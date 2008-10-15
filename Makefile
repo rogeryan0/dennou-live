@@ -18,4 +18,4 @@ clean:
 distclean: clean
 	sudo rm -rf cache/	
 	sudo rm -f *.iso *.list *.packages
-	rm -f log.*
+	rm -f debian_live-buildlog.* *.md5sum

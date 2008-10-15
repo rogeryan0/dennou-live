@@ -3,7 +3,6 @@ clamtk
 dosfstools
 fdclone
 gpart
-gparted
 jfsutils
 mbr
 mtools

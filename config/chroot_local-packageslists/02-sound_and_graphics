@@ -1,9 +1,4 @@
-cheese
 ffmpeg
-gimp
-gstreamer0.10-ffmpeg
 gstreamer0.10-plugins-bad
-inkscape
+gstreamer0.10-plugins-ugly
 mplayer
-totem-gstreamer
-totem-plugins
