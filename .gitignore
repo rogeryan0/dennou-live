@@ -1,8 +1,10 @@
-log.*
-cache/
-chroot/
-binary/
 *.iso
 *.list
+*.md5sum
 *.packages
 .stage/
+binary/
+cache/
+chroot/
+debian_live-buildlog.*
+log.*

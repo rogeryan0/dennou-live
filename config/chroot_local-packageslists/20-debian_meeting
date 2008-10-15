@@ -1,0 +1,29 @@
+# Debian Meeting packages
+#
+# non-free packages
+# gs-cjk-resource
+# poppler-data
+# xpdf-japanese
+advi
+avahi-autoipd
+avahi-daemon
+dvipdfmx
+emacs22-gtk
+evince
+ghostscript-x
+git-core
+git-gui
+gv
+latex-beamer
+latex-cjk-japanese
+latex-cjk-japanese-wadalab
+latexmk
+libnss-mdns
+make
+okumura-clsfiles
+ptex-bin
+qgit
+texlive-latex-extra
+whizzytex
+xpdf
+yatex

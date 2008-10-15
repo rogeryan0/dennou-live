@@ -1,3 +1,4 @@
+# japanese packages
 anthy
 iceweasel-l10n-ja
 jfbterm
@@ -6,6 +7,7 @@ manpages-ja
 nkf
 openoffice.org-help-ja
 openoffice.org-l10n-ja
+ttf-mona
 ttf-sazanami-gothic
 ttf-sazanami-mincho
 ttf-vlgothic
@@ -14,4 +16,3 @@ uim-applet-gnome
 uim-gtk2.0
 uim-xim
 unifont
-ttf-mona

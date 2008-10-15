@@ -1,6 +1,7 @@
-compiz-gnome
-compizconfig-settings-manager
-fusion-icon
+# compiz packages
 compiz-fusion-plugins-extra
 compiz-fusion-plugins-main
 compiz-fusion-plugins-unsupported
+compiz-gnome
+compizconfig-settings-manager
+fusion-icon

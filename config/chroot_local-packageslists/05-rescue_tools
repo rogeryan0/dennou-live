@@ -1,3 +1,4 @@
+# rescue and virusscan packages
 clamav
 clamtk
 dosfstools
@@ -16,5 +17,5 @@ rsync
 smbfs
 sshfs
 testdisk
-xfsprogs
 xdelta
+xfsprogs
