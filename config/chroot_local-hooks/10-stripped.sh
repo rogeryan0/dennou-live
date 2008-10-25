@@ -7,10 +7,6 @@
 # This is free software, and you are welcome to redistribute it
 # under certain conditions; see COPYING for details.
 
-echo
-echo "10-stripped.sh"
-echo
-
 set -e
 
 # Removing unused packages

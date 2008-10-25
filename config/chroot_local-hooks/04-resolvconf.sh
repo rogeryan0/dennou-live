@@ -1,9 +1,4 @@
 #!/bin/sh
-
-echo
-echo "04-resolvconf.sh"
-echo
-
 cd /etc
 rm resolv.conf resolv.conf.orig
 ln -s /etc/resolvconf/run/resolv.conf resolv.conf
