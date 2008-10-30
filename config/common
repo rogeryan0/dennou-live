@@ -62,7 +62,7 @@ LH_DEBCONF_PRIORITY="critical"
 
 # $LH_INITRAMFS: set initramfs hook
 # (Default: live-initramfs)
-LH_INITRAMFS="auto"
+LH_INITRAMFS="live-initramfs"
 
 # $LH_FDISK: set fdisk program
 # (Default: autodetected)
