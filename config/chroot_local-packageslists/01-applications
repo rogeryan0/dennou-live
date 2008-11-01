@@ -1,4 +1,5 @@
 brasero
+debian-bts-applet
 f-spot
 gnome-do
 icedtea-gcjwebplugin
@@ -13,6 +14,7 @@ openoffice.org-gtk
 pidgin
 pidgin-extprefs
 reportbug
+reportbug-ng
 screen
 swfdec-gnome
 wine

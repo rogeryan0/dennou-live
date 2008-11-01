@@ -6,11 +6,13 @@ cpufrequtils
 cups-driver-gutenprint
 disk-manager
 foomatic-filters-ppds
+genext2fs
 gnome-device-manager
 gnome-randr-applet
 grub
 gspca-modules-2.6-686
 gutenprint-locales
+insserv
 libengine-pkcs11-openssl
 live-helper
 mtd-utils
@@ -25,5 +27,6 @@ resolvconf
 splashy
 splashy-themes
 squashfs-tools
+virtualbox-ose-guest-utils
 wireless-tools
 xserver-xorg-input-vmmouse
