@@ -9,11 +9,13 @@ avahi-autoipd
 avahi-daemon
 dvipdfmx
 emacs22-gtk
-evince
+evince 
 ghostscript-x
 git-core
-git-gui
+git-gui 
+gs-esp
 gv
+kpdf
 latex-beamer
 latex-cjk-japanese
 latex-cjk-japanese-wadalab
@@ -23,8 +25,7 @@ make
 okumura-clsfiles
 ptex-bin
 qgit
-texlive-latex-extra
-whizzytex
+texlive-latex-extra 
+whizzytex 
 xpdf
 yatex
-kpdf
