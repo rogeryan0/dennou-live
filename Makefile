@@ -1,4 +1,4 @@
-BUILDDATE = $(shell date +%Y%m%d%H%M%S)
+BUILDDATE := $(shell date +%Y%m%d%H%M%S)
 
 all: build
 
