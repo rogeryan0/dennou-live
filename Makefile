@@ -16,6 +16,6 @@ clean:
 	sudo lh_clean
 
 distclean: clean
-	sudo rm -rf cache/	
+	sudo lh_clean --purge
 	sudo rm -f *.iso *.list *.packages
 	rm -f debian_live-buildlog.* *.md5sum
