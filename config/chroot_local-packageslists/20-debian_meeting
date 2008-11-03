@@ -1,6 +1,6 @@
 # Debian Meeting packages
 #
-# non-free packages
+# -- non-free packages
 # gs-cjk-resource
 # poppler-data
 # xpdf-japanese
@@ -15,7 +15,6 @@ git-core
 git-gui 
 gs-esp
 gv
-kpdf
 latex-beamer
 latex-cjk-japanese
 latex-cjk-japanese-wadalab

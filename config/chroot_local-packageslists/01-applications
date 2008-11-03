@@ -12,10 +12,12 @@ openjdk-6-jre
 openoffice.org
 openoffice.org-gnome
 openoffice.org-gtk
+openoffice.org-writer2latex
 pidgin
 pidgin-extprefs
 reportbug
 screen
 swfdec-gnome
 wine
+writer2latex
 zsh
