@@ -1,0 +1,4 @@
+INITEX=iniptex
+FORMAT=platex
+LATEX=platex
+FMT=fmt

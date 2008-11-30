@@ -35,11 +35,11 @@ LH_CHROOT_BUILD="enabled"
 
 # $LH_DEBIAN_INSTALLER: set debian-installer
 # (Default: netinst)
-LH_DEBIAN_INSTALLER="netinst"
+LH_DEBIAN_INSTALLER="live"
 
 # $LH_DEBIAN_INSTALLER_DISTRIBUTION: set debian-installer suite
 # (Default: empty)
-LH_DEBIAN_INSTALLER_DISTRIBUTION="daily"
+LH_DEBIAN_INSTALLER_DISTRIBUTION="lenny"
 
 # $LH_DEBIAN_INSTALLER_PRESEEDFILE: set debian-installer preseed filename/url
 # (Default: )
