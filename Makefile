@@ -1,21 +1,35 @@
-BUILDDATE := $(shell date +%Y%m%d%H%M%S)
+BOOTOPTION_LIVE = quiet locale=ja_JP.UTF-8 keyb=jp kmodel=jp106 vga=788 splash
+BOOTOPTION_INSTALLER = -- quiet video=vesa:ywrap,mtrr vga=788
 
-all: build
+all: lxde
 
-build:
-#	sudo MKSQUASHFS_OPTIONS="-b 1024k" lh_build 2>&1 | tee debian_live-buildlog.$(BUILDDATE)
-	sudo lh_build 2>&1 | tee debian_live-buildlog.$(BUILDDATE)
-	mv binary.iso debian_live-binary-$(BUILDDATE).iso
-	mv binary.list debian_live-binary-$(BUILDDATE).list
-	mv binary.packages debian_live-binary-$(BUILDDATE).packages
-	md5sum debian_live-binary-$(BUILDDATE).iso > debian_live-binary-$(BUILDDATE).iso.md5sum
+lxde: lxde-config-usb build
 
-.PHONY: clean
+lxde-config-usb: clean
+	lh_config \
+	 	--binary-images usb-hdd \
+		--bootappend-live "$(BOOTOPTION_LIVE)" \
+		--bootappend-install "$(BOOTOPTION_INSTALLER) desktop=lxde" \
+		--linux-flavours 486 \
+		--packages-lists "lxde 01-system 10-lxde-application 50-japanese" \
+
+gnome: gnome-config-usb build
+
+gnome-config-usb: clean
+	lh_config \
+	 	--binary-images usb-hdd \
+		--bootappend-live "$(BOOTOPTION_LIVE)" \
+		--bootappend-install "$(BOOTOPTION_INSTALLER) desktop=gnome" \
+		--linux-flavours 686 \
+		--packages-lists "gnome 01-system 50-japanese" \
+
+build: 
+	sudo lh_build 
 
 clean:
 	sudo lh_clean
 
 distclean: clean
 	sudo lh_clean --purge
-	sudo rm -f *.iso *.list *.packages
-	rm -f debian_live-buildlog.* *.md5sum
+	sudo rm -f *.iso *.img *.list *.packages *.buildlog *.md5sum
+

@@ -1,0 +1,23 @@
+# eeepc-acpi-scripts
+# powertop
+# gnome-app-install
+# vbetool
+acpi acpi-support
+aptitude
+bzip2 unzip p7zip-full
+cpufrequtils
+dash insserv prelink usplash
+libengine-pkcs11-openssl
+pcmciautils
+ppp pppconfig pppoe pppoeconf
+synaptic software-properties-gtk
+vrms
+
+# disk/file utilities
+fuse-utils
+fusesmb
+ntfs-3g
+dosfstools ntfsprogs reiser4progs reiserfsprogs xfsprogs jfsutils
+
+# live-initramfs recommends
+mtd-utils genext2fs curlftpfs loop-aes-utils squashfs-tools uuid-runtime
