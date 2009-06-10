@@ -20,6 +20,7 @@ update-bootsystem-insserv
 # remove packages
 apt-get -y clean 
 apt-get -y autoremove 
+
 # purge package
 PURGEPKG=$(dpkg -l | grep ^rc | cut -d' ' -f3)
 [ -z "${PURGEPKG}" ] || dpkg -P ${PURGEPKG}
@@ -37,6 +38,8 @@ do
         : > ${FILE}
 done
 
-# prelink
-prelink -afmR
+# Cleaning /lib/init/rw/*
+rm -rf /lib/init/rw/*
 
+# prelink
+[ -f ] && prelink -afmR
