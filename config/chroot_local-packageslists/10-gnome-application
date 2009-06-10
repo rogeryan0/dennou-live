@@ -1,0 +1,41 @@
+# compiz
+compiz compiz-fusion-plugins-extra compiz-fusion-plugins-main compiz-fusion-plugins-unsupported compizconfig-settings-manager fusion-icon
+libgl1-mesa-dri
+
+# print
+#cups cups-client cups-driver-gutenprint foomatic-filters-ppds system-config-printer hal-cups-utils
+
+# disk/filesystem
+#disk-manager gparted
+#partimage partimage-server
+
+# multimedia
+#exaile totem gimp inkscape xsane gnomebaker
+#gstreamer0.10-ffmpeg gstreamer0.10-plugins-ugly
+mozplugger totem-mozilla swfdec-mozilla icedtea-gcjwebplugin
+
+# application
+#epdfview
+#filezilla filezilla-locales
+openoffice.org openoffice.org-gtk
+#pidgin
+#screen
+#smbclient
+#ssh
+#tsclient
+#w3m-img
+#wine
+xdg-user-dirs xdg-user-dirs-gtk xdg-utils
+#zile
+
+# games/fun
+titanion
+
+# kernel
+atl2-modules-2.6-686
+et131x-modules-2.6-686
+gspca-modules-2.6-686
+loop-aes-modules-2.6-686
+speakup-modules-2.6-686
+tp-smapi-modules-2.6-686
+# virtualbox-ose-guest-modules-2.6-686
