@@ -17,5 +17,5 @@ lh_config noautoconfig \
 	--mirror-bootstrap ${MIRROR_DEBIAN} \
 	--mirror-chroot ${MIRROR_DEBIAN} \
 	--mirror-chroot-security ${MIRROR_SECURITY} \
-    --syslinux-timeout 30 \
+	--syslinux-timeout 30 \
 	${@}

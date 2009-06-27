@@ -21,7 +21,7 @@ gnome-config-usb: clean
 		--bootappend-live "$(BOOTOPTION_LIVE)" \
 		--bootappend-install "$(BOOTOPTION_INSTALLER) desktop=gnome" \
 		--linux-flavours 686 \
-		--packages-lists "gnome-full 01-system 10-gnome-application 50-japanese" \
+		--packages-lists "gnome-full 01-system 10-gnome-application 20-debian_meeting 50-japanese" \
 
 build: 
 	sudo lh_build 

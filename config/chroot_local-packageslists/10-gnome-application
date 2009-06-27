@@ -10,14 +10,14 @@ libgl1-mesa-dri
 #partimage partimage-server
 
 # multimedia
-#exaile totem gimp inkscape xsane gnomebaker
+#totem gimp inkscape xsane brasero f-spot
 #gstreamer0.10-ffmpeg gstreamer0.10-plugins-ugly
 mozplugger totem-mozilla swfdec-mozilla icedtea-gcjwebplugin
 
 # application
-#epdfview
+#evince
 #filezilla filezilla-locales
-openoffice.org openoffice.org-gtk
+#openoffice.org openoffice.org-gnome
 #pidgin
 #screen
 #smbclient
@@ -26,7 +26,7 @@ openoffice.org openoffice.org-gtk
 #w3m-img
 #wine
 xdg-user-dirs xdg-user-dirs-gtk xdg-utils
-#zile
+#emacs22-gtk
 
 # games/fun
 titanion

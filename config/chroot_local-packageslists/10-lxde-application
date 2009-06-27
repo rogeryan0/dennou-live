@@ -18,7 +18,7 @@ mozplugger totem-mozilla swfdec-mozilla icedtea-gcjwebplugin
 # application
 epdfview
 filezilla filezilla-locales
-openoffice.org openoffice.org-gtk
+# openoffice.org openoffice.org-gtk
 pidgin
 screen
 smbclient

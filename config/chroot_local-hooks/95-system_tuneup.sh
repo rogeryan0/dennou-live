@@ -42,4 +42,4 @@ done
 rm -rf /lib/init/rw/*
 
 # prelink
-[ -f ] && prelink -afmR
+[ -f /usr/sbin/prelink ] && prelink -afmR
