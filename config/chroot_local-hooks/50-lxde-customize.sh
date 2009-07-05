@@ -14,7 +14,7 @@ cat << _EOL_ >>${SMBMOUNTSCRIPT}
 
 # read user directory
 # XDG_DESKTOP_DIR = desktop directory
-. \${XDG_CONFIG_HOME}/user-dirs.dirs
+. \${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs
 
 # set permission
 FUSESMBCONF=\${HOME}/.smb/fusesmb.conf

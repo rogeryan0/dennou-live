@@ -8,7 +8,7 @@ sed -i 's/^[23456]/#\ &/' /etc/inittab
 sed -i 's/^CONCURRENCY=none/CONCURRENCY=startpar/' /etc/init.d/rc
 
 # remove daemon
-DAEMON="acct acpi-support avahi-daemon clamav-freshclam cron hdparm partimaged portmap pppd-dns rc.local rsync rsyslog saned ssh system-tools-backends timidity vbesave"
+DAEMON="acct clamav-freshclam cron hdparm partimaged portmap pppd-dns rc.local rsync rsyslog saned ssh timidity samba mdadm "
 for i in ${DAEMON}; do update-rc.d -f ${i} remove; done
 
 # set insserv

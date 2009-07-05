@@ -7,8 +7,8 @@ metacity
 cups cups-client cups-driver-gutenprint foomatic-filters-ppds system-config-printer hal-cups-utils
 
 # disk/filesystem
-disk-manager gparted
-partimage partimage-server
+disk-manager
+gparted
 
 # multimedia
 exaile totem gimp inkscape xsane gnomebaker
@@ -18,7 +18,9 @@ mozplugger totem-mozilla swfdec-mozilla icedtea-gcjwebplugin
 # application
 epdfview
 filezilla filezilla-locales
-# openoffice.org openoffice.org-gtk
+
+openoffice.org openoffice.org-gtk
+
 pidgin
 screen
 smbclient

@@ -1,0 +1,14 @@
+partimage partimage-server
+hfsprogs hfsutils hfsutils-tcltk hfsplus
+testdisk
+clamav clamtk
+afio
+grub syslinux mbr
+ddrescue gddrescue
+samba smbfs
+blktool sdparm hdparm 
+rsync
+fdclone
+dmraid
+mdadm
+lvm2

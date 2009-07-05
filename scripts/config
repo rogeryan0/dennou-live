@@ -4,7 +4,6 @@ MIRROR_DEBIAN="http://ftp.jp.debian.org/debian/"
 MIRROR_SECURITY="http://security.debian.org/"
 
 lh_config noautoconfig \
-	--apt-recommends disabled \
 	--categories "main" \
 	--debian-installer netboot \
 	--debian-installer-distribution lenny \

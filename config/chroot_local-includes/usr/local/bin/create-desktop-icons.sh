@@ -2,7 +2,7 @@
 
 # read user directory
 # XDG_DESKTOP_DIR = desktop directory
-. ${XDG_CONFIG_HOME}/user-dirs.dirs
+. ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs
 
 # icons directory
 ICON_DIR=/usr/share/applications
@@ -36,7 +36,7 @@ SKYPE=skype.desktop
 [ -f ${ICON_DIR}/${SKYPE} ] || SKYPE=""
 
 # copy icons
-ICONS="${SKYPE} ${MUA} ${BROWSER} ${MPLAYER} ${SPLAYER} ${PDF} f-spot.desktop filezilla.desktop gimp.desktop inkscape.desktop ooo-startcenter.desktop pidgin.desktop system-config-printer.desktop tsclient.desktop"
+ICONS="${SKYPE} ${MUA} ${BROWSER} ${MPLAYER} ${SPLAYER} ${PDF} filezilla.desktop gimp.desktop inkscape.desktop ooo-startcenter.desktop pidgin.desktop tsclient.desktop"
 for i in ${ICONS}; do
   [ -e ${XDG_DESKTOP_DIR}/${i} ] || cp ${ICON_DIR}/${i} ${XDG_DESKTOP_DIR}/
 done

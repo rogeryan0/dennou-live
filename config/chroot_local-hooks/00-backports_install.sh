@@ -8,7 +8,8 @@ if [ -f /usr/bin/startlxde ]; then
 PACKAGES="wicd jd \
 openoffice.org openoffice.org-gtk ttf-opensymbol \
 openoffice.org-help-ja openoffice.org-l10n-ja \
-openoffice.org-pdfimport openoffice.org-ogltrans"
+openoffice.org-pdfimport openoffice.org-ogltrans \
+dictionaries-common"
   apt-get -y -t lenny-backports install ${PACKAGES}
   apt-get -y purge lxnm
 fi
@@ -21,7 +22,8 @@ openoffice.org-help-ja openoffice.org-l10n-ja \
 openoffice.org-pdfimport openoffice.org-ogltrans \
 openoffice.org-presentation-minimizer openoffice.org-presenter-console \
 openoffice.org-filter-binfilter openoffice.org-report-builder \
-openoffice.org-filter-mobiledev"
+openoffice.org-filter-mobiledev \
+dictionaries-common"
   apt-get -y -t lenny-backports install ${PACKAGES}
 fi
 
