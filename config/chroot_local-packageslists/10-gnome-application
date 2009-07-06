@@ -43,8 +43,9 @@ ttf-bitstream-vera
 wireless-tools
 
 # virtualization
-kvm vbe2
-qemu shareutils kqemu-common
+kvm vde2
+qemu sharutils kqemu-common
+virt-viewer virt-manager libvirt-bin
 
 # games/fun
 titanion
