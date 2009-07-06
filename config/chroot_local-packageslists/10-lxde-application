@@ -12,7 +12,7 @@ gparted
 
 # multimedia
 exaile totem gimp inkscape xsane gnomebaker
-gstreamer0.10-ffmpeg gstreamer0.10-plugins-ugly
+gstreamer0.10-ffmpeg gstreamer0.10-plugins-ugly gstreamer0.10-plugins-bad
 mozplugger totem-mozilla swfdec-mozilla icedtea-gcjwebplugin
 
 # application
@@ -41,4 +41,4 @@ gspca-modules-2.6-486
 loop-aes-modules-2.6-486
 speakup-modules-2.6-486
 tp-smapi-modules-2.6-486
-# virtualbox-ose-guest-modules-2.6-486
+#virtualbox-ose-guest-modules-2.6-486

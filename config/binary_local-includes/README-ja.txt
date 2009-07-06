@@ -1,7 +1,7 @@
 ============================================================
 
-　Debian Live DVD(lenny) / Debian Installer(lenny)
-　TeX資料作成ハンズオンバージョン (2008.11.7-8 KOF)
+　Debian Live DVD (Lenny) / Debian Installer (Lenny)
+ オープンソースカンファレンス2009 Kansai (2009.07.10-11)
 
 ============================================================
 
@@ -24,13 +24,23 @@ Debian Liveについて
 　このDVDは、Debian Live Projectのlive-helperを用いて制作され
 たDebian LiveとDebian InstallerのハイブリッドDVDです。
 
-　以前配布したDebian Liveとの違いは以前の内容に加え、東京エリ
-ア・関西Debian勉強会の資料作成、管理に必要なemacs, git, TeXの
-環境がほぼすべて入っています。　
-　関西Debian勉強会では、このDebian Liveを使い、資料を作成、管
-理するためのハンズオンを予定しています。
-　ハンズオン参加のための準備方法については「資料作成ハンズオ
-ンの準備について」をご覧ください。
+　以前配布したDebian Liveとの違いは、以前の内容に加え以下のよ
+うな違いがあります。
+
+・Debian GNU/Linux 5.0.2ベース
+・backports.orgより以下のパッケージを追加。
+　Kernel 2.6.30
+　OpenOffice.org 3.1.0
+　Pidgin
+・live-initramfsにDebian Live Projectのスナップショット版を
+ 使用。
+・デスクトップにアイコンが作成されるにした。
+・起動オプションにより、ネットワークからNVIDIA、ATIのプロプライエタリド
+ ライバをインストールすることが可能。
+
+　その他、東京エリア・関西Debian勉強会の資料作成、管理に必要
+なemacs, git, TeXの環境や、このDebian Liveをカスタマイズする
+ための環境、レスキューツールなど入っています。
 
 Live DVDとして使う
 ------------------------------------------------------------
@@ -48,24 +58,15 @@ Debian Installerとして使う
 　起動時のメニューから「Debian Installer」を選択してください。
 Debian GNU/Linux 5.0(Lenny)をHDDにインストールすることができ
 ます。　
-　インストール方法については現安定版のEtchとほぼ同じ手順です
-ので下記のURIを参考にしてください。
+　インストール方法については下記のURIを参考にしてください。
 
-Debian JP Project - Debian GNU/Linux クイックインストール解説 (Etch 編)
+Debian JP Project - Debian GNU/Linux クイックインストール解説 (Etch/Lenny 編)
 http://www.debian.or.jp/using/quick-etch/
 
+Debian GNU/Linux 5.0：ITpro
+http://itpro.nikkeibp.co.jp/article/COLUMN/20090326/327243/?ST=lin-os&P=1
 
 
-資料作成ハンズオンの準備について
-------------------------------------------------------------
-　資料作成ハンズオンの会場には、ネットワーク環境もなく、時間
-も限られているので、参加する方は以下の準備をしておいてください。
-
-1. USBメモリにDVDの差分を保存できるようにする。
-2. apt-lineのnon-freeセクションを有効にし、poppler-data,
-   gs-cjk-resource, xpdf-japaneseのパッケージをインストールする。
-3. debian勉強会の資料リポジトリからリポジトリを複製し、コンパ
-   イルできる事を確認する。
 
 
 1. USBメモリにDVDの差分を保存する。
@@ -76,7 +77,7 @@ http://www.debian.or.jp/using/quick-etch/
 
 用意するもの:
 　・Debian Live DVD
-　・USBメモリ(資料作成ハンズオンの準備には512MB以上)
+　・USBメモリ
 
 1. DVDを起動しUSBメモリをセットする。
 　この時USBメモリが自動的にマウントされてしまうので、マウント
@@ -117,7 +118,7 @@ Terminal」を選択し作業をします。
 
 　tune2fsでfsckをしないようにしておくのもいいかもしれません。
 
- # tune2fs -i 0 -c 0 /dev/sdXn 
+ # tune2fs -i 0 -c 0 -L live-rw /dev/sdXn 
 
 　もし後からラベル名をつけるときはtune2fsで変更します。
 
@@ -265,12 +266,12 @@ http://www.debian.or.jp/
 
 追加情報など
 ------------------------------------------------------------
+
 　Debian Live DVD制作後の追加情報や訂正は以下のURIにてアナウ
 ンスされる予定です。
-
-　http://wiki.debian.org/KansaiDebianMeetingKOF2008
-
+　http://wiki.debian.org/KansaiDebianMeetingOSC2009
 
 ------------------------------------------------------------
+
 関西Debian勉強会
-のがたじゅん <nogajun@gmail.com>
+のがたじゅん <nogajun@debian.or.jp>

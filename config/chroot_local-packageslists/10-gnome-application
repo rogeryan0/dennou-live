@@ -26,6 +26,7 @@ iceweasel-gnome-support
 rarian-compat
 nautilus-gksu nautilus-open-terminal
 gnome-device-manager libsmbios-bin
+screenlets python-feedparser
 
 # application
 filezilla filezilla-locales
@@ -41,8 +42,13 @@ live-magic
 ttf-bitstream-vera 
 wireless-tools
 
+# virtualization
+kvm vbe2
+qemu shareutils kqemu-common
+
 # games/fun
 titanion
+tumiki-fighters
 
 # kernel
 atl2-modules-2.6-686
@@ -52,3 +58,5 @@ loop-aes-modules-2.6-686
 speakup-modules-2.6-686
 tp-smapi-modules-2.6-686
 # virtualbox-ose-guest-modules-2.6-686
+kqemu-modules-2.6.26-2-686
+kvm-modules-2.6.26-2-686

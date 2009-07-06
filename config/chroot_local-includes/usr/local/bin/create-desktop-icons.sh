@@ -36,7 +36,7 @@ SKYPE=skype.desktop
 [ -f ${ICON_DIR}/${SKYPE} ] || SKYPE=""
 
 # copy icons
-ICONS="${SKYPE} ${MUA} ${BROWSER} ${MPLAYER} ${SPLAYER} ${PDF} filezilla.desktop gimp.desktop inkscape.desktop ooo-startcenter.desktop pidgin.desktop tsclient.desktop"
+ICONS="${SKYPE} ${MUA} ${BROWSER} ${MPLAYER} ${SPLAYER} brasero.desktop gparted.desktop filezilla.desktop gimp.desktop inkscape.desktop ooo-startcenter.desktop pidgin.desktop"
 for i in ${ICONS}; do
   [ -e ${XDG_DESKTOP_DIR}/${i} ] || cp ${ICON_DIR}/${i} ${XDG_DESKTOP_DIR}/
 done

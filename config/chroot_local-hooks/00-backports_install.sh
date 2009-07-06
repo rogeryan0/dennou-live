@@ -5,7 +5,7 @@ set -e
 
 # lxde
 if [ -f /usr/bin/startlxde ]; then
-PACKAGES="wicd jd \
+PACKAGES="wicd jd pidgin acpid \
 openoffice.org openoffice.org-gtk ttf-opensymbol \
 openoffice.org-help-ja openoffice.org-l10n-ja \
 openoffice.org-pdfimport openoffice.org-ogltrans \
@@ -16,7 +16,7 @@ fi
 
 # gnome
 if [ -f /usr/bin/gnome-session ]; then
-PACKAGES="jd \
+PACKAGES="jd pidgin acpid \
 openoffice.org openoffice.org-gnome ttf-opensymbol \
 openoffice.org-help-ja openoffice.org-l10n-ja \
 openoffice.org-pdfimport openoffice.org-ogltrans \
