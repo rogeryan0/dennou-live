@@ -1,4 +1,5 @@
 default 0
+timeout 30
 color cyan/blue white/blue
 foreground  = ffffff
 background  = 999999
@@ -35,16 +36,20 @@ title      Live (persistent)
 kernel     /live/vmlinuz-2.6.26-2-686 boot=live quiet locale=ja_JP.UTF-8 keyb=jp kmodel=jp106 vga=788 splash union=aufs persistent
 initrd	   /live/initrd.img-2.6.26-2-686
 
-title      Live (NVIDIA)
-kernel     /live/vmlinuz-2.6.26-2-686 boot=live quiet locale=ja_JP.UTF-8 keyb=jp kmodel=jp106 vga=788 splash union=aufs nvidia
-initrd	   /live/initrd.img-2.6.26-2-686
-
-title      Live (ATI)
-kernel     /live/vmlinuz-2.6.26-2-686 boot=live quiet locale=ja_JP.UTF-8 keyb=jp kmodel=jp106 vga=788 splash union=aufs fglrx
-initrd	   /live/initrd.img-2.6.26-2-686
-
+# title      Live (NVIDIA)
+# kernel     /live/vmlinuz-2.6.26-2-686 boot=live quiet locale=ja_JP.UTF-8 keyb=jp kmodel=jp106 vga=788 splash union=aufs nvidia
+# initrd	   /live/initrd.img-2.6.26-2-686
+# 
+# title      Live (ATI)
+# kernel     /live/vmlinuz-2.6.26-2-686 boot=live quiet locale=ja_JP.UTF-8 keyb=jp kmodel=jp106 vga=788 splash union=aufs fglrx
+# initrd	   /live/initrd.img-2.6.26-2-686
+# 
 title      Live (US Keyboard)
 kernel     /live/vmlinuz-2.6.26-2-686 boot=live quiet locale=ja_JP.UTF-8 keyb=us vga=788 splash union=aufs 
+initrd	   /live/initrd.img-2.6.26-2-686
+
+title      Live (Frame Buffer)
+kernel     /live/vmlinuz-2.6.26-2-686 boot=live quiet locale=ja_JP.UTF-8 keyb=jp kmodel=jp106 vga=792 nosplash union=aufs xdriver=fbdev
 initrd	   /live/initrd.img-2.6.26-2-686
 
 title      Live (fail-safe fb mode)
@@ -59,19 +64,19 @@ title		--------------------------------------------------
 root
 
 title		Install (GUI)
-kernel		/install/gtk/vmlinuz video=vesa:ywrap,mtrr vga=788 quiet
+kernel		/install/gtk/vmlinuz video=vesa:ywrap,mtrr vga=788 -- quiet
 initrd		/install/gtk/initrd.gz
 
 title		Install (TEXT)
-kernel		/install/vmlinuz vga=normal quiet
+kernel		/install/vmlinuz vga=normal -- quiet
 initrd		/install/initrd.gz
 
 title		Install (Expert/GUI)
-kernel		/install/gtk/vmlinuz priority=low video=vesa:ywrap,mtrr vga=788 quiet
+kernel		/install/gtk/vmlinuz priority=low video=vesa:ywrap,mtrr vga=788 
 initrd		/install/gtk/initrd.gz
 
 title		Install (Expert/TEXT)
-kernel		/install/vmlinuz priority=low vga=normal quiet
+kernel		/install/vmlinuz priority=low vga=normal 
 initrd		/install/initrd.gz
 
 # title		Debian GNU/Linux - rescue

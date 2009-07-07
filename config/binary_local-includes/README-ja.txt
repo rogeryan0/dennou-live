@@ -8,6 +8,13 @@
 
 ======================================================================
 
+始めに／追加情報など
+----------------------------------------------------------------------
+　Debian Live DVD制作後の追加情報や訂正は以下のURIにてアナウンスされます。
+　この文書と会わせてお読みください。
+　http://wiki.debian.org/KansaiDebianMeetingOSC2009
+
+
 目次
 ----------------------------------------------------------------------
 + Debian Liveについて
@@ -15,7 +22,6 @@
   2. Debian Installerとして使う
 + Debian Liveのカスタマイズ
 + Debian勉強会のお知らせ
-+ 追加情報など
 
 
 Debian Liveについて
@@ -31,8 +37,6 @@ LiveとDebian InstallerのハイブリッドDVDです。
 　  Pidgin 2.5.5
   ・live-initramfsにDebian Live Projectのスナップショット版を使用。
   ・デスクトップにアイコンが作成されます。
-  ・ネットワークからNVIDIA、ATIのプロプライエタリドライバをインストール
-  　して起動することが可能。(live-initscripts)
 
 　その他、東京エリア・関西Debian勉強会の資料作成、管理に必要なemacs,
 git, TeXの環境や、このDebian Liveをカスタマイズするための環境、レスキュー
@@ -48,11 +52,6 @@ Live DVDとして使う
   ・Live
   　通常起動モードです。
 
-  ・Live (NVIDIA)
-  ・Live (ATI)
-  　起動時にプロプライエタリドライバをダウンロードして起動するモードです。
-  　ネットワークに接続している必要があります。
-
   ・Live (persistent)
   　データを保存するディレクトリをマウントして起動します。
   　データの保存方法については「USBメモリにDVDの差分を保存する」をご覧ください
@@ -60,12 +59,20 @@ Live DVDとして使う
   ・Live (US Keyboard)
   　英語キーボードモードです。
 
-  ・Live (fail-safe mode)
+  ・Live (Frame Buffer)
+  　フレームバッファでXを起動します。
+
+  ・Live (fail-safe mode) / (fail-safe fb mode)
   　すべてのオプションを無効にして起動するモードです。
   　うまく起動できない場合に試してみてください。
 
 　起動時のパラメータを追加するには、メニューの上で「e」キーを押して追加します。
 　パラメータの詳細については、DVDのlive/parameters.txtをご覧ください。
+
+　このほかにDVD独自のパラメータとして、「nvidia」「fglrx」があります。
+これは起動時にインターネット上からNVIDA / ATIのプロプライエタリドライバ
+をダウンロード・インストールして起動するモードですが、DVDでは起動のタイ
+ミングにより、うまくダウンロードができないので無効にしてあります。
 
 
 Debian Installerとして使う
@@ -145,40 +152,37 @@ Terminal」を選択し作業をします。
 
 Debian Liveのカスタマイズについて
 ----------------------------------------------------------------------
-　このDebian Live DVDは、githubにあるレシピを利用してカスタマイズするこ
-とができます。
-　カスタマイズにはDebian GNU/Linux上作業する必要がありますが、このLive
-DVDを使う場合、「USBメモリにDVDの差分を保存する。」を参考に、USB HDD上
-に差分保存パーティションを用意すると、LiveDVD上でカスタマイズすることが
-できます。
-　カスタマイズには10GBほど容量が必要になります
+　このDebian Live DVDは、githubにあるlive-helperのレシピを利用してカス
+タマイズすることができます。
+　カスタマイズをおこなうにはLinux上で作業をする必要がありますが、この
+Live DVDを使ってもカスタマイズすることが可能ですので、興味のある方はチャ
+レンジしてみたください。
+　その際には、「USBメモリにDVDの差分を保存する。」を参考に、HDD上(USB
+HDDでも可) に差分保存パーティションを10GB程度用意する必要があります。
 
-　同じものをビルドするには、以下のコマンドでビルドすることができます。
+　ビルドの方法は、以下のコマンドによりビルドすることができます。
 
  $ git clone git://github.com/nogajun/debian-study-live-cd.git
  $ cd debian-study-live-cd
- $ make
+ $ make gnome
 
-　live-helperの設定を変更する事により、さまざまなカスタマイズをすること
-が可能ですので、ぜひチャレンジしてみてください。
+　live-helperの設定については、英語の資料を見るのが手っ取り早いのですが、
+日本語の資料では、筆者が関西Debian勉強会で発表した資料があるので、それ
+を参考にしていただくとよいかと思います。
 
-　資料については、英語の資料を見るのが手っ取り早いのですが、日本語の資
-料がほしいならば、関西Debian勉強会で筆者が発表した資料があるので、それ
-を参考にするとわかりやすいと思います。
+  関西Debian勉強会　資料
+  KansaiDebianMeetingArchivesの添付ファイル:debianmeetingresume200906-kansai.pdf - Debian Wiki
+  http://wiki.debian.org/KansaiDebianMeetingArchives?action=AttachFile&do=view&target=debianmeetingresume200906-kansai.pdf
 
-関西Debian勉強会　資料
-KansaiDebianMeetingArchivesの添付ファイル:debianmeetingresume200906-kansai.pdf - Debian Wiki
-http://wiki.debian.org/KansaiDebianMeetingArchives?action=AttachFile&do=view&target=debianmeetingresume200906-kansai.pdf
+  nogajun's debian-study-live-cd at master ― GitHub
+  http://github.com/nogajun/debian-study-live-cd/
 
-nogajun's debian-study-live-cd at master ― GitHub
-http://github.com/nogajun/debian-study-live-cd/
+  DebianLive - Debian Wiki (英語)
+  http://wiki.debian.org/DebianLive
 
-DebianLive - Debian Wiki (英語)
-http://wiki.debian.org/DebianLive
-
-Debian Live Manual (英語)
-http://alioth.debian.org/~lamby-guest/live-manual/html/
-
+  Debian Live Manual (英語)
+  http://alioth.debian.org/~lamby-guest/live-manual/html/
+  
 
 Debian勉強会のお知らせ
 ----------------------------------------------------------------------
@@ -194,23 +198,16 @@ Debian勉強会のお知らせ
 　開催日時については、Debian JP ProjectのWebサイト、debian-usersメーリ
 ングリスト、mixiのDebianコミュニティなどでアナウンスされます。
 
- 東京エリアDebian勉強会
- http://tokyodebian.alioth.debian.org/
+  東京エリアDebian勉強会
+  http://tokyodebian.alioth.debian.org/
 
- 関西Debian勉強会
- http://wiki.debian.org/KansaiDebianMeeting
+  関西Debian勉強会
+  http://wiki.debian.org/KansaiDebianMeeting
 
- Debian JP Project
- http://www.debian.or.jp/
+  Debian JP Project
+  http://www.debian.or.jp/
 
- Debian Project
- http://www.debian.org/
-
-
-追加情報など
-----------------------------------------------------------------------
-　Debian Live DVD制作後の追加情報や訂正は以下のURIにてアナウンスされる
-予定です。
-　http://wiki.debian.org/KansaiDebianMeetingOSC2009
+  Debian Project
+  http://www.debian.org/
 
 ----------------------------------------------------------------------

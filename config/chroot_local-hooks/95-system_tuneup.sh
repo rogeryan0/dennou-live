@@ -5,14 +5,14 @@ set -e
 sed -i 's/^[23456]/#\ &/' /etc/inittab
 
 # enable parallel init script
-sed -i 's/^CONCURRENCY=none/CONCURRENCY=startpar/' /etc/init.d/rc
+#sed -i 's/^CONCURRENCY=none/CONCURRENCY=startpar/' /etc/init.d/rc
 
 # remove daemon
-DAEMON="acct clamav-freshclam cron hdparm partimaged portmap pppd-dns rc.local rsync rsyslog saned ssh timidity samba mdadm vbesave"
+DAEMON="acct clamav-freshclam cron hdparm partimaged portmap pppd-dns rc.local rsync rsyslog saned ssh timidity samba mdadm vbesave mdadm-raid lvm2"
 for i in ${DAEMON}; do update-rc.d -f ${i} remove; done
 
 # set insserv
-update-bootsystem-insserv
+#update-bootsystem-insserv
 
 # set usplash
 #update-alternatives --set usplash-artwork.so /usr/lib/usplash/CrunchyBranch.so
