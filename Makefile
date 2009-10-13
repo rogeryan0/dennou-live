@@ -37,9 +37,13 @@ gnome-config: clean
 		--linux-flavours 686 \
 		--packages-lists "gnome-full 01-system 10-gnome-application 20-japanese 30-rescue 50-debian_meeting" 
 
-lxde: lxde-config config-usb build
+lxde-iso: lxde-config config-iso build
 
-gnome: gnome-config config-iso build
+lxde-usb: lxde-config config-usb build
 
-all: lxde
+gnome-iso: gnome-config config-iso build
+
+gnome-usb: gnome-config config-usb build
+
+all: gnome-usb
 
