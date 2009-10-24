@@ -16,5 +16,6 @@ lh_config noautoconfig \
 	--mirror-chroot ${MIRROR_DEBIAN} \
 	--mirror-chroot-security ${MIRROR_SECURITY} \
 	--bootloader syslinux \
+	--syslinux-menu vesamenu \
 	--syslinux-timeout 30 \
 	${@}
