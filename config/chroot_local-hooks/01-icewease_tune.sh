@@ -1,6 +1,8 @@
 #!/bin/bash -x
 set -e
 
+[ -f /usr/bin/iceweasel ] || exit 0
+
 ICEWEASEL_PREFS=/etc/iceweasel/profile/prefs.js
 
 cat << _EOL_ >>${ICEWEASEL_PREFS}

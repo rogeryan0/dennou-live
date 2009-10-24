@@ -3,7 +3,7 @@ hfsprogs hfsutils hfsutils-tcltk hfsplus
 testdisk
 clamav clamtk
 afio
-grub syslinux mbr
+syslinux mbr
 ddrescue gddrescue
 samba smbfs
 blktool sdparm hdparm 
@@ -12,3 +12,11 @@ fdclone
 dmraid
 mdadm
 lvm2
+
+#if DISTRIBUTION lenny
+grub
+#endif
+#if DISTRIBUTION squeeze sid
+grub-legacy
+#endif
+

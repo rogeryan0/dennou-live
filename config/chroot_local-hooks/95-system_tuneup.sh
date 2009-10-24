@@ -12,7 +12,7 @@ DAEMON="acct clamav-freshclam cron hdparm partimaged portmap pppd-dns rc.local r
 for i in ${DAEMON}; do update-rc.d -f ${i} remove; done
 
 # set insserv
-#update-bootsystem-insserv
+[ -f /sbin/insserv ] && update-bootsystem-insserv
 
 # set usplash
 #update-alternatives --set usplash-artwork.so /usr/lib/usplash/CrunchyBranch.so
@@ -42,4 +42,4 @@ done
 rm -rf /lib/init/rw/*
 
 # prelink
-[ -f /usr/sbin/prelink ] && prelink -afmR
+#[ -f /usr/sbin/prelink ] && prelink -afmR

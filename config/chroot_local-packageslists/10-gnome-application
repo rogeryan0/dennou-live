@@ -29,7 +29,12 @@ gnome-device-manager libsmbios-bin
 screenlets python-feedparser
 
 # application
-filezilla filezilla-locales
+filezilla
+#if DISTRIBUTION lenny
+filezilla-locales
+ttf-bitstream-vera 
+#endif
+
 # openoffice.org openoffice.org-gnome
 pidgin
 screen
@@ -37,27 +42,37 @@ smbclient ssh tsclient
 w3m-img lynx-cur
 wine
 xdg-user-dirs xdg-user-dirs-gtk xdg-utils
-emacs22-gtk vim-gnome
+
+#if DISTRIBUTION lenny
+emacs22-gtk
+#endif
+#if DISTRIBUTION squeeze sid
+emacs23
+#endif
+
+vim-gnome
 live-magic
-ttf-bitstream-vera 
 wireless-tools
 
 # virtualization
 kvm vde2
 qemu sharutils kqemu-common
 virt-viewer virt-manager libvirt-bin
+#if DISTRIBUTION squeeze sid
+virtualbox-ose virtualbox-ose-qt
+#endif
 
 # games/fun
 titanion
 tumiki-fighters
 
 # kernel
-atl2-modules-2.6-686
-et131x-modules-2.6-686
-gspca-modules-2.6-686
-loop-aes-modules-2.6-686
-speakup-modules-2.6-686
-tp-smapi-modules-2.6-686
+#atl2-modules-2.6-686
+#et131x-modules-2.6-686
+#gspca-modules-2.6-686
+#loop-aes-modules-2.6-686
+#speakup-modules-2.6-686
+#tp-smapi-modules-2.6-686
 # virtualbox-ose-guest-modules-2.6-686
-kqemu-modules-2.6.26-2-686
-kvm-modules-2.6.26-2-686
+#kqemu-modules-2.6.26-2-686
+#kvm-modules-2.6.26-2-686
