@@ -5,7 +5,7 @@ set -e
 sed -i 's/^[23456]/#\ &/' /etc/inittab
 
 # enable parallel init script
-#sed -i 's/^CONCURRENCY=none/CONCURRENCY=startpar/' /etc/init.d/rc
+sed -i 's/^CONCURRENCY=none/CONCURRENCY=startpar/' /etc/init.d/rc
 
 # remove daemon
 DAEMON="acct clamav-freshclam cron hdparm partimaged portmap pppd-dns rc.local rsync rsyslog saned ssh timidity samba mdadm vbesave mdadm-raid lvm2"

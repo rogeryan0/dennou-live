@@ -7,7 +7,7 @@ lh_config noautoconfig \
 	--apt-recommends disabled \
 	--categories "main" \
 	--debian-installer live \
-	--debian-installer-distribution sid \
+	--debian-installer-distribution lenny \
 	--iso-publisher "Debian JP Project; http://www.debian.or.jp/;" \
 	--language ja \
 	--mirror-binary ${MIRROR_DEBIAN} \

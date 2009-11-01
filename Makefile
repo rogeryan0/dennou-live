@@ -1,6 +1,16 @@
 BOOTOPTION_LIVE = quiet locale=ja_JP.UTF-8 kmodel=jp106 vga=788 splash
 BOOTOPTION_INSTALLER = -- video=vesa:ywrap,mtrr vga=788
 
+build: clean config-lenny config-iso config-gnome
+	sudo lh_build
+
+clean:
+	sudo lh_clean
+
+distclean: clean
+	sudo lh_clean --purge
+	sudo rm -f *.iso *.img *.list *.packages *.buildlog *.md5sum
+
 config-lenny:
 	lh_config \
 		--distribution lenny \
@@ -29,16 +39,5 @@ config-gnome:
 	lh_config \
 		--bootappend-install "$(BOOTOPTION_INSTALLER) desktop=gnome" \
 		--linux-flavours 686 \
-		--packages-lists "gnome-full 20-japanese 30-rescue" 
-#		--packages-lists "gnome-full 01-system 10-gnome-application 20-japanese 30-rescue 50-debian_meeting" 
-
-build: clean config-lenny config-iso config-gnome
-	sudo lh_build
-
-clean:
-	sudo lh_clean
-
-distclean: clean
-	sudo lh_clean --purge
-	sudo rm -f *.iso *.img *.list *.packages *.buildlog *.md5sum
+		--packages-lists "gnome-full 01-system 10-gnome-application 20-japanese 30-rescue 50-debian_meeting" 
 

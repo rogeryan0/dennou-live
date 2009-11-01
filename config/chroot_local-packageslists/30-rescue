@@ -10,7 +10,7 @@ blktool sdparm hdparm
 rsync
 fdclone
 dmraid
-mdadm
+#mdadm
 lvm2
 
 #if DISTRIBUTION lenny
