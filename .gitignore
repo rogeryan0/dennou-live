@@ -5,6 +5,8 @@
 *.md5sum
 *.packages
 *~
+.*.swp
+*.swp
 .*~
 .directory
 .stage/
