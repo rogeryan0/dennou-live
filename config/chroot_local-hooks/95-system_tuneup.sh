@@ -1,8 +1,8 @@
 #!/bin/bash -x
 set -e
 
-# disable console tty3,tty4,tty5,tty6
-sed -i 's/^[3456]/#\ &/' /etc/inittab
+# disable console tty2,tty3,tty4,tty5,tty6
+sed -i 's/^[23456]/#\ &/' /etc/inittab
 
 # enable parallel init script
 sed -i 's/^CONCURRENCY=none/CONCURRENCY=startpar/' /etc/init.d/rc
@@ -42,4 +42,4 @@ done
 rm -rf /lib/init/rw/*
 
 # prelink
-[ -f /usr/sbin/prelink ] && prelink -afmR
+#[ -f /usr/sbin/prelink ] && prelink -afmR

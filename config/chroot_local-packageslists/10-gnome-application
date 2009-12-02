@@ -1,0 +1,78 @@
+# compiz
+compiz compiz-fusion-plugins-extra compiz-fusion-plugins-main compiz-fusion-plugins-unsupported compizconfig-settings-manager fusion-icon
+libgl1-mesa-dri
+
+# print
+cups cups-client cups-driver-gutenprint foomatic-filters-ppds system-config-printer hal-cups-utils
+foo2zjs hp-ppd printconf hplip-gui openprinting-ppds
+
+# disk/filesystem
+disk-manager
+gparted
+
+# multimedia
+totem gimp inkscape xsane brasero f-spot
+gstreamer0.10-ffmpeg gstreamer0.10-plugins-bad gstreamer0.10-plugins-ugly gstreamer0.10-fluendo-mp3
+mozplugger totem-mozilla swfdec-mozilla icedtea-gcjwebplugin mozilla-mplayer
+ffmpeg python-coherence dcraw sqlite3
+bluetooth
+
+# gnome
+gthumb hardinfo liferea tomboy network-manager-gnome
+gnome-audio fam gnome-accessibility
+gnome-extra-icons gnome-games-extra-data
+gnome-do gnome-do-plugins
+iceweasel-gnome-support
+rarian-compat
+nautilus-gksu nautilus-open-terminal
+gnome-device-manager libsmbios-bin
+screenlets python-feedparser
+
+# application
+filezilla
+#if DISTRIBUTION lenny
+filezilla-locales
+ttf-bitstream-vera 
+#endif
+
+# openoffice.org openoffice.org-gnome
+pidgin
+screen
+smbclient ssh tsclient
+w3m-img lynx-cur
+wine
+xdg-user-dirs xdg-user-dirs-gtk xdg-utils
+
+#if DISTRIBUTION lenny
+emacs22-gtk
+#endif
+#if DISTRIBUTION squeeze sid
+emacs23
+#endif
+
+vim-gnome
+live-magic
+wireless-tools
+
+# virtualization
+kvm vde2
+qemu sharutils kqemu-common
+virt-viewer virt-manager libvirt-bin
+#if DISTRIBUTION squeeze sid
+virtualbox-ose virtualbox-ose-qt
+#endif
+
+# games/fun
+titanion
+tumiki-fighters
+
+# kernel
+#atl2-modules-2.6-686
+#et131x-modules-2.6-686
+#gspca-modules-2.6-686
+#loop-aes-modules-2.6-686
+#speakup-modules-2.6-686
+#tp-smapi-modules-2.6-686
+# virtualbox-ose-guest-modules-2.6-686
+#kqemu-modules-2.6.26-2-686
+#kvm-modules-2.6.26-2-686

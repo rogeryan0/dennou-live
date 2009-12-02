@@ -1,21 +1,17 @@
-BOOTOPTION_LIVE = locale=ja_JP.UTF-8 kmodel=jp106 vga=788 
+BOOTOPTION_LIVE = quiet locale=ja_JP.UTF-8 kmodel=jp106 vga=788 splash
 BOOTOPTION_INSTALLER = -- video=vesa:ywrap,mtrr vga=788
 
 build: clean config-lenny config-iso config-lxde
 	sudo lh_build
 
 build-usb: clean config-lenny config-usb config-lxde
-	sudo lh_build
 
 clean:
 	sudo lh_clean
 
 distclean: clean
-	sudo rm -f *.list *.packages *.buildlog *.md5sum
-
-distclean.all: distclean
 	sudo lh_clean --purge
-	sudo rm -f *.iso *.img
+	sudo rm -f *.list *.packages *.buildlog *.md5sum
 
 config-lenny:
 	lh_config \
@@ -40,4 +36,5 @@ config-lxde:
 		--bootappend-install "$(BOOTOPTION_INSTALLER) desktop=lxde" \
 		--linux-flavours 686 \
 		--packages-lists "lxde 01-system 10-lxde-application 20-japanese 99-dennou"
+
 

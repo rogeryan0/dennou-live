@@ -1,5 +1,4 @@
 #!/bin/sh
-
 MIRROR_DEBIAN="ftp://dennou-k.gfd-dennou.org/arch-large1/cc-env/Linux/debian/"
 MIRROR_SECURITY="http://security.debian.org/"
 

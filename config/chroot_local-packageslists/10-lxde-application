@@ -1,6 +1,9 @@
 # print
 #cups cups-client cups-driver-gutenprint foomatic-filters-ppds system-config-printer hal-cups-utils
 
+# print
+cups cups-client cups-driver-gutenprint foomatic-filters-ppds system-config-printer hal-cups-utils
+
 # disk/filesystem
 disk-manager
 gparted
@@ -24,3 +27,14 @@ wine
 xdg-user-dirs xdg-user-dirs-gtk xdg-utils
 zile
 
+# games/fun
+titanion
+
+# kernel
+atl2-modules-2.6-486
+et131x-modules-2.6-486
+gspca-modules-2.6-486
+loop-aes-modules-2.6-486
+speakup-modules-2.6-486
+tp-smapi-modules-2.6-486
+#virtualbox-ose-guest-modules-2.6-486
