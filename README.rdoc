@@ -1,26 +1,6 @@
 = scripts for GFD-Dennou Club Live CD/USB image using Debian live-helper
 
 This repositry contains recipe's for create customized Live CD/USB image 
-using Debian live-helperl
-
- * emacs22, iceweasel(aka. firefox)
- * packages for japanese environment(pager, some fonts, and more)
- * modified printer environment.
- * {ISPACK}[http://www.gfd-dennou.org/library/ispack/], {gtool5}[http://www.gfd-dennou.org/library/gtool/], {NetCDF}[http://www.gfd-dennou.org/library/netcdf] and {spml}[http://www.gfd-dennou.org/arch/spmodel/html/spml.htm] libraries compiled with g95
- * Materials used for {dennou-ruby}[http://ruby.gfd-dennou.org/] tutorial seminar
- * {spmodel web page}[http://www.gfd-dennou.org/library/spmodel/]
- * {Nagare Multimedia article explaining the outline of SPMODEL}[http://www.nagare.or.jp/mm/2006/spmodel/]
- * Materials used for SPMODEL tutorial seminar
- * {The products of dennou-ruby project}[http://ruby.gfd-dennou.org/]
- * {Tutorial for dennou-ruby products}[http://ruby.gfd-dennou.org/]
- * Supplement 1.: {dcmodel products}[http://www.gfd-dennou.org/library/dcmodel/] (deepconv/arare, dcmodel)
- * Supplement 2 : Environment for installing {Gfdnavi}[http://www.gfd-dennou.org/arch/davis/gfdnavi/]
- * Supplement 3 : {GrADS}[http://www.iges.org/grads/]
- * supplement 4 : {GMT}[http://gmt.soest.hawaii.edu/], apply {Wind barb extension}[http://www.rain.hyarc.nagoya-u.ac.jp/~kato/work/GMT/index-e.html]
-
-On the other hand, a major package removed from the original image 
-is openoffice, icedove(aka. Thunderbird)
-
-see {SPMODEL Live CD}[http://www.gfd-dennou.org/arch/spmodel/LiveCD/index.htm.en]. 
+using Debian live-helperl, see {SPMODEL Live CD}[http://www.gfd-dennou.org/arch/spmodel/LiveCD/index.htm.en] page. 
 
 
