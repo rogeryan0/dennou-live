@@ -1,0 +1,3 @@
+# debian-dennou
+deb ftp://dennou-k.gfd-dennou.org/arch/cc-env/debian-dennou lenny/
+deb-src ftp://dennou-k.gfd-dennou.org/arch/cc-env/debian-dennou lenny/

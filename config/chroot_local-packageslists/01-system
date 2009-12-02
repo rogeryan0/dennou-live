@@ -1,0 +1,65 @@
+vbetool
+acpi acpi-support
+aptitude gdebi
+bzip2 unzip p7zip-full
+cpufrequtils powernowd
+
+#if DISTRIBUTION lenny
+dash insserv
+#endif
+
+prelink usplash
+libengine-pkcs11-openssl
+pcmciautils
+ppp pppconfig pppoe pppoeconf
+synaptic software-properties-gtk
+vrms
+lftp
+live-helper
+reportbug python-urwid
+
+# disk/file utilities
+fuse-utils fusesmb ntfs-3g sshfs
+dosfstools ntfsprogs reiser4progs reiserfsprogs xfsprogs jfsutils
+mtools
+
+# live-initramfs recommends
+mtd-utils genext2fs curlftpfs loop-aes-utils squashfs-tools uuid-runtime
+syslinux grub
+
+# xorg
+xserver-xorg-input-acecad
+xserver-xorg-input-aiptek
+xserver-xorg-input-citron
+xserver-xorg-input-elographics
+xserver-xorg-input-evtouch
+xserver-xorg-input-fpit
+xserver-xorg-input-hyperpen
+xserver-xorg-input-joystick
+xserver-xorg-input-mutouch
+xserver-xorg-input-penmount
+xserver-xorg-input-tslib
+xserver-xorg-input-vmmouse
+xserver-xorg-input-void
+xserver-xorg-video-geode
+xserver-xorg-video-glide
+xserver-xorg-video-via
+
+#if DISTRIBUTION lenny
+xserver-xorg-input-calcomp
+xserver-xorg-input-digitaledge
+xserver-xorg-input-dmc
+xserver-xorg-input-dynapro
+xserver-xorg-input-elo2300
+xserver-xorg-input-jamstudio
+xserver-xorg-input-magellan
+xserver-xorg-input-microtouch
+xserver-xorg-input-palmax
+xserver-xorg-input-spaceorb
+xserver-xorg-input-summa
+xserver-xorg-input-tek4957
+xserver-xorg-input-ur98
+#endif
+
+build-essential debhelper dh-make lintian fakeroot devscripts wdiff
+autotools-dev dpatch quilt module-assistant

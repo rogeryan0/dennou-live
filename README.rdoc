@@ -1,0 +1,6 @@
+= scripts for GFD-Dennou Club Live CD/USB image using Debian live-helper
+
+This repositry contains recipe's for create customized Live CD/USB image 
+using Debian live-helper, see {SPMODEL Live CD}[http://www.gfd-dennou.org/arch/spmodel/LiveCD/index.htm.en]. 
+
+
