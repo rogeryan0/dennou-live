@@ -49,8 +49,8 @@ DEBIAN_ICON=${XDG_DESKTOP_DIR}/debian.desktop
 cat << _EOL_ >>${DEBIAN_ICON}
 [Desktop Entry]
 Encoding=UTF-8
-Name=Debian JP Project
-Exec=/usr/bin/x-www-browser http://www.debian.or.jp/
+Name=GFD-Dennou Club
+Exec=/usr/bin/x-www-browser http://www.gfd-dennou.org/
 Type=Application
 Icon=/usr/share/pixmaps/debian-logo.png
 _EOL_

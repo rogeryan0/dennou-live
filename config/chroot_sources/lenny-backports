@@ -1,0 +1,3 @@
+# lenny backports
+deb http://www.jp.backports.org/ lenny-backports main
+deb-src http://www.jp.backports.org/ lenny-backports main

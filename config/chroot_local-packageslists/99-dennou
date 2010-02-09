@@ -1,7 +1,0 @@
-# spml
-netcdf-bin
-spml-g95
-# Dennou Ruby
-libdap-dev libdap-bin libdap-doc 
-libnc-dap-dev libnc-dap-bin 
-gphys
