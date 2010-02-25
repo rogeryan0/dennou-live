@@ -1,59 +1,41 @@
-LINUX_PACKAGES   := linux-image-2.6 aufs-modules-2.6 squashfs-modules-2.6
-BOOT_OPTION_LIVE := locale=ja_JP.UTF-8 keyb=jp kmodel=jp106 vga=788 splash
-BOOT_OPTION_INSTALLER = -- video=vesa:ywrap,mtrr vga=788
-MIRROR_DEBIAN="http://ftp.jp.debian.org/debian/"
-MIRROR_SECURITY="http://security.debian.org/"
+BOOT_OPTION_LIVE := quiet locale=ja_JP.UTF-8 keyb=jp kmodel=acpi utc=no tz=Asia/Tokyo persistent
+BOOT_OPTION_INSTALLER = -- locale=ja_JP.UTF-8
+LINUX_PACKAGES   := linux-image-2.6 aufs-modules-2.6 squashfs-modules-2.6 loop-aes-modules-2.6
 
 all:
-	@echo "usage: make build|clean"
+	@echo "make build-iso|build-usb|clean|distclean"
+
 clean:
-	sudo lh clean --binary
-distclean:
-	sudo lh clean --all
-	sudo rm -f *.iso *.img *.list *.packages *.buildlog *.md5sum
+	sudo lh clean
+	sudo rm -f *.list *.packages *.buildlog *.md5sum
+
+distclean: clean
+	sudo lh clean --purge
+	sudo rm -f *.iso *.img 
 
 build: build-iso
-build-iso: config-lenny config-iso config-lxde
+build-iso: clean config-lenny config-iso config-lxde
 	sudo lh build
-build-usb: config-lenny config-usb config-lxde
+build-usb: clean config-lenny config-usb config-lxde
 	sudo lh build
 
 config-lenny:
 	lh config \
-	 --language ja \
-	 --distribution lenny \
-	 --archive-areas "main" \
-	 --bootappend-live "${BOOT_OPTION_LIVE}" \
-	 --linux-packages "${LINUX_PACKAGES}" \
-	 --mirror-bootstrap "${MIRROR_DEBIAN}" \
-	 --mirror-chroot "${MIRROR_DEBIAN}" \
-	 --mirror-chroot-security "${MIRROR_SECURITY}" \
-	 --mirror-binary "${MIRROR_DEBIAN}" \
-	 --mirror-binary-security "${MIRROR_SECURITY}" \
-	 --bootloader syslinux \
-	 --syslinux-menu vesamenu \
-	 --syslinux-timeout 30
+	--distribution lenny \
+	--bootappend-live "${BOOT_OPTION_LIVE}" \
+	--linux-packages "${LINUX_PACKAGES}" \
+	--iso-publisher "GFD Dennou Club; http://www.gfd-dennou.org/;"  \
+	--debian-installer-gui true
 
 config-usb:
-	lh config --binary-images usb-hdd
+	lh config \
+	--binary-images usb-hdd \
+	--binary-filesystem fat32
+
 config-iso:
 	lh config --binary-images iso
 
 config-lxde:
 	lh config \
 	--bootappend-install "$(BOOT_OPTION_INSTALLER)" \
-	--packages-lists lxde
-#	--linux-flavours 486 
-
-
-# config-sid:
-# lh_config \
-# 	--distribution sid \
-# 	--bootappend-live "$(BOOTOPTION_LIVE) klayout=jp" \
-# 	--linux-packages "linux-image-2.6 aufs-modules-2.6"
-
-# config-gnome:
-# 	lh_config \
-# 	--bootappend-install "$(BOOTOPTION_INSTALLER) desktop=gnome" \
-# 	--linux-flavours 686 \
-# 	--packages-lists "gnome-full 01-system 10-gnome-application 20-japanese"
+	--packages-lists "lxde"
