@@ -3,18 +3,13 @@ set -e
 
 # install backports package 
 
-[ -z "$(lsb_release -c | grep lenny)" ] || exit 0
-
-# lxde 
-if [ -f /usr/bin/startlxde ]; then
 PACKAGES="wicd pidgin acpid " #\
 #openoffice.org openoffice.org-gtk ttf-opensymbol \
 #openoffice.org-help-ja openoffice.org-l10n-ja \
 #openoffice.org-pdfimport openoffice.org-ogltrans \
 #dictionaries-common"
-  apt-get -y -t lenny-backports install ${PACKAGES}
-  apt-get -y purge lxnm
-fi
+apt-get -y -t lenny-backports install ${PACKAGES}
+apt-get -y purge lxnm
 
 # RubyGems
 Default_PACKAGES="ruby1.8 ruby rdoc1.8 rdoc ruby1.8-dev libopenssl-ruby1.8 "
