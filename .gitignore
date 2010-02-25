@@ -1,7 +1,7 @@
 *.buildlog
 *.img
 *.iso
-*.list
+debian*.list
 *.md5sum
 *.packages
 *~

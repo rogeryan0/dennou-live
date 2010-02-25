@@ -1,0 +1,20 @@
+# icedove-l10n-ja
+# jfbterm unifont
+# ttf-umefont
+# uim-prime
+iceweasel-l10n-ja
+lv
+manpages-ja
+nkf
+# openoffice.org-help-ja openoffice.org-l10n-ja
+ttf-kochi-gothic ttf-kochi-mincho
+#ttf-mona
+ttf-sazanami-gothic ttf-sazanami-mincho
+ttf-vlgothic
+xfonts-shinonome
+#uim uim-qt uim-qt3
+uim-anthy
+
+vim-gtk less 
+zsh tcsh 
+gnupg 
