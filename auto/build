@@ -6,8 +6,10 @@ lh build noautoconfig 2>&1 | tee debian_live-binary-${BUILDDATE}.buildlog
 # rename files
 if [ -f binary.iso ]; then
     mv binary.iso debian_live-binary-${BUILDDATE}.iso
+    ln -s debian_live-binary-${BUILDDATE}.iso current.iso
 elif [ -f binary.img ]; then
     mv binary.img debian_live-binary-${BUILDDATE}.img
+    ln -s debian_live-binary-${BUILDDATE}.img current.img
 fi
 [ -f binary.list ] && mv binary.list debian_live-binary-${BUILDDATE}.list
 [ -f binary.packages ] && mv binary.packages debian_live-binary-${BUILDDATE}.packages

@@ -5,7 +5,7 @@ MIRROR_SECURITY="http://security.geo.debian.org/"
 
 lh config noautoconfig \
 	--apt-recommends false \
-	--archive-areas "main" \
+	--archive-areas "main contrib non-free" \
 	--bootloader syslinux \
 	--language ja \
 	--mirror-binary ${MIRROR_DEBIAN} \
@@ -14,7 +14,8 @@ lh config noautoconfig \
 	--mirror-chroot ${MIRROR_DEBIAN} \
 	--mirror-chroot-security ${MIRROR_SECURITY} \
 	--syslinux-menu vesamenu \
-	--syslinux-timeout 15 \
+	--linux-flavours 486 \
+  --syslinux-timeout 15 \
 	${@}
 #--linux-flavours 486 \
 #	--debian-installer-distribution daily \
