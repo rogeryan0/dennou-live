@@ -7,12 +7,17 @@ using Debian live-helperl, see {SPMODEL Live CD}[http://www.gfd-dennou.org/arch/
 
 * setup Debian GNU/Linux 6.0 (squeeze) i386 environment
 * install live-helper
-  $ sudo apt-get install live-helper
+
+      $ sudo apt-get install live-helper
+
 * install git, clone live-helper recive
-  $ sudo apt-get install git
-  $ git clone git://github.com/uwabami/dennou-live.git
+
+      $ sudo apt-get install git
+      $ git clone git://github.com/uwabami/dennou-live.git
+
 * build hybrid iso
-  $ cd dennou-live
-  $ make                 
+
+      $ cd dennou-live
+      $ make                 
 
 enjoy!
