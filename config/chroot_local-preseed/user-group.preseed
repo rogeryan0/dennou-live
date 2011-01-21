@@ -1,0 +1,1 @@
+user-setup	passwd/user-default-groups	string	audio cdrom dialout floppy video plugdev netdev powerdev fuse dip scanner partimage kvm vde2-net clamav libvirt pulse pulse-access pulse-rt

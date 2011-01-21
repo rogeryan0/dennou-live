@@ -1,6 +1,6 @@
 #!/bin/sh
 
-lh clean noautoconfig --all ${@}
+lb clean noauto --all ${@}
 
 # Remove generated files
 rm -f config/binary config/bootstrap config/chroot config/common config/source
@@ -8,10 +8,10 @@ rm -f config/binary config/bootstrap config/chroot config/common config/source
 # Remove empty directories in config tree
 if ls config/*/ > /dev/null 2>&1
 then
-    rmdir --ignore-fail-on-non-empty config/*/
+	rmdir --ignore-fail-on-non-empty config/*/
 fi
 
 if [ -d config ]
 then
-    rmdir --ignore-fail-on-non-empty config
+	rmdir --ignore-fail-on-non-empty config
 fi

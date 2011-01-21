@@ -1,16 +1,18 @@
 #!/bin/sh
 
 BUILDDATE=`date +%Y%m%d%H%M%S`
-# sudo MKSQUASHFS_OPTIONS="-b 1024k" lh build 2>&1 | tee debian_live-binary-${BUILDDATE}.buildlog
-lh build noautoconfig 2>&1 | tee debian_live-binary-${BUILDDATE}.buildlog
+# sudo MKSQUASHFS_OPTIONS="-b 1024k" lb build 2>&1 | tee debian_live-binary-${BUILDDATE}.buildlog
+lb build noauto 2>&1 | tee dennou_live-binary-${BUILDDATE}.buildlog
 # rename files
 if [ -f binary.iso ]; then
-    mv binary.iso debian_live-binary-${BUILDDATE}.iso
-    ln -s debian_live-binary-${BUILDDATE}.iso current.iso
+    mv binary.iso dennou_live-binary-${BUILDDATE}.iso
+elif [ -f binary-hybrid.iso ]; then
+    mv binary-hybrid.iso dennou_live-binary-${BUILDDATE}-hybrid.iso
+elif [ -f binary-net.tar.gz ]; then
+    mv binary-net.tar.gz dennou_live-binary-${BUILDDATE}-net.tar.gz
 elif [ -f binary.img ]; then
-    mv binary.img debian_live-binary-${BUILDDATE}.img
-    ln -s debian_live-binary-${BUILDDATE}.img current.img
+    mv binary.img dennou_live-binary-${BUILDDATE}.img
 fi
-[ -f binary.list ] && mv binary.list debian_live-binary-${BUILDDATE}.list
-[ -f binary.packages ] && mv binary.packages debian_live-binary-${BUILDDATE}.packages
+[ -f binary.list ] && mv binary.list dennou_live-binary-${BUILDDATE}.list
+[ -f binary.packages ] && mv binary.packages dennou_live-binary-${BUILDDATE}.packages
 # md5sum debian_live-binary-${BUILDDATE}.img > debian_live-binary-${BUILDDATE}.img.md5sum
