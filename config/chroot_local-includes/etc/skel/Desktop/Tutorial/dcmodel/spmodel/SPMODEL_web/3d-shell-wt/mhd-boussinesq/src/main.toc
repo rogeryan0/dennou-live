@@ -1,0 +1,25 @@
+\contentsline {section}{\numberline {1}基礎方程式系}{3}
+\contentsline {subsection}{\numberline {1.1}系の設定と支配方程式}{3}
+\contentsline {subsection}{\numberline {1.2}ポテンシャルによる方程式系の表現}{7}
+\contentsline {subsubsection}{\numberline {1.2.1}速度場及び磁場とポテンシャルとの関係式}{8}
+\contentsline {subsection}{\numberline {1.3}境界条件}{10}
+\contentsline {subsubsection}{\numberline {1.3.1}運動学的境界条件}{10}
+\contentsline {subsubsection}{\numberline {1.3.2}力学的境界条件}{10}
+\contentsline {subsubsection}{\numberline {1.3.3}熱的境界条件}{11}
+\contentsline {subsubsection}{\numberline {1.3.4}磁場の境界条件}{11}
+\contentsline {section}{\numberline {2}水平離散化}{12}
+\contentsline {subsection}{\numberline {2.1}スペクトル展開}{12}
+\contentsline {subsection}{\numberline {2.2}方程式のスペクトル表現}{14}
+\contentsline {subsubsection}{\numberline {2.2.1}運動方程式}{14}
+\contentsline {subsubsection}{\numberline {2.2.2}熱の式}{14}
+\contentsline {subsubsection}{\numberline {2.2.3}誘導方程式}{14}
+\contentsline {subsubsection}{\numberline {2.2.4}速度場の表現}{15}
+\contentsline {subsubsection}{\numberline {2.2.5}磁場の表現}{15}
+\contentsline {section}{\numberline {3}鉛直離散化}{16}
+\contentsline {subsection}{\numberline {3.1}鉛直離散化}{16}
+\contentsline {subsection}{\numberline {3.2}鉛直境界条件}{17}
+\contentsline {subsubsection}{\numberline {3.2.1}トロイダルポテンシャル}{17}
+\contentsline {subsubsection}{\numberline {3.2.2}ポロイダルポテンシャル}{17}
+\contentsline {subsubsection}{\numberline {3.2.3}温度}{18}
+\contentsline {subsubsection}{\numberline {3.2.4}磁場}{18}
+\contentsline {section}{参考文献}{21}

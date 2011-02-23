@@ -1,0 +1,248 @@
+%#LPRdvips main.dvi; lpr main.ps
+%#!platex main.tex
+\section{鉛直離散化}
+
+ Glatzmaier(1984) に従い, 方程式を鉛直方向に離散化する. 
+ 鉛直微分はチェビシェフ関数展開を用いて評価する.
+
+%----------------------------------------------------------------------------  
+ \subsection{鉛直離散化}
+ 
+ 動径を差分化し, 上の層から下の層へと番号をつける.
+
+ 格子点をチェビシェフポイント(チェビシェフ関数が極地をとる点)にとるため, 
+ 動径を次式のように座標変換する:
+ \begin{eqnarray}
+  r   &=& \frac{r_{o} + r_{i}}{2} + \frac{r_{o}-r_{i}}{2}\xi,\\
+  \xi &=& \frac{2r - (r_{o}+r_{i})}{r_{o}-r_{i}}.
+ \end{eqnarray}
+ この変換により, 動径は $\xi$ を用いて区間 $[-1,1]$ で表現される
+ (上部境界が $1$, 下部境界が$-1$).
+
+ 座標 $\xi$ 上で $K+1$ 個の格子点を次のように定義する:
+ \begin{equation}
+  \xi_{k} = \cos\biggl(\frac{\pi k}{K} \biggr),\quad k = 0,1,\cdots K.
+ \end{equation}
+ 各格子点でのチェビシェフ関数の値は
+ \begin{equation}
+  T_{l}(\xi_{k}) = \cos\biggl(\frac{l k \pi}{K} \biggr).
+ \end{equation}
+
+ 格子点での物理量をチェビシェフ関数で展開する.     
+ 例えば $\tilde{\psi}(r,t)_{n}^{m}$ について,
+ \begin{equation}
+  \psi_{nl}^{m}(t) 
+   = \biggl(\frac{2}{K}\biggr)
+   \sum_{k=0}^{K}{}''
+   \tilde{\psi}_{n}^{m}(\xi_{k},t) T_{l}(\xi_{k}), 
+   \quad l = 0,1,\cdots K.
+ \end{equation}
+ ただし $\sum{}''$ は
+ 最初と最後の項を 2 分の 1 倍して和をとることを表している. 
+ 同様にチェビシェフ展開係数から格子点での値を求めるには
+ \begin{equation}
+  \tilde{\psi}_{n}^{m}(\xi_{k},t) 
+   = \sum_{l=0}^{K}{}''\psi_{jn}^{m}(t) T_{j}(\xi_{k}).
+ \end{equation}
+ 以上の結果は, 
+ $\tilde{\phi}(r,t)_{n}^{m},
+  \tilde{g}(r,t)_{n}^{m}, \tilde{h}(r,t)_{n}^{m}
+  \tilde{\theta}(r,t)_{n}^{m}$
+ についてもそのまま成立する.
+
+%-------------------------------------------------------------------------- 
+ \subsection{鉛直境界条件}
+
+ 内部領域の格子点において,
+ 差分化した方程式を時間積分した後に,
+ 境界条件を満たすように境界における格子点上の関数値を定める. 
+
+ \subsubsection{トロイダルポテンシャル}
+  
+ トロイダルポテンシャルに関しては 
+ $r_k$ ($ k=1,\cdots K-1$ )の点で時間積分を実行する.
+
+ 応力無し条件の場合, 境界値は内部領域を計算した後
+ \begin{eqnarray}
+   \tilde{\psi}_{n}^{m}(r_{0},t) 
+    = \frac{r_{0}}{r_1}\tilde{\psi}_{n}^{m}(r_1,t) , \quad
+   \tilde{\psi}_{n}^{m}(r_{K},t)
+    = \frac{r_{K}}{r_{K-1}}\tilde{\psi}_{n}^{m}(r_{K-1},t)
+ \end{eqnarray}
+ で定める. 
+
+ 滑べり無し条件の場合は
+ \begin{eqnarray}
+   \Deqlab{トロイダル境界:rigid}
+    \tilde{\psi}_{n}^{m}(r_{0},t) = 0, \quad   
+    \tilde{\psi}_{n}^{m}(r_{K},t) = 0.
+ \end{eqnarray}
+ となる.
+
+ \subsubsection{ポロイダルポテンシャル}
+
+ ポロイダルポテンシャルは
+ $r_{k},~(k=2,\cdots K-2)$ の点で 
+ $(D_{n}\tilde{\phi}_{n}^{m})$ について時間積分を実行した後,
+ $D_{n}$ の逆演算(積分)をおこなって
+ $\tilde{\phi}_{n}^{m}$ を定める.
+ そのためには境界値問題
+ \begin{eqnarray}
+   \Deqlab{境界値問題}
+   && 
+   \biggl(\DD[2]{}{r} + \frac{2}{r}\DD[]{}{r} - \frac{n(n+1)}{r^{2}}\biggr) 
+   \tilde{\phi}_{n}^{m} 
+   = (D_{n}\tilde{\phi}_{n}^{m}),  \\
+   \Deqlab{境界値:応力無し}
+   && 
+    \tilde{\phi}_n^m = \DP[2]{\tilde{\phi}_n^m}{r} = 0
+          \quad \mbox{at} \quad  r = r_{i}, r_{o}. 
+ \end{eqnarray}
+ を解かねばならない(上式は応力無し条件の場合).
+ 滑べり無し条件の場合には、\Deqref{境界値:応力無し}を
+ \begin{equation}
+    \tilde{\phi}_n^m = \DP{\tilde{\phi}_n^m}{r} = 0
+          \quad \mbox{at} \quad  r = r_{i}, r_{o}. 
+ \end{equation}
+ へ置き換えればよい.
+    
+ \Deqref{境界値問題}, \Deqref{境界値:応力無し}
+ をチェビシェフ関数展開で表現すると
+ \begin{eqnarray}
+     &&\sum_{l=0}^{K}{}''
+          \biggl(    
+               \DD[2]{T_j(r_k)}{r} 
+             + \frac{2}{r_k} \DD[]{T_j(r_k)}{r}
+             - \frac{n(n+1)}{r_k^2} T_j(r_k)
+         \biggr) \phi_{jn}^m 
+      =  D_n \tilde{\phi}_n^m(r_k), \nonumber \\
+     && {}{}{}k = 2, \cdots K-2, \\
+     && \Deqlab {運動条件}
+      \sum_{l=0}^{K}{}''T_j(r_0) \phi_{jn}^m = 0, 
+      \quad 
+      \sum_{l=0}^{K}{}''T_j(r_K) \phi_{jn}^m = 0, \\
+     && \Deqlab{ポロイダル:free}
+      \sum_{l=0}^{K}{}''\DD[2]{T_j(r_0)}{r} \phi_{jn}^m = 0, 
+      \quad
+      \sum_{l=0}^{K}{}''\DD[2]{T_j(r_K)}{r} \phi_{jn}^m = 0.
+ \end{eqnarray}
+ と, $\phi_{jn}^m$ に関する連立 1 次方程式となる. これを LU 分解で解き,
+ $\phi_{jn}^m $ を定める. 
+ 
+ 滑べり無し条件の場合は \Deqref{ポロイダル:free}が
+ \begin{eqnarray}
+     \Deqlab{ポロイダル:rigid}
+      \sum_{l=0}^{K}{}''\DD[]{T_j(r_0)}{r} \phi_{jn}^m = 0, 
+      \quad 
+      \sum_{l=0}^{K}{}''\DD[]{T_j(r_K)}{r} \phi_{jn}^m = 0,
+ \end{eqnarray}
+ となる.
+
+ \subsubsection{温度}
+
+ 温度に関しては $r_k, k=1,\cdots K-1$ の点で時間積分を実行する. 
+ 境界値は内部領域を計算した後(温度固定の場合)
+ \begin{equation}
+  \Deqlab{温度固定}
+   \tilde{\Theta}_n^m(r_0,t) = 0, \ \ \tilde{\Theta}_n^m(r_K,t) = 0,
+ \end{equation}
+ で定める. 熱フラックス固定の場合は \Deqref{温度固定} を
+ \begin{equation}
+  \tilde{\Theta}_n^m(r_0,t) = \tilde{\Theta}_n^m(r_1,t), \ \ 
+   \tilde{\Theta}_n^m(r_K,t) = \tilde{\Theta}_n^m(r_{K-1},t),
+ \end{equation}
+ に置き換える. 
+
+ \subsubsection{磁場}
+
+ 先ず境界外部が不導体の場合を考える.
+ 接続すべきポテンシャル場 $W$ を球面調和函数展開すると, 
+ \begin{eqnarray}
+      W & = & \sum_{n,m} W_{n}^{m} r^{-n-1} Y_{n}^{m} \quad (r > r_{o}), \\
+        & = & \sum_{n,m} W_{n}^{m} r^{n} Y_{n}^{m} \quad  (r < r_{i}).
+ \end{eqnarray}
+ 従って各成分は
+ \begin{eqnarray}
+  B_\lambda \cos\theta
+   & = &  \sum_{n,m} im W_{n}^{m} r^{-n-2} Y_{n}^{m} \quad  (r > r_{o}), \\
+   & = &  \sum_{n,m} im W_{n}^{m} r^{n-1} Y_{n}^{m} \quad  (r < r_{i}),\\
+  B_\mu \cos\theta
+   & = &  \sum_{n,m} W_{n}^{m} r^{-n-2}(1-\mu^2)\DP{Y_{n}^{m}}{\mu} 
+   \quad  ( r>r_o ), \\
+   & = &  \sum_{n,m} W_{n}^{m} r^{n-1}(1-\mu^2)\DP{Y_{n}^{m}}{\mu} 
+   \quad  ( r<r_i ),\\
+  B_r 
+   & = & -\sum_{n,m} (n+1)W_{n}^{m} r^{-n-2} Y_{n}^{m} \quad  (r > r_{o}), \\
+   & = &  \sum_{n,m} n W_{n}^{m} r^{n-1} Y_{n}^{m} \quad  (r < r_{i}).
+ \end{eqnarray}
+ これに対して, 磁場の各成分が連続でなければならない. 
+ 一方, 磁場の鉛直成分 \Deqref{磁場鉛直} と比較することにより, 
+ \begin{eqnarray}
+  \frac{n(n+1)h_n^m}{r}= -(n+1)W_{n}^{m} r^{-n-2} 
+   \quad  (r =r_{o}), \\
+  \frac{n(n+1)h_n^m}{r}= n W_{n}^{m} r^{n-1} 
+   \quad  (r = r_{i}).
+ \end{eqnarray}
+ さらに水平成分を \Deqref{磁場経度}, \Deqref{磁場緯度}と比較して
+ \begin{eqnarray}
+  g_n^m =0, \quad
+   \Dinv{r}\DP{(r h_n^m)}{r} = W_{n}^{m} r^{-n-2}, \quad (r=r_{o}),\\
+  g_n^m =0, \quad 
+   \Dinv{r}\DP{(r h_n^m)}{r} = W_{n}^{m} r^{n-1}, \quad  (r=r_{i}),
+ \end{eqnarray}
+ $W_{n}^{m}$ を代入して, $h_n^m$ の境界条件が得られる: 
+ \begin{eqnarray}
+  \DP{h_n^m}{r} + \frac{(n+1)h_{n}^{m}}{r} = 0, \quad  (r=r_{o}),\\
+  \DP{h_n^m}{r} - \frac{nh_{n}^{m}}{r} = 0, \quad  (r=r_{i}),
+ \end{eqnarray}
+ 従ってまとめると, 
+ トロイダル磁場に関しては $r_k, k=1,\cdots K-1$ の点で
+ 時間積分を実行する. 境界値は内部領域を計算した後, 
+ \begin{equation}
+  \tilde{g}_n^m(r_{0},t) = 0, \quad \tilde{g}_n^m(r_{K},t) = 0, 
+ \end{equation}
+ で定める. 
+ ポロイダル磁場も $r_k, k=1,\cdots K-1$ の点で時間積分を実行する. 
+ その後境界条件により境界の値を定める:
+ \begin{eqnarray}
+  && \DP{h_n^m}{r} + \frac{(n+1)h_n^m}{r} = 0, \quad  
+         \mbox{at} \quad  r=r_{0}, \\
+  && \DP{h_n^m}{r} - \frac{nh_n^m}{r} = 0, \quad  
+         \mbox{at} \quad  r=r_{K}. 
+ \end{eqnarray}
+ また, この時の外部磁場は次式で表される:
+ \begin{equation}
+  W_{n}^{m} = -n (r^{n+1} h_n^m)_{r=r_0} \ \ (r > r_{o}), \quad 
+  W_{n}^{m} = \biggl[\frac{(n+1)h_n^m}{r^{n}}\biggr]_{r=r_K},\ \ (r < r_{i}).
+ \end{equation}
+ 
+ 次に球殻内の流体と球殻の芯となる領域(以下, 内核)との
+ 電気伝導度が等しい場合を, 
+ 特に内核が系に対して角速度 $\Dvect{\omega}^{i}=\omega^{i}\Dvect{k}$
+ で剛体回転している場合について考える(以下, 添字$^{i}$は内核を表す).
+ 
+ 内核の磁場 $\Dvect{B}^{i}$ 及び角速度 $\omega_{i}$ は,
+ 剛体回転する導体の誘導方程式と
+ 自転軸周りのトルクの釣合から, 
+ \begin{eqnarray}
+  \Deqlab{内核誘導}
+  \DP{\Dvect{B}^{i}}{t} 
+   &=& \omega^{i}\DP{\Dvect{B}^{i}}{\lambda} + P_{m}^{-1}\Dlapla\Dvect{B}^{i}\\
+  \Deqlab{トルク}
+  I\DP{\omega^{i}}{t} &=& \Gamma_{M}+\Gamma_{\nu}
+ \end{eqnarray}
+ によって求められる.
+ ここで $I$ は内核の自転軸周りの慣性モーメントであり, 
+ $\Gamma_{M}$  はローレンツ力によるトルクを, 
+ $\Gamma_{\nu}$ は粘性応力によるトルクを表す.
+
+ \begin{itemize}
+  \item 回転対称性を用いる:\\
+	$\Dvect{B}^{i}(\lambda,\varphi,-r) 
+	 = \Dvect{B}^{i}(\lambda \pm \pi, \pi - \varphi,r)$
+  \item $h_{n}^{mi}(-r) = (-1)^{l+1}h_{n}^{mi}(r)$
+  \item チェボシェフで計算するのは, $r=[0,r]$ まで.
+  \item 境界条件は rigid → ポテンシャル, ポテンシャルの動径微分が連続
+  \item トルクは…むーん.
+ \end{itemize}
+

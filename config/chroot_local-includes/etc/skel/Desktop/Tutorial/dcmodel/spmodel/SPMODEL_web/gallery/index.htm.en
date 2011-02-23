@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>SPMODEL Gallery</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="index.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> / <a href="/library/spmodel/gallery">SPMODEL Gallery</a> ] </small>
+<h1><a name="label-0" id="label-0">SPMODEL Gallery</a></h1><!-- RDLabel: "SPMODEL Gallery" -->
+<p>Figures and movies produced by sample programs of SPMODEL.
+Click figures to see movies. </p>
+<dl>
+<dt><a name="label-1" id="label-1"><a href="./kdv/index.htm.en">Solitary wave (KdV equation)</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-2" id="label-2"><a href="./bsncnv/index.htm.en">2D thermal convection (Benard-Rayleigh problem)</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-3" id="label-3"><a href="./ddfcnv/index.htm.en">Double-diffusive convection</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-4" id="label-4"><a href="./kh-instability/index.htm.en">Kelvin-Helmholtz instability</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-5" id="label-5"><a href="./gravcurrent/index.htm.en">Gravity current</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-6" id="label-6"><a href="./igwave/index.htm.en">Internal gravity wave</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-7" id="label-7"><a href="./shallow-topo/index.htm.en">Shallow water flow on sphere</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-8" id="label-8"><a href="./dynamo/">MHD dynamo in a rotating spherical shell</a></a></dt><!-- RDLabel: "" -->
+</dl>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2009/01/16, Since: 2002/09/26 </small>
+
+</body>
+</html>

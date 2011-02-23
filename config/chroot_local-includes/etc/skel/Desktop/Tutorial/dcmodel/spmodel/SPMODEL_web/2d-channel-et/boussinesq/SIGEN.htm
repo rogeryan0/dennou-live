@@ -1,0 +1,127 @@
+<HTML>
+<HEAD><TITLE>ftp/arch/spmodel/2d-channel-et/boussinesq</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffeecc"><P>地球流体電脳倶楽部
+<P>
+<A HREF="../../../../../SIGEN.htm">/GFD_Dennou_Club</A>/
+<A HREF="../../../../SIGEN.htm">ftp</A>/
+<A HREF="../../../SIGEN.htm">arch</A>/
+<A HREF="../../SIGEN.htm">spmodel</A>/
+<A HREF="../SIGEN.htm">2d-channel-et</A>/
+<H1>boussinesq</H1>
+<P>
+ブシネスク流体モデル(2 次元水路領域, 鉛直チェビシェフ展開)<BR>
+竹広真一 (2002/08/29)<BR>
+<HR>
+<P>
+<DL>
+<H2>要約</H2>
+<DT><A HREF="CVS">
+CVS</A>/
+<DD>
+<DT><A HREF="sample-ff/SIGEN.htm">
+<B>sample-ff</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域, チェビシェフ展開) : 熱フラックス固定対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case FF に相当. <BR>
+<DL>
+</DL>
+<DT><A HREF="sample-tt/SIGEN.htm">
+<B>sample-tt</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域, チェビシェフ展開) : 温度固定条件下の対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case TT に相当. <BR>
+<DL>
+</DL>
+<DT><A HREF="teishiki/SIGEN.htm">
+<B>teishiki</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域, チェビシェフ展開) : 定式化<BR>
+竹広真一 (2002/08/29)<BR>
+<DL>
+</DL>
+</DL>
+<HR>
+<H2>詳細</H2>
+<DL>
+<DT><A HREF="CVS">
+CVS</A>/
+<DD>
+<DT><A HREF="sample-ff/SIGEN.htm">
+<B>sample-ff</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域, チェビシェフ展開) : 熱フラックス固定対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case FF に相当. <BR>
+<DL>
+<DT><A HREF="sample-ff/f90/SIGEN.htm">
+<B>sample-ff/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域, チェビシェフ展開) : 熱フラックス固定条件下の対流問題, Fortran90 プログラム置場<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case FF に相当. <BR>
+<DL>
+<DT><A HREF="sample-ff/f90/bsncnv-et-ff-1.f90">
+<B>sample-ff/f90/bsncnv-et-ff-1.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : 熱フラックス固定対流<BR>
+竹広真一 (2002/05/31)<BR>
+内部熱源なし. Ishiwatari et al. (1994)での FF 問題に相当. 高さ方向チェビシェフ展開. <BR>
+<DT><A HREF="sample-ff/f90/bsncnv-et-ff-2.f90">
+<B>sample-ff/f90/bsncnv-et-ff-2.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : 熱フラックス固定対流<BR>
+竹広真一 (2002/05/31)<BR>
+内部熱源なし. Ishiwatari et al. (1994)での FF 問題に相当. 高さ方向チェビシェフ展開. 速度境界条件変更可能(Free-slip)<BR>
+</DL>
+</DL>
+<DT><A HREF="sample-tt/SIGEN.htm">
+<B>sample-tt</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域, チェビシェフ展開) : 温度固定条件下の対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case TT に相当. <BR>
+<DL>
+<DT><A HREF="sample-tt/f90/SIGEN.htm">
+<B>sample-tt/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域, チェビシェフ展開) : 温度固定条件下の対流問題, Fortran90 プログラム置場<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case TT に相当. <BR>
+<DL>
+<DT><A HREF="sample-tt/f90/bsncnv-et-tt-1.f90">
+<B>sample-tt/f90/bsncnv-et-tt-1.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : ベナール対流<BR>
+竹広真一 (2002/05/31)<BR>
+温度固定条件, 内部熱源なし. 領域縦横比 1:8. 高さ方向チェビシェフ展開. <BR>
+<DT><A HREF="sample-tt/f90/bsncnv-et-tt-2.f90">
+<B>sample-tt/f90/bsncnv-et-tt-2.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : ベナール対流<BR>
+竹広真一 (2002/05/31)<BR>
+温度固定条件, 内部熱源なし. 領域縦横比 1:8. 高さ方向チェビシェフ展開. 速度境界条件変更可能(Free-slip)<BR>
+<DT><A HREF="sample-tt/f90/bsncnv-et-tt-3.f90">
+<B>sample-tt/f90/bsncnv-et-tt-3.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : ベナール対流<BR>
+竹広真一 (2002/05/31)<BR>
+温度固定条件, 内部熱源なし. 領域縦横比 1:8. 高さ方向チェビシェフ展開. 速度境界条件変更可能(no-slip)<BR>
+</DL>
+</DL>
+<DT><A HREF="teishiki/SIGEN.htm">
+<B>teishiki</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域, チェビシェフ展開) : 定式化<BR>
+竹広真一 (2002/08/29)<BR>
+<DL>
+</DL>
+</DL>
+<HR>
+<P ALIGN=RIGHT>
+last update: 2010/03/04 10:29:26
+<BR>this page is generated with <B><A HREF="http://www.gfd-dennou.org/arch/cc-env/mksigen/desc.htm">mksigen</A></B>
+</BODY>
+</HTML>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>階層的地球流体スペクトルモデル集 SPMODEL</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ <a href="index.htm.en">English</a> | Japanese ] [ <a href="/">地球流体電脳倶楽部</a> / <a href="/library/spmodel">SPMODEL プロジェクト</a> / <a href="SIGEN.htm">SIGEN</a> ] </small>
+<h1><a name="label-0" id="label-0">階層的地球流体スペクトルモデル集 SPMODEL</a></h1><!-- RDLabel: "階層的地球流体スペクトルモデル集 SPMODEL" -->
+<p>地球流体電脳倶楽部スペクトルモデルプロジェクトでは, 地球流体力学の研究
+や教育に使えるスペクトル法を用いたさまざまな数値モデルをそろえる活動を
+進めています.</p>
+<table align="right">
+<tr><td>
+<A href="gallery/shallow-topo/">
+<IMG ALT="shallow_topo_linear_small.jpg" SRC="./gallery/shallow_topo_linear_small.jpg" width=240, BORDER=1></a>
+</td>
+<td>
+<A href="gallery/kh-instability//">
+<IMG ALT="kh1.gif" SRC="./gallery/kh-instability/kh1.gif" align="center" BORDER=1 width=240></a>
+</td>
+</tr>
+</table>
+
+
+<ul>
+<li><a href="#label-2">SPMODEL の目指すもの</a></li>
+<li><a href="./gallery/index.htm">ギャラリー</a></li>
+<li><a href="./html/usage.htm">SPMODEL の使い方</a>
+<ul>
+<li><a href="./html/needed.htm">SPMODEL に必要となる資源</a></li>
+<li><a href="./html/spml.htm">SPMODEL ライブラリ (spml)</a></li>
+</ul></li>
+<li><a href="./html/sample.htm">プログラム集</a></li>
+<li><a href="./tutorial/index.htm">チュートリアル資料</a></li>
+<li><a href="./LiveCD/index.htm">Live CD</a></li>
+<li><a href="./html/licence.htm">使用上の注意</a></li>
+<li><a href="./html/paper.htm">発表資料</a></li>
+<li><a href="./html/acknowledge.htm">謝辞</a></li>
+<li><a href="./html/link.htm">リンク・開発者向け資料</a></li>
+</ul>
+<h2><a name="label-1" id="label-1">ニュース(2009.03.03)</a></h2><!-- RDLabel: "ニュース(2009.03.03)" -->
+<p>SPMODEL ライブラリ(spml) の新規バージョン 0.5.0 をリリースしました.
+今回の更新/変更点は以下の通りです. </p>
+<ul>
+<li>新規追加項目
+<ul>
+<li>mpi 計算用の関数(ISPACK の MPI ルーチンを呼ぶ)</li>
+<li>ヤコビ多項式を用いた円および球領域計算用のモジュール(aq_module)</li>
+<li>チェビシェフ多項式とガウス-ラダウ格子による円および球領域計算用のモジュール(au_module)</li>
+<li>ルジャンドル展開による軸対称流計算用のモジュール(l_module)</li>
+<li>球面, 球殻モデルの軸対称版への変更用モジュール(w_zonal_module, wa_zonal_module, wt_zonal_module)</li>
+</ul></li>
+<li>変更項目
+<ul>
+<li>球面調和関数モジュールにおける格子点の宣言の修正
+    (im,jm) -&gt; (0:im-1, 1:jm)</li>
+<li>ドキュメント構成の変更
+    ほぼ全てを rdoc-f95 の出力に置き換えた.</li>
+</ul></li>
+</ul>
+<p>旧バージョンをお使いの方は特に球面調和函数モジュールの格子データ配列宣言の変更に御注意ください. </p>
+<h2><a name="label-2" id="label-2">SPMODEL の目指すもの</a></h2><!-- RDLabel: "SPMODEL の目指すもの" -->
+<p>SPMODEL では, 地球流体力学に登場するさまざまなレベルの近似方程式系の数
+値モデルを, 空間 1 次元モデルから 2 次元あるいは 3 次元モデルまで階層
+的に整備しています.</p>
+<p>このような一連の数値モデルをそろえることで</p>
+<ul>
+<li>標準的あるいは重要な GFD のイラストレーションをたやすく再現できるようにしたい
+  → 地球流体力学の理解と普及に役立てる</li>
+<li>数値計算による知見を研究者の間で共有したい
+  → 従来の数式による理解から数値計算による理解へ</li>
+<li>一連のモデルの振舞の比較をスムーズに行いたい
+  → より複雑なモデルの結果を理解するための道具</li>
+</ul>
+<p>といったことを目指しています. </p>
+<p>このため, 現在整備しようとしているモデルシリーズの基本方針では「可読性
+が高く理解しやすく, 変形しやすいこと」を最重点においています. 大名プロ
+グラマー主義(CPUは無限に速く, メモリとディスク容量は無限に大きいという
+環境の下で仕事をする) にしたがって, スピードはとりあえず犠牲にしても構
+わない, というスタンスです.  しかしながらこのモデルシリーズをベースに
+することで, 例えば最先端の大計算を行うに耐える高速なモデルの開発などが
+容易になることも期待しています.</p>
+<p>SPMODEL のモデルでは, 格子点とスペクトル空間のデータ変換や空間微分などの
+基本的な配列関数からなる SPMODEL library (spml) を用いてます. 
+Fortran90 の配列機能を生かしたこのライブラリの配列関数を用いることで, 
+時間発展方程式の時間変化項以外の部分を
+数式の形そのままにプログラミングすることができるようになってます. 
+支配方程式の形をそのままプログラムソースに反映させられるので
+プログラムの可読性を向上させることができます. 
+また, spml の配列関数は入出力配列の性質が名前からわかるようにするべく
+統一的に命名法にしたがっているので, 関数の使い方が機械的になり, 
+プログラムを修正することも容易に行えるようになっています. </p>
+<p>SPMODEL のライブラリとサンプルプログラム自体が Fortran90 のプログラミ
+ング書法の一つの実験でもあります. 地球流体力学の問題に限らずさまざまな
+物理現象のスペクトル法による数値計算の一つのスタイルとして参考にして頂
+ければと思います.</p>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2008/03/04, Since: 2002/02/15 </small>
+
+</body>
+</html>

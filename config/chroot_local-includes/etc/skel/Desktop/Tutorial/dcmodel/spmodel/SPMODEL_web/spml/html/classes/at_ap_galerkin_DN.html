@@ -1,0 +1,1206 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: at_ap_galerkin_DN</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">at_ap_galerkin_DN</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/at_ap_galerkin_DN_f90.html">
+
+                src/at_ap_galerkin_DN.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="at_ap_galerkin_DN.html">at_ap_galerkin_DN</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a
+href="../files/src/at_ap_galerkin_DN_f90.html">at_ap_galerkin_DN.f90</a>,v
+1.3 2009-02-28 21:33:46 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/at_ap_galerkin_DN はチェビシェフ−ガラーキン法,
+片端ディリクレ片端ノイマン境界条件
+</p>
+<pre>
+      f(:,i=0)=f'(:,i=im)=0 [ f(:,x=xmax)=f'(:,x=xmin)=0 ]
+</pre>
+<p>
+を k 次のガラーキン基底が
+</p>
+<pre>
+    \phi_k(x)=T_k(x) + C_{k-1}T_{k-1}(x) + C_{k-2}T_{k-2}(x)
+</pre>
+<p>
+の型式(Type1)を用いて計算するためのモジュールである.
+</p>
+<p>
+定式化については解説文書「チェビシェフ関数展開を利用したガラーキン法」 (<a
+href=".././link:cheb_gal.pdf">cheb_gal.pdf</a>)を参照のこと.
+</p>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M001967">PT</a>&nbsp;&nbsp;
+
+        <a href="#M001966">TP</a>&nbsp;&nbsp;
+
+        <a href="#M001977">ag_ap</a>&nbsp;&nbsp;
+
+        <a href="#M001968">alpha</a>&nbsp;&nbsp;
+
+        <a href="#M001979">ap_Dx_ap</a>&nbsp;&nbsp;
+
+        <a href="#M001975">ap_ag</a>&nbsp;&nbsp;
+
+        <a href="#M001971">ap_at</a>&nbsp;&nbsp;
+
+        <a href="#M001973">at_ap</a>&nbsp;&nbsp;
+
+        <a href="#M001970">at_ap_galerkin_DN_Initial</a>&nbsp;&nbsp;
+
+        <a href="#M001969">beta</a>&nbsp;&nbsp;
+
+        <a href="#M001978">g_p</a>&nbsp;&nbsp;
+
+        <a href="#M001980">p_Dx_p</a>&nbsp;&nbsp;
+
+        <a href="#M001976">p_g</a>&nbsp;&nbsp;
+
+        <a href="#M001972">p_t</a>&nbsp;&nbsp;
+
+        <a href="#M001974">t_p</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name"><a href="lumatrix.html">lumatrix</a></span>
+
+        <span class="include-name"><a href="at_module.html">at_module</a></span>
+
+        <span class="include-name">dc_message</span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M001967" class="method-detail">
+        <a name="M001967"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">PT</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001967">PT</a>(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> チェビシェフ-&gt;ガラーキン変換行列
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001966" class="method-detail">
+        <a name="M001966"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">TP</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001966">TP</a>(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ガラーキン-&gt;チェビシェフ変換行列
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001977" class="method-detail">
+        <a name="M001977"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001977" class="method-signature">
+
+
+
+          <span class="method-name">ag_ap</span><span class="method-args">( ap_data ) result(ag_ap)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001977">ag_ap</a>(size(ap_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001977-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001977-source">
+<pre>
+  function ag_ap(ap_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+    !
+    real(8), intent(IN) :: ap_data(:,ks:)              !(in)  ガラーキン係数  
+    real(8)             :: ag_ap(size(ap_data,1),0:im) !(out) 格子点データ  
+    
+    ag_ap = ag_at(at_ap(ap_data))
+  end function ag_ap
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001968" class="method-detail">
+        <a name="M001968"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">alpha</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001968">alpha</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> チェビシェフ&lt;-&gt;ガラーキン行列積係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001979" class="method-detail">
+        <a name="M001979"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001979" class="method-signature">
+
+
+
+          <span class="method-name">ap_Dx_ap</span><span class="method-args">( ap_data ) result(ap_Dx_ap)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001979">ap_Dx_ap</a>(size(ap_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+X 微分計算(2 次元)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001979-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001979-source">
+<pre>
+  function ap_Dx_ap(ap_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! X 微分計算(2 次元)
+    !
+    real(8), intent(IN) :: ap_data(:,ks:)                  !(in) ガラーキン係数
+    real(8)             :: ap_Dx_ap(size(ap_data,1),ks:km) !(out) 微分ガラーキン
+    ap_Dx_ap = ap_at(at_Dx_at(at_ap(ap_data)))
+  end function ap_Dx_ap
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001975" class="method-detail">
+        <a name="M001975"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001975" class="method-signature">
+
+
+
+          <span class="method-name">ap_ag</span><span class="method-args">( ag_data ) result(ap_ag)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001975">ap_ag</a>(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001975-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001975-source">
+<pre>
+  function ap_ag(ag_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! 格子点データ -&gt; ガラーキン係数変換(2次元データ)
+    !
+    real(8), intent(IN)  :: ag_data(:,0:)                !(in)  格子点データ
+    real(8)              :: ap_ag(size(ag_data,1),ks:km) !(out) ガラーキン係数
+
+    ap_ag = ap_at(at_ag(ag_data))
+  end function ap_ag
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001971" class="method-detail">
+        <a name="M001971"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001971" class="method-signature">
+
+
+
+          <span class="method-name">ap_at</span><span class="method-args">( at_data ) result(ap_at)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001971">ap_at</a>(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001971-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001971-source">
+<pre>
+  function ap_at(at_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+    !
+    real(8), intent(IN) :: at_data(:,0:)                !(in)  チェビシェフ係数
+    real(8)             :: ap_at(size(at_data,1),ks:km) !(out) ガラーキン係数  
+
+    real(8)             :: ap_work(size(at_data,1),ks:km)  ! 作業用配列
+
+    integer :: k,m
+
+    if ( .not. DN_Initialized ) call MessageNotify('E','ap_at', 'at_ap_galerkin_DN_module not initialized')
+
+    ap_work =0.0
+    do m=ks,km
+       do k=0,km
+          ap_work(:,m) = ap_work(:,m) + alpha(k) * beta(k) * at_data(:,k) * TP(k,m)
+       enddo
+    enddo
+
+    ap_at = LUSolve(PT,kp,ap_work)
+  end function ap_at
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001973" class="method-detail">
+        <a name="M001973"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001973" class="method-signature">
+
+
+
+          <span class="method-name">at_ap</span><span class="method-args">( ap_data ) result(at_ap)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001973">at_ap</a>(size(ap_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+片端ディリクレ片端ノイマン境界条件 ガラーキン係数 -&gt;
+チェビシェフ係数変換(2次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001973-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001973-source">
+<pre>
+  function at_ap(ap_data)
+    !
+    ! 片端ディリクレ片端ノイマン境界条件
+    ! ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+    !
+    real(8), intent(IN)  :: ap_data(:,ks:)              !(in)  ガラーキン係数
+    real(8)              :: at_ap(size(ap_data,1),0:km) !(out) チェビシェフ係数
+
+    integer :: m, n
+
+    if ( .not. DN_Initialized ) call MessageNotify('E','at_ap', 'at_ap_galerkin_DN_module not initialized')
+
+    at_ap = 0.0D0
+    do m=0,km
+       do n=ks,km
+          at_ap(:,m) = at_ap(:,m) + TP(m,n)*ap_data(:,n)/beta(m)
+       enddo
+    enddo
+
+  end function at_ap
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001970" class="method-detail">
+        <a name="M001970"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001970" class="method-signature">
+
+
+
+          <span class="method-name">at_ap_galerkin_DN_Initial</span><span class="method-args">( i_in, k_in ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>i_in  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in)格子点数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>k_in  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in)チェビシェフ切断波数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件用モジュール
+</p>
+<p>
+初期化サブルーチン
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001970-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001970-source">
+<pre>
+  subroutine at_ap_galerkin_DN_Initial(i_in,k_in)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件用モジュール
+    !
+    ! 初期化サブルーチン
+    !
+    integer, intent(IN) :: i_in     ! (in)格子点数
+    integer, intent(IN) :: k_in     ! (in)チェビシェフ切断波数  
+
+    integer :: k, l, m, n
+
+    im=i_in 
+     km=k_in
+
+    allocate(TP(0:km,ks:km),PT(ks:km,ks:km),kp(ks:km))
+    allocate(alpha(0:km),beta(0:km))
+
+    ! 片端ディリクレ片端ノイマン条件用変換行列設定
+    TP = 0.0D0
+    do k=ks,km
+       TP(k,k) = 1.0D0
+       TP(k-1,k) =  1.0D0*(k**2-(k-2)**2)/((k-1)**2+(k-2)**2)
+       TP(k-2,k) = -1.0D0*(k**2+(k-1)**2)/((k-1)**2+(k-2)**2)
+    enddo
+
+    beta=1.0 
+     beta(0)=0.5D0
+    if (im .eq. km ) beta(km)=0.5D0
+
+    ! 片端ディリクレ片端ノイマン条件用変換逆行列
+    alpha=1.0 
+     alpha(0)=2.0D0
+
+    PT = 0.0D0
+    do m=ks,km
+       do n=ks,km
+          do l=0,km
+             PT(m,n) = PT(m,n) + alpha(l)*TP(l,m)*TP(l,n)
+          enddo
+       enddo
+    enddo
+
+    call LUDecomp(PT,kp)
+
+    call MessageNotify('M','at_ap_galerkin_DN_Initial', 'Conversion matrices initialized')
+
+    DN_Initialized=.true.
+
+  end subroutine at_ap_galerkin_DN_Initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001969" class="method-detail">
+        <a name="M001969"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">beta</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001969">beta</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> チェビシェフ&lt;-&gt;ガラーキン行列和係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001978" class="method-detail">
+        <a name="M001978"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001978" class="method-signature">
+
+
+
+          <span class="method-name">g_p</span><span class="method-args">( p_data ) result(g_p)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001978">g_p</a>(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>p_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001978-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001978-source">
+<pre>
+  function g_p(p_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+    !
+    real(8), intent(IN) :: p_data(ks:km)        !(in)  ガラーキン係数  
+    real(8)             :: g_p(0:im)            !(out) 格子点データ  
+    
+    g_p = g_t(t_p(p_data))
+  end function g_p
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001980" class="method-detail">
+        <a name="M001980"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001980" class="method-signature">
+
+
+
+          <span class="method-name">p_Dx_p</span><span class="method-args">( p_data ) result(p_Dx_p)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001980">p_Dx_p</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>p_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+X 微分計算(1 次元)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001980-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001980-source">
+<pre>
+  function p_Dx_p(p_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! X 微分計算(1 次元)
+    !
+    real(8), intent(IN) :: p_data(ks:km)
+    real(8)             :: p_Dx_p(ks:km)
+
+    p_Dx_p = p_t(t_Dx_t(t_p(p_data)))
+
+  end function p_Dx_p
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001976" class="method-detail">
+        <a name="M001976"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001976" class="method-signature">
+
+
+
+          <span class="method-name">p_g</span><span class="method-args">( g_data ) result(p_g)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001976">p_g</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(1次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001976-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001976-source">
+<pre>
+  function p_g(g_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! 格子点データ -&gt; ガラーキン係数変換(1次元データ)
+    !
+    real(8), intent(IN)  :: g_data(0:im)        !(in)  格子点データ
+    real(8)              :: p_g(ks:km)          !(out) ガラーキン係数
+
+    p_g = p_t(t_g(g_data))
+  end function p_g
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001972" class="method-detail">
+        <a name="M001972"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001972" class="method-signature">
+
+
+
+          <span class="method-name">p_t</span><span class="method-args">( t_data ) result(p_t)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001972">p_t</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001972-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001972-source">
+<pre>
+  function p_t(t_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+    !
+    real(8), intent(IN) :: t_data(0:km)        !(in)  チェビシェフ係数
+    real(8)             :: p_t(ks:km)          !(out) ガラーキン係数  
+
+    real(8)             :: p_work(ks:km)       ! 作業用配列
+
+    integer :: k,m
+
+    if ( .not. DN_Initialized ) call MessageNotify('E','p_t', 'at_ap_galerkin_DN_module not initialized')
+
+    p_work =0.0
+    do m=ks,km
+       do k=0,km
+          p_work(m) = p_work(m) + alpha(k) * beta(k) * t_data(k) * TP(k,m)
+       enddo
+    enddo
+
+    p_t = LUSolve(PT,kp,p_work)
+  end function p_t
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001974" class="method-detail">
+        <a name="M001974"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001974" class="method-signature">
+
+
+
+          <span class="method-name">t_p</span><span class="method-args">( p_data ) result(t_p)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_ap_galerkin_DN.html#M001974">t_p</a>(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>p_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001974-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001974-source">
+<pre>
+  function t_p(p_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! 片端ディリクレ片端ノイマン境界条件
+    !
+    ! ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+    !
+    real(8), intent(IN)  :: p_data(ks:km)       !(in)  ガラーキン係数  
+    real(8)              :: t_p(0:km)           !(out) チェビシェフ係数
+
+    integer :: m, n
+
+    if ( .not. DN_Initialized ) call MessageNotify('E','t_p', 'at_ap_galerkin_DN_module not initialized')
+
+    t_p = 0.0D0
+    do m=0,km
+       do n=ks,km
+          t_p(m) = t_p(m) + TP(m,n)*p_data(n)/beta(m)
+       enddo
+    enddo
+
+  end function t_p
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

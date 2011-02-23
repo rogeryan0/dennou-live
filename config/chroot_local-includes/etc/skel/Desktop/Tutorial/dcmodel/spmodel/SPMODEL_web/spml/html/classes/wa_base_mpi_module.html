@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: wa_base_mpi_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">wa_base_mpi_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src-mpi/wa_base_mpi_module_f90.html">
+
+                src-mpi/wa_base_mpi_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <p>
+<a href="wa_base_mpi_module.html">wa_base_mpi_module</a>
+</p>
+<pre>
+ spml/wa_base_mpi_module モジュールは球面上での流体運動を
+ 球面調和函数を用いたスペクトル法と MPI 並列化によって
+ 数値計算するための モジュール wa_mpi_module の下部モジュールであり,
+ スペクトル計算の基本的な Fortran90 関数を提供する.
+
+ 球面上の 1 層モデル用 w_base_mpi_module モジュールを多層モデル用に
+ 拡張したものであり, 同時に複数個のスペクトルデータ, 格子点データに
+ 対する変換が行える.
+
+ 内部で ISPACK の SPPACK と SNPACK の Fortran77 サブルーチンを呼んでいる.
+ スペクトルデータおよび格子点データの格納方法や変換の詳しい計算法に
+ ついては ISPACK/SNPACK,SPPACK のマニュアルを参照されたい.
+</pre>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M001665">im</a>&nbsp;&nbsp;
+
+        <a href="#M001664">im</a>&nbsp;&nbsp;
+
+        <a href="#M001667">jm</a>&nbsp;&nbsp;
+
+        <a href="#M001666">jm</a>&nbsp;&nbsp;
+
+        <a href="#M001669">nm</a>&nbsp;&nbsp;
+
+        <a href="#M001668">nm</a>&nbsp;&nbsp;
+
+        <a href="#M001661">wa_base_mpi_initial</a>&nbsp;&nbsp;
+
+        <a href="#M001663">wa_xva</a>&nbsp;&nbsp;
+
+        <a href="#M001662">xva_wa</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+
+        <span class="include-name"><a href="w_base_module.html">w_base_module</a></span>
+
+        <span class="include-name"><a href="w_base_mpi_module.html">w_base_mpi_module</a></span>
+
+        <span class="include-name"><a href="wa_base_module.html">wa_base_module</a></span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M001665" class="method-detail">
+        <a name="M001665"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">im</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_base_mpi_module.html#M001664">im</a>  </tt></b>  <tt> =64            </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点の設定(東西)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_base_mpi_module.html#M000196">w_base_mpi_module#im</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001664" class="method-detail">
+        <a name="M001664"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">im</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_base_mpi_module.html#M001664">im</a>  </tt></b>  <tt> =64            </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点の設定(東西)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_base_module.html#M001503">w_base_module#im</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001667" class="method-detail">
+        <a name="M001667"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">jm</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_base_mpi_module.html#M001666">jm</a>  </tt></b>  <tt> =32            </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点の設定(南北)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_base_mpi_module.html#M000197">w_base_mpi_module#jm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001666" class="method-detail">
+        <a name="M001666"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">jm</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_base_mpi_module.html#M001666">jm</a>  </tt></b>  <tt> =32            </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点の設定(南北)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_base_module.html#M001504">w_base_module#jm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001669" class="method-detail">
+        <a name="M001669"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">nm</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_base_mpi_module.html#M001668">nm</a>  </tt></b>  <tt> =21            </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数の設定
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_base_mpi_module.html#M000198">w_base_mpi_module#nm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001668" class="method-detail">
+        <a name="M001668"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">nm</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_base_mpi_module.html#M001668">nm</a>  </tt></b>  <tt> =21            </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数の設定
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_base_module.html#M001505">w_base_module#nm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001661" class="method-detail">
+        <a name="M001661"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001661" class="method-signature">
+
+
+
+          <span class="method-name">wa_base_mpi_initial</span><span class="method-args">( ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+</table>
+<p>
+スペクトル変換の最大データ数(層数)を設定する.
+</p>
+<p>
+このサブルーチンを単独で用いるのでなく, 上位サブルーチン wa_Initial
+を使用すること.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001661-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001661-source">
+<pre>
+    subroutine wa_base_mpi_initial
+      ! 
+      ! スペクトル変換の最大データ数(層数)を設定する.
+      !
+      ! このサブルーチンを単独で用いるのでなく, 
+      ! 上位サブルーチン wa_Initial を使用すること.
+      !
+      integer :: iw
+
+      allocate(ipk(km,((nm+1)/2+nm+1)*2))      ! 変換用配列(多層用)
+      allocate(pk(km,((nm+1)/2+nm+1)*jm))      ! 変換用配列(多層用)
+      allocate(rk(km,((nm+1)/2*2+3)*(nm/2+1))) ! 変換用配列(多層用)
+
+      allocate(q(km*((nm+1)/2+nm+1)*jm))       ! 作業配列(多層用)
+
+      allocate(xva_work(id,jd,km))                ! 変換用配列
+
+      iw=km * max((nm+4)*(nm+3),jd*3*(nm+1),jd*im)
+
+      allocate(ws(iw),ww(iw),w((nm+1)*(nm+1)*km))    ! 作業用配列(多層用)
+
+      call snkini(nm,jm,km,ip,p,r,ipk,pk,rk)
+
+      call MessageNotify('M','wa_base_mpi_initial', 'wa_base_mpi_module is initialized')
+
+    end subroutine wa_base_mpi_initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001663" class="method-detail">
+        <a name="M001663"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001663" class="method-signature">
+
+
+
+          <span class="method-name">wa_xva</span><span class="method-args">( xva_data, [ipow], [iflag] ) result(wa_xva)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_base_mpi_module.html#M001663">wa_xva</a>((<a href="wa_base_mpi_module.html#M001668">nm</a>+1)*(<a href="wa_base_mpi_module.html#M001668">nm</a>+1),size(xva_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xva_data(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ(<a href="wa_base_mpi_module.html#M001664">im</a>,<a
+href="wa_base_mpi_module.html#M001666">jm</a>,*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ipow  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 変換時に同時に作用させる 1/cosφ の次数. 省略時は 0.
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>iflag  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 変換の種類
+
+<pre>
+    0 : 通常の正変換
+    1 : 経度微分を作用させた正変換
+   -1 : 緯度微分を作用させた正変換
+    2 : sinφを作用させた正変換
+  省略時は 0.
+</pre>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点 -&gt; 球面調和関数スペクトル
+</p>
+<p>
+格子データからスペクトルデータへ(正)変換する(多層用).
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001663-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001663-source">
+<pre>
+    function wa_xva(xva_data,ipow,iflag) ! 格子点 -&gt; 球面調和関数スペクトル
+      !
+      ! 格子データからスペクトルデータへ(正)変換する(多層用).
+      !
+      real(8), intent(in)   :: xva_data(:,:,:)
+      !(in) 格子点データ(im,jm,*)
+
+      real(8)               :: wa_xva((nm+1)*(nm+1),size(xva_data,3))
+      !(out) スペクトルデータ
+
+      integer, intent(in), optional  :: ipow
+      !(in) 変換時に同時に作用させる 1/cosφ の次数. 省略時は 0.
+
+      integer, intent(in), optional  :: iflag
+      ! 変換の種類
+      !     0 : 通常の正変換
+      !     1 : 経度微分を作用させた正変換
+      !    -1 : 緯度微分を作用させた正変換
+      !     2 : sinφを作用させた正変換
+      !   省略時は 0.
+
+      integer, parameter  :: ipow_default  = 0      ! スイッチデフォルト値
+      integer, parameter  :: iflag_default = 0      ! スイッチデフォルト値
+
+      integer ipval, ifval
+      integer k
+
+      if (present(ipow)) then
+         ipval = ipow
+      else
+         ipval = ipow_default
+      endif
+
+      if (present(iflag)) then
+         ifval = iflag
+      else
+         ifval = iflag_default
+      endif
+
+      k = size(xva_data,3)
+      if ( k &gt; km ) then
+         call MessageNotify('E','wa_xva','Size of 3rd dimension invalid.')
+      endif
+
+      xva_work = 0.0
+      xva_work(1:im,1:jc,1:k) = xva_data
+
+      call sntgms(nm,im,id,jc,jd,k,xva_work,wa_xva, it,t,y,ipk(1:k,:),pk(1:k,:),rk(1:k,:),ia,a,q,ws,ww,ipval,ifval,w)
+
+    end function wa_xva
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001662" class="method-detail">
+        <a name="M001662"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001662" class="method-signature">
+
+
+
+          <span class="method-name">xva_wa</span><span class="method-args">( wa_data, [ipow], [iflag] ) result(xva_wa)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_base_mpi_module.html#M001662">xva_wa</a>(<a href="wa_base_mpi_module.html#M001664">im</a>,jc,size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ipow  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 作用させる 1/cosφ の次数. 省略時は 0.
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>iflag  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 変換の種類
+
+<pre>
+    0 : 通常の正変換
+    1 : 経度微分を作用させた正変換
+   -1 : 緯度微分を作用させた正変換
+    2 : sinφを作用させた正変換
+    省略時は 0.
+</pre>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+球面調和関数スペクトル -&gt; 格子点
+</p>
+<p>
+スペクトルデータから格子データへ変換する(多層用).
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001662-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001662-source">
+<pre>
+    function xva_wa(wa_data,ipow,iflag)    ! 球面調和関数スペクトル -&gt; 格子点
+      !
+      ! スペクトルデータから格子データへ変換する(多層用).
+      !
+      real(8), intent(in)   :: wa_data(:,:)
+      !(in) スペクトルデータ
+
+      real(8)               :: xva_wa(im,jc,size(wa_data,2))
+      !(out) 格子点データ
+
+      integer, intent(in), optional  :: ipow
+      !(in) 作用させる 1/cosφ の次数. 省略時は 0. 
+
+      integer, intent(in), optional  :: iflag
+      !(in) 変換の種類
+      !     0 : 通常の正変換
+      !     1 : 経度微分を作用させた正変換
+      !    -1 : 緯度微分を作用させた正変換
+      !     2 : sinφを作用させた正変換
+      !     省略時は 0.
+      !
+
+      integer, parameter  :: ipow_default  = 0
+      integer, parameter  :: iflag_default = 0
+
+      integer ipval, ifval
+      integer k
+
+      if (present(ipow)) then
+         ipval = ipow
+      else
+         ipval = ipow_default
+      endif
+
+      if (present(iflag)) then
+         ifval = iflag
+      else
+         ifval = iflag_default
+      endif
+
+      k= size(wa_data,2)
+      if  ( k &gt; km ) then
+         call MessageNotify('E','xva_wa','Size of 3rd dimension invalid.')
+      else
+         call snts2g(nm,im,id,jc,jd,k,wa_data, xva_work, it,t,y,ipk(1:k,:),pk(1:k,:),rk(1:k,:),ia,a,q,ws,ww,ipval,ifval)
+      endif
+      xva_wa=xva_work(1:im,1:jc,1:k)
+
+    end function xva_wa
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

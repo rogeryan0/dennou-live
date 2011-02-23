@@ -1,0 +1,9 @@
+Subject: ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定 + 一様熱源下の対流 Fortran90 サンプルプログラム説明文書ソース
+Maintainer: 小高正嗣
+Update: 2004/06/01
+Description: Ishiwatari et al. (1994) の Case FQ に相当. 
+
+
+履歴
+	2004/06/01 小高正嗣
+

@@ -1,0 +1,7 @@
+Subject: SPMODEL サンプルプログラム : 熱フラックス固定対流
+Maintainer: 竹広真一
+Update: 2002/05/31
+Description: 一様内部熱源. Ishiwatari et al. (1994)での FQ 問題に相当. 高さ方向 sin/cos 展開. 
+
+履歴
+	2002/05/31 竹広真一

@@ -1,0 +1,334 @@
+<<<<<<< INSTALL.ja
+Title: spml インストールガイド
+
+1 動作環境
+
+spml ライブラリは以下の環境での動作を確認しています.
+
+ ・ OS: Debian GNU/Linux
+ ・ Fortran Compiler
+     □ G95 Fortran Compiler ver. 0.91
+         ☆ with MPICH2 1.0.7
+         ☆ with OpenMPI 1.3.2
+     □ Fujitsu Fortran Driver ver.1.0(Japanese)
+         ☆ with MPICH2 1.0.7
+         ☆ with OpenMPI 1.3.2
+     □ Fujitsu Fortran Compiler ver.5.0(Japanese)
+         ☆ with MPICH2 1.0.7
+     □ Intel Fortran Compiler ver 10.0, 11.0
+
+過去には以下の環境でも動作したことが確認されています. 確認はしていませんが, 現
+在のバージョンでもおそらく動作すると期待されます.
+
+ ・ Cray XT4 + PGI Fortran
+ ・ NEC SX-6 + FORTRAN90/SX
+ ・ NEC SX-8 + FORTRAN90/SX
+ ・ NEC SX-8R + FORTRAN90/SX
+ ・ NEC SX-9 + FORTRAN90/SX
+ ・ Linux + PGI Fortran
+
+2 インストール作業の概略
+
+spml ライブラリのインストールは以下の様に行ないます. 詳しくは各項目を参照して下
+さい.
+
+ 1. 必要なソフトウェアをインストールします.
+ 2. ビルドの手引きに従い, ソースからライブラリをビルドします.
+ 3. インストールの手引きに従い, ライブラリをインストールします.
+ 4. テストプログラム実行の手順に従い, インストールされたライブラリが正常に機能
+    するかどうか確認してください.
+ 5. パスの設定を行ってください.
+
+3 必要なソフトウェア
+
+spml を利用するためには, 以下のソフトウェアを事前にインストールしておく必要があ
+ります.
+
+ ・ netCDF, version 3.6 以上
+ ・ gtool5
+ ・ ispack
+
+4 ビルドの手引き
+
+4.1 TGZ パッケージの展開
+
+適当な作業ディレクトリでソースアーカイブを展開します. ソースは spml-バージョン
+というディレクトリに展開されます.
+
+$ tar xvzf spml_current.tgz
+
+または
+
+$ zcat spml_current.tar.gz | tar -xvf -
+
+4.2 Fortran コンパイラの指定
+
+環境変数 FC に使用する Fortran コンパイラを指定してください. 以下は, 利用するコ
+ンパイラが frt の場合です.
+
+ ・ sh, bash の場合
+
+    $ FC=frt ; export FC
+
+ ・ csh, tcsh の場合
+
+    $ setenv FC frt
+
+
+最適化やデバッグのためのオプションは環境変数 SYSFFLAGS に設定してください. 以下
+の例は Fujitsu Fortran を使用する場合の高速化と並列化のためのオプションです.
+
+ ・ sh, bash の場合
+
+    $ SYSFFLAGS="-Kfast,parallel" ; export FFLAGS
+
+ ・ csh, tcsh の場合
+
+    $ setenv SYSFFLAGS "-Kfast,parallel"
+
+
+4.3 Config.mk の作成
+
+展開されたディレクトリに移動し, ./configure を実行します.
+
+ ・ --with-netcdf= には netCDF ライブラリのパスを指定します. (以下の例は /usr/
+    local/netcdf/lib/libnetcdf.a にライブラリがある場合のものです).
+ ・ --with-gtool5= には gtool5 ライブラリのパスを指定します. (以下の例は /usr/
+    local/gtool5/lib/libgtool5.a にライブラリがある場合のものです).
+ ・ --with-ispack= には ispack ライブラリのパスを指定します. (以下の例は /usr/
+    local/ispack/lib/libisp.a にライブラリがある場合のものです).
+
+このコマンドによって Config.mk ファイルが生成されます. netCDF ライブラリが共有
+ライブラリである場合, --with-netcdff= も指定する必要があるかもしれません. 詳し
+くは下記のオプションの詳細を参照してください.
+
+$ ./configure --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a \
+              --with-gtool5=/usr/local/gtool5/lib/libgtool5.a \
+              --with-ispack=/usr/local/ispack/lib/libisp.a
+
+spml を MPI 用にビルドする場合には, MPI 用にビルドする場合にはを参照してくださ
+い.
+
+ビルドには GNU make が必要となるため, configure は PATH 内から自動で GNU make
+を探査しようとしますが, もし見つからない場合, エラーを返します. その場合には環
+境変数 MAKE に GNU make コマンドを指定して再度 configure を実行してください.
+
+インストール先などを変更したい場合は, 以下のように --help オプションをつけるこ
+とで, 指定可能なオプションリストが表示されます.
+
+$ ./configure --help
+
+主なオプションに関しての説明です.
+
+--with-netcdf=ARG
+    ARG にビルドに必要な netCDF ライブラリを指定します. 必ず明示的に指定する必
+    要があります.
+--with-netcdff=ARG
+    netCDF ライブラリが共有ライブラリである場合, C 用ライブラリと Fortran 用ラ
+    イブラリとに分かれてビルドされている場合があります. その際は, 上記オプショ
+    ンに C 用ライブラリを指定し, 本オプションの ARG に Fortran 用ライブラリを指
+    定します.
+--with-netcdf-include=ARG
+    必要ならば netCDF ライブラリの Fortran 用ヘッダ(netcdf.inc) を指定します.
+--with-gtool5=ARG
+    ARG にビルドに必要な gtool5 ライブラリを指定します. 必ず明示的に指定する必
+    要があります.
+--with-ispack=ARG
+    ARG にビルドに必要な ispack ライブラリを指定します. 必ず明示的に指定する必
+    要があります.
+--with-ssl2=ARG
+--with-ssl2tp=ARG
+--with-lapack=ARG
+    ARG に固有値問題を解くために使用するライブラリを指定します.
+--with-fftw=ARG
+--with-rfftw=ARG
+    フーリエ変換に FFTW ver.2 を使用する場合に指定します. ispack を -FFTW2 付き
+    でビルドしている場合には指定する必要があります.
+--with-mpifc=ARG
+    MPI 並列を有効にする場合に指定します.
+--prefix=ARG
+    ARG にライブラリやモジュール, 実行ファイルのインストール先のディレクトリの
+    プレフィックスを指定します. デフォルトは /usr/local/spml です.
+--host=ARG
+    クロスコンパイルを行う場合には, パッケージが実行されるシステムタイプ名を
+    ARG に指定します.
+--libdir=ARG
+    ARG にライブラリのインストール先のディレクトリを指定します. デフォルトは /
+    usr/local/spml/lib です.
+--includedir=ARG
+    ARG にモジュール情報ファイルのインストール先のディレクトリを指定します. デ
+    フォルトは /usr/local/spml/include です.
+--bindir=ARG
+    ARG に実行ファイルのインストール先のディレクトリを指定します. デフォルトは
+    /usr/local/spml/bin です.
+--docdir=ARG
+    ARG にドキュメント/マニュアルのインストール先のディレクトリを指定します. デ
+    フォルトは /usr/local/spml/doc です.
+--with-abort=ARG
+    ARG に abort, errtra-setrcd, exit, setrcd, stop のいずれかを指定することで,
+    終了時に用いる Fortran の内部関数を変更することが可能です. デフォルトは
+    abort です.
+
+    abort
+        Fortran の内部サブルーチン abort で終了します.
+    errtra-setrcd
+        Fujitsu Fortran の ERRTRA サービスサブルーチンを呼び出し, 現在実行中の
+        プログラム単位までのトレースバックマップを出力し, 終了します. Fujitsu
+        Fortran の SETRCD サービスサブルーチンにて, 復帰コード 13 を設定し, 終
+        了コードとして 3 を設定します.
+    exit
+        Fortran の内部サブルーチン exit で終了します.
+    setrcd
+        Fujitsu Fortran の SETRCD サービスサブルーチンを呼び出し, Fortran の復
+        帰コードとして 3 を設定して終了します.
+    stop
+        Fortran の内部関数 stop で終了します.
+
+--config-cache または -C
+
+    Config.mk ファイルが生成されると同時に, config.cache ファイルが作成され, ./
+    configure の引数に指定されたライブラリの位置などの情報が保持されます.
+
+    再度 ./configure を実行する際にもこのオプションを指定することで,
+    config.cache が読み込まれ, 前回指定したオプション等が引き継がれます. 既に存
+    在する config.cache を無視する場合はこのオプションを指定せずに ./configure
+    を実行してください.
+
+    例えば下記のように ./configure を実行するとします.
+
+    $ ./configure -C --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a
+                     --with-gtool5=/usr/local/gtool5/lib/libgtool5.a
+                     --with-ispack=/usr/local/ispack/lib/libisp.a
+
+    すると次回以降, 下記のように ./configure を実行することでライブラリの位置情
+    報などが引き継がれます.
+
+    $ ./configure -C
+
+
+4.4 MPI 用にビルドする場合には
+
+spml を MPI 用にビルドする場合にはまず MPI ライブラリをシステムにインストールし
+てください.
+
+次に gtool5 を MPI サポートを有効にして install します. 詳細については gtool5
+の install ドキュメントを参照して下さい.
+
+Config.mk を作成する場合には, 環境変数 FC に mpif90 などの MPI 用コンパイルコマ
+ンドを指定してください. そして, 以下のように configure にはオプション
+--with-mpifc を指定して下さい
+
+$ ./configure -C --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a \
+                 --with-gtool5=/usr/local/gtool5/lib/libgtool5.a \
+                 --with-ispack=/usr/local/ispack/lib/libisp.a \
+                 --with-mpifc=/usr/local/mpich/mpif90
+
+その他のオプションなどについては, Config.mk の作成を参照してください.
+
+4.5 Config.mk の編集
+
+環境に合わせ Config.mk を手動で編集してください. 下記の設定についてよく分からな
+い場合にはとりあえずソースコードのコンパイルへ進んでください.
+
+FC          : Fortran コンパイラ
+
+SYSFFLAGS   : コンパイル時・リンク時に必要なフラグ
+              (Fortran コンパイラ実行時に必要なオプション)
+
+SYSLDFLAGS  : リンク時に必要なフラグ
+
+SYSLDLIBS   : リンク時に必要なライブラリ
+
+F90MODTYPE  : モジュール情報の渡し方
+
+DEST_LIB    : spml ライブラリインストールディレクトリ
+
+DEST_INC    : spml モジュールインストールディレクトリ
+
+DEST_BIN    : spml 実行ファイルインストールディレクトリ
+
+DEST_DOC    : spml ドキュメントファイルインストールディレクトリ
+
+MODS        : モジュールファイル拡張子
+
+MAKE        : GNU make コマンド
+
+AR          : アーカイブコマンド
+
+ARFLAGS     : アーカイブ時に必要なフラグ
+
+RANLIB      : アーカイブのインデックスを作成するコマンド
+
+4.6 ソースコードのコンパイル
+
+ビルドには必ず GNU make を使用してください. 他の "make" プログラムを使用すると,
+正しくビルドが行われません. 以降 GNU make のコマンド名を "make" と表記しますが,
+これらはシステムの GNU make コマンドの名前に置き換えてください.
+
+./configure を実行すると, 以下のように GNU make のコマンド名が表示されます. こ
+のメッセージに従って GNU make を実行してください.
+
+Execute GNU make in the current directory, as follows.
+
+  /usr/bin/make
+
+4.7 ドキュメントの生成
+
+マニュアルとコードリファレンスのコンパイルはカレントディレクトリにおいて, 以下
+のコマンドを実行してください. spml の TGZ パッケージから入手する場合には既に生
+成済みです.
+
+$ make doc
+$ make install
+
+5 インストールの手引き
+
+カレントディレクトリで以下のコマンドを実行してください. システム領域にインスト
+ールする場合には管理者権限が必要です. (デフォルトの場合はシステム領域にインスト
+ールします).
+
+# make install
+
+6 テストプログラム実行の手順
+
+カレントディレクトリにおいて, 以下のコマンドを実行してください. エラーが生じず
+に " *** Compilation and installation are succeeded !! *** " というメッセージが
+表示されればインストールは完了です.
+
+$ make test
+
+7 パスの設定
+
+上記のように正しくインストールが行われたら, spmfrt というシェルスクリプトが
+--prefix=ARG で指定されたディレクトリ以下の bin ディレクトリ ARG/bin に作成され
+ているはずです. ( --prefix= を指定しなかった場合は /usr/local/spml/bin/ 以下).
+
+このディレクトリへのパスを通してください. 以下は /usr/local/spml/bin/ 以下に
+spmfrt がインストールされた場合の例です.
+
+ ・ sh, bash
+
+    $ PATH=$PATH:/usr/local/spml/bin ; export PATH
+
+ ・ csh, tcsh
+
+    $ setenv PATH $PATH:/usr/local/spml/bin
+
+
+spmfrt は spml ライブラリを利用した Fortran プログラムを簡単にコンパイル, リン
+クするためのシェルスクリプトです. これまで利用していた Fortran コンパイラのコマ
+ンドの代わりに spmfrt を用いることで, 自動的に spml ライブラリへのリンク, モジ
+ュール群へのディレクトリ指定を行ってくれます.
+
+$ spmfrt test.f90
+
+/usr/bin/g95 -I/usr/local/spml/include \
+             -I/usr/local/gtool5/include -O test.f90 \
+             -L/usr/local/gtool5/lib \
+             -L/usr/local/netcdf/lib \
+             -L/usr/local/ispack/lib \
+             -L/usr/local/spml/lib \
+             -lgtool5 -lnetcdf -lisp -lspml
+
+=======
+>>>>>>> 1.4

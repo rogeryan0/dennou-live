@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>5.4. A shallow water model on a two-dimensional rotating sphere</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec5.3.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=sec6.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h3><a name="label-0" id="label-0">5.4. A shallow water model on a two-dimensional rotating sphere</a></h3><!-- RDLabel: "5.4. A shallow water model on a two-dimensional rotating sphere" -->
+<p>This is a replication of the numerical calculation by 
+<a href="ref.htm">[12]</a> where the
+orographic responses of the atmosphere are considered by the use of a shallow
+water model on a rotating sphere. What follows is a case presented as an ideal
+orographic response, where global propagation of waves is caused by an
+isolated mountain whose radius is 45 degrees located at 30 degree latitude
+North and 180 degree longitude placed in westerly wind (eastward flow) with
+rigid rotating distribution.</p>
+<p>The governing equations are the linearized shallow water model on a rotating
+sphere:</p>
+<center><img src=sec5.4_1.png align=bottom></center>
+<p>where <i>U<sub>0</sub></i> is 
+the given longitudinal velocity of the basic state (rigid rotation), 
+<i>u,v</i> are velocity field disturbances, 
+and <i>H,h</i> and <i>h<sub>t</sub></i> 
+are the averaged fluid depth, 
+surface height, and the bottom topography, respectively. 
+&Omega; is the rotation rate of the system, 
+&nu; is the coefficient of the fourth order hyper-viscosity. 
+<i>a</i> is the radius of the sphere, and 
+&lambda; and &phi; are longitude and latitude, respectively.</p>
+<p>The resultant program source code is given as
+<a href="./f90/spshallow_topo_linear_f90.txt">spshallow_topo_linear.f90</a>.
+Since the computational domain is the whole spherical surface, 
+we use the spherical harmonic series as the basis of spectral expansion. 
+The main part of the program corresponding the governing equations 
+is as follows:</p>
+<pre>do it=1,nt
+    w_U = ( w_U &amp;
+        + dt * w_xy( - xy_U0 * xy_GradLon_w(w_U) / R0   &amp;
+                     - xy_V  * xy_GradLat_w(w_U0) / R0  &amp;
+                     + xy_U0 * xy_V * tan(xy_Lat) / R0  &amp;
+                     + 2 * Omega * sin(xy_Lat) * xy_V   &amp;
+                     - Grav * xy_GradLon_w(w_H)/ R0   ) &amp;
+                     )/(1+Nu*(-rn(:,1)/R0**2)**(ndiff/2)*dt)
+
+    xy_U = xy_w(w_U)
+
+    w_V = ( w_V &amp;
+        + dt * w_xy( - xy_U0 * xy_GradLon_w(w_V) / R0   &amp;
+                     - xy_U * xy_U0 * tan(xy_Lat) / R0  &amp;
+                     - xy_U0 * xy_U * tan(xy_Lat) / R0  &amp;
+                     - 2 * Omega * sin(xy_Lat) * xy_U   &amp;
+                     - Grav * xy_GradLat_w(w_H) / R0 )  &amp;
+                     )/(1+Nu*(-rn(:,1)/r0**2)**(ndiff/2)*dt)
+
+    xy_V = xy_w(w_V)
+
+    w_H = ( w_H &amp;
+        + dt * ( - w_Div_xy_xy( xy_U*(H0+xy_H0)+xy_U0*(xy_H-xy_Htopo),   &amp;
+                                xy_V*(H0+xy_H0) ) / R0      ) &amp;
+                )/(1+Nu*(-rn(:,1)/R0**2)**(ndiff/2)*dt)
+
+    xy_H = xy_w(w_H)
+    ...
+enddo</pre>
+<p>The prefix "w_" and the suffix "_w" denote the spectral data expanded by the
+spherical harmonic series, and the prefix "xy_" and the suffix "_xy" represent
+the grid data whose first and second dimensions are longitude and latitude,
+respectively. As for the time integration, the implicit scheme is applied to
+the viscous terms, while the explicit scheme (the Euler scheme) is applied to
+the others. 
+<i>-rn(:,1)</i> is the array storing the total wavenumber 
+<i>n(n+1)</i>,  which
+is the multiplying factor of the Laplacian operator.</p>
+<p>The pictures below show time the development of vorticity field on different
+map projections. It can be seen that the disturbance is propagating as Rossby
+waves along the great circle.</p>
+<center><table>
+   <tr><td align=center>
+    <a href=../fig/spshallow-topo_anim.gif>
+    <img src=../fig/spshallow-topo_031.gif></a>
+    </td><td align=center>
+    <a href=../fig/spshallow-topo-sat_anim.gif>
+    <img src=../fig/spshallow-topo-sat_031.gif></a>
+</td></tr><tr>
+<td align=center><a href=../fig/spshallow-topo_anim.gif>[animation]</a></td>
+<td align=center><a href=../fig/spshallow-topo-sat_anim.gif>[animation]</a></td></table>
+</center>
+
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec5.3.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=sec6.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

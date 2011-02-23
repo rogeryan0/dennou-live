@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>Required softwares</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="needed.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> ] </small>
+<h1><a name="label-0" id="label-0">Required softwares</a></h1><!-- RDLabel: "Required softwares" -->
+<ul>
+<li>Fortran90 compiler which can be used for building following libraries.</li>
+<li><a href="/library/ispack/">ISPACK</a></li>
+<li><a href="http://www.unidata.ucar.edu/packages/netcdf/">NetCDF</a>
+<ul>
+<li>Mirror site is <a href="/library/ucar/netcdf/">here</a></li>
+</ul></li>
+<li><a href="/library/gtool/">gtool5</a></li>
+</ul>
+<p><a href="../debian/needed.htm.en">Debian GNU/Linux binary packages</a> are available. </p>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2009/03/03, Since: 2002/02/15 </small>
+
+</body>
+</html>

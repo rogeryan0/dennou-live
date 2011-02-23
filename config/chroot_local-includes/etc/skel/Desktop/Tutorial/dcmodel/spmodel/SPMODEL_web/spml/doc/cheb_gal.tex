@@ -1,0 +1,1838 @@
+%表題  SPMODEL レファレンスマニュアル
+%      チェビシェフ関数展開を利用したガラーキン法
+%
+%履歴  2006/01/06 作成  竹広真一
+%      2006/01/14 非圧縮流体用定式化を別ファイルに分割
+%
+\documentclass[a4j,12pt]{jarticle}
+\usepackage{Dennou6}
+
+\Dtitle[チェビシェフ・ガラーキン法]
+       {チェビシェフ関数展開を利用した\\ガラーキン法}
+\Dauthor{竹広真一}
+\Ddate{平成 18 年 1 月 18 日}
+
+\Dparskip
+
+\begin{document}
+
+\maketitle
+
+この文書は, チェビシェフ関数展開ルーチンを利用した
+ガラーキン法による数値計算の定式化を説明する. 
+
+\section{チェビシェフ関数の性質}
+
+  チェビシェフ関数系 $T_k(x)$ は区間 $[-1,1]$ で定義される関数からなり, 
+  次の性質ような性質をもつ. 
+  %
+  \begin{itemize}
+    \item 定義
+      \begin{equation}
+        x=\cos \theta; \quad T_k(x) = T_k(\cos\theta) = \cos k\theta.
+      \end{equation}
+
+    \item 微分の表現
+        \footnote{
+          \begin{eqnarray*}
+            \DD{T_k}{x} 
+            &=& \DD{T_k(\cos \theta)}{\theta}\DD{\theta}{x} = 
+            = \frac{(\cos k \theta)'}{(cos\theta)'}
+            = \frac{k\sin k\theta}{\sin\theta},\\
+            \DD[2]{T_k}{x} 
+            &=&
+              \DD{}{\theta}\left(\DD{T_k}{x}\right)\DD{\theta}{x}
+            = \DD{}{\theta}\left(\frac{k\sin k\theta}{\sin\theta}\right)
+                     \frac{1}{(cos\theta)'}
+            = \frac{k^2\cos k\theta\sin\theta - k\sin k\theta \cos\theta}
+                   {-\sin^3\theta}.
+          \end{eqnarray*}
+        }
+      \begin{equation}
+        x=\cos\theta, \quad
+        \DD{T_k}{x} = \frac{k\sin k\theta}{\sin\theta}, \quad
+        \DD[2]{T_k}{x} 
+          = \frac{-k^2\cos k\theta\sin\theta + k\sin k\theta \cos\theta}
+                 {\sin^3\theta}.
+      \end{equation}
+
+    \item 端点での値
+        \footnote{
+          \begin{eqnarray*}
+           \left.\DD{T_k}{x}\right|_{x=1} 
+             &=& \lim_{\theta\rightarrow 0} \frac{k\sin k\theta}{\sin\theta}
+              = \lim_{\theta\rightarrow 0} 
+                  k^2\frac{\sin k\theta}{n\theta}\frac{\theta}{\sin\theta}
+              = k^2, \\
+           \left.\DD{T_k}{x}\right|_{x=-1} 
+             &=&\lim_{\theta\rightarrow \pi} \frac{k\sin k\theta}{\sin\theta}
+              = \lim_{\varphi\rightarrow 0} 
+                 \frac{k\sin k(\pi-\varphi)}{\sin(\pi-\varphi)}
+              = \lim_{\varphi\rightarrow 0} 
+                 \frac{-k\cos k\pi\sin\varphi}{\sin\varphi}\\
+             &=& (-1)^{k+1}\lim_{\varphi\rightarrow 0} 
+                 \frac{k\sin\varphi}{\sin\varphi}
+              =  (-1)^{k+1}k^2, \\
+           \left.\DD[2]{T_k}{x}\right|_{x=1} 
+             &=& \lim_{\theta\rightarrow 0} 
+                  \frac{-k^2\cos k\theta\sin\theta + k\sin k\theta \cos\theta}
+                       {\sin^3\theta}
+              = \lim_{\theta\rightarrow 0} 
+                 \frac{(-k^2\cos k\theta\sin\theta 
+                         + k\sin k\theta \cos\theta)'}
+                       {(\sin^3\theta)'}\\
+             &=& \lim_{\theta\rightarrow 0} 
+                 \frac{k^3\sin k\theta\sin\theta -k^2 \cos k\theta\cos\theta 
+                       + k^2\cos k\theta \cos\theta -k\sin k\theta \sin\theta}
+                       {3\sin^2\theta\cos\theta}\\
+             &=& \lim_{\theta\rightarrow 0} 
+                   k(k^2-1)\frac{\sin k\theta}{3\sin\theta\cos\theta}
+              = \lim_{\theta\rightarrow 0} 
+                   \frac{k^2(k^2-1)}{3}
+                    \frac{\sin k\theta}{k\theta}
+                    \frac{\theta}{\sin\theta}
+                    \frac{1}{\cos\theta}
+              = \frac{n^2(n^2-1)}{3}.\\
+            \left.\DD[2]{T_k}{x}\right|_{x=-1} 
+              &=& \lim_{\theta\rightarrow \pi}
+                   \frac{-k^2\cos k\theta\sin\theta + k\sin k\theta \cos\theta}
+                        {\sin^3\theta}
+               = \lim_{\theta\rightarrow \pi} 
+                    k(k^2-1)\frac{\sin k\theta}{3\sin\theta\cos\theta}\\
+              &=& \lim_{\varphi\rightarrow 0} 
+                    \frac{k(k^2-1)}{3}
+                    \frac{\sin k(\pi-\varphi)}
+                         {\sin(\pi-\varphi)\cos(\pi-\varphi)}
+               = \lim_{\varphi\rightarrow 0} 
+                    \frac{k(k^2-1)}{3}
+                    \frac{-\cos k\pi\sin k\varphi}
+                         {-\sin\varphi\cos\varphi}\\
+              &=& \lim_{\varphi\rightarrow 0} 
+                    (-1)^k\frac{k(k^2-1)}{3}
+                    \frac{\sin k\varphi}{\sin\varphi\cos\varphi}
+               = (-1)^k\frac{k(k^2-1)}{3}
+          \end{eqnarray*}
+          }
+      \begin{eqnarray}
+        & & T_k(1) = 1, \quad T_k(-1) = (-1)^k, \\
+        & & \left.\DD{T_k}{x}\right|_{x=1} = k^2, \quad 
+            \left.\DD{T_k}{x}\right|_{x=-1} = (-1)^{k+1}k^2, \\
+        & & \left.\DD[2]{T_k}{x}\right|_{x=1} = \frac{k^2(k^2-1)}{3}, \quad 
+         \left.\DD[2]{T_k}{x}\right|_{x=-1}= (-1)^k\frac{k^2(k^2-1)}{3}.
+      \end{eqnarray}
+
+    \item 微分方程式
+        \footnote{
+          \begin{eqnarray*}
+            \DD[2]{T_k}{x} 
+             &=& \frac{-k^2\cos k\theta\sin\theta + k\sin k\theta \cos\theta}
+                   {\sin^3\theta}.
+              = -k^2\frac{\cos k\theta}{\sin^2\theta}
+               + k\frac{\sin k\theta \cos\theta}{\sin^3\theta}.
+              = -k^2\frac{T_k(x)}{1-x^2}
+               + \frac{k\sin k\theta}{\sin\theta} 
+                   \frac{\cos\theta}{\sin^2\theta}\\
+             &=& -k^2\frac{T_k(x)}{1-x^2}
+               + \DD{T_k}{x}
+                   \frac{x}{1-x^2}
+             \rightarrow (1-x^2)\DD[2]{T_k}{x}-x\DD{T_k}{x} +k^2T_k(x).
+          \end{eqnarray*}
+          }
+      \begin{equation}
+        (1-x^2)\DD[2]{T_k}{x} - x\DD{T_k}{x} + k^2 T_k = 0.
+      \end{equation}
+
+    \item 漸化式
+      \footnote{
+        三角関数の和を積に直す公式より
+        \begin{displaymath}
+          \cos(k+1)\theta + \cos(k-1)\theta = 2 \cos k\theta \cos\theta 
+          \rightarrow T_{k+1}(x) + T_{k-1}(x) = 2x T_k(x).
+        \end{displaymath}
+        }
+      \begin{equation}
+        T_{k+1}(x) = 2xT_k(x) - T_{k-1}(x).
+      \end{equation}
+
+    \item 昇降漸化式
+        \footnote{
+          \begin{eqnarray*}
+            T_{k+1}(x) 
+              &=& \cos (k+1)\theta
+               = \cos k\theta \cos\theta - \sin k\theta \sin\theta
+               = x T_k(x) 
+                  - \frac{1}{k}\frac{k\sin k\theta}{\sin\theta}\sin^2\theta
+               = x T_k(x) - \frac{1-x^2}{k}\DD{T_k}{x}, \\
+            T_{k-1}(x) 
+              &=& \cos (k-1)\theta
+               = \cos k\theta \cos\theta + \sin k\theta \sin\theta
+               = x T_k(x) 
+                  + \frac{1}{k}\frac{k\sin k\theta}{\sin\theta}\sin^2\theta
+               = x T_k(x) + \frac{1-x^2}{k}\DD{T_k}{x}.
+           \end{eqnarray*}
+           }
+      \begin{equation}
+            T_{k\pm 1}(x) = x T_k(x) \mp \frac{1-x^2}{k}\DD{T_k}{x}
+      \end{equation}
+
+    \item 直交関係
+        \footnote{
+            \begin{displaymath}
+              \int_{-1}^{1} T_k(x)T_l(x) \frac{dx}{\sqrt{1-x^2}} 
+                = \int_{pi}^{0} \cos k\theta \cos l\theta 
+                   \frac{-\sin\theta \ d\theta}{\sin\theta}
+                = \int_{0}^{\pi} \cos k\theta \cos l\theta \ d\theta.
+            \end{displaymath}
+          $k \neq l$ のとき
+             \begin{eqnarray*}
+               \int_{0}^{\pi} \cos k\theta \cos l\theta \ d\theta
+               &=& \int_{0}^{\pi}\frac{1}{2}
+                    [ \cos(k+l)\theta + \cos(k-l)\theta]\ d\theta\\
+               &=& \frac{1}{2}\left[
+                     \frac{1}{k+l}\sin(n+m)\theta 
+                     + \frac{1}{k-l}\sin(n-m)\theta \right]_0^\pi
+                = 0.
+            \end{eqnarray*}
+          $k = l \neq 0$ のとき
+             \begin{displaymath}
+               \int_{0}^{\pi} \cos k\theta \cos l\theta \ d\theta
+                =  \int_{0}^{\pi} \cos^2 k\theta \ d\theta
+                =  \int_{0}^{\pi}\frac{1}{2}
+                    [ 1 + \cos 2 k \theta ]\ d\theta
+                = \frac{1}{2}\left[
+                     \theta +
+                     \frac{1}{2k}\sin 2k\theta \right]_0^\pi
+                = \frac{\pi}{2}.
+            \end{displaymath}
+          $k = l = 0$ のとき
+             \begin{displaymath}
+               \int_{0}^{\pi} \cos k\theta \cos l\theta \ d\theta
+                =  \int_{0}^{\pi} \ d\theta
+                = \left[\theta \right]_0^\pi
+                = \pi.
+            \end{displaymath}
+          }
+      \begin{equation}
+        \int_{-1}^{1} T_k(x)T_l(x) \frac{dx}{\sqrt{1-x^2}} 
+        = \alpha_k \delta_{kl},
+      \end{equation}
+      %
+      ここで
+      \begin{equation}
+        \alpha_k=\left\{
+        \begin{array}{ll}
+          \pi    & k  = 0   \\
+          \pi/2  & k \neq 0
+        \end{array}
+        \right..
+      \end{equation}
+      である. 
+
+    \item 低次の関数形
+      \begin{equation}
+        T_0(x) = 1, \ T_1(x) = x, 
+        \ T_2(x) = 2x^2-1, 
+        \ T_3(x) = 4x^3-3x, 
+        \ T_4(x) = 8x^4-8x^2 + 1, \ldots
+      \end{equation}
+
+  \end{itemize}
+
+
+\section{チェビシェフ関数展開}
+
+  区間 $[x_{min},x_{max}]$ でとある時間発展方程式と境界条件の下での解を
+  ガラーキン法で数値計算したい. 
+  区間 $[x_{min},x_{max}]$ で定義された関数 $f^*(x^*)$ は
+  次の線形写像で区間 $[-1,1]$ での関数 $f(x)$ へと写される. 
+  %
+  \begin{equation}
+     x^* = \frac{x_{max}+x_{min}}{2} + \frac{x_{max}-x_{min}}{2} \times x.
+  \end{equation}
+  %
+  したがって, 区間 $[-1,1]$ で $f(x)$ をチェビシェフ関数で構成された
+  境界条件を満たす関数系 $\phi_n(x)$ を用いて
+  %
+  \begin{equation}
+    \Deqlab{ガラーキン展開}
+    f(x) = \sum_{n=K_s}^{N}a_n\phi_n(x)
+  \end{equation}
+  %
+  と表せればよい. 
+  $\phi_n(x)$ はガラーキン法の基底関数系であり, 
+  チェビシェフ関数の線形結合で表されるとする. 
+  $K_s$ は基底関数のもっとも低い次数, $K$ が最高次の切断次数を表す. 
+  %
+  \begin{equation}
+    \Deqlab{ガラーキン基底チェビシェフ展開}
+    \phi_n(x) = \sum_{l=0}^{K} A_{ln}T_l(x)
+  \end{equation}
+  %
+  $\phi_n(x)$ は $n$ 次の多項式であることに注意されたい. 
+  $(A_{ln})$ は $(K+1) \times(K-K_s)$ の行列である. 
+
+  一方で, $f(x)$ が $K$ 次までのチェビシェフ関数系 $T_k(x)$ で
+  展開されているとする. すなわち
+  %
+  \begin{equation}
+    \Deqlab{チェビシェフ展開}
+    f(x) = \sum_{k=0}^{K}{}'' c_k T_k(x)
+         \equiv \Dinv{2}c_0 T_0(x) 
+                 +  \sum_{k=1}^{K-1}c_k T_k(x)
+                 + \Dinv{2}c_K T_K(x)
+         = \sum_{n=0}^{K}\beta_k c_k T_k(x)
+  \end{equation}
+  %
+  ただし
+  % 
+  \begin{equation}
+    \beta_k = \left\{
+    \begin{array}{ccc}
+      1/2  & \quad & (k=0,K) \\
+      1    & \quad & (k \neq 0,K)
+    \end{array}
+    \right.
+  \end{equation}
+  %
+  である. 
+
+  \subsection{チェビシェフ係数からガラーキン係数の計算}
+
+    いま $c_k$ を計算できているとして, ガラーキン法による展開係数 $a_n$ を
+    求めることを考える. 
+    \Deqref{ガラーキン展開}と\Deqref{ガラーキン基底チェビシェフ展開}から
+    %
+    \begin{displaymath}
+      f(x) = \sum_{n=K_s}^{K}a_n\phi_n(x)
+           = \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}T_l(x).
+    \end{displaymath}
+    %
+    これと\Deqref{チェビシェフ展開}が等しいので
+    %
+    \begin{equation}
+      \Deqlab{17}
+      \sum_{k=0}^{K}\beta_k c_k T_k(x)
+       = \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}T_l(x).
+    \end{equation}
+    %
+    両辺に $\Ddsty \phi_m(x)=\sum_{l'=0}^{K} A_{l'm}T_l'(x)$ ($m=k_s,\ldots,K$) を
+    かけて $\Ddsty \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}$ を作用させ, 
+    チェビシェフ関数の直交関係を用いる. 
+    %
+    \begin{eqnarray*}
+      & &
+      \sum_{k=0}^{K}\sum_{l'=0}^{K} A_{l'm}T_l'(x)\beta_k c_k T_k(x)
+       = \sum_{n=K_s}^{K}\sum_{l'=0}^{K} A_{l'm}T_l'(x) 
+        a_n\sum_{l=0}^{K} A_{ln}T_l(x), \\
+      & &
+      \sum_{k=0}^{K}\sum_{l'=0}^{K} A_{l'm}\beta_k c_k 
+           \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}T_l'(x)T_k(x)
+       = \sum_{n=K_s}^{K}\sum_{l'=0}^{K} A_{l'm}
+        a_n\sum_{l=0}^{K} A_{ln} 
+        \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}} T_l'(x) T_l(x), \\
+      & &
+      \sum_{k=0}^{K}\sum_{l'=0}^{K} A_{l'm}\beta_k c_k 
+           \alpha_k\delta_{l'k}
+       = \sum_{n=K_s}^{K}\sum_{l'=0}^{K} A_{l'm}
+        a_n\sum_{l=0}^{K} A_{ln} 
+        \alpha_l \delta_{l'l}, \\
+      & &
+      \sum_{k=0}^{K} \alpha_k \beta_k c_k A_{km}
+       = \sum_{n=K_s}^{K} a_n \sum_{l=0}^{K}\alpha_l A_{lm} A_{ln},
+    \end{eqnarray*}
+    %
+    ここで $\Ddsty B_{mn} \equiv\sum_{l=0}^{K}\alpha_l A_{lm} A_{ln} $ 
+    と書き直すと行列の積の形にかけて
+    %
+    \begin{displaymath}
+      \sum_{k=0}^{K} \alpha_k \beta_k c_k A_{km}
+       = \sum_{n=K_s}^{K} B_{mn}a_n \quad (m=k_s,\ldots,K)
+    \end{displaymath}
+    %
+    すなわち, 
+    %
+    \begin{eqnarray*}
+      & &
+      \left(\alpha_0 \beta_0 c_0,\ \cdots,\ \alpha_k \beta_k c_k, 
+            \ \cdots,\ \alpha_K \beta_K c_K \right)
+      \cdot
+      \left(
+        \begin{array}{ccccc}
+          A_{0k_s} &\cdots& A_{0m} &\cdots& A_{Kk_s} \\
+           \cdots  &      &  \cdots  &      & \cdots   \\
+          A_{kk_s} &\cdots& A_{km} &\cdots& A_{kk_s} \\
+           \cdots  &      &  \cdots  &      & \cdots   \\
+          A_{Kk_s} &\cdots& A_{Km} &\cdots& A_{KK} 
+        \end{array}
+      \right)\\
+     & & = 
+      \left(
+        \begin{array}{ccccc}
+          B_{k_sk_s}&\cdots& B_{k_sm} &\cdots& B_{Kk_s} \\
+           \cdots   &      &  \cdots  &      & \cdots   \\
+          B_{kk_s}  &\cdots& B_{km} &\cdots& B_{kk_s} \\
+           \cdots   &      &  \cdots  &      & \cdots   \\
+          B_{Kk_s}  &\cdots& B_{Km} &\cdots& B_{KK} 
+        \end{array}
+      \right)
+      \cdot
+      \left(
+        \begin{array}{c}
+          a_{k_s} \\
+          \cdots  \\
+          a_{m}   \\
+          \cdots  \\
+          a_{K} 
+        \end{array}
+      \right)
+    \end{eqnarray*}
+    %
+    この連立方程式を解くことにより $c_k$ から $a_n$ を求めることができる. 
+
+  \subsection{ガラーキン係数からチェビシェフ係数の計算}
+
+    逆にガラーキン法による展開係数 $a_k$ から $c_k$ を求めるための式は, 
+    \Deqref{17}の両辺に $\Ddsty \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}T_m(x) 
+    \quad (m=0,\ldots,K)$ を作用させて直交関係を用いると良い. 
+    %
+    \begin{eqnarray*}
+      & &
+      \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}T_m(x) 
+          \sum_{k=0}^{K}\beta_k c_k T_k(x)
+       = \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}T_m(x) 
+          \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}T_l(x), \\
+      & &
+      \sum_{k=0}^{K}\beta_k c_k
+         \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}T_m(x)T_k(x)
+       = \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}
+           \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}T_m(x) T_l(x), \\
+      & &
+      \sum_{k=0}^{K}\beta_k c_k \alpha_m\delta_{mk}
+       = \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln} \alpha_m \delta_{ml},\\
+      & &
+      \alpha_m \beta_m c_m = \sum_{n=K_s}^{K} a_n A_{mn}\alpha_m,\\
+      & &
+      c_m = \frac{1}{\beta_m}\sum_{n=K_s}^{K} A_{mn}a_n, 
+      \quad (m=0,\ldots,K).
+    \end{eqnarray*}
+    %
+    行列の形で書き直すと
+    %
+    \begin{equation}
+      \left(
+      \begin{array}{c}
+        c_0    \\ 
+        \ldots \\
+        c_m    \\
+        \ldots \\
+        c_K    
+      \end{array}
+      \right)
+      =
+      \left(
+      \begin{array}{ccccc}
+        A_{0,K_s}/\beta_0 & \ldots & A_{0,k}/\beta_0 &\ldots & A_{0,K}/\beta_0 \\
+         \ldots &   \ldots & \ldots & \ldots & \ldots \\
+        A_{m,K_s}/\beta_m & \ldots & A_{m,k}/\beta_m &\ldots & A_{m,K}/\beta_m \\
+         \ldots &   \ldots & \ldots & \ldots & \ldots \\
+        A_{K,K_s}/\beta_K & \ldots & A_{K,k}/\beta_K & \ldots & A_{K,K}/\beta_K
+      \end{array}
+      \right)
+      \left(
+      \begin{array}{c}
+        a_{K_s} \\ 
+        \ldots  \\
+        a_k     \\
+        \ldots  \\
+        a_K    
+      \end{array}
+      \right)
+    \end{equation}
+  % 
+%   あるいは行列を書き直して
+%   %
+%   \begin{equation}
+%     c_n = \tilde{A}_{nk} a_k, \quad (n=0,\ldots,K, \ k=K_s,\ldots K)
+%   \end{equation}
+%   %
+%   ただし
+%   %
+%   \begin{equation}
+%      \tilde{A}_{nk} = 
+%      \left\{
+%        \begin{array}{cc}
+%          2 A_{nk} &  (n=0,K)\\
+%           A_{nk}  &  (n\neq 0,K)
+%        \end{array}
+%      \right.
+%   \end{equation}
+
+%   この式は未知数 $a_k$ が $(K-K_s+1)$ 個であるのに対して
+%   条件式が $K$ 個と多すぎるので, 
+%   高波数成分を切断し低波数成分に制限した連立方程式を構成する. 
+%   すなわち
+%   %
+%   \begin{equation}
+%     \left(
+%     \begin{array}{c}
+%       c_0    \\ 
+%       \ldots \\
+%       c_n    \\
+%       \ldots \\
+%       c_{K-K_s+1}
+%     \end{array}
+%     \right)
+%     =
+%     \left(
+%     \begin{array}{ccccc}
+%        2A_{0,K_s} & \ldots & 2A_{0,k} & \ldots & 2A_{0,K} \\
+%        \ldots &   \ldots & \ldots & \ldots & \ldots \\
+%        A_{n,K_s} & \ldots & A_{n,k} & \ldots & A_{n,K} \\
+%        \ldots &   \ldots & \ldots & \ldots & \ldots \\
+%        A_{K-K_s+1,K_s} & \ldots & A_{K-K_s+1,k} & \ldots & A_{K-K_s+1,K} \\
+%     \end{array}
+%     \right)
+%     \left(
+%     \begin{array}{c}
+%       a_{K_s} \\ 
+%       \ldots  \\
+%       a_k     \\
+%       \ldots  \\
+%       a_K    
+%     \end{array}
+%     \right)
+%   \end{equation}
+%   %
+%   あるいは, 
+%   \begin{equation}
+%     c_n = \tilde{A}_{nk} a_k, \quad (n=0,\ldots,K-K_s+1, \ k=K_s,\ldots K).
+%   \end{equation}
+
+%   この連立方程式をしかるべき方法で解くことにより, 
+%   チェビシェフ展開係数 $c_n$ からガラーキン展開係数 $a_k$ を
+%   求めることができる. 
+
+%   逆にガラーキン展開係数 $a_k$ から チェビシェフ展開係数 $c_n$ を
+%   計算するには, 
+%   %
+%   \begin{eqnarray*}
+%    c_0 &=& \sum_{k=K_s}^{K} 2 A_{0k} a_k,\\
+%    c_n &=& \sum_{k=K_s}^{K}  A_{nk} a_k, \quad (n=1,\ldots,K-1), \\
+%    c_K &=& \sum_{k=K_s}^{K} 2 A_{Kk} a_k.
+%   \end{eqnarray*}
+%   %
+%   あるいは
+%   %
+%   \begin{eqnarray*}
+%    c_n &=& \sum_{k=K_s}^{K}  \tilde{A}_{nk} a_k, \quad (n=0,\ldots,K). \\
+%   \end{eqnarray*}
+%   \footnote{
+%     非線形項のエイリアシングエラーを避けるために, 
+%     格子点数に対してあえて切断波数を少なく選んでいる場合には
+%     変換行列の最後の $N$ 次の行の 2 倍の係数が不要となることに注意されたい. 
+%     }
+
+
+  \subsection{境界値問題の解法}
+
+    与えられた関数 $g(x)$ に対して, とある境界条件の下で
+    %
+    \begin{equation}
+       {\cal L}[f(x)] = g(x)
+    \end{equation}
+    %
+    を満たす関数 $f(x)$ を求めるという境界値問題を解くことを考える. 
+    ここで ${\cal L}$ は $f(x)$ に働く線形微分作用素であるとする. 
+    
+    このような問題をチェビシェフ・ガラーキン法で解くには, 
+    $f(x)$ を境界条件を満たすガラーキン基底で表現し, 
+    %
+    \begin{displaymath}
+      f(x) = \sum_{n=K_s}^{K}a_n\phi_n(x)
+           = \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}T_l(x),
+    \end{displaymath}
+    %
+    とおく. 
+    一方, 与えられた関数 $g(x)$ はチェビシェフ関数展開されており, 
+    %
+    \begin{equation}
+      g(x) = \sum_{k=0}^{K}{}''b_k T_k(x)=\sum_{k=0}^{K} \beta_k b_k T_k(x)
+    \end{equation}
+    %
+    そうすると
+    %
+    \begin{equation}
+      \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}{\cal L}[T_l(x)]
+      = \sum_{k=0}^{K} \beta_k b_k T_k(x),
+    \end{equation}
+    %
+    の式で $b_k$ から $a_n$ を求める式を構成すれば良い. 
+    ${\cal L}$ は線形作用素であるから
+    %
+    \begin{equation}
+      {\cal L}[T_l(x)] = \sum_{p=0}^{K} L_{lp}T_p(x)
+    \end{equation}
+    %
+    の形に書き直せる. さらに
+    両辺に $\Ddsty \phi_m(x)=\sum_{l'=0}^{K} A_{l'm}T_l'(x)$ ($m=k_s,\ldots,K$) を
+    かけて $\Ddsty \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}$ を作用させ, 
+    チェビシェフ関数の直交関係を用いると, 
+    %
+    \begin{eqnarray*}
+      \sum_{l'=0}^{K} A_{l'm}T_l'(x)
+      \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}
+      \sum_{p=0}^{K} L_{lp}T_p(x)
+      &=& \sum_{l'=0}^{K} A_{l'm}T_l'(x)
+        \sum_{k=0}^{K} \beta_k b_k T_k(x), 
+    \\
+      \sum_{l'=0}^{K} A_{l'm}
+      \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}
+      \sum_{p=0}^{K} L_{lp}
+          \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}T_l'(x)T_p(x) & & \\
+      = \sum_{l'=0}^{K} A_{l'm}
+        \sum_{k=0}^{K} \beta_k b_k 
+        \int_{-1}^{1} \frac{dx}{\sqrt{1-x^2}}T_l'(x)T_k(x), & & 
+    \\
+      \sum_{l'=0}^{K} A_{l'm}
+      \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K} A_{ln}
+      \sum_{p=0}^{K} L_{lp}
+          \alpha_p \delta_{l'p}
+      &=& \sum_{l'=0}^{K} A_{l'm}
+        \sum_{k=0}^{K} \beta_k b_k 
+        \alpha_k\delta_{l'k}
+    \\
+      \sum_{n=K_s}^{K}a_n\sum_{l=0}^{K}\sum_{p=0}^{K}
+          A_{ln}L_{lp}\alpha_p A_{pm}
+      &=& \sum_{k=0}^{K} \alpha_k\beta_k b_k A_{km}
+    \end{eqnarray*}
+    %
+    ここで
+    $\Ddsty D_{nm} \equiv \sum_{l=0}^{K}\sum_{p=0}^{K} A_{ln}L_{lp}\alpha_p A_{pm}$
+    とおけば行列の形で書き直して
+    %
+    \begin{equation}
+      \sum_{n=K_s}^{K}D_{nm} a_n 
+      =\sum_{k=0}^{K} \alpha_k\beta_k b_k A_{km},
+      \quad (m=k_s,\ldots,K)
+    \end{equation}
+    %
+    \begin{eqnarray}
+      & &
+      (a_{k_s},\ \ldots,\ a_n, \ \ldots,\ a_K)\cdot
+      \left(
+        \begin{array}{ccccc}
+          D_{k_sk_s} & \cdots & D_{k_s m} & \cdots & D_{k_s K} \\
+            \cdots   &        & \cdots    &      & \cdots \\
+          D_{n k_s} & \cdots & D_{n m} & \cdots & D_{n K} \\
+            \cdots   &        & \cdots    &      & \cdots \\
+          D_{K k_s} & \cdots & D_{K m} & \cdots & D_{K K} 
+        \end{array}
+      \right)\nonumber\\
+      &=&
+      (\alpha_0\beta_0 b_0,\ \ldots, \ \alpha_k\beta_k b_k,
+      \ \ldots, \ \alpha_K\beta_K b_K)\cdot
+      \left(
+        \begin{array}{ccccc}
+          A_{0k_s} & \cdots & A_{0 m} & \cdots & A_{0 K} \\
+            \cdots   &        & \cdots    &      & \cdots \\
+          A_{k k_s} & \cdots & A_{k m} & \cdots & A_{k K} \\
+            \cdots   &        & \cdots    &      & \cdots \\
+          A_{K k_s} & \cdots & A_{K m} & \cdots & A_{K K} 
+        \end{array}
+      \right)\nonumber\\
+    \end{eqnarray}
+    %
+    この連立方程式を解くことにより $b_k$ から $a_n$ を求めることができる. 
+
+\section[ディリクレ・ノイマン境界条件]
+        {ディリクレ・ノイマン境界条件に対する定式化}
+
+ \subsection{ディリクレ・ノイマン境界条件に対するガラーキン基底の例 : その 1}
+
+  $k$ 次の基底が
+  %
+  \begin{displaymath}
+    \phi_k(x) = T_k(x) + C_{k-1} T_{k-1}(x) + C_{k-2} T_{k-2}(x)
+  \end{displaymath}
+  %
+  の場合の各境界条件に対応するガラーキン基底を求める($k=2,\ldots,K$). 
+  この場合, チェビシェフ係数とガラーキン係数の間の変換行列 $(A_{ln})$ は
+  %
+  \begin{equation}
+     A_{k,k} = 1, \quad A_{k-1,k} = C_{k-1}, \quad A_{k-2,k} = C_{k-2},
+  \end{equation}
+  %
+  と与えられることになる. 
+
+  \subsubsection{両端境界で値が 0 の場合(両端ディリクレ条件)}
+
+    境界条件 $\phi_k(1) = \phi_k(-1) = 0$ より,
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_{k-1}  + C_{k-2} =0, \\
+      & & \phi_k(-1) = (-1)^k + (-1)^{k-1} C_{k-1} + (-1)^{k-2} C_{k-2} =0.
+    \end{eqnarray*}
+    %
+    これを解くと
+    \begin{equation}
+      C_{k-1}=0, \quad C_{k-2} = -1.
+    \end{equation}
+    %
+    したがって
+    \begin{equation}
+      \phi_k(x) = T_k(x) - T_{k-2}(x).
+    \end{equation}
+
+
+  \subsubsection{両端境界で微分が 0 の場合(両端ノイマン条件)}
+
+    区間両端での微分が 0 となる境界条件
+    %
+    \begin{equation}
+      \DD{f}{x} = 0 \quad \mbox{at} \quad x=-1,1
+    \end{equation}
+    %
+    の場合は  
+    \begin{eqnarray*}
+      & & \phi'_k(1) = k^2 + (k-1)^2 C_{k-1} + (k-2)^2C_{k-2} =0, \\
+      & & \phi'_k(-1) = (-1)^k k^2 
+          + (-1)^{k-1} (k-1)^2 C_{k-1} + (-1)^{k-2}(k-2)^2 C_{k-2} =0.
+    \end{eqnarray*}
+    %
+    ただしこの場合, $k=2$ では境界条件を満たすことができないので
+    $k=3,\ldots,K$ である. 
+    $k=2$ の基底は特別に扱い, $\phi_2(x)= T_0(x)$ とおく必要がある. 
+
+    これを解くと, 
+    \begin{equation}
+      C_{k-1} = 0, \quad C_{k-2}=-\left(\frac{k}{k-2}\right)^2,
+    \end{equation}
+    %
+    したがって
+    \begin{equation}
+      \phi_2(x) = T_0(x), \quad
+      \phi_k(x) = T_k(x) - \left(\frac{k}{k-2}\right)^2T_{k-2}(x).
+    \end{equation}
+    %
+    変換行列は
+    \begin{eqnarray}
+      & & A_{0,2} = 1, \nonumber\\
+      & & A_{k,k} = 1, \quad
+          A_{k-2,k} = - \left(\frac{k}{k-2}\right)^2 \quad
+          (k=3,\ldots,K)
+    \end{eqnarray}
+
+
+  \subsubsection{片側端境界で値が 0, 他方で微分値が 0 の場合
+                (片側ディリクレ, 片側ノイマン条件)}
+
+    区間両端での条件が, 片側の値が 0, もう一方で微分値が 0 となる境界条件
+    %
+    \begin{equation}
+      f(1) = 0, \quad  \left.\DD{f}{x}\right|_{x=-1} = 0,
+    \end{equation}
+    %
+    の場合を考える. この境界条件から
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 +  C_{k-1} + C_{k-2} =0, \\
+      & & \phi'_k(-1) = (-1)^k k^2 
+          + (-1)^{k-1} (k-1)^2 C_{k-1} + (-1)^{k-2}(k-1)^2 C_{k-2} =0.
+    \end{eqnarray*}
+    %
+    これを解くと, 
+    \begin{equation}
+      C_{k-1} = \frac{k^2-(k-2)^2}{(k-1)^2+(k-2)^2}, \quad
+      C_{k-2} = -\frac{k^2+(k-1)^2}{(k-1)^2+(k-2)^2}, 
+    \end{equation}
+
+  \subsubsection{片側端境界で微分値が 0, 他方で値が 0 の場合
+                (片側ノイマン, 片側ディリクレ条件)}
+
+    区間両端での条件が, 片側の微分値が 0, もう一方で値が 0 となる境界条件
+    \begin{equation}
+      \left.\DD{f}{x}\right|_{x=1} = 0, \quad , f(-1) = 0, 
+    \end{equation}
+    %
+    の場合を考える. この境界条件から
+    %
+    \begin{eqnarray*}
+      & & \phi'_k(1) = k^2 + (k-1)^2 C_{k-1} + (k-2)^2C_{k-2} =0, \\
+      & & \phi'_k(-1) = (-1)^k  + (-1)^{k-1} C_{k-1} + (-1)^{k-2} C_{k-2} =0.
+    \end{eqnarray*}
+    %
+    これを解くと, 
+    \begin{equation}
+      C_{k-1} = -\frac{k^2-(k-2)^2}{(k-1)^2+(k-2)^2}, \quad
+      C_{k-2} = -\frac{k^2+(k-1)^2}{(k-1)^2+(k-2)^2}, 
+    \end{equation}
+
+  \subsection{一般的な混合境界条件}
+
+    区間両端での条件が, ディリクレ・ノイマン型の混合した一般的な場合
+    を考える. すなわち
+    \footnote{
+      区間 $[x_{min},x_{max}]$ での関数 $f^*(x^*)$ に対する
+      境界条件が
+      % 
+      \begin{displaymath}
+        \alpha^*_{1,x_{max}}\left.\DD{f^*}{x^*}\right|_{x^*=x_{max}}
+           + \alpha^*_{0,x_{max}}f^*(x_{max}) = 0, \quad
+         \alpha^*_{1,x_{min}}\left.\DD{f^*}{x^*}\right|_{x^*=x_{min}}
+           + \alpha^*_{0,x_{min}}f^*(x_{min}) = 0,
+      \end{displaymath}
+      % 
+      と与えられた場合の, 
+      区間 $[-1,1]$ へ写された関数に対する境界条件を表すには
+      微分関係
+      %
+      \begin{displaymath}
+        \DD{f^*}{x^*} = \DD{x}{x^*}\DD{f}{x} 
+         = \frac{2}{x_{max}-x_{min}}\DD{f}{x}
+         \equiv\frac{1}{D_{fac}}\DD{f}{x}
+      \end{displaymath}
+      % 
+      を気をつけなければならない. 
+      ここで $D_{fac}\equiv (x_{max}-x_{min})/2$ である. 
+      したがって, 対応する境界条件は
+      %
+      \begin{displaymath}
+        \frac{\alpha^*_{1,x_{max}}}{D_{fac}}\left.\DD{f}{x}\right|_{x=1}
+           + \alpha^*_{0,x_{max}}f(1) = 0, \quad
+        \frac{\alpha^*_{1,x_{min}}}{D_{fac}}\left.\DD{f}{x}\right|_{x=-1}
+           + \alpha^*_{0,x_{min}}f(-1) = 0,
+      \end{displaymath}
+      %
+      となる. 
+    }
+    %
+    \begin{eqnarray}
+      & & \alpha_{1,1}\left.\DD{f}{x}\right|_{x=1}+ \alpha_{0,1}f(1) = 0,\\
+      & & \alpha_{1,-1}\left.\DD{f}{x}\right|_{x=-1}+ \alpha_{0,-1}f(-1) =0, 
+    \end{eqnarray}
+    %
+    ここで $\alpha_{i,j}$ は定数係数であり, $\alpha_{1,1}$と$\alpha_{0,1}$, 
+    $\alpha_{1,-1}$と$\alpha_{0,-1}$
+    および $\alpha_{0,1}$と$\alpha_{0,-1}$ は同時に 0 とはならないと
+    仮定する. 
+    この境界条件から
+    %
+    \begin{eqnarray*}
+      & & \alpha_{1,1}\phi'(1)+ \alpha_{0,1}\phi(1) \\
+      & &  =  \alpha_{1,1}(k^2 +(k-1)^2C_{k-1}+(k-2)^2C_{k-2})
+            + \alpha_{0,1}(1 + C_{k-1}+ C_{k-2} ) =  0,\\
+      & & \alpha_{1,-1}\phi'(-1)+ \alpha_{0,-1}\phi(-1) \\
+      & &  = \alpha_{1,-1}[(-1)^{k+1}k^2 
+                        + (-1)^k (k-1)^2 C_{k-1}+(-1)^{k-1}(k-2)^2C_{k-2}]\\
+      & &  + \alpha_{0,-1}[(-1)^k + (-1)^{k-1} C_{k-1}+ (-1)^{k-2} C_{k-2} ]
+        =  0,
+    \end{eqnarray*}
+    %
+    行列の形式でかけば
+    %
+    \begin{displaymath}
+      \left(
+        \begin{array}{cc}
+          a & b\\
+          c & d 
+        \end{array}
+      \right)
+      \left(
+        \begin{array}{c}
+          C_{k-1}\\C_{k-2}
+        \end{array}
+      \right)
+      =
+      \left(
+        \begin{array}{c}
+          e\\f
+        \end{array}
+      \right),
+    \end{displaymath}
+    %
+    ただし
+    %
+    \begin{eqnarray*}
+      a &=& \alpha_{1,1}(k-1)^2 + \alpha_{0,1} \\
+      b &=& \alpha_{1,1}(k-2)^2 + \alpha_{0,1} \\
+      c &=&  \alpha_{1,-1}(k-1)^2 - \alpha_{0,-1} \\
+      d &=& -\alpha_{1,-1}(k-2)^2 + \alpha_{0,-1} \\
+      e &=& -( \alpha_{1,1}k^2 + \alpha_{0,1}) \\
+      f &=& -(-\alpha_{1,-1}k^2 + \alpha_{0,-1}).
+    \end{eqnarray*}
+    %
+    これを解くと
+    \begin{displaymath}
+      \left(
+        \begin{array}{c}
+          C_{k-1}\\C_{k-2}
+        \end{array}
+      \right)
+      =
+      \frac{1}{ad-bc}
+      \left(
+        \begin{array}{cc}
+          -d & -b\\
+          -c & a 
+        \end{array}
+      \right)
+      \left(
+        \begin{array}{c}
+          e\\f
+        \end{array}
+      \right)
+      =
+      \frac{1}{ad-bc}
+      \left(
+        \begin{array}{c}
+          de-bf\\-ce+af
+        \end{array}
+      \right).
+    \end{displaymath}
+
+    係数行列の行列式が 0 となってしまう特別な場合として, 
+    $k=2$ の係数行列式が 0 となる場合を考えよう. 
+    このときには基底の一つが
+    %
+    \begin{displaymath}
+      \phi_2(x) = C_1 T_1(x) + C_0 T_0(x)
+    \end{displaymath}
+    %
+    という形となることを意味している. 
+    $C_1, C_0$ は片側の境界条件から定めることができて, 
+    例えば $x=1$ での境界条件から
+    %
+    \begin{displaymath}
+      \alpha_{1,1} C_1 + \alpha_{0,1}(C_1+ C_0) = 0, \quad
+      (\alpha_{1,1}+ \alpha_{0,1})C_1 + \alpha_{0,1}C_0 = 0,
+    \end{displaymath}
+    %
+    すなわち
+    \begin{equation}
+      C_1 = -\alpha_{0,1}\quad C_0 = \alpha_{1,1}+ \alpha_{0,1},
+    \end{equation}
+    %
+    と定められる. したがって
+    \begin{displaymath}
+      \phi_2(x) = -\alpha_{0,1}T_1(x) + (\alpha_{1,1}+ \alpha_{0,1})C_0 T_0(x).
+    \end{displaymath}
+
+    結局, この場合は変換行列の 0 行目だけ修正して
+    \begin{eqnarray}
+      & & A_{1,2} = -\alpha_{0,1}, \quad A_{0,2} = \alpha_{1,1}+ \alpha_{0,1}\\
+      & & A_{k,k} = 1, \quad A_{k-1,k} = C_{k-1}, \quad A_{k-2,k} = C_{k-2},
+      \quad (k \ge 3).
+    \end{eqnarray}
+    % 
+    と与えられることになる. 
+
+
+ \subsection{ディリクレ・ノイマン境界条件に対するガラーキン基底の例 : その 2}
+  
+  \subsubsection{両端境界で値が 0 の場合(両端ディリクレ条件)}
+
+    $T_k(1) = \cos 0 = 1$, $T_k(-1) = \cos k\pi = (-1)^k$ 
+    である. 特に $T_0(1)=T_0(-1)=1, T_1(1)=1, T_1(-1)=-1$ 
+    であるから, 
+    両端で値が 0 となるようなガラーキン基底は
+    %
+    \begin{eqnarray*}
+      \phi_2(x) = T_2(x) - T_0(x), &\quad& \phi_3(x) = T_3(x) - T_1(x), \\
+        \ldots  & &  \ldots \\ 
+      \phi_{2k}(x) = T_{2k}(x) - T_0(x), &\quad& 
+            \phi_{2k+1}(x) = T_{2k+1}(x) - T_1(x), \\
+        \ldots  & & \ldots \\
+      \phi_{K-1}(x) = T_{K-1}(x) - T_1(x), &\quad& 
+            \phi_{K}(x) = T_{K}(x) - T_0(x). 
+    \end{eqnarray*}
+    %
+    暗黙のうちに $K$ が偶数であることを用いている. 
+    変換行列 $(\tilde{A}_{nk})$ は
+    \begin{equation}
+      (\tilde{A}_{nk}) = 
+      \left(
+      \begin{array}{ccccccccccc}
+        -1 &  0 & \ldots & -1 &  0 & \ldots & 0  & -1 \\
+         0 & -1 & \ldots &  0 & -1 & \ldots & -1 & 0  \\
+         1 &  0 & \ldots &  0 &  0 & \ldots & 0  & 0  \\
+         0 &  1 & \ldots &  0 &  0 & \ldots & 0  & 0  \\
+         0 &  0 & \ldots &  0 &  0 & \ldots & 0  & 0  \\
+         0 &  0 & \ldots &  1 &  0 & \ldots & 0  & 0  \\
+         0 &  0 & \ldots &  0 &  1 & \ldots & 0  & 0  \\
+         0 &  0 & \ldots &  0 &  0 & \ldots & 0  & 0  \\
+         0 &  0 & \ldots &  0 &  0 & \ldots & 1  & 0  \\
+         0 &  0 & \ldots &  0 &  0 & \ldots & 0  & 1
+      \end{array}
+      \right)
+    \end{equation}
+    %
+    解析的に書けば
+    %
+    \begin{eqnarray}
+      \tilde{A}_{0,k} = -[1+(-1)^k]/2  &\quad & ( k=2,3,\ldots,K )\\
+      \tilde{A}_{1,k} = -[1-(-1)^k]/2  &\quad & ( k=2,3,\ldots,K-1 )\\
+      \tilde{A}_{k,k} =  1  &\quad & ( k=2,3,\ldots,K )
+    \end{eqnarray}
+
+  \subsubsection{両端境界で微分が 0 の場合(両端ノイマン条件)}
+
+    区間両端での微分が 0 となる境界条件
+    %
+    \begin{equation}
+      \DD{f}{x} = 0 \quad \mbox{at} \quad x=-1,1
+    \end{equation}
+    %
+    の場合を考える. 
+
+    チェビシェフ関数の微分は
+    %
+    \begin{equation}
+      \DD{T_k(x)}{x} = \DD{T_k(\cos\theta)}{\theta}
+        = \frac{(\cos n\theta)'}{(\cos\theta)'}
+        = \frac{n\sin n\theta}{\sin\theta}
+    \end{equation}
+    %
+    $x=1$ での微分値は $\theta \rightarrow 0$ の極限をとって
+    %
+    \begin{equation}
+      \DD{T_k(x)}{x}|_{x=1} 
+         = \lim_{\theta\rightarrow 0}\frac{k\sin k\theta}{\sin\theta}
+         = \lim_{\theta\rightarrow 0}
+             k^2\frac{\sin n\theta}{k\theta}\frac{\theta}{\sin\theta}
+         = k^2.
+    \end{equation}
+    %
+    $x=-1$ での微分値は $\varphi=\pi-\theta $ と変換して
+    %
+    \begin{eqnarray}
+      \DD{T_k(x)}{x}|_{x=-1} 
+         &=& \lim_{\varphi\rightarrow 0}
+               \frac{k\sin k(\pi-\varphi)}{\sin(\pi-\varphi)}
+         = \lim_{\varphi\rightarrow 0}
+               \frac{-k\cos k\pi\sin k\varphi}{\sin\varphi}\nonumber\\
+         &=& \lim_{\varphi\rightarrow 0}
+               (-1)^{k+1}k^2 \frac{\sin k\varphi}{n\varphi}
+               \frac{\varphi}{\sin\varphi}
+         = (-1)^{k+1}k^2.
+    \end{eqnarray}
+    %
+    したがって, 境界条件を満たすガラーキン基底を
+    \begin{eqnarray*}
+      \phi_2(x) &=& T_0(x), \\
+      \phi_3(x) &=& T_3(x)- 3^2 T_1(x) \\
+      \phi_4(x) &=& T_4(x)- (4/2)^2 T_2(x) \\
+               &\ldots& \\
+      \phi_{2k-1}(x) &=& T_{2k-1}(x)- (2k-1)^2 T_1(x) \\
+      \phi_{2k}(x) &=& T_{2k}(x)- k^2 T_2(x) 
+    \end{eqnarray*}
+    %
+    これにあわせて変換行列は
+    \begin{equation}
+      (\tilde{A}_{nk}) = 
+      \left(
+      \begin{array}{cccccccccccc}
+         0 &  0 & 1&  \ldots &  0 &  0 & \ldots & 0  & 0  \\
+        -3^2 &0 &-5^2&\ldots & -(2k-1)^2 &  0 & \ldots & (K-1)^2  & 0 \\
+         0 & -4^2&0& \ldots &  0 & -k^2 & \ldots & 0              & (K/2)^2  \\
+         1 &  0 & 0 &\ldots &  0 &  0 & \ldots & 0  & 0  \\
+         0 &  1 & 0 &\ldots &  0 &  0 & \ldots & 0  & 0  \\
+         0 &  0 & 1 &\ldots &  0 &  0 & \ldots & 0  & 0  \\
+         0 &  0 & 0 &\ldots &  1 &  0 & \ldots & 0  & 0  \\
+         0 &  0 & 0 &\ldots &  0 &  1 & \ldots & 0  & 0  \\
+         0 &  0 & 0 &\ldots &  0 &  0 & \ldots & 0  & 0  \\
+         0 &  0 & 0 &\ldots &  0 &  0 & \ldots & 1  & 0  \\
+         0 &  0 & 0 &\ldots &  0 &  0 & \ldots & 0  & 1
+      \end{array}
+      \right)
+    \end{equation}
+
+    解析的に書けば
+    \begin{eqnarray}
+      A_{0,2} = 1, \\
+      A_{1,k} = -[1-(-1)^k] k^2/2  &\quad & ( k=3,4,\ldots,K-1 )\\
+      A_{2,k} = -[1+(-1)^k] k^2/8  &\quad & ( k=3,4,\ldots,K )\\
+      A_{k,k} =  1  &\quad & ( k=3,4,\ldots,K )
+    \end{eqnarray}
+
+  \subsubsection{片側端境界で値が 0, 他方で微分値が 0 の場合
+                (片側ディリクレ, 片側ノイマン条件)}
+
+    区間両端での条件が, 片側の値が 0, もう一方で微分値が 0 となる境界条件
+    %
+    \begin{equation}
+      f(1) = 0, \quad  \left.\DD{f}{x}\right|_{x=-1} = 0,
+    \end{equation}
+    %
+    の場合を考える. $k$ 次の基底を
+    %
+    \begin{displaymath}
+      \phi_k(x) = T_k(x) + C_1 T_1(x) + C_0 T_0(x)
+    \end{displaymath}
+    %
+    と仮定する. 境界条件から
+    \begin{displaymath}
+      \phi'_k(-1) = (-1)^{k+1}\cdot k^2 + C_1 =0, \quad
+      \phi_k(1) = 1 + C_1 + C_0 =0, 
+    \end{displaymath}
+    %
+    これを解くと
+    %
+    \begin{displaymath}
+      C_1 = (-1)^k\cdot k^2, \quad C_0 = (-1)^{k+1}\cdot k^2 - 1
+    \end{displaymath}
+    %
+    よって基底関数は
+    \begin{equation}
+      \phi_n(x) = T_k(x) + (-1)^k\cdot k^2 T_1(x) 
+                + [(-1)^{n+1}\cdot n^2 - 1] T_0(x).
+    \end{equation}
+    %
+    対応して変換行列は
+    %
+    \begin{eqnarray}
+      \tilde{A}_{0,k} = [(-1)^{k+1}\cdot k^2 - 1]  
+                            &\quad & ( n=2,3,\ldots,K )\\
+      \tilde{A}_{1,k} = (-1)^k\cdot k^2  
+                            &\quad & ( n=2,3,\ldots,K )\\
+      \tilde{A}_{k,k} =  1  &\quad & ( n=2,3,\ldots,K )
+    \end{eqnarray}
+
+  \subsubsection{片側端境界で微分値が 0, 他方で値が 0 の場合
+                (片側ノイマン, 片側ディリクレ条件)}
+
+    \begin{equation}
+      \left.\DD{f}{x}\right|_{x=1} = 0, \quad , f(-1) = 0, 
+    \end{equation}
+    %
+    の場合を考える. 先と同様に $n$ 次の基底を
+    %
+    \begin{displaymath}
+      \phi_k(x) = T_k(x) + C_1 T_1(x) + C_0 T_0(x)
+    \end{displaymath}
+    %
+    と仮定する. 境界条件から
+    %
+    \begin{displaymath}
+      \phi_k(-1) = (-1)^{n} - C_1 + C_0 =0, \quad
+      \phi'_k(1) = k^2 + C_1 =0, 
+    \end{displaymath}
+    %
+    これを解くと
+    %
+    \begin{displaymath}
+      C_1 = - k^2, \quad C_0 = - k^2 + (-1)^{k+1}
+    \end{displaymath}
+    %
+    よって基底関数は
+    \begin{equation}
+      \phi_k(x) = T_k(x) - n^2 T_1(x) 
+                + [- k^2 + (-1)^{k+1}] T_0(x).
+    \end{equation}
+    %
+    対応して変換行列は
+    %
+    \begin{eqnarray}
+      \tilde{A}_{0,k} =   [- k^2 + (-1)^{k+1}]
+                            &\quad & ( k=2,3,\ldots,K )\\
+      \tilde{A}_{1,k} = - k^2
+                            &\quad & ( k=2,3,\ldots,K )\\
+      \tilde{A}_{k,k}   =  1  &\quad & ( k=2,\ldots,K )
+    \end{eqnarray}
+
+  \subsection{一般的な混合境界条件}
+
+    区間両端での条件が, ディリクレ・ノイマン型の混合した一般的な場合
+    を考える. すなわち
+    \footnote{
+      区間 $[x_{min},x_{max}]$ での関数 $f^*(x^*)$ に対する
+      境界条件が
+      % 
+      \begin{displaymath}
+        \alpha^*_{1,x_{max}}\left.\DD{f^*}{x^*}\right|_{x^*=x_{max}}
+           + \alpha^*_{0,x_{max}}f^*(x_{max}) = 0, \quad
+         \alpha^*_{1,x_{min}}\left.\DD{f^*}{x^*}\right|_{x^*=x_{min}}
+           + \alpha^*_{0,x_{min}}f^*(x_{min}) = 0,
+      \end{displaymath}
+      % 
+      と与えられた場合の, 
+      区間 $[-1,1]$ へ写された関数に対する境界条件を表すには
+      微分関係
+      %
+      \begin{displaymath}
+        \DD{f^*}{x^*} = \DD{x}{x^*}\DD{f}{x} 
+         = \frac{2}{x_{max}-x_{min}}\DD{f}{x}
+         \equiv\frac{1}{D_{fac}}\DD{f}{x}
+      \end{displaymath}
+      % 
+      を気をつけなければならない. 
+      ここで $D_{fac}\equiv (x_{max}-x_{min})/2$ である. 
+      したがって, 対応する境界条件は
+      %
+      \begin{displaymath}
+        \frac{\alpha^*_{1,x_{max}}}{D_{fac}}\left.\DD{f}{x}\right|_{x=1}
+           + \alpha^*_{0,x_{max}}f(1) = 0, \quad
+        \frac{\alpha^*_{1,x_{min}}}{D_{fac}}\left.\DD{f}{x}\right|_{x=-1}
+           + \alpha^*_{0,x_{min}}f(-1) = 0,
+      \end{displaymath}
+      %
+      となる. 
+    }
+    %
+    \begin{eqnarray}
+      & & \alpha_{1,1}\left.\DD{f}{x}\right|_{x=1}+ \alpha_{0,1}f(1) = 0,\\
+      & & \alpha_{1,-1}\left.\DD{f}{x}\right|_{x=-1}+ \alpha_{0,-1}f(-1) =0, 
+    \end{eqnarray}
+    %
+    ここで $\alpha_{i,j}$ は定数係数である. 
+    この境界条件を満たす $n$ 次の基底を
+    %
+    \begin{displaymath}
+      \phi_k(x) = T_k(x) + C_1 T_1(x) + C_0 T_0(x)
+    \end{displaymath}
+    %
+    と仮定する. 境界条件から
+    %
+    \begin{eqnarray*}
+      & \alpha_{1,1}(k^2 + C_1) + \alpha_{0,1}(1+C_1+ C_0) = 0, \\
+      & \alpha_{1,-1}[(-1)^{k+1}k^2 + C_1] 
+         + \alpha_{0,-1}[(-1)^k - C_1 + C_0] = 0,
+    \end{eqnarray*}
+    %
+    これを整理すると
+    \begin{displaymath}
+      \left(
+      \begin{array}[]{cc}
+        \alpha_{1,1}+\alpha_{0,1} & \alpha_{0,1} \\
+        \alpha_{1,-1}-\alpha_{0,-1}& \alpha_{0,-1} 
+      \end{array}
+      \right)
+      \left(
+      \begin{array}[]{c}
+        C_1 \\ C_0
+      \end{array}
+      \right)
+      = 
+      -\left(
+      \begin{array}[]{c}
+        \alpha_{1,1}\cdot k^2 + \alpha_{0,1}\\
+        \alpha_{1,-1}\cdot (-1)^{k+1}k^2 + \alpha_{0,-1}\cdot (-1)^k
+      \end{array}
+      \right),
+    \end{displaymath}
+    %
+    よって, 左辺係数行列の行列式が 0 でない, すなわち
+    \begin{equation}
+      (\alpha_{1,1}+\alpha_{0,1})\alpha_{0,-1}
+                 -(\alpha_{1,-1}-\alpha_{0,-1})\alpha_{0,1}
+     =\alpha_{1,-1}\alpha_{0,1}-\alpha_{1,1}\alpha_{0,-1}
+        -2\alpha_{0,-1}\alpha_{0,1}
+     \neq 0
+    \end{equation}
+    %
+    の場合には $C_1, C_0$ を定めることができて, 
+    %
+    \begin{eqnarray*}
+      &&\left(
+      \begin{array}[]{c}
+        C_1 \\ C_0
+      \end{array}
+      \right)
+      =
+      -\frac{1}{(\alpha_{1,1}+\alpha_{0,1})\alpha_{0,-1}
+                 -(\alpha_{1,-1}-\alpha_{0,-1})\alpha_{0,1}}
+      \left(
+      \begin{array}[]{cc}
+        \alpha_{0,-1}     & -\alpha_{0,1} \\
+        -\alpha_{1,-1}+\alpha_{0,-1}& \alpha_{1,1}+\alpha_{0,1}
+      \end{array}
+      \right)\\
+      &&\qquad\times
+      \left(
+      \begin{array}[]{c}
+        \alpha_{1,1}\cdot k^2 + \alpha_{0,1}\\
+        \alpha_{1,-1}\cdot (-1)^{k+1}k^2 + \alpha_{0,-1}\cdot (-1)^k
+      \end{array}
+      \right)\\
+      &&=
+      \frac{1}{
+        \alpha_{1,-1}\alpha_{0,1}-\alpha_{1,1}\alpha_{0,-1}
+        -2\alpha_{0,-1}\alpha_{0,1}
+      }\\
+      &&\times
+      \left(
+      \begin{array}[]{c}
+        \alpha_{0,-1}[\alpha_{1,1}\cdot k^2 + \alpha_{0,1}]
+         -\alpha_{0,1}
+          [\alpha_{1,-1}\cdot (-1)^{k+1}k^2 + \alpha_{0,-1}\cdot (-1)^k]\\
+        (-\alpha_{1,-1}+\alpha_{0,-1})(\alpha_{1,1}\cdot k^2 + \alpha_{0,1})
+         + (\alpha_{1,1}+\alpha_{0,1})
+          [\alpha_{1,-1}\cdot (-1)^{k+1}k^2 + \alpha_{0,-1}\cdot (-1)^k]
+      \end{array}
+      \right)
+    \end{eqnarray*}
+
+    対応する変換行列は
+    %
+    \begin{eqnarray}
+      \tilde{A}_{0,k} =  C_0(k)
+                            &\quad & ( k=2,3,\ldots,K )\\
+      \tilde{A}_{1,k} =  C_1(k)
+                            &\quad & ( k=2,3,\ldots,K )\\
+      \tilde{A}_{k,k}   =  1  &\quad & (n=2,3,\ldots,K )
+    \end{eqnarray}
+
+    係数行列式が 0 となる場合には基底の取り方を変えなければならない. 
+    係数行列式が 0 となる時には基底の一つが
+    %
+    \begin{displaymath}
+      \phi_2(x) = C_1 T_1(x) + C_0 T_0(x)
+    \end{displaymath}
+    %
+    という形となることを意味している. 
+    $C_1, C_0$ は片側の境界条件から定めることができて, 
+    例えば $x=1$ での境界条件から
+    %
+    \begin{displaymath}
+      \alpha_{1,1} C_1 + \alpha_{0,1}(C_1+ C_0) = 0, \quad
+      (\alpha_{1,1}+ \alpha_{0,1})C_1 + \alpha_{0,1}C_0 = 0,
+    \end{displaymath}
+    %
+    すなわち
+    \begin{equation}
+      C_1 = -\alpha_{0,1}\quad C_0 = \alpha_{1,1}+ \alpha_{0,1},
+    \end{equation}
+    %
+    と定められる. したがって
+    \begin{displaymath}
+      \phi_2(x) = -\alpha_{0,1}T_1(x) + (\alpha_{1,1}+ \alpha_{0,1})C_0 T_0(x).
+    \end{displaymath}
+
+    $n>2$ での境界条件を満たす $n$ 次の基底は
+    %
+    \begin{displaymath}
+      \phi_k(x) = T_k(x) + C_2 T_2(x) + C_1 T_0(x)
+    \end{displaymath}
+    %
+    と仮定する. 境界条件から
+    %
+    \begin{eqnarray*}
+      & \alpha_{1,1}(k^2 + 4C_2 + C_1) + \alpha_{0,1}(1+C_2+ C_1) = 0, \\
+      & \alpha_{1,-1}[(-1)^{k+1}k^2 - 4C_2+ C_1] 
+         + \alpha_{0,-1}[(-1)^k + C_2 - C_1] = 0,
+    \end{eqnarray*}
+    %
+    これを整理すると
+    \begin{displaymath}
+      \left(
+      \begin{array}[]{cc}
+        4\alpha_{1,1}+\alpha_{0,1}  & \alpha_{1,1}+\alpha_{0,1} \\
+       -4\alpha_{1,-1}+\alpha_{0,-1}& \alpha_{1,-1}-\alpha_{0,-1}
+      \end{array}
+      \right)
+      \left(
+      \begin{array}[]{c}
+        C_2 \\ C_1
+      \end{array}
+      \right)
+      = 
+      -\left(
+      \begin{array}[]{c}
+        \alpha_{1,1}\cdot k^2 + \alpha_{0,1}\\
+        \alpha_{1,-1}\cdot (-1)^{k+1}k^2 + \alpha_{0,-1}\cdot (-1)^k
+      \end{array}
+      \right),
+    \end{displaymath}
+    %
+    \begin{eqnarray*}
+      &&\left(
+      \begin{array}[]{c}
+        C_2 \\ C_1
+      \end{array}
+      \right)
+      =-\frac{1}{ad-bc}
+      \left(
+      \begin{array}[]{cc}
+        d & -b \\
+        -c & a
+      \end{array}
+      \right)\\
+      &&\qquad\times
+      \left(
+      \begin{array}[]{c}
+        e \\ f
+      \end{array}
+      \right)\\
+      &&=-\frac{1}{ad-bc}
+      \left(
+      \begin{array}[]{c}
+        de - bf \\ -ce + af
+      \end{array}
+      \right)
+    \end{eqnarray*}
+    %
+    ただし
+    \begin{eqnarray*}
+      a &=& 4\alpha_{1,1}+\alpha_{0,1}   \\
+      b &=& \alpha_{1,1}+\alpha_{0,1}    \\
+      c &=& -4\alpha_{1,-1}+\alpha_{0,-1}\\
+      d &=& \alpha_{1,-1}-\alpha_{0,-1}  \\
+      e &=& \alpha_{1,1}\cdot k^2 + \alpha_{0,1}\\
+      f &=& \alpha_{1,-1}\cdot (-1)^{k+1}k^2 + \alpha_{0,-1}\cdot (-1)^k
+    \end{eqnarray*}
+    %
+    対応する変換行列は
+    %
+    \begin{eqnarray}
+      \tilde{A}_{0,2} =  \alpha_{1,1}+ \alpha_{0,1}\\
+      \tilde{A}_{1,2} =  -\alpha_{0,1}\\
+      \tilde{A}_{1,k} =  C_1(k)
+                            &\quad & ( k=3,4,\ldots,K )\\
+      \tilde{A}_{2,k} =  C_2(k)
+                            &\quad & ( k=3,4,\ldots,K )\\
+      \tilde{A}_{k,k}   =  1  &\quad & (n=3,4,\ldots,K )
+    \end{eqnarray}
+
+    特別な場合に先の結果と一致することを確認しておこう. 
+
+    $\alpha_{1,1}=\alpha_{1,-1}=0$,
+    $\alpha_{0,1}=\alpha_{0,-1}=1$ の場合は両端ディリクレ条件に
+    一致する. このとき上の係数 $C_1,C_0$ は
+    %
+    \begin{displaymath}
+      \left(
+      \begin{array}[]{c}
+        C_1 \\ C_0
+      \end{array}
+      \right)
+      =-\frac{1}{2}
+      \left(
+      \begin{array}[]{c}
+        1 -(-1)^k\\
+        1 + (-1)^k
+      \end{array}
+      \right)
+    \end{displaymath}
+
+    $\alpha_{1,1}=\alpha_{0,-1}=0$,
+    $\alpha_{0,1}=\alpha_{1,-1}=1$ の場合は片側ディリクレ, 
+    片側ノイマン条件に一致する. 
+    このとき上の係数 $C_1,C_0$ は
+    %
+    \begin{displaymath}
+      \left(
+      \begin{array}[]{c}
+        C_1 \\ C_0
+      \end{array}
+      \right)
+      =
+      \left(
+      \begin{array}[]{c}
+         -(-1)^{k+1}\cdot k^2 \\
+        -1 + (-1)^{k+1}\cdot k^2 
+      \end{array}
+      \right)
+      =
+      \left(
+      \begin{array}[]{c}
+         (-1)^k \cdot k^2 \\
+         (-1)^{k+1} \cdot k^2 -1 
+      \end{array}
+      \right)
+    \end{displaymath}
+
+    $\alpha_{0,1}=\alpha_{1,-1}=0$,
+    $\alpha_{1,1}=\alpha_{0,-1}=1$ の場合は
+    もう一つの片側ディリクレ, 片側ノイマン条件に一致する. 
+    このとき上の係数 $C_1,C_0$ は
+    %
+    \begin{displaymath}
+      \left(
+      \begin{array}[]{c}
+        C_1 \\ C_0
+      \end{array}
+      \right)
+      =
+      -
+      \left(
+      \begin{array}[]{c}
+        k^2 \\
+        k^2 + (-1)^k
+      \end{array}
+      \right)
+    \end{displaymath}
+
+    $\alpha_{1,1}=\alpha_{1,-1}=1$,
+    $\alpha_{0,1}=\alpha_{0,-1}=0$ の場合は両端ノイマン条件に
+    一致する. このとき上の係数 $C_2,C_1$ は 
+    $ a = 4, b = 1, c = -4, d = 1, e = k^2 , f = (-1)^{k+1}k^2 $
+    より
+    \begin{eqnarray*}
+      \left(
+      \begin{array}[]{c}
+        C_2 \\ C_1
+      \end{array}
+      \right)
+      =-\frac{1}{8}
+      \left(
+      \begin{array}[]{c}
+        k^2 - (-1)^{k+1}k^2 \\  4 k^2 + 4 (-1)^{k+1}k^2 
+      \end{array}
+      \right)
+      =
+      \left(
+      \begin{array}[]{c}
+        -[1 + (-1)^k]k^2/8 \\ -[1- (-1)^k]k^2/2 
+      \end{array}
+      \right)
+    \end{eqnarray*}
+    %
+    また最低次の基底は
+    %
+    \begin{displaymath}
+      \phi_2(x) = T_0(x)
+    \end{displaymath}
+    %
+    である. 
+
+
+\section[非圧縮流体のための定式化]
+        {非圧縮流体の流線関数・ポテンシャルのための定式化}
+
+ \subsection{非圧縮流体の流線関数・ポテンシャルのための
+             ガラーキン基底の例 : その 1}
+
+  $n$ 次の基底が
+  %
+  \begin{displaymath}
+    \phi_k(x) = T_k(x) + C_{k-1} T_{k-1}(x) 
+              +C_{k-2} T_{k-2}(x) + C_{k-3} T_{k-3}(x) + C_{k-4} T_{k-4}(x)
+  \end{displaymath}
+  %
+  の場合の各境界条件に対応するガラーキン基底を求める. 
+  この場合, チェビシェフ係数とガラーキン係数の間の変換行列 $(A_{ln})$ は
+  %
+  \begin{eqnarray}
+    & & A_{k,k} = 1, \nonumber\\
+    & & A_{k-1,k} = C_{k-1,k}, \quad A_{k-2,k} = C_{k-2}, \\
+    & & A_{k-3,k} = C_{k-3,k}, \quad A_{k-4,k} = C_{k-4}, \nonumber
+  \end{eqnarray}
+  %
+  と与えられることになる. 
+
+  \subsubsection{両境界で粘着条件の場合}
+
+    両境界で粘着条件の場合を考える. 
+    この場合区間両端での条件は, 値と微分値がともに 0 となる境界条件となる. 
+    すなわち, 
+    %
+    \begin{equation}
+      f(1) = f(-1) = 0, \quad
+      \left.\DD{f}{x}\right|_{x=-1} = \left.\DD{f}{x}\right|_{x=1} = 0.
+    \end{equation}
+    %
+    境界条件を適用すると, 
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_{k-1} + C_{k-2} + C_{k-3} + C_{k-4}  = 0, \\
+      & & \phi_k(-1) = (-1)^{k}(
+                1 - C_{k-1} + C_{k-2} - C_{k-3} + C_{k-4} ) = 0, \\
+      & & \phi'_k(1) = T'_k + T'_{k-1}C_{k-1} +  T'_{k-2}C_{k-2} +  
+                       T'_{k-3}C_{k-3} +  T'_{k-4}C_{k-4}  = 0, \\
+      & & \phi'_k(-1) = (-1)^{k}(
+                T'_k - T'_{k-1}C_{k-1} +  T'_{k-2}C_{k-2} 
+                     - T'_{k-3}C_{k-3} +  T'_{k-4}C_{k-4}  ) = 0.
+    \end{eqnarray*}
+    %
+    ここで $\Ddsty T'_k = \left.\DP{T_k}{x}\right|_{x=1}=k^2$ である. 
+    これを解くと
+    %
+    \begin{eqnarray*}
+      & & C_{k-1}=C_{k-3}=0, \\
+      & & C_{k-2}=-\frac{T'_{k}-T'_{k-4}}{T'_{k-2}-T'_{k-4}} 
+                 = -\frac{2(k-2)}{k-3},
+         \\
+      & & C_{k-4}=-\frac{T'_{k}-T'_{k-2}}{T'_{k-2}-T'_{k-4}} 
+         = -\frac{k-1}{k-3}.
+    \end{eqnarray*}
+    %
+
+  \subsubsection{両境界で自由すべり条件の場合}
+
+    両境界で自由すべり条件の場合を考える. 
+    この場合区間両端での条件は, 
+    値と 2 階微分値がともに 0 となる境界条件となる. 
+    すなわち, 
+    %
+    \begin{equation}
+      f(1) = f(-1) = 0, \quad
+      \left.\DD[2]{f}{x}\right|_{x=-1} = \left.\DD[2]{f}{x}\right|_{x=1} = 0.
+    \end{equation}
+    %
+    境界条件を適用すると, 
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_{k-1} + C_{k-2} + C_{k-3} + C_{k-4}  = 0, \\
+      & & \phi_k(-1) = (-1)^{k}(
+                1 - C_{k-1} + C_{k-2} - C_{k-3} + C_{k-4} ) = 0, \\
+      & & \phi''_k(1) = T''_k + T''_{k-1}C_{k-1} +  T''_{k-2}C_{k-2} +  
+                       T''_{k-3}C_{k-3} +  T''_{k-4}C_{k-4}  = 0, \\
+      & & \phi''_k(-1) = (-1)^{k}(
+                T''_k - T''_{k-1}C_{k-1} +  T''_{k-2}C_{k-2} 
+                     - T''_{k-3}C_{k-3} +  T''_{k-4}C_{k-4}  ) = 0.
+    \end{eqnarray*}
+    %
+    ここで 
+    $\Ddsty T''_k = \left.\DP[2]{T_k}{x}\right|_{x=1}=\frac{k^2(k^2-1)}{3}$ 
+    である. これを解くと
+    %
+    \begin{eqnarray*}
+      & & C_{k-1}=C_{k-3}=0, \\
+      & & C_{k-2}=-\frac{T''_{k}-T''_{k-4}}{T''_{k-2}-T''_{k-4}}, \\
+      & & C_{k-4}=\frac{T''_{k}-T''_{k-2}}{T''_{k-2}-T''_{k-4}} 
+    \end{eqnarray*}
+    %
+
+  \subsubsection{片側自由すべり条件, 他方粘着条件の場合}
+
+    片側自由すべり条件, 他方粘着条件の場合を考える. 
+    この場合, 片側境界にて値と 2 階微分値, 
+    もう一方では値と 1  階微分値が 0 となる境界条件となる. すなわち, 
+    %
+    \begin{equation}
+      f(1) = f(-1) = 0, \quad
+      \left.\DD[2]{f}{x}\right|_{x=1} = \left.\DD[1]{f}{x}\right|_{x=-1} = 0.
+    \end{equation}
+    %
+    境界条件を適用すると, 
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_{k-1} + C_{k-2} + C_{k-3} + C_{k-4}  = 0, \\
+      & & \phi_k(-1) = (-1)^{k}(
+                1 - C_{k-1} + C_{k-2} - C_{k-3} + C_{k-4} ) = 0, \\
+      & & \phi''_k(1) = T''_k + T''_{k-1}C_{k-1} +  T''_{k-2}C_{k-2} +  
+                       T''_{k-3}C_{k-3} +  T''_{k-4}C_{k-4}  = 0, \\
+      & & \phi'_k(-1) = (-1)^{k}(
+                T'_k - T'_{k-1}C_{k-1} +  T'_{k-2}C_{k-2} 
+                     - T'_{k-3}C_{k-3} +  T'_{k-4}C_{k-4}  ) = 0,
+    \end{eqnarray*}
+    %
+    である. これを解くと
+    %
+    \begin{eqnarray*}
+      & & C_{k-1}= - C_{k-3}, \\
+      & & C_{k-2}= - C_{k-4}-1, \\
+      & & C_{k-3}=\frac{1}{\Delta}
+           (T'_{k-2}-T'_{k-4})(T''_{k}-T''_{k-2})
+           -(T''_{k-2}-T''_{k-4})(T'_{k}-T'_{k-2}), \\
+      & & C_{k-4}=\frac{1}{\Delta}
+           (T'_{k-1}-T'_{k-3})(T''_{k}-T''_{k-2})
+           +(T''_{k-1}-T''_{k-3})(T'_{k}-T'_{k-2}),
+    \end{eqnarray*}
+    %
+    ここで
+    %
+    \begin{displaymath}
+      \Delta=(T''_{k-1}-T''_{k-3})(T'_{k-2}-T'_{k-4})
+            +(T'_{k-1}-T'_{k-3})(T''_{k-2}-T''_{k-4})
+    \end{displaymath}
+    %
+    である. 
+
+  \subsubsection{片側粘着条件, 他方自由すべり条件の場合}
+
+    片側粘着条件, 他方自由すべり条件の場合を考える. 
+    この場合, 片側境界にて値と 1 階微分値, 
+    もう一方では値と 2 階微分値が 0 となる境界条件となる. すなわち, 
+    %
+    \begin{equation}
+      f(1) = f(-1) = 0, \quad
+      \left.\DD[]{f}{x}\right|_{x=1} = \left.\DD[2]{f}{x}\right|_{x=-1} = 0.
+    \end{equation}
+    %
+    境界条件を適用すると, 
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_{k-1} + C_{k-2} + C_{k-3} + C_{k-4}  = 0, \\
+      & & \phi_k(-1) = (-1)^{k}(
+                1 - C_{k-1} + C_{k-2} - C_{k-3} + C_{k-4} ) = 0, \\
+      & & \phi'_k(1) = T'_k + T'_{k-1}C_{k-1} +  T'_{k-2}C_{k-2} +  
+                       T'_{k-3}C_{k-3} +  T'_{k-4}C_{k-4}  = 0, \\
+      & & \phi''_k(-1) = (-1)^{k}(
+                T''_k - T''_{k-1}C_{k-1} +  T''_{k-2}C_{k-2} 
+                     - T''_{k-3}C_{k-3} +  T''_{k-4}C_{k-4}  ) = 0,
+    \end{eqnarray*}
+    %
+    である. これを解くと
+    %
+    \begin{eqnarray*}
+      & & C_{k-1}= - C_{k-3},\\
+      & & C_{k-2}= - C_{k-4}-1,\\
+      & & C_{k-3}=\frac{1}{\Delta}
+           (T''_{k-2}-T''_{k-4})(T'_{k}-T'_{k-2})
+           -(T'_{k-2}-T'_{k-4})(T''_{k}-T''_{k-2}), \\
+      & & C_{k-4}=\frac{1}{\Delta}
+           (T''_{k-1}-T''_{k-3})(T'_{k}-T'_{k-2})
+           +(T'_{k-1}-T'_{k-3})(T''_{k}-T''_{k-2}),
+    \end{eqnarray*}
+    %
+    ここで
+    %
+    \begin{displaymath}
+      \Delta=(T'_{k-1}-T'_{k-3})(T''_{k-2}-T''_{k-4})
+            +(T''_{k-1}-T''_{k-3})(T'_{k-2}-T'_{k-4})
+    \end{displaymath}
+    %
+    である. 
+
+
+  \subsection{非圧縮流体の流線関数・ポテンシャルのための
+              ガラーキン基底の例 : その 2}
+
+  $n$ 次の基底が
+  %
+  \begin{displaymath}
+    \phi_k(x) = T_k(x) + C_3 T_3(x) + C_2 T_2(x) + C_1 T_1(x) + C_0 T_0(x)
+  \end{displaymath}
+  %
+  の場合の各境界条件に対応するガラーキン基底を求める. 
+  この場合, チェビシェフ係数とガラーキン係数の間の変換行列 $(A_{ln})$ は
+  %
+  \begin{eqnarray}
+    & & A_{k,k} = 1, \nonumber\\
+    & & A_{3,k} = C_3, \quad A_{2,k} = C_2, \\
+    & & A_{1,k} = C_1, \quad A_{0,k} = C_0, \nonumber
+  \end{eqnarray}
+  %
+  と与えられることになる. 
+
+  \subsubsection{両境界で粘着条件の場合}
+
+    両境界で粘着条件の場合を考える. 
+    この場合区間両端での条件は, 値と微分値がともに 0 となる境界条件となる. 
+    すなわち, 
+    %
+    \begin{equation}
+      f(1) = f(-1) = 0, \quad
+      \left.\DD{f}{x}\right|_{x=-1} = \left.\DD{f}{x}\right|_{x=1} = 0.
+    \end{equation}
+    %
+    境界条件を適用すると, 
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_3 + C_2 + C_1 + C_0  = 0, \\
+      & & \phi_k(-1) = (-1)^{k} -C_3 + C_2 - C_1 + C_0  = 0, \\
+      & & \phi'_k(1) = k^2 + 9 C_3 + 4 C_2 + C_1 = 0, \\
+      & & \phi'_k(-1) = (-1)^{k+1} k^2 + 9 C_3 - 4 C_2 + C_1 = 0. 
+    \end{eqnarray*}
+    %
+    これを解くと
+    %
+    \begin{eqnarray}
+      & & C_3 = \frac{1}{16}[1-(-1)^k](1-k^2), \
+          C_2 = -\frac{1}{8}[(-1)^k+1]k^2,  \\
+      & & C_1 = -\frac{1}{16}[1-(-1)^k](9-k^2),\
+          C_0 = \frac{1}{8}[(-1)^{k}+1](k^2-4).
+    \end{eqnarray}
+
+  \subsubsection{両境界で自由すべり条件}
+
+    両境界で自由すべり条件の場合を考える. 
+    この場合区間両端での条件は, 値と 2 階微分値がともに 0 となる境界条件
+    となる. すなわち, 
+    %
+    \begin{equation}
+      f(1) = f(-1) = 0, \quad
+      \left.\DD[2]{f}{x}\right|_{x=-1} = \left.\DD[2]{f}{x}\right|_{x=1} = 0.
+    \end{equation}
+    %
+    境界条件から
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_3 + C_2 + C_1 + C_0  = 0, \\
+      & & \phi_k(-1) = (-1)^{n} -C_3 + C_2 - C_1 + C_0  = 0, \\
+      & & \phi''_k(1) = \frac{k^2(k^2-1)}{3} + 24 C_3 + 4 C_2  = 0, \\
+      & & \phi''_k(-1) = (-1)^k\frac{k^2(k^2-1)}{3} - 24 C_3 + 4 C_2 = 0. 
+    \end{eqnarray*}
+    %
+    これを解くと
+    %
+    \begin{eqnarray}
+      & & C_3 = -\frac{1}{144}[1-(-1)^k]k^2(k^2-1), \\
+      & & C_2 = -\frac{1}{24}[(-1)^k+1]k^2(k^2-1), \\
+      & & C_1 = \frac{1}{144}[1-(-1)^k][k^2(k^2-1)-72],\\
+      & & C_0 = \frac{1}{24}[(-1)^k+1][k^2(k^2-1)-12].
+    \end{eqnarray}
+
+  \subsubsection{片側自由すべり条件, 他方粘着条件の場合}
+
+    片側自由すべり条件, 他方粘着条件の場合を考える. 
+    この場合, 片側境界にて値と 2 階微分値, 
+    もう一方では値と 1 階微分値が 0 となる境界条件となる. すなわち, 
+    %
+    \begin{equation}
+      f(1) = f(-1) = 0, \quad
+      \left.\DD[2]{f}{x}\right|_{x=1} = \left.\DD[]{f}{x}\right|_{x=-1} = 0.
+    \end{equation}
+    %
+    境界条件から
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_3 + C_2 + C_1 + C_0  = 0, \\
+      & & \phi_k(-1) = (-1)^{n} -C_3 + C_2 - C_1 + C_0  = 0, \\
+      & & \phi''_k(1) = \frac{k^2(k^2-1)}{3} + 24 C_3 + 4 C_2  = 0, \\
+      & & \phi'_k(-1) = (-1)^{k+1}k^2 + 9 C_3 -4 C_2 + C_1 = 0. 
+    \end{eqnarray*}
+    %
+    これを解くと
+    %
+    \begin{eqnarray}
+      & & C_3 = -\frac{1}{32}\left[\frac{1}{3}k^2(k^2-1)+(-1)^{k+1}k^2 
+                                   - \frac{1-(-1)^k}{2}\right], \\
+      & & C_2 = -\frac{1}{48}k^2(k^2-1)+\frac{3}{16}(-1)^{k+1}k^2
+                -\frac{3}{32}[1-(-1)^k],\\
+      & & C_1 =  \frac{1}{96}k^2(k^2-1)+\frac{1}{32}(-1)^{k+1} k^2
+                -\frac{33}{64}[1-(-1)^k],\\
+      & & C_0 = \frac{1}{48}k^2(k^2-1)  -\frac{3}{16}(-1)^{k+1} k^2
+                +\frac{3}{32}[1-(-1)^k] - \frac{1}{2}[1+(-1)^k].
+    \end{eqnarray}
+
+  \subsubsection{片側粘着条件条件, 他方自由すべりの場合}
+
+    片側粘着条件, 他方自由すべり条件の場合を考える. 
+    この場合, 片側境界にて値と 1 階微分値, 
+    もう一方では値と 2 階微分値が 0 となる境界条件となる. すなわち, 
+    %
+    \begin{equation}
+      f(1) = f(-1) = 0, \quad
+      \left.\DD[]{f}{x}\right|_{x=1} = \left.\DD[2]{f}{x}\right|_{x=-1} = 0.
+    \end{equation}
+    %
+    境界条件から
+    %
+    \begin{eqnarray*}
+      & & \phi_k(1) = 1 + C_3 + C_2 + C_1 + C_0  = 0, \\
+      & & \phi_k(-1) = (-1)^{n} -C_3 + C_2 - C_1 + C_0  = 0, \\
+      & & \phi'_k(1) =  k^2 + 9 C_3 + 4 C_2  = 0, \\
+      & & \phi''_k(-1) = (-1)^{k}\frac{k^2(k^2-1)}{3} - 24 C_3 + 4 C_2 + C_1 = 0. 
+    \end{eqnarray*}
+    %
+    これを解くと
+    %
+    \begin{eqnarray}
+      & & C_3 =  \frac{1}{32}\left[\frac{(-1)^k}{3}k^2(k^2-1)-k^2 
+                                   + \frac{1-(-1)^k}{2}\right], \\
+      & & C_2 = -\frac{(-1)^k}{48}k^2(k^2-1)-\frac{3}{16}k^2
+                +\frac{3}{32}[1-(-1)^k],\\
+      & & C_1 = - \frac{(-1)^k}{96}k^2(k^2-1)+\frac{1}{32} k^2
+                -\frac{33}{64}[1-(-1)^k],\\
+      & & C_0 = \frac{(-1)^k}{48}k^2(k^2-1) +\frac{3}{16}k^2
+                -\frac{3}{32}[1-(-1)^k] - \frac{1}{2}[1+(-1)^k].
+    \end{eqnarray}
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

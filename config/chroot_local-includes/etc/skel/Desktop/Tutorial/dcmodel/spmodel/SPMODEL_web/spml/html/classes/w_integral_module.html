@@ -1,0 +1,948 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: w_integral_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">w_integral_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/w_integral_module_f90.html">
+
+                src/w_integral_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="w_integral_module.html">w_integral_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a
+href="../files/src/w_integral_module_f90.html">w_integral_module.f90</a>,v
+1.8 2009-02-28 21:33:47 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/w_integral_module モジュールは球面上での 2 次元流体運動を
+球面調和函数を用いたスペクトル法によって数値計算するための モジュール <a
+href="w_module.html">w_module</a> の下部モジュールであり,
+積分・平均計算のための Fortran90 関数を提供する.
+</p>
+<p>
+内部で ISPACK の SPPACK と SNPACK の Fortran77 サブルーチンを呼んでいる.
+スペクトルデータおよび格子点データの格納方法や変換の詳しい計算法に ついては
+ISPACK/SNPACK,SPPACK のマニュアルを参照されたい.
+</p>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000254">AvrLat_y</a>&nbsp;&nbsp;
+
+        <a href="#M000258">AvrLonLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000255">AvrLon_x</a>&nbsp;&nbsp;
+
+        <a href="#M000249">IntLat_y</a>&nbsp;&nbsp;
+
+        <a href="#M000253">IntLonLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000250">IntLon_x</a>&nbsp;&nbsp;
+
+        <a href="#M000256">x_AvrLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000251">x_IntLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000257">y_AvrLon_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000252">y_IntLon_xy</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name"><a href="w_base_module.html">w_base_module</a></span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000254" class="method-detail">
+        <a name="M000254"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000254" class="method-signature">
+
+
+
+          <span class="method-name">AvrLat_y</span><span class="method-args">( y_data ) result(AvrLat_y)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000254">AvrLat_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元緯度格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの緯度(Y)方向平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000254-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000254-source">
+<pre>
+    function AvrLat_y(y_data)
+      !
+      ! 1 次元(Y)格子点データの緯度(Y)方向平均(1 層用).
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), intent(in) :: y_data(1:jm)         
+      !(in)  1 次元緯度格子点データ
+      real(8)             :: AvrLat_y            
+      !(out) 平均値
+
+      AvrLat_y = IntLat_y(y_data)/sum(y_Lat_weight)
+
+    end function AvrLat_y
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000258" class="method-detail">
+        <a name="M000258"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000258" class="method-signature">
+
+
+
+          <span class="method-name">AvrLonLat_xy</span><span class="method-args">( xy_data ) result(AvrLonLat_xy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000258">AvrLonLat_xy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの全領域平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた 総和を計算し,
+x_X_Weight*y_Y_Weight の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000258-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000258-source">
+<pre>
+    function AvrLonLat_xy(xy_data)
+      !
+      ! 2 次元緯度経度格子点データの全領域平均(1 層用).
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算し, x_X_Weight*y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), intent(in)   :: xy_data(0:im-1,1:jm)
+      !(in) 2 次元経度緯度格子点データ
+
+      real(8) :: AvrLonLat_xy
+      !(out) 平均値
+
+      AvrLonLat_xy = AvrLon_x(x_AvrLat_xy(xy_data))
+
+    end function AvrLonLat_xy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000255" class="method-detail">
+        <a name="M000255"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000255" class="method-signature">
+
+
+
+          <span class="method-name">AvrLon_x</span><span class="method-args">( x_data ) result(AvrLon_x)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000255">AvrLon_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x_data(0:im-1)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元経度(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(X)格子点データの経度(X)方向平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, x_X_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000255-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000255-source">
+<pre>
+    function AvrLon_x(x_data)
+      !
+      ! 1 次元(X)格子点データの経度(X)方向平均(1 層用).
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), intent(in) :: x_data(0:im-1)
+      !(in)  1 次元経度(X)格子点データ
+      real(8)             :: AvrLon_x       
+      !(out) 平均値
+
+      AvrLon_x = IntLon_x(x_data)/sum(x_Lon_weight)
+
+    end function AvrLon_x
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000249" class="method-detail">
+        <a name="M000249"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000249" class="method-signature">
+
+
+
+          <span class="method-name">IntLat_y</span><span class="method-args">( y_data ) result(IntLat_y)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000249">IntLat_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元緯度(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元緯度(Y)格子点データの Y 方向積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000249-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000249-source">
+<pre>
+    function IntLat_y(y_data)
+      !
+      ! 1 次元緯度(Y)格子点データの Y 方向積分(1 層用).
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), intent(in) :: y_data(1:jm)  !(in)  1 次元緯度(Y)格子点データ
+      real(8)             :: IntLat_y        !(out) 積分値
+
+      IntLat_y = sum(y_data * y_Lat_weight)
+
+    end function IntLat_y
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000253" class="method-detail">
+        <a name="M000253"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000253" class="method-signature">
+
+
+
+          <span class="method-name">IntLonLat_xy</span><span class="method-args">( xy_data ) result(IntLonLat_xy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000253">IntLonLat_xy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの全領域積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000253-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000253-source">
+<pre>
+    function IntLonLat_xy(xy_data)
+      !
+      ! 2 次元緯度経度格子点データの全領域積分(1 層用). 
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), intent(in)   :: xy_data(0:im-1,1:jm)         
+      !(in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+      real(8) :: IntLonLat_xy                         
+      !(out) 積分値
+
+      IntLonLat_xy = IntLon_x(x_IntLat_xy(xy_data))
+
+    end function IntLonLat_xy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000250" class="method-detail">
+        <a name="M000250"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000250" class="method-signature">
+
+
+
+          <span class="method-name">IntLon_x</span><span class="method-args">( x_data ) result(IntLon_x)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000250">IntLon_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x_data(0:im-1)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元経度(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元経度(X)格子点データの X 方向積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000250-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000250-source">
+<pre>
+    function IntLon_x(x_data)
+      !
+      ! 1 次元経度(X)格子点データの X 方向積分(1 層用).
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している.
+      !
+      real(8), intent(in) :: x_data(0:im-1)   !(in)  1 次元経度(X)格子点データ
+      real(8)             :: IntLon_x     !(out) 積分値
+
+      IntLon_x = sum(x_data * x_Lon_weight)
+
+    end function IntLon_x
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000256" class="method-detail">
+        <a name="M000256"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000256" class="method-signature">
+
+
+
+          <span class="method-name">x_AvrLat_xy</span><span class="method-args">( xy_data ) result(x_AvrLat_xy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000256">x_AvrLat_xy</a>(im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元経度(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの緯度(Y)方向平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000256-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000256-source">
+<pre>
+    function x_AvrLat_xy(xy_data)
+      !
+      ! 2 次元緯度経度格子点データの緯度(Y)方向平均(1 層用).
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), intent(in) :: xy_data(0:im-1,1:jm)
+      !(in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+      real(8)             :: x_AvrLat_xy(im)
+      !(out) 平均された 1 次元経度(X)格子点データ
+
+      x_AvrLat_xy = x_IntLat_xy(xy_data)/sum(y_Lat_weight)
+
+    end function x_AvrLat_xy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000251" class="method-detail">
+        <a name="M000251"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000251" class="method-signature">
+
+
+
+          <span class="method-name">x_IntLat_xy</span><span class="method-args">( xy_data ) result(x_IntLat_xy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000251">x_IntLat_xy</a>(0:im-1)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元経度(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの緯度(Y)方向積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000251-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000251-source">
+<pre>
+    function x_IntLat_xy(xy_data)
+      !
+      ! 2 次元緯度経度格子点データの緯度(Y)方向積分(1 層用).
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), intent(in) :: xy_data(0:im-1,1:jm)           
+      !(in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+      real(8)             :: x_IntLat_xy(0:im-1) 
+      !(out) 積分された 1 次元経度(X)格子点データ
+
+      integer :: j
+
+      x_IntLat_xy = 0.0D0
+      do j=1,jm
+         x_IntLat_xy = x_IntLat_xy + xy_data(:,j) * y_Lat_weight(j)
+      enddo
+
+    end function x_IntLat_xy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000257" class="method-detail">
+        <a name="M000257"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000257" class="method-signature">
+
+
+
+          <span class="method-name">y_AvrLon_xy</span><span class="method-args">( xy_data ) result(y_AvrLon_xy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000257">y_AvrLon_xy</a>(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元緯度(Y)格子点
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの経度(X)方向平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, x_X_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000257-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000257-source">
+<pre>
+    function y_AvrLon_xy(xy_data)
+      !
+      ! 2 次元緯度経度格子点データの経度(X)方向平均(1 層用).
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), intent(in) :: xy_data(0:im-1,1:jm)
+      !(in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+      real(8)             :: y_AvrLon_xy(1:jm)
+      !(out) 平均された 1 次元緯度(Y)格子点
+
+      y_AvrLon_xy = y_IntLon_xy(xy_data)/sum(x_Lon_weight)
+
+    end function y_AvrLon_xy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000252" class="method-detail">
+        <a name="M000252"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000252" class="method-signature">
+
+
+
+          <span class="method-name">y_IntLon_xy</span><span class="method-args">( xy_data ) result(y_IntLon_xy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_integral_module.html#M000252">y_IntLon_xy</a>(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元緯度(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの経度(X)方向積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000252-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000252-source">
+<pre>
+    function y_IntLon_xy(xy_data)
+      !
+      ! 2 次元緯度経度格子点データの経度(X)方向積分(1 層用).
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), intent(in) :: xy_data(0:im-1,1:jm)
+      !(in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+      real(8)             :: y_IntLon_xy(1:jm)
+      !(out) 積分された 1 次元緯度(Y)格子点データ
+
+      integer :: i
+
+      y_IntLon_xy = 0.0D0
+      do i=0,im-1
+         y_IntLon_xy = y_IntLon_xy + xy_data(i,:) * x_Lon_weight(i)
+      enddo
+
+    end function y_IntLon_xy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

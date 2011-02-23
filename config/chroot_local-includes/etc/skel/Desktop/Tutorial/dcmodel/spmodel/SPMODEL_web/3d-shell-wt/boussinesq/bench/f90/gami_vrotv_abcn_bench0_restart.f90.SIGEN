@@ -1,0 +1,16 @@
+Subject: 回転球殻ブシネスク対流モデル : ベンチマーク用プログラム
+Maintainer: 竹広真一
+Update: 2002/11/29
+Description: Christensen et al. (1999) の Case0. 
+	     Adams-Bashforth & Crank Nicholson スキーム
+	     (鉛直格子空間での Crank Nicholson 行列).
+             鉛直格子点空間での選点法による境界条件適用.
+             非線形項を ▽xVxV で計算. 
+	     リスタート可能バージョン. 
+
+履歴
+	2002/11/19 竹広真一  境界条件をタウ法から変更
+        2002/11/24 竹広真一  鉛直格子空間での Crank Nicholson 行列. 
+                             行列計算で境界値を変更しない. 
+        2002/11/26 竹広真一  配列を減らし変数名変更.
+        2002/11/29 竹広真一  V▽V 非線形項を ▽xVxV に変更. 渦度を追加.

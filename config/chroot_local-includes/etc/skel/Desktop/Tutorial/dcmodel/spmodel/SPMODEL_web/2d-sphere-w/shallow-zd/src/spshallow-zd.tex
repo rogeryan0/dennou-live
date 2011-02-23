@@ -1,0 +1,1273 @@
+%
+% 表題   SPMODEL サンプルプログラムドキュメント
+%        spshallow_zd.tex
+%
+% 履歴   2004/06/16 小高 正嗣  
+%        2005/06/24 小高 正嗣  
+%        2005/09/21 竹広 真一 大幅改訂
+%        2005/09/21 竹広 真一 拡散係数変更
+%        2005/09/28 竹広 真一 拡散係数変更
+%        2005/10/07 竹広 真一 標準実験解説を旧資源より移行
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4j,12pt]{jarticle}
+%
+% プリアンブル
+%
+\usepackage{Dennou6}                      % dennou-sty-6 を使用
+
+\Dtitle[球面浅水方程式モデル : 渦度発散型]        % ヘッダ部タイトル, モデル名と同じ
+{ {\large SPMODEL サンプルプログラム} \\  % ここは変更しない 
+   球面浅水方程式モデル : 渦度発散型 \\   % モデル名
+  {\large spshallow-zd\_*.f90}             % プログラム名
+}
+%
+\Dauthor[竹広 真一]{竹広 真一}            % 著者
+\Ddate{2004 年 10 月 7 日}                % 日付
+\Dnoparindent                             % 段落の字下げをしない
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% 本文開始
+%
+% 基本的な章節構成は以下の通り. 
+%
+%   1. はじめに 
+%   2. 支配方程式系
+%   3. 離散化
+%   4. 利用モジュールとその他の設定
+%   5. 数値実験
+%   6. 参考文献
+%   -. 謝辞
+% 
+% 必要に応じて構成を変更すること.
+%
+\begin{document}
+
+\maketitle                                % タイトルの作成
+\tableofcontents                          % 目次の作成
+\pagebreak                                
+
+%----------------------------------------------------------------------
+\Dparskip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{概要}
+
+SPMODEL サンプルプログラム『shallow-zd\_*.f90』に用いられている
+基礎方程式と境界条件, および, 
+このプログラムを用いた数値実験の方法について解説する. 
+基礎方程式は, 渦度と発散を用いて表現した球面上の浅水方程式である.  
+計算はスペクトル法を用いて行い, 展開関数は球面調和関数である. 
+波数切断は三角切断である. 
+スペクトル変換と逆変換および微分演算には SPMODEL ライブラリ(spml)を用いている. 
+時間積分はオイラー法, 
+リープフロッグ法と台形公式を組み合わせたセミインプリシット法, 
+およびリープフロッグ法とクランク・ニコルソン法を組み合わせた方法, 
+および 4 次のルンゲ・クッタ法とクランク・ニコルソン法を組み合わせた方法
+について定式化を記述する. 
+
+数値実験として Williamson {\it et al}. (1992) によって提案された, 
+球面浅水方程式モデルの標準試験の実験を行う.
+
+{\bf プログラム名} \\                  % プログラム名
+{\footnotesize
+  \begin{tabular}{ll}
+    shallow-zd\_euler\_*.f90 & : オイラー法 \\
+    shallow-zd\_lfsi\_*.f90  & : セミインプリシット法 \\
+    shallow-zd\_lfcn\_*.f90  & : リープフロッグ \& クランク・ニコルソン法 \\
+    shallow-zd\_rn4cn\_*.f90 & : ルンゲ・クッタ \& クランク・ニコルソン法
+  \end{tabular}
+}
+
+{\bf プログラム取得元}\\               % プログラム取得先
+{\footnotesize
+http://www.gfd-dennou.org/arch/spmodel/2d-sphere-w/shallow-zd/SIGEN.htm
+}
+
+{\bf SPMODEL サンプルプログラム目次}\\ % サンプルプログラム目次(変更しない)
+{\footnotesize
+ http://www.gfd-dennou.org/arch/spmodel/html/sample.htm
+}
+
+{\bf SPMODEL の使い方}\\               % SPMODEL の使い方(変更しない)
+{\footnotesize
+http://www.gfd-dennou.org/arch/spmodel/
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{支配方程式系}
+ここでは支配方程式系と境界条件を記す. 
+
+  \subsection{支配方程式系}
+    支配方程式系は球面浅水方程式系である. 
+
+
+
+  \subsection{渦度・発散を用いた支配方程式系}
+
+    球面浅水方程式系を渦度と発散を用いて表した式はつぎのとおりである. 
+    \begin{eqnarray}
+      \DP{\zeta }{t} &=& -\frac{1}{a(1-\mu ^{2})}
+                          \DP{(f+\zeta)U}{\lambda}
+                        - \frac{1}{a}\DP{(f+\zeta)V}{\mu} \nonumber \\
+                      & & -K_{m}\left[(-1)^{N_m}\Dlapla[2N_m]
+                            - \left(\frac{2}{a^{2}}\right)^{2N_m}\right]\zeta, 
+                        \Deqlab{渦度方程式} \\
+      \DP{D}{t} &=& \frac{1}{a(1-\mu ^{2})}
+                    \DP{(f+\zeta)V}{\lambda}
+                    - \frac{1}{a}\DP{(f+\zeta)U}{\mu} 
+                    - \Dlapla \left[g (h+h_{s}) + E\right] \nonumber \\
+                & & -K_{m}\left[(-1)^{N_m}\Dlapla[2N_m]
+                           - \left(\frac{2}{a^{2}}\right)^{2N_m}\right]D,
+                    \Deqlab{発散方程式} \\
+      \DP{h}{t} &=& - \frac{1}{a(1-\mu ^{2})}\DP{(hU)}{\lambda}
+                    - \frac{1}{a}\DP{(hV)}{\mu}  
+                    - (-1)^{N_h}K_{h}\Dlapla[2N_h]h. 
+                    \Deqlab{質量保存の式} 
+    \end{eqnarray}
+    %
+    各記号の定義は\Dtabref{変数, 物理定数の定義}に示した.
+    渦度 $\zeta $ と発散 $D$ , 単位質量あたりの運動エネルギー $E$, 
+    演算子 $\nabla ^{2}$ は以下のように定義される.
+    %
+    \begin{eqnarray}
+      \zeta &=& \frac{1}{a(1-\mu ^{2})}\DP{V}{\lambda} - \frac{1}{a}\DP{U}{\mu}, \\
+      D     &=& \frac{1}{a(1-\mu ^{2})}\DP{U}{\lambda} + \frac{1}{a}\DP{V}{\mu}, \\
+      E     &=& \frac{U^{2}+V^{2}}{2(1-\mu ^{2})}, \\ 
+      \nabla^{2} A &=& \frac{1}{a^{2}(1-\mu ^{2})}\DP[2]{A}{\lambda}
+                  + \frac{1}{a^{2}}\DP{}{\mu}\left[(1-\mu^{2})\DP{A}{\mu}\right].
+    \end{eqnarray}
+    %
+    ここで $A$ は任意のスカラーである. 流線関数 $\psi $ と速度ポテンシャル
+    $\chi$ を導入すると,
+    %
+    \begin{eqnarray}
+      U &=& -\frac{1-\mu^ {2}}{a}\DP{\psi}{\mu}
+            +\frac{1}{a}\DP{\chi}{\lambda}, \\
+      V &=& \frac{1}{a}\DP{\psi}{\lambda}
+            + \frac{1-\mu^{2}}{a}\DP{\chi}{\mu}, \\
+      \zeta &=& \nabla ^{2} \psi, \\
+      D     &=& \nabla ^{2} \chi
+    \end{eqnarray}
+    と表される. 
+    \begin{table}[h]
+     \begin{center}
+      \begin{tabular}{c l l  } \hline
+       記号    &\qquad\qquad&  変数/物理定数   \\ \hline 
+       $\lambda$&& 経度            \\
+       $\phi$   && 緯度            \\
+       $\mu $   && $\sin$ 緯度 ($\equiv \sin \phi$) \\
+       $t$      && 時間            \\ 
+       $u$      && 経度方向流速    \\ 
+       $v$      && 緯度方向流速    \\ 
+       $U$      && $u\cos \phi $  \\ 
+       $V$      && $v\cos \phi $  \\ 
+       $h$      && 流体の全厚さ    \\ 
+       $\zeta$  && 渦度            \\ 
+       $D$      && 発散            \\
+       $E$      && 運動エネルギー \\
+       $\psi$   && 流線関数        \\
+       $\chi$   && 速度ポテンシャル \\
+       $f$      && $2\Omega \sin \phi$ \\
+       $\Omega$ && 自転角速度      \\
+       $g$      && 重力加速度     \\
+       $a$      && 惑星半径       \\
+       $K_{m}$  && 水平粘性係数   \\
+       $K_{h}$  && 水平拡散係数   \\
+       $N_{m}$  && 超粘性の次数(水平ラプラシアンの階数) \\
+       $N_{h}$  && 超拡散の次数(水平ラプラシアンの階数) \\ \hline
+      \end{tabular} 
+     \end{center}
+     \caption{変数, 物理定数の定義}
+     \Dtablab{変数, 物理定数の定義}
+    \end{table}
+
+    \subsection{境界条件}
+
+    境界条件は緯度, 経度方向ともに周期境界条件である. 
+    \begin{eqnarray}
+      \zeta (\lambda + 2\pi, \phi)  &=& \zeta (\lambda, \phi), \\
+      \zeta (\lambda , \phi + 2\pi) &=& \zeta (\lambda, \phi).
+    \end{eqnarray}
+    などと表される.
+
+    後の時間積分スキームの構成のために, 
+    $h$ を平均成分 $\overline{h}$ とそれからの擾乱 $h'$ を用いて
+    $h=\overline{h}+h'(\lambda,\mu,t)$ と表しておくと, 
+    %
+    \begin{eqnarray}
+      \DP{\zeta }{t} &=& -\frac{1}{a(1-\mu ^{2})}
+                          \DP{(f+\zeta)U}{\lambda}
+                        - \frac{1}{a}\DP{(f+\zeta)V}{\mu} \nonumber \\
+                      & & -K_{m}\left[(-1)^{N_m}\Dlapla[2N_m]
+                            - \left(\frac{2}{a^{2}}\right)^{2N_m}\right]\zeta, 
+                        \Deqlab{擾乱渦度方程式} \\
+      \DP{D}{t} &=& \frac{1}{a(1-\mu ^{2})}
+                    \DP{(f+\zeta)V}{\lambda}
+                    - \frac{1}{a}\DP{(f+\zeta)U}{\mu} 
+                    - \Dlapla \left[g (h'+h_{s}) + E\right] \nonumber \\
+                & & -K_{m}\left[(-1)^{N_m}\Dlapla[2N_m]
+                           - \left(\frac{2}{a^{2}}\right)^{2N_m}\right]D,
+                    \Deqlab{擾乱発散方程式} \\
+      \DP{h}{t} &=& - \frac{1}{a(1-\mu ^{2})}\DP{(h'U)}{\lambda}
+                    - \frac{1}{a}\DP{(h'V)}{\mu}  
+                    - \bar{h}D
+                    - (-1)^{N_h}K_{h}\Dlapla[2N_h]h. 
+                    \Deqlab{擾乱質量保存の式} 
+    \end{eqnarray}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{水平離散化}
+
+  この節では方程式系の空間離散化について説明, 
+  プログラム内で実際に用いられている方程式を記述する.
+
+  格子点を経度方向には等間隔, 緯度方向にはガウス緯度上に置き, 
+  物理量 A を格子点上の値で定義したものを $A_{i,j}$ と表すことにする. 
+  添字 $i,j$ は格子点 $(\lambda _{i}, \mu _{j})$ 上の値であることを示す.
+
+  $A_{i,j}$ に対する離散スペクトル変換を $\hat{A}_{m,n}$ であらわす.
+  すなわち, 
+  %
+  \begin{eqnarray}
+   A_{i,j} &=& \sum _{n=0}^{M}\sum _{m=-n}^{n}
+                   P_{n}^{m}(\mu)e ^{im\lambda} \hat A_{m,n}, \\
+   \hat A_{m,n} &=& \frac{1}{2I} \sum _{j=1}^{J} \sum _{i=1}^{I}
+                    A _{i,j}e^{-i m \lambda _{i}}P_{n}^{m}(\mu_{j})w_{j},
+  \end{eqnarray}
+  %
+  支配方程式\Deqref{擾乱渦度方程式},\Deqref{擾乱発散方程式},
+  \Deqref{擾乱質量保存の式},
+  をスペクトル変換すると
+  %
+  \begin{eqnarray}
+    \DP{\hat\zeta _{m,n}}{t} 
+         &=& -\widehat{\left[\frac{1}{a(1-\mu^{2})}
+                        \DP{(f+\zeta_)U}{\lambda}\right]}_{m,n}
+             - \widehat{\left[\frac{1}{a}\DP{(f+\zeta)V}{\mu}\right]}_{m,n} 
+             -K_{m_{n,N_m}}\hat{\zeta}_{m,n}, 
+          \Deqlab{スペクトル渦度方程式} \\
+    \DP{\hat{D}_{m,n}}{t} 
+         &=&   \widehat{\left[\frac{1}{a(1-\mu^2)}
+                            \DP{(f+\zeta)V}{\lambda}\right]}_{m,n}
+             - \widehat{\left[
+                  \frac{1}{a}\DP{(f+\zeta)U}{\mu} \right]}_{m,n}\nonumber \\
+         & & -g\Dlapla\hat{h}'_{m,n}
+             - \widehat{\left[\Dlapla\left\{ gh_s+E \right\}\right]}_{m,n}
+             - K_{m_{n,N_m}}\hat{D}_{m,n},
+         \Deqlab{スペクトル発散方程式} \\
+    \DP{\hat{h}_{m,n}}{t} 
+         &=& - \widehat{\left[\frac{1}{a(1-\mu^2)}
+                              \DP{(h'U)}{\lambda}\right]}_{m,n}
+             - \widehat{\left[\frac{1}{a}\DP{(h'V)}{\mu}\right]}_{m,n}
+             -\bar{h}\hat{D}_{m,n}
+             - K_{h_{n,N_h}}\hat{h}_{m,n}. 
+         \Deqlab{スペクトル質量保存の式} 
+  \end{eqnarray}
+  %
+  ここで各散逸項に対して, 球面調和函数がラプラシアンの固有関数であることを用いて
+  $\widehat{(\Dlapla A)}_{m,n}=-n(n+1)\tilde{A}_{m,n}/a^2$ の関係を
+  散逸項に対して適用し, 
+  %
+  \begin{eqnarray*}
+    K_{m_{n,N_m}} 
+       &=& K_m\left[(-1)^{N_m}\left(\frac{-n(n+1)}{a^2}\right)^{N_m}
+                    - \left(\frac{2}{a^{2}}\right)^{N_m}\right] \\
+       &=& K_m\left[\left(\frac{-[-n(n+1)]}{a^2}\right)^{N_m} 
+                    - \left(\frac{2}{a^{2}}\right)^{N_m}\right], \\
+    K_{h_{n,N_h}} &=& (-1)^{N_h}K_h\left(\frac{-n(n+1)}{a^2}\right)^{N_h}
+       = K_h\left(\frac{-[-n(n+1)]}{a^2}\right)^{N_h}.
+  \end{eqnarray*}
+  %
+  として表している. 
+
+  非線形項のスペクトル変換は, 格子点上での値を用いて非線形項を評価し, 
+  それをスペクトル変換する(変換法)を適用することにする. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{時間積分}
+
+  ここでは時間積分法について記述し, プログラム内で実際に用いられている方程
+  式を記述する. 以下では $\Delta t$ を時間格子間隔, 時刻 $t, t+\Delta t$ 
+  における $\hat \zeta_{m,n}$ の値をそれぞれ
+  $\hat \zeta_{m,n}^{\tau}, \hat \zeta_{m,n}^{\tau+1}$ 等と表す. 
+
+  \subsection{陽解法(オイラースキーム)}
+    \Dseclab{オイラー}
+
+    時間積分を 1 次の陽解法(オイラースキーム)で解く場合の定式化を記す. 
+    時間変化項を全て時間ステップ $\tau$ の値で評価し, 
+    時間変化を $\tau+1$ と $\tau$ の差分で見積もれば,
+    \Deqref{スペクトル渦度方程式}, \Deqref{スペクトル発散方程式}, 
+    \Deqref{スペクトル質量保存の式}はつぎのように時間方向に差分化される. 
+    %
+  \begin{eqnarray}
+    \hat\zeta^{\tau+1}_{m,n} &=& \hat\zeta^{\tau}_{m,n} 
+       +(\Delta t)\times\left\{
+               -\widehat{\left[\frac{1}{a(1-\mu^{2})}
+                        \DP{(f+\zeta_)U}{\lambda}\right]}_{m,n}
+             - \widehat{\left[\frac{1}{a}\DP{(f+\zeta)V}{\mu}\right]}_{m,n} 
+             -K_{m_{n,N_m}}\hat{\zeta}_{m,n}
+             \right\},
+          \Deqlab{オイラースペクトル渦度方程式} \nonumber\\ \\
+    \hat{D}^{\tau+1}_{m,n}&=&\hat{D}^{\tau}_{m,n}
+        +(\Delta t)\times\left\{
+               \widehat{\left[\frac{1}{a(1-\mu^2)}
+                            \DP{(f+\zeta)V}{\lambda}\right]}_{m,n}
+             - \widehat{\left[
+                  \frac{1}{a}\DP{(f+\zeta)U}{\mu} \right]}_{m,n}
+             \nonumber \right.\\
+          & & \left.\hspace{30mm} 
+             -g\Dlapla\hat{h}'_{m,n}
+             - \widehat{\left[\Dlapla\left\{ gh_s+E \right\}\right]}_{m,n}
+             - K_{m_{n,N_m}}\hat{D}_{m,n}
+           \right\},
+         \Deqlab{オイラースペクトル発散方程式} \nonumber\\\\
+    \hat{h}^{\tau+1}_{m,n} &=&\hat{h}^{\tau}_{m,n}
+      +(\Delta t)\times\left\{
+             - \widehat{\left[\frac{1}{a(1-\mu^2)}
+                              \DP{(h'U)}{\lambda}\right]}_{m,n}
+             - \widehat{\left[\frac{1}{a}\DP{(h'V)}{\mu}\right]}_{m,n}
+             -\bar{h}\hat{D}_{m,n}
+             - K_{h_{n,N_h}}\hat{h}_{m,n}
+           \right\}.
+         \Deqlab{オイラースペクトル質量保存の式} \nonumber\\
+  \end{eqnarray}
+
+
+  \subsection{セミインプリシット \& リープフロッグスキーム}
+    \Dseclab{セミインプリシット}
+
+    時間積分にセミインプリシット法を用いる場合の定式化を行なう. 
+    重力波に関係する線形項は陰的に解き, その他の項は陽的に解く
+    (Krishnamurti, {\it et al.}, 1998). 
+
+    \Deqref{スペクトル渦度方程式}の時間積分は陽的解法を用いて行う. 
+    摩擦項に対しては Euler 法, その他の項に対しては Leapfrog 法を適用する.
+    %
+    \begin{eqnarray}
+       \hat \zeta _{m,n}^{\tau +1} &=& \hat \zeta _{m,n}^{\tau -1} 
+           + 2\Delta t \times \left\{ 
+               -\widehat{\left[\frac{1}{a(1-\mu^{2})}
+                          \DP{(f+\zeta_)U}{\lambda}\right]}^\tau_{m,n}
+             \right.\nonumber\\
+        & &  \left.\hspace{30mm}
+            - \widehat{\left[\frac{1}{a}\DP{(f+\zeta)V}{\mu}\right]}^\tau_{m,n} 
+            -K_{m_{n,N_m}}\hat{\zeta}^{\tau-1}_{m,n}
+          \right\}.
+      \Deqlab{渦度方程式の時間積分セミインプリシット} 
+    \end{eqnarray}
+
+    \Deqref{スペクトル発散方程式}, \Deqref{スペクトル質量保存の式}は
+    時間方向に離散化する前に重力波成分の分離を行う. 
+    \Deqref{スペクトル発散方程式},
+    \Deqref{スペクトル質量保存の式}を書き直すと
+    %
+    \begin{eqnarray}
+      \DP{\hat D_{m,n}}{t} &=& \left(\DP{\hat{D}_{m,n}}{t}\right)_{NG}  
+                              -  g \Dlapla \hat h'_{m,n} 
+                              - K_{m_{n,N_m}}\hat D_{m,n}
+          \Deqlab{深さ擾乱スペクトル発散方程式} \\
+      \DP{\hat h'_{m,n}}{t} &=& \left(\DP{\hat{h}'_{m,n}}{t}\right)_{NG}  
+                           - \overline{h}\hat D_{m,n} 
+                           - K_{h_{n,N_h}}\hat h'_{i,j} 
+          \Deqlab{深さ擾乱スペクトル質量保存の式} 
+    \end{eqnarray}
+    %
+    \Deqref{深さ擾乱スペクトル発散方程式}, 
+    \Deqref{深さ擾乱スペクトル質量保存の式}の
+    それぞれ右辺第 2 項が重力波に関係する線形項である. 
+    ここで, 
+    %
+    \begin{eqnarray}
+      & & \left(\DP{\hat{D}_{m,n}}{t}\right)_{NG}(\zeta, D, U, V)
+          \nonumber \\
+      & & \qquad
+          =  \widehat{\left[\frac{1}{a(1-\mu^2)}
+                              \DP{(f+\zeta)V}{\lambda}\right]}_{m,n}
+               - \widehat{\left[
+                    \frac{1}{a}\DP{(f+\zeta)U}{\mu} \right]}_{m,n}
+               - \widehat{\left[\Dlapla (g h_s + E )\right]}_{m,n},
+           \\
+      & & \left(\DP{\hat{h}'_{m,n}}{t}\right)_{NG}(\zeta, D, U, V)
+           = - \widehat{\left[\frac{1}{a(1-\mu^2)}
+                                \DP{(h'U)}{\lambda}\right]}_{m,n}
+               - \widehat{\left[\frac{1}{a}\DP{(h'V)}{\mu}\right]}_{m,n}
+    \end{eqnarray}
+    %
+    は重力波に関係しない(非線形)項である. 
+
+    セミインプリシット法を適用するために, つぎの時間平均演算子を導入する. 
+    %
+    \begin{equation}
+      D^{\tau*} = \frac{D^{\tau+1} + D^{\tau-1}}{2},
+      \Deqlab{時間平均演算子}
+    \end{equation}
+    %
+    \Deqref{深さ擾乱スペクトル発散方程式}, 
+    \Deqref{深さ擾乱スペクトル質量保存の式}の時間変化を
+    中央差分で評価する. 
+    一方右辺は重力波に関係する項を $\tau+1$ と $\tau-1$ の
+    時間平均の値, 
+    摩擦項はオイラースキームを適用すべく $\tau-1$ での値, 
+    それ以外の非線形項を $\tau$ での値で評価する. 
+    さらに左辺の時間変化項を上の演算子を用いて表せば, 
+    %
+    \begin{eqnarray*}
+      \frac{\hat D_{m,n}^{\tau+1}-\hat D_{m,n}^{\tau-1}}{2\Delta t}
+      =\frac{\hat D_{m,n}^{\tau*}-\hat D_{m,n}^{\tau-1}}{\Delta t}
+        &=& \left(\DP{D_{m,n}}{\tau}\right)_{NG}^{\tau}  
+            -g \Dlapla  \hat h^{'\tau*}_{m,n} 
+            - K_{m_{n,N_m}}\hat D_{m,n}^{\tau-1},
+       \\                           
+      \frac{\hat h^{'\tau+1}_{m,n}-\hat h^{'\tau-1}_{m,n}}{2\Delta t}
+      =\frac{\hat h^{'\tau*}_{m,n}-\hat h^{'\tau-1}_{m,n}}{\Delta t}
+       &=& \left(\DP{h'_{m,n}}{\tau}\right)_{NG}^{\tau}  
+           - \overline{h}\hat D^{\tau*}_{m,n} 
+           - K_{h_{n,N_h}}\hat h^{'\tau-1}_{n,m},
+    \end{eqnarray*}
+    %
+    すなわち
+    %
+    \begin{eqnarray}
+      \hat D^{\tau*}_{m,n} &=& \hat D_{m,n}^{\tau-1}
+          + (\Delta t)\left[ 
+                  \left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG}  
+                - g \Dlapla \hat h^{'\tau*}_{m,n} 
+                - K_{m_{n,N_m}}\hat D_{m,n}^{\tau-1} \right],
+     .     \Deqlab{深さ擾乱スペクトル発散方程式第1段} \\
+      \hat h^{\tau*}_{m,n} &=& \hat h^{'\tau-1}_{m,n}
+          + (\Delta t)\left[ 
+                   \left(\DP{\hat{h}'_{m,n}}{t}\right)^{\tau}_{NG}  
+                 - \overline{h}\hat D_{m,n}^{\tau*} 
+                 - K_{h_{n,N_h}}\hat h^{'\tau-1}_{n,m} \right],
+          \Deqlab{深さ擾乱スペクトル質量保存の式第1段}
+    \end{eqnarray}
+    %
+    \Deqref{深さ擾乱スペクトル発散方程式第1段},
+    \Deqref{深さ擾乱スペクトル質量保存の式第1段}から
+    $\hat h^{\tau*}_{m,n}$ を消去する. そのために
+    %
+    \begin{eqnarray}
+      \hat h^{\tau+}_{m,n} &=& \hat h^{'\tau-1}_{m,n}
+          + (\Delta t)\left[ 
+                   \left(\DP{\hat{h}'_{m,n}}{t}\right)^{\tau}_{NG}  
+                 - K_{h_{n,N_h}}\hat h^{'\tau-1}_{n,m} \right]\\
+          &=& [1-(\Delta t)K_{h_{n,N_h}}]\hat h^{'\tau-1}_{m,n}
+              + (\Delta t)\left(\DP{\hat{h}'_{m,n}}{t}\right)^{\tau}_{NG}  
+       \Deqlab{深さ擾乱スペクトル質量保存の式第0段}
+    \end{eqnarray}
+    と定義すると, 
+    %
+    \begin{eqnarray}
+      \hat h^{\tau*}_{m,n} 
+       &=& \hat h^{\tau+}_{m,n} - (\Delta t)\overline{h}\hat D_{m,n}^{\tau*},
+       \Deqlab{深さ擾乱スペクトル質量保存の式第2段}
+    \end{eqnarray}
+    であり, 
+    \begin{eqnarray*}
+      \hat D^{\tau*}_{m,n} 
+      &=& \hat D_{m,n}^{\tau-1}
+          + (\Delta t)\left[ \left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG}  
+                  - K_{m_{n,N_m}}\hat D_{m,n}^{\tau-1} \right]
+          - (\Delta t)g \Dlapla \hat h^{'\tau*}_{m,n} \\
+      &=& \hat D_{m,n}^{\tau-1}
+          + (\Delta t)\left[ \left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG}  
+                  - K_{m_{n,N_m}}\hat D_{m,n}^{\tau-1} \right]
+          - (\Delta t)g \Dlapla{}
+            [\hat h^{\tau+}_{m,n}-(\Delta t)\overline{h}\hat D_{m,n}^{\tau*}],\\
+      \hat D^{\tau*}_{m,n} 
+                 &-& (\Delta t)^2 g\overline{h}\Dlapla\hat D_{m,n}^{\tau*}\\
+      &=& (1- K_{m_{n,N_m}}\Delta t)\hat D_{m,n}^{\tau-1}
+          + (\Delta t)\left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG} 
+          - (\Delta t)g \Dlapla \hat h^{\tau+}_{m,n}.
+    \end{eqnarray*}
+    %
+    左辺に
+    $\widehat{(\Dlapla A)}_{m,n}=-n(n+1)\tilde{A}_{m,n}/a^2$ の関係を
+    再び用いることで $\hat D^{\tau*}_{m,n}$ について解くことができて, 
+    %
+    \begin{equation}
+      \hat D^{\tau*}_{m,n} 
+       = \frac{1}{1+(\Delta t)^2 g\overline{h}\frac{n(n+1)}{a^2}}
+          \left\{
+            (1- K_{m_{n,N_m}}\Delta t)\hat D_{m,n}^{\tau-1}
+          + (\Delta t)\left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG}
+          - (\Delta t)g \Dlapla \hat h^{\tau+}_{m,n}\right\}
+    \end{equation}
+    %
+    これを\Deqref{深さ擾乱スペクトル質量保存の式第2段}に代入して
+    $\hat h^{\tau*}_{m,n}$ が求められる. 
+
+    それぞれの時間平均が求められたら, 時間平均の定義式\Deqref{時間平均演算子}
+    からつぎの時間ステップの値が求められる. 
+
+    以上の手順をまとめると, 
+
+    \begin{enumerate}
+      \item 重力波以外の時間変化項から $h'$ を見積もる. 
+        \begin{equation}
+          \hat h^{\tau+}_{m,n}
+            = [1-(\Delta t)K_{h_{n,N_h}}]\hat h^{'\tau-1}_{m,n}
+              + (\Delta t)\left(\DP{\hat{h}'_{m,n}}{t}\right)^{\tau}_{NG}  
+        \end{equation}
+
+      \item 発散 $D$ に関して セミインプリシット時間積分を実行する. 
+        \begin{eqnarray}
+         \hat D^{\tau*}_{m,n} 
+           &=& \frac{1}{1+(\Delta t)^2 g\overline{h}\cdot n(n+1)/a^2}
+           \nonumber\\
+           &\times& \left\{
+                (1- K_{m_{n,N_m}}\Delta t)\hat D_{m,n}^{\tau-1}
+              + (\Delta t)\left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG}
+              - (\Delta t)g \Dlapla \hat h^{\tau+}_{m,n}\right\}.
+        \end{eqnarray}
+
+      \item 変位擾乱 $h'$ に対して セミインプリシット時間積分を実行する. 
+        \begin{equation}
+          \hat h^{\tau*}_{m,n} 
+           = \hat h^{\tau+}_{m,n} - (\Delta t)\overline{h}\hat D_{m,n}^{\tau*},
+        \end{equation}
+
+      \item つぎの時間ステップの値を求める
+        \begin{eqnarray}
+          D^{\tau+1}_{m,n} 
+             &=& 2 D^{\tau*}_{m,n}-D^{\tau-1}_{m,n},\\
+          h^{'\tau+1}_{m,n} 
+             &=& 2 h^{'\tau*}_{m,n}-h^{'\tau-1}_{m,n}.
+        \end{eqnarray}
+    \end{enumerate}
+
+    \subsubsection{時間フィルター}
+      \Dseclab{時間フィルター}
+
+      Leap frog スキームを用いる場合には, 
+      計算モードの増幅を抑制するため Asselin (1972) の
+      時間フィルターを適用する. 
+      フィルターの定義式は
+      %
+      \begin{equation}
+        A^{\tau*} = A^{\tau} 
+         + \Dinv{2}\gamma (A^{\tau+1}-2A^{\tau}+A^{\tau-1})
+      \end{equation}
+      %
+      ここで $A^{\tau*}$ が修正された $\tau$ での $A$ の値, 
+      $\gamma $ はフィルターの係数である. 
+      この時間フィルターを, とあるタイムステップ間隔で適用する. 
+
+  \subsection{リープフロッグ \& クランク・ニコルソン法}
+
+    時間積分にリープフロッグ法と
+    クランク・ニコルソン法を組み合わせて用いる場合の定式化を行なう
+     \footnote{このスキームは\Dsecref{セミインプリシット}でのものと
+       計算手順が異なるだけで, 本質的にはおなじであると考えられる(要確認).}. 
+
+    \Deqref{スペクトル渦度方程式}の時間積分は陽的解法を用いて行う. 
+    摩擦項に対しては Euler 法, その他の項に対しては Leapfrog 法を適用する.
+    %
+    \begin{eqnarray}
+       \hat \zeta _{m,n}^{\tau +1} &=& \hat \zeta _{m,n}^{\tau -1} 
+           + 2\Delta t \times \left\{ 
+               -\widehat{\left[\frac{1}{a(1-\mu^{2})}
+                          \DP{(f+\zeta_)U}{\lambda}\right]}^\tau_{m,n}
+             \right.\nonumber\\
+        & &  \left.\hspace{30mm}
+            - \widehat{\left[\frac{1}{a}\DP{(f+\zeta)V}{\mu}\right]}^\tau_{m,n} 
+            -K_{m_{n,N_m}}\hat{\zeta}^{\tau-1}_{m,n}
+          \right\}.
+      \Deqlab{渦度方程式の時間積分} 
+    \end{eqnarray}
+
+     \Deqref{深さ擾乱スペクトル発散方程式}, 
+     \Deqref{深さ擾乱スペクトル質量保存の式}には, 重力波に関係する
+     それぞれの式の右辺第 2 項に対して台形型の陰解法(Clank-Nicolson 法), 
+     摩擦項に対してはオイラー法, その他の項に対しては
+     リープフロッグ法を適用する.
+     %
+     \begin{eqnarray}
+       \frac{\hat D_{m,n}^{\tau +1} - \hat D_{m,n}^{\tau -1}}{2\Delta t}
+         &=& \left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG}  
+          + \frac{n(n+1)}{a^2} g 
+               \frac{\hat h_{m,n}^{' \tau +1} + \hat h_{m,n}^{' \tau - 1}}{2}
+            - K_{m_{n,N_m}}\hat D_{m,n}^{\tau-1}, \\
+       \frac{\hat h_{m,n}^{' \tau +1} - \hat h_{m,n}^{' \tau -1}}{2\Delta t}
+         &=& \left(\DP{\hat{h}'_{m,n}}{t}\right)^{\tau}_{NG}  
+         - \overline{h}\frac{\hat D_{m,n}^{\tau +1} + \hat D_{m,n}^{\tau -1}}{2}
+         - K_{h_{n,N_h}}\hat h_{n,m}^{' \tau -1}.
+     \end{eqnarray}
+     %
+     %
+     これらを $\hat D_{m,n}^{\tau +1}, \hat h_{m,n}^{' \tau +1}$ について解く
+     と以下の式が得られる (Krishnamurti {\it et al.}, 1998; Satoh, 2004).
+     %
+     \begin{eqnarray}
+     \left(1 + \Delta t^2 g\overline{h}\frac{n(n+1)}{a^2}\right)
+       \hat D_{m,n}^{\tau +1}  &=&
+       \left(1 - \Delta t^2 g\overline{h}\frac{n(n+1)}{a^2}  
+            - 2\Delta t K_{m_{n,N_m}}\right)\hat D_{m,n}^{\tau -1} \nonumber \\ 
+       && + 2\Delta t G_{1}(\zeta, D, U, V), \Deqlab{発散方程式の時間積分} 
+     \\
+     \left(1 + \Delta t^{2}g\overline{h}\frac{n(n+1)}{a^{2}}\right)
+       \hat h_{m,n}^{' \tau +1}  &=&
+       \left(1 - \Delta t^{2}g\overline{h}\frac{n(n+1)}{a^{2}}
+               - 2\Delta t K_{h_{n,N_h}}\right)
+       \hat h_{m,n}^{' \tau -1} \nonumber \\
+       && + 2\Delta t G_{2}(\zeta, D, U, V) \Deqlab{質量保存の式の時間積分} 
+     \end{eqnarray}
+     %
+     ここで, 
+     %
+     \begin{eqnarray}
+       G_{1}(\zeta, D, U, V) 
+              &=&  \left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG}
+                   + \frac{n(n+1)}{a^{2}} g \left[
+                        (1-\Delta t K_{h_{n,p}})\hat h_{m,n}^{' \tau-1}
+                   + \left(\DP{\hat{h}'_{m,n}}{t}\right)^{\tau}_{NG}(\Delta t)
+                  \right], 
+     \nonumber \\\\
+       G_{2}(\zeta, D, U, V) 
+              &=& \left(\DP{\hat{h}'_{m,n}}{t}\right)^{\tau}_{NG}
+              - \overline{h}(1- \Delta tK_{m_{n,p}}) \hat D_{m,n}^{\tau-1}
+              - \overline{h}\left(\DP{\hat{D}_{m,n}}{t}\right)^{\tau}_{NG}(\Delta t).
+     \end{eqnarray}
+
+    \Dsecref{セミインプリシット}と同様, 計算モードを抑えるための
+    時間フィルター(\Dsecref{時間フィルター})を, 
+    とあるタイムステップ間隔で適用する. 
+
+
+  \subsection{ルンゲ・クッタ \& クランク・ニコルソン法}
+
+    時間積分の数値スキームとして, 
+    散逸項にはクランク・ニコルソン法, それ以外の項を
+    4 次のルンゲ・クッタ法を組み合わせて用いる場合の定式化を行なう. 
+
+    まず散逸項以外の項に関してルンゲ・クッタ法で積分する. 
+    \Deqref{スペクトル渦度方程式},
+    \Deqref{スペクトル発散方程式}, 
+    \Deqref{スペクトル質量保存の式}から
+    散逸項以外の時間変化を
+    %
+    \begin{eqnarray}
+      & &\left(\DP{\hat\zeta_{m,n}}{t}\right)_{ND}
+       [\hat{\zeta}_{m,n},\hat{D}_{m,n},\hat{h'}_{m,n}]
+        = -\widehat{\left[\frac{1}{a(1-\mu^{2})}
+                          \DP{(f+\zeta)U}{\lambda}\right]}_{m,n}
+         - \widehat{\left[\frac{1}{a}\DP{(f+\zeta)V}{\mu}\right]}_{m,n} 
+            \nonumber\\\Deqlab{スペクトル渦度時間変化散逸なし}\\
+      & & \left(\DP{\hat{D}_{m,n}}{t}\right)_{ND}
+       [\hat{\zeta}_{m,n},\hat{D}_{m,n},\hat{h'}_{m,n}] 
+           = \widehat{\left[\frac{1}{a(1-\mu^2)}
+                              \DP{(f+\zeta)V}{\lambda}\right]}_{m,n}
+             - \widehat{\left[
+                  \frac{1}{a}\DP{(f+\zeta)U}{\mu} \right]}_{m,n}
+              \nonumber \\
+           & & \hspace{60mm}
+              -g\Dlapla\hat{h}^{'\tau}_{m,n}
+               - \widehat{\left[\Dlapla\left\{ g h_s+E \right\}\right]}_{m,n}
+            \Deqlab{スペクトル発散時間変化散逸なし} \\
+      & & \left(\DP{\hat{h}_{m,n}}{t}\right)_{ND}
+       [\hat{\zeta}_{m,n},\hat{D}_{m,n},\hat{h'}_{m,n}]
+            = - \widehat{\left[\frac{1}{a(1-\mu^2)}
+                                \DP{(h'U)}{\lambda}\right]}_{m,n}
+               - \widehat{\left[\frac{1}{a}\DP{(h'V)}{\mu}\right]}_{m,n}
+               -\bar{h}\hat{D}_{m,n}
+        \nonumber\Deqlab{スペクトル質量時間変化散逸なし}\\
+    \end{eqnarray}
+    %
+    と定義する. ここで非線形項で用いられている格子点で定義された変数は
+    各スペクトル変数
+    $\hat{\zeta}_{m,n},\hat{D}_{m,n},\hat{h'}_{m,n}$
+    からスペクトル逆変換して求められる. 
+
+    ルンゲ・クッタ法による積分の手順はつぎのようになる. 
+    渦度方程式だけを例に手順を記す. 
+    第 1 段は
+    %
+    \begin{eqnarray}
+      \left(\DP{\hat\zeta_{m,n}}{t}\right)^{k1}
+       &=& \left(\DP{\hat\zeta_{m,n}}{t}\right)_{ND}
+          [\hat{\zeta}^{\tau}_{m,n},\hat{D}^{\tau}_{m,n},
+           \hat{h'}^{\tau}_{m,n}],\\ 
+      \hat\zeta^{\tau+1/2}_{m,n} &=& \hat\zeta^{\tau}_{m,n} + 
+        \left(\DP{\hat\zeta_{m,n}}{t}\right)^{k1}\cdot \frac{(\Delta t)}{2},
+    \end{eqnarray}
+    %
+    第 2 段は
+    \begin{eqnarray}
+      \left(\DP{\hat\zeta_{m,n}}{t}\right)^{k2}
+       &=& \left(\DP{\hat\zeta_{m,n}}{t}\right)_{ND}
+          [\hat{\zeta}^{\tau+1/2}_{m,n},\hat{D}^{\tau+1/2}_{m,n},
+           \hat{h'}^{\tau+1/2}_{m,n}], \\
+      \hat\zeta^{*\tau+1/2}_{m,n} &=& \hat\zeta^{\tau}_{m,n} + 
+        \left(\DP{\hat\zeta_{m,n}}{t}\right)^{k2}\cdot \frac{(\Delta t)}{2},
+    \end{eqnarray}
+    %
+    第 3 段は
+    %
+    \begin{eqnarray}
+      \left(\DP{\hat\zeta_{m,n}}{t}\right)^{k3}
+       &=& \left(\DP{\hat\zeta_{m,n}}{t}\right)_{ND}
+          [\hat{\zeta}^{*\tau+1/2}_{m,n},\hat{D}^{*\tau+1/2}_{m,n},
+           \hat{h'}^{*\tau+1/2}_{m,n}], \\
+      \hat\zeta^{*\tau+1}_{m,n} &=& \hat\zeta^{\tau}_{m,n} + 
+        \left(\DP{\hat\zeta_{m,n}}{t}\right)^{k3}\cdot (\Delta t),
+    \end{eqnarray}
+    %
+    第 4 段は
+    %
+    \begin{eqnarray}
+      \left(\DP{\hat\zeta_{m,n}}{t}\right)^{k4}
+       = \left(\DP{\hat\zeta_{m,n}}{t}\right)_{ND}
+          [\hat{\zeta}^{*\tau+1}_{m,n},\hat{D}^{*\tau+1}_{m,n},
+           \hat{h'}^{*\tau+1}_{m,n}], 
+    \end{eqnarray}
+    %
+    最終的に
+    %
+    \begin{eqnarray}
+      \hat\zeta^{\tau+1,ND}_{m,n} &=& \hat\zeta^{\tau}_{m,n} + 
+        (\Delta t)\left[
+            \Dinv{6}\left(\DP{\hat\zeta_{m,n}}{t}\right)^{k1}
+          + \Dinv{3}\left(\DP{\hat\zeta_{m,n}}{t}\right)^{k2}
+          + \Dinv{3}\left(\DP{\hat\zeta_{m,n}}{t}\right)^{k3}
+          + \Dinv{6}\left(\DP{\hat\zeta_{m,n}}{t}\right)^{k4}
+          \right], \nonumber\\
+    \end{eqnarray}
+    %
+    以上の手順を発散 $\hat{D}_{m,n}$, 変位擾乱 $\hat{h'}_{m,n}$ に
+    ついても平行して計算していくことで, 非散逸項の積分が完了する. 
+
+    ルンゲ・クッタ法による積分ののち, 散逸項からの修正を行なう. 
+    渦度を例に取ると, 
+    \begin{displaymath}
+      \frac{\zeta^{\tau+1}_{m,n}-\zeta^{\tau+1,ND}_{m,n}}{\Delta t}
+       = - K_{m_{n,N_m}}\frac{\zeta^{\tau+1}_{m,n}+\zeta^{\tau+1,ND}_{m,n}}{2}
+    \end{displaymath}
+    %
+    したがって
+    \begin{equation}
+      \zeta^{\tau+1}_{m,n} = 
+      \frac{1- K_{m_{n,N_m}}(\Delta t)/2}{1+ K_{m_{n,N_m}}(\Delta t)/2}
+         \cdot\zeta^{\tau+1,ND}_{m,n},
+    \end{equation}
+    %
+    と修正される. 発散 $\hat{D}_{m,n}$, 変位擾乱 $\hat{h'}_{m,n}$ に
+    ついても同様に計算する. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{使用モジュールとその他の設定}
+
+  スペクトル変換と逆変換, 微分演算は SPMODEL ライブラリ (spml) の
+  w\_module に含まれる関数を用いて行う. スペクトル変換と逆変換の際の数値
+  積分は台形公式を用いて行う. spml が下位で使用する ISPACK の仕様から, 格
+  子点数 $I$ は偶数で, かつ $I/2 =2^{a}3^{b}5^{c}$ ($a, b, c$ は 0 または
+  整数) でなければならない. 非線形項の計算によって生じるエリアジングを防ぐ
+  ため, 格子点数 $I,J$ は切断波数 $M$ に対し $I>3M+1,J>3M/2$ を満たすよう
+  に与える.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+
+\section{Williamson et al. (1992) の標準実験}
+
+  作成したプログラムのチェックのために, 
+  Williamson {\it et al.} (1992) によって提案された
+  球面浅水モデルの標準実験を行なった. 
+  以下ではその実験設定について説明する. 
+
+  \subsection{テストケース1: 極を越える $\cos$ 型の山の移流}
+
+    テストケース 1 は剛体回転の流れ場に cosine 型の山を置き移流させる実験
+    である. これは球面浅水方程式系において, $u, v$ を定常とし $h$ の式を移
+    流方程式として扱う. $u, v$ の初期値は
+    \begin{eqnarray}
+      u &=& u_{0}(\cos \phi \cos \alpha + \sin \phi \cos \lambda \sin \alpha), \\
+      v &=& - u_{0}\sin \lambda \sin \alpha 
+    \end{eqnarray}
+    と与える. 流線関数と速度ポテンシャルの初期値は
+    \begin{eqnarray}
+      \psi &=& - a u_{0}
+               (\sin \phi \cos \alpha - \cos \lambda \cos \phi \sin \alpha),\\
+      \chi &=& 0
+    \end{eqnarray}
+    である. ここで $\alpha $ は球面上での流れの方向を指定するパラメータである.
+    初期の山の分布は
+    \begin{equation}
+      h = \left\{
+    \begin{array}{ll}
+      (h_{0}/2)( 1 + \cos (\pi r/R) ) & (r < R) \\
+      0                               & (r \ge R)
+    \end{array}
+    \right.
+    \end{equation}
+    とする. ここで
+    \begin{equation}
+      r = a \arccos (\sin \phi _{c}\sin \phi + 
+                     \cos \phi _{c}\cos \phi \cos (\lambda -\lambda _{c}))
+    \end{equation}
+    である. 与えたパラメータは\Dtabref{テストケース1のパラメータ}にまとめる.
+    計算時間は 12 日間で 1 ステップ毎のデータを出力する. 
+
+    \begin{table}[h]
+      \begin{center}
+        \Dtablab{テストケース1のパラメータ}
+        \caption{テストケース 1 で用いたパラメータ}
+        \begin{tabular}{cc} \hline
+          パラメータ  & 値 \\ \hline
+          $\alpha$    & $0, \quad 0.05, \quad \pi/2 - 0.05,\quad \pi/2$ \\
+          $u_{0}$     & $2\pi a/(12$日) msec${}^{-1}$ \\
+          $h_{0}$     & $1000$ m \\
+          $\lambda _{c}$ & $3\pi/2$ \\
+          $\phi _{c}$ & $0$ \\
+          $R$         & $a/3$ \\ \hline
+        \end{tabular}
+      \end{center}
+    \end{table}
+
+%     \begin{table}[h]
+%       \begin{center}
+%         \Dtablab{テストケース1の計算時間}
+%         \caption{テストケース 1 の計算時間 (sec)}
+%         \begin{tabular}{lc|rcccc} \hline
+%               &   & T42 & T63 & T106 & T213 \\ \hline
+%                            & real & 1m11.292s &  &  & \\ 
+%          Intel Pentium III & usr  & 1m07.220s  &  &  & \\ 
+%          (Coppermine) 1GHz & sys  & 0m04.030s  &  &  & \\ \hline
+%         \end{tabular}
+%       \end{center}
+%     \end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+
+  \subsection{テストケース 2: 定常な非線形帯状地衡流}
+
+  テストケース 2 では非線形球面浅水方程式系の定常解として得られる剛体回
+  転の流れ場と, それに地衡流平衡する厚さ分布を初期に与える.
+  \begin{eqnarray}
+    u &=& u_{0}(\cos \phi \cos \alpha + \sin \phi \cos \lambda \sin \alpha), \\
+    v &=& - u_{0}\sin \lambda \sin \alpha, \\
+    h &=& h_{0} - \left(a\Omega u_{0} + \frac{u_{0}^{2}}{2}\right)
+        (-\cos \lambda \cos \phi \sin \alpha + \sin \phi \cos \alpha)^{2}/g.
+  \end{eqnarray}
+  流線関数と速度ポテンシャルの初期値はケース 1 と同様に
+  \begin{eqnarray}
+    \psi &=& - a u_{0}
+             (\sin \phi \cos \alpha - \cos \lambda \cos \phi \sin \alpha),\\
+    \chi &=& 0
+  \end{eqnarray}
+  である. 
+
+  この計算ではコリオリパラメータ $f$ は球面上での流れの方向を指定するパ
+  ラメータ $\alpha $ に依存する.
+  \begin{equation}
+    f = 2\Omega(-\cos \lambda \cos \phi \sin \alpha + \sin \phi \cos \alpha).
+  \end{equation}
+  与えたパラメータは\Dtabref{テストケース2のパラメータ}にまとめる.  計算
+  時間は 5 日間で, テストケース 1 と同様に 1 ステップ毎のデータを出力する.
+
+  \begin{table}[h]
+    \begin{center}
+      \Dtablab{テストケース2のパラメータ}
+      \caption{テストケース 2 で用いたパラメータ}
+      \begin{tabular}{cc} \hline
+        パラメータ  & 値 \\ \hline
+        $\alpha$    & $0, \quad 0.05, \quad \pi/2 - 0.05, \quad \pi/2$ \\
+        $u_{0}$     & $2\pi a/(12$日) msec${}^{-1}$ \\
+        $h_{0}$     & $2.94\times 10^{4}/g$ m \\ \hline
+      \end{tabular}
+    \end{center}
+  \end{table}
+
+%   \begin{table}[h]
+%     \begin{center}
+%       \Dtablab{テストケース2の計算時間}
+%       \caption{テストケース 2 の計算時間 (sec)}
+%       \begin{tabular}{lc|rccc} \hline
+%             &   & T42 & T63 & T106 & T213 \\ \hline
+%                          & real & 0m42.335s &  &  & \\ 
+%        Intel Pentium III & usr  & 0m40.110s &  &  & \\ 
+%        (Coppermine) 1GHz & sys  & 0m02.190s  &  &  & \\ \hline
+%       \end{tabular}
+%     \end{center}
+%   \end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+
+  \subsection{テストケース 3: 局在した非線形帯状地衡流}
+
+  この実験はケース 2 と同様に定常解として得られる帯状な流れを与える.  こ
+  の解では限られた場所でのみ流れが存在する. 流れの軸を変えた場合の初期値
+  の表現が難しいので, まず流れが経度座標と平行な系 $(\lambda ', \phi')$ 
+  での初期値を $u', v', h'$ と表し, 座標軸を $\alpha$ だけ回転した系
+  $(\lambda, \phi)$ における $u, v, h$ へ変換する.
+
+  変換前の $u', v', h'$ は以下のように与えられる.
+  \begin{eqnarray}
+    u' &=& u_{0}b(x)b(x_{e}-x)e^{4/x_{e}}, \\
+    v' &=& 0, \\
+    h' &=& h_{0} - \frac{a}{g}\int _{-\pi/2}^{\phi '}
+           \left(2\Omega \sin \tau + \frac{u'(\tau)\tan \tau}{a}\right)
+           u'(\tau)\Dd \tau.
+  \end{eqnarray}
+  ここで
+  \[
+    b(x) = \left\{
+  \begin{array}{lc}
+  0 & x\le 0 \\
+  e^{-x^{-1}} & 0 < x 
+  \end{array}
+  \right.
+  \]
+  \[
+   x = x_{e}\frac{\phi ' - \phi _{b}}{\phi _{e}-\phi_{b}}
+  \]
+  である.
+
+  $u', v', h'$ から $u, v, h$ への変換は以下のように行う. まず座標は
+  \begin{eqnarray}
+   \sin \phi ' &=& \sin \phi \cos \alpha - \cos \alpha \cos \lambda \sin \alpha, \\
+   \sin \lambda '\cos \theta ' &=& \sin \lambda \cos \phi
+  \end{eqnarray}
+  にしたがって変換する. $\lambda '$ を決める際には
+  \[
+    \lambda ' = \left\{
+  \begin{array}{lc}
+  \lambda '_{p} & \cos \alpha \cos \lambda \cos \phi + \sin \alpha \sin \phi \ge 0 \\
+  \pi - \lambda '_{p} & \cos \alpha \cos \lambda \cos \phi + \sin \alpha \sin \phi < 0
+  \end{array}
+  \right.
+  \]
+  とする. ここで $\lambda '_{p}$ は $\lambda$ の主値である.
+  $u, v$ は
+  \begin{eqnarray}
+   v\cos \phi &=& - u'\sin \alpha \sin \lambda ', \\
+   u\cos \lambda &=& v\sin \phi \sin \lambda + u'\cos \lambda '.
+  \end{eqnarray}
+  より求める. 
+  $h$ は $h'$ の式を回転後の座標系で数値積分することで得られる. 
+
+  コリオリパラメータ $f$ はテストケース 3 の場合と同様に
+  \begin{equation}
+    f = 2\Omega(-\cos \lambda \cos \phi \sin \alpha + \sin \phi \cos \alpha)
+  \end{equation}
+  とする. 
+  与えたパラメータは\Dtabref{テストケース3のパラメータ}にまとめる.  計算
+  時間は 5 日間で, テストケース 1 と同様に 1 ステップ毎のデータを出力する.
+
+  \begin{table}[h]
+    \begin{center}
+      \Dtablab{テストケース3のパラメータ}
+      \caption{テストケース 3 で用いたパラメータ}
+      \begin{tabular}{cc} \hline
+        パラメータ  & 値                            \\ \hline
+        $\alpha$    & $0, \quad \pi/3$              \\
+        $u_{0}$     & $2\pi a/(12$日) msec${}^{-1}$ \\
+        $h_{0}$     & $2.94\times 10^{4}/g$ m       \\ 
+        $\phi _{b}$ & $-pi/6$                       \\
+        $\phi _{e}$ & $pi/2$                        \\
+        $x _{e}   $ & 0.3                           \\ \hline
+      \end{tabular}
+    \end{center}
+  \end{table}
+
+%   \begin{table}[h]
+%     \begin{center}
+%       \Dtablab{テストケース3の計算時間}
+%       \caption{テストケース 3 の計算時間 (sec)}
+%       \begin{tabular}{lc|rccc} \hline
+%             &   & T42 & T63 & T106 & T213 \\ \hline
+%                          & real & 0m41.851s &  &  & \\ 
+%        Intel Pentium III & usr  & 0m39.200s &  &  & \\ 
+%        (Coppermine) 1GHz & sys  & 0m02.610s  &  &  & \\ \hline
+%       \end{tabular}
+%     \end{center}
+%   \end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+
+  \subsection{テストケース 4: 移動する低気圧を持つ強制された流れ}
+
+    このケースでは $u, v, h$ を予報変数とする形で表された浅水方程式系
+    に強制項を加える. 強制項は
+    \begin{eqnarray}
+    F_{u} &=& \DD{\tilde{u}}{t} - \frac{\tilde{u}\tilde{v}\tan \phi}{a} 
+              - f \tilde{v} + \frac{g}{a\cos \phi}\DP{\tilde{h}}{\lambda}, \\
+    F_{v} &=& \DD{\tilde{v}}{t} + \frac{\tilde{u}\tilde{v}\tan \phi}{a} 
+              + f \tilde{v} + \frac{g}{a}\DP{\tilde{h}}{\lambda}, \\
+    F_{h} &=& \DD{\tilde{h}}{t} + \frac{\tilde{h}}{a\cos \phi}
+           \left[\DP{\tilde{u}}{\lambda} + \DP{\tilde{v}\cos \phi}{\phi}
+           \right] 
+    \end{eqnarray}
+    として与えられる. ここで
+    \[
+    \DD{}{t} = \DP{}{t} + \frac{u}{a\cos \phi}\DP{}{\lambda} + 
+               \frac{v}{a}\DP{}{\phi} 
+    \]
+    である. 渦度方程式\Deqref{渦度方程式}と発散方程式\Deqref{発散方程式}に
+    おける強制 $F_{\zeta}, F_{D}$ は
+    \begin{eqnarray}
+      F_{\zeta} &=& \frac{1}{a(1-\mu ^{2})}\DP{(F_{v}\cos \phi)}{\lambda} - \frac{1}{a}\DP{(F_{u}\cos \phi)}{\mu}, \\
+      F_{D} &=& \frac{1}{a(1-\mu ^{2})}\DP{(F_{u}\cos \phi)}{\lambda} + \frac{1}{a}\DP{(F_{v}\cos \phi)}{\mu}
+    \end{eqnarray}
+    より計算される.
+
+    $\tilde{u}, \tilde{v}, \tilde{h}$ は
+    \begin{eqnarray}
+    \tilde{u} &=& \overline{u} - \frac{1}{a}\DP{\overline{\psi}}{\phi}, \\
+    \tilde{v} &=& \frac{1}{a\cos \phi}\DP{\overline{\psi}}{\lambda}, \\
+    \tilde{h} &=& \overline{h} + \frac{f}{g}\overline{\psi}
+    \end{eqnarray}
+    で与えられ, ここで
+    \begin{eqnarray}
+    \overline{u} &=& u_{0}\sin ^{14}(2\phi), \\
+    \overline{h} &=& h_{0} - \frac{a}{g}\int _{-\pi/2}^{\phi}
+             \left(2\Omega \sin \tau + \frac{\overline{u}(\tau)\tan \tau}{a}\right)
+             \overline{u}(\tau)\Dd \tau, \\
+    \overline{\psi} &=& \psi _{0}\exp \left(-\sigma \frac{1-C}{1+C}\right),
+    \end{eqnarray}
+    \begin{eqnarray}
+     \psi _{0} &=& -0.03\frac{gh_{0}}{2\Omega \sin (\pi/4)}, \\
+     C &=& \sin \phi _{0}\sin \phi
+          + \cos \phi_{0}\cos \phi
+          \left(\lambda - \frac{u_{0}}{a}t - \lambda _{0}\right)
+    \end{eqnarray}
+    である.
+
+    与えたパラメータは\Dtabref{テストケース4のパラメータ}にまとめる.  計算
+    時間は 5 日間で, テストケース 1 と同様に 1 ステップ毎のデータを出力する.
+
+    \begin{table}[h]
+      \begin{center}
+        \Dtablab{テストケース4のパラメータ}
+        \caption{テストケース 4 で用いたパラメータ}
+        \begin{tabular}{cc} \hline
+          パラメータ  & 値                 \\ \hline
+          $u_{0}$     & $20, \quad 40$ (msec${}^{-1}$)       \\ 
+          $h_{0}$     & $10^{5}/g$ m       \\ 
+          $\sigma $   & $(12.74244)^{2}$     \\
+          $\lambda _{0}$ & 0               \\ 
+          $\phi _{0}$ & $\pi/4$           \\ \hline
+        \end{tabular}
+      \end{center}
+    \end{table}
+
+%     \begin{table}[h]
+%       \begin{center}
+%         \Dtablab{テストケース4の計算時間}
+%         \caption{テストケース 4 の計算時間 (sec)}
+%         \begin{tabular}{lc|rccc} \hline
+%               &   & T42 & T63 & T106 & T213 \\ \hline
+%                            & real & 0m55.169s &  &  & \\ 
+%          Intel Pentium III & usr  & 0m51.200s  &  &  & \\ 
+%          (Coppermine) 1GHz & sys  & 0m03.780s  &  &  & \\ \hline
+%         \end{tabular}
+%       \end{center}
+%     \end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+
+  \subsection{テストケース 5: 孤立した山を越える帯状流}
+
+    これは中緯度に孤立した山を置き, それによる流体の応答を調べる実験である. 
+    底面の地形分布 $h_{s}$ は以下のように与える.
+    \begin{equation}
+      h_{s} = h_{s0} \left(1 - \frac{1}{R}\sqrt{\mbox{min}[R^{2}, (\lambda -\lambda _{c})^{2}+(\phi - \phi _{c})^{2}]}\right)
+    \end{equation}
+    初期の場はケース 2 の $\alpha =0$ の場合と同じである.
+    \begin{eqnarray}
+      u &=& u_{0}\cos \phi, \\
+      v &=& 0, \\
+      h &=& h_{0} - \left(a\Omega u_{0} + \frac{u_{0}^{2}}{2}\right)
+          (\sin \phi)^{2}/g.
+    \end{eqnarray}
+    流線関数と速度ポテンシャルの初期値は
+    \begin{eqnarray}
+      \psi &=&  -u_{0}a\sin \theta, \\
+      \chi &=& 0
+    \end{eqnarray}
+    である. これより渦度と発散の初期値は
+    \begin{eqnarray}
+      \zeta &=& \frac{2u_{0}}{a}\sin \theta, \\
+      D &=& 0
+    \end{eqnarray}
+    である.
+
+    与えたパラメータは\Dtabref{テストケース5のパラメータ}にまとめる.  計算
+    時間は 15 日間で, テストケース 1 と同様に 1 ステップ毎のデータを出力する.
+
+    \begin{table}[h]
+      \begin{center}
+        \Dtablab{テストケース5のパラメータ}
+        \caption{テストケース 5 で用いたパラメータ}
+        \begin{tabular}{cc} \hline
+          パラメータ     & 値               \\ \hline
+          $u_{0}$        & 20 msec${}^{-1}$ \\ 
+          $h_{0}$        & 5960 m           \\ 
+          $h_{s0}$       & 2000 m           \\
+          $R$            & $\pi$/9          \\
+          $\lambda _{c}$ & $\pi$/2         \\ 
+          $\phi _{c}$    & $\pi/6$         \\ \hline
+        \end{tabular}
+      \end{center}
+    \end{table}
+
+%     \begin{table}[h]
+%       \begin{center}
+%         \Dtablab{テストケース5の計算時間}
+%         \caption{テストケース 5 の計算時間 (sec)}
+%         \begin{tabular}{lc|cccc} \hline
+%               &   & T42 & T63 & T106 & T213 \\ \hline
+%                            & real & 1m26.335 &  &  & \\ 
+%          Intel Pentium III & usr  & 1m25.770s  &  &  & \\ 
+%          (Coppermine) 1GHz & sys  & 0m00.550s  &  &  & \\ \hline
+%         \end{tabular}
+%       \end{center}
+%     \end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+
+  \subsection{テストケース 6: ロスビー・ハウルヴィッツ波}
+
+    初期に非発散順圧渦度方程式の解であるロスビー・ハウルヴィッツ波を表現する
+    流線関数を与える.
+    \begin{eqnarray}
+      \psi &=& -a^{2}\omega \sin \phi + a^{2}K\cos ^{R}\phi \cos R\lambda, \\
+      \chi &=& 0.
+    \end{eqnarray}
+    初期の速度場は
+    \begin{eqnarray}
+      u &=& a\omega \cos \phi + aK\cos ^{R-1}\phi (R\sin ^{2}\phi - \cos ^{2}\phi)\cos R\lambda, \\
+      v &=& -aKR\cos ^{R-1}\phi \sin \phi \sin R\lambda
+    \end{eqnarray}
+    であり, 渦度と発散の初期値は
+    \begin{eqnarray}
+      \zeta &=& 2\omega\sin \phi - K\sin \phi \cos ^{R}\phi (R^{2}+3R+2)\cos R\lambda, \\
+      D &=& 0
+    \end{eqnarray}
+    である.
+
+    初期の $h$ は
+    \begin{equation}
+     h = h_{0} + [a^{2}A(\phi) + a^{2}B(\phi)\cos R\lambda +a^{2}C(\phi)\cos 2R\lambda]/g
+    \end{equation}
+    で与えられる. ここで
+    \begin{eqnarray}
+      A(\phi) &=&
+        \frac{\omega}{2}(2\Omega + \omega)\cos^{2} \phi \nonumber \\ 
+      &&+ \frac{1}{4}K^{2}\cos ^{2R}[(R+1)\cos^{2}\phi 
+        + (2R^{2} - R - 2) - 2R^{2}cos^{-2}\phi], \\
+      B(\phi) &=& \frac{2(\Omega + \omega)K}{(R+1)(R+2)}\cos ^{R}\phi 
+                  [(R^{2} + 2R +2) - (R + 1)^{2}\cos ^{2}\phi], \\
+      C(\phi) &=& \frac{1}{4}K^{2}\cos ^{2R}\phi[(R + 1)\cos ^{2}\phi - (R + 2)]
+    \end{eqnarray}
+    である. 
+
+    与えたパラメータは\Dtabref{テストケース5のパラメータ}にまとめる.  計算
+    時間は 15 日間で, テストケース 1 と同様に 1 ステップ毎のデータを出力する.
+
+    \begin{table}[h]
+      \begin{center}
+        \Dtablab{テストケース5のパラメータ}
+        \caption{テストケース 5 で用いたパラメータ}
+        \begin{tabular}{cc} \hline
+          パラメータ     & 値               \\ \hline
+          $h_{0}$  & 8000 m           \\ 
+          $R$      & 4               \\
+          $\omega$ & $7.848\times 10^{-6}$ sec${}^{-1}$ \\ 
+          $K$      & $7.848\times 10^{-6}$ sec${}^{-1}$ \\ \hline
+        \end{tabular}
+      \end{center}
+    \end{table}
+
+%     \begin{table}[h]
+%       \begin{center}
+%         \Dtablab{テストケース6の計算時間}
+%         \caption{テストケース 6 の計算時間 (sec)}
+%         \begin{tabular}{lc|cccc} \hline
+%               &   & T42 & T63 & T106 & T213 \\ \hline
+%                            & real & 1m35.644s &  &  & \\ 
+%          Intel Pentium III & usr  & 1m32.210s &  &  & \\ 
+%          (Coppermine) 1GHz & sys  & 0m03.410s &  &  & \\ \hline
+%         \end{tabular}
+%       \end{center}
+%     \end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+
+\section{参考文献}
+\begin{description}
+ \item Asselin, R. A., 1972: 
+       Frequency filter for time integrations.
+       {\it Mon. Wea. Rev.}, {\bf 100}, 487--490.
+
+ \item 石岡圭一, 2004:
+       スペクトル法による数値計算入門, 東京大学出版会, 232pp.
+
+ \item Krishnamurti, T. N., H. S. Bedi, and V. M. Hardiker, 1998:
+       An introduction to global spectral modeling. 
+       Ocford Univ. Press, 253 pp.
+
+%  \item Satoh, M., 2004: Atmospheric circulation dynamics and circulation 
+%        models.
+%        Springer-Verlag, 643 pp.
+
+ \item 竹広真一, 石岡圭一, 柿並義宏, 西澤誠也, 森川靖大, 小高正嗣, 
+       石渡正樹, 林祥介, SPMODEL 開発グループ, 2005:  
+       階層的地球流体力学スペクトルモデル集 (SPMODEL),  
+       http://www.gfd-dennou.org/library/spmodel/, 地球流体電脳倶楽部. 
+
+ \item Williamson, D. L., J. B. Drake, J. J. Hack, R. Jakob, and P. N. Swarztrauber, 1992:
+      A Standard Test Set for Numerical Approximations to the Shallow
+      Water Equation in Spherical Geometry.
+      {\it J. Comput. Phys.}, {\bf 102},  211--224.
+\end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section*{謝辞}                           % 謝辞. このまま利用する.
+\markright{謝辞}                          % ヘッダに表示
+
+本資源は, 地球流体電脳倶楽部のインターネット上での学術知識の集積と活用
+の実験の一環として
+\begin{center}
+ http:\slash \slash www.gfd-dennou.org\slash arch\slash spmodel\slash 
+\end{center}
+において公開されているものである 
+(\copyright 地球流体電脳倶楽部スペクトルモデルプロジェクト 
+spmodel@gfd-dennou.org 2002. ). 
+本資源は, 著作者の諸権利に抵触しない(迷惑をかけない)限りにおいて自由に
+利用していただいて構わない. なお, 利用する際には今一度自ら内容を確かめ
+ることをお願いする(無保証無責任原則).
+
+本資源に含まれる元資源提供者(図等の版元等を含む)からは,  直接的な形で
+の WEB 上での著作権または使用許諾を得ていない場合があるが,  勝手ながら, 
+「未来の教育」のための実験という学術目的であることをご理解いただけるも
+のと信じ,  学術標準の引用手順を守ることで諸手続きを略させていただいて
+いる.  本資源の利用者には, この点を理解の上,  注意して扱っていただける
+ようお願いする.  万一, 不都合のある場合には
+\begin{center}
+ spmodel@gfd-dennou.org
+\end{center}
+まで連絡していただければ幸いである. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+

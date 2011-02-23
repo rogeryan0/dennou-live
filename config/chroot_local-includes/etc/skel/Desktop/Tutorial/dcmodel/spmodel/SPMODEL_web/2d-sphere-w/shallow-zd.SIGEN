@@ -1,0 +1,13 @@
+Subject: 浅水系(2 次元球面, 渦度発散型) 
+Maintainer: 竹広真一
+Note: 定式化等解説は relative:pub/index.htm , 
+      Fortran90 サンプルプログラムは relative:f90/SIGEN.htm で参照可能. 
+      実験結果は <URL:/library/numexp/spshallow-zd_bench/exp/index.htm> から. 
+Description:
+Update: 2009/01/19
+
+履歴
+	2003/06/21 小高正嗣
+	2005/09/22 竹広真一 新プログラムへ移行. 
+	           旧バージョンは OLD ディレクトリへ移動
+	2009/01/19 竹広真一 ディレクトリ構成変更. exp を numexp へ移動

@@ -1,0 +1,4211 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: et_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">et_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/et_module_f90.html">
+
+                src/et_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="et_module.html">et_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a href="../files/src/et_module_f90.html">et_module.f90</a>,v 1.15
+2009-02-28 21:33:47 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+2 次元水路領域問題, Fourier 展開 + Chebyshev 展開法
+</p>
+<p>
+spml/et_module モジュールは 2 次元水路領域での流体運動を
+スペクトル法により数値計算を実行するための Fortran90 関数を提供する.
+周期的な境界条件を扱うための X 方向へのフーリエ変換と境界壁を扱うための Y
+方向のチェビシェフ変換を用いる場合のスペクトル計算のためのさまざまな
+関数を提供する.
+</p>
+<p>
+内部で <a href="ae_module.html">ae_module</a>, <a
+href="at_module.html">at_module</a> を用いている.
+最下部ではフーリエ変換およびチェビシェフ変換のエンジンとして ISPACK/FTPACK
+の Fortran77 サブルーチンを用いている.
+</p>
+<h2>関数・変数の名前と型について</h2>
+<h3>命名法</h3>
+<ul>
+<li>関数名の先頭 (et_, yx_, x_, y_) は, 返す値の形を示している.
+
+<table>
+<tr><td valign="top">et_ :</td><td>2次元スペクトルデータ
+
+</td></tr>
+<tr><td valign="top">yx_ :</td><td>2 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">x_  :</td><td>X 方向 1 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">y_  :</td><td>Y 方向 1 次元格子点データ
+
+</td></tr>
+</table>
+</li>
+<li>関数名の間の文字列(Dx, Dy, Lapla, LaplaInv, Jacobian)は,
+その関数の作用を表している.
+
+</li>
+<li>関数名の最後 (_et_et, _et, _yx, _x, _y) は, 入力変数のスペクトルデータ
+および格子点データであることを示している.
+
+<table>
+<tr><td valign="top">_et    :</td><td>2次元スペクトルデータ
+
+</td></tr>
+<tr><td valign="top">_et_et :</td><td>2 つの2次元スペクトルデータ
+
+</td></tr>
+<tr><td valign="top">_yx    :</td><td>2 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">_x     :</td><td>X 方向 1 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">_y     :</td><td>Y 方向 1 次元格子点データ
+
+</td></tr>
+</table>
+</li>
+</ul>
+<h3>各データの種類の説明</h3>
+<ul>
+<li>yx : 2 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:jm,0:im-1).
+
+</li>
+<li>im, jm はそれぞれ X, Y 座標の格子点数であり, サブルーチン <a
+href="et_module.html#M002158">et_initial</a> にてあらかじめ設定しておく.
+
+</li>
+<li>第 1 次元が Y 座標の格子点位置番号, 第 2 次元が X 座標の
+格子点位置番号である (X, Y の順ではない)ことに注意.
+
+</li>
+</ul>
+</li>
+<li>et : 2 次元スペクトルデータ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(-km:km,0:lm).
+
+</li>
+<li>km, lm はそれぞれ X, Y 方向の最大波数であり, サブルーチン <a
+href="et_module.html#M002158">et_initial</a> にてあらかじめ設定しておく.
+
+</li>
+<li>スペクトルデータの格納のされ方については&#8230;
+
+</li>
+</ul>
+</li>
+<li>x, y : X, Y 方向 1 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元はそれぞれ real(8), dimension(0:im-1) および real(8),
+dimension(0:jm).
+
+</li>
+</ul>
+</li>
+<li>e, t : 1 次元スペクトルデータ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(-km:km) および real(8),
+dimension(-lm:lm).
+
+</li>
+</ul>
+</li>
+<li>ax, ay : 1 次元格子点データの並んだ 2 次元配列.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(:,0:im-1) および real(8),
+dimension(:,0:jm).
+
+</li>
+</ul>
+</li>
+<li>ae, at : 1 次元スペクトルデータの並んだ 2 次元配列.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(:,-km:km) および real(8),
+dimension(:,0:lm).
+
+</li>
+</ul>
+</li>
+<li>et_ で始まる関数が返す値はスペクトルデータに同じ.
+
+</li>
+<li>yx_ で始まる関数が返す値は 2 次元格子点データに同じ.
+
+</li>
+<li>x_, y_ で始まる関数が返す値は 1 次元格子点データに同じ.
+
+</li>
+<li>スペクトルデータに対する微分等の作用とは, 対応する格子点データに
+微分などを作用させたデータをスペクトル変換したものことである.
+
+</li>
+</ul>
+<h2>変数・手続き群の要約</h2>
+<h4>初期化</h4>
+<table>
+<tr><td valign="top"><a href="et_module.html#M002158">et_Initial</a> :</td><td>スペクトル変換の格子点数, 波数, 領域の大きさの設定
+
+</td></tr>
+</table>
+<h4>座標変数</h4>
+<table>
+<tr><td valign="top"><a href="et_module.html#M002180">x_X</a>, <a href="et_module.html#M002182">y_Y</a>     :</td><td>格子点座標(X,Y座標)を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002184">x_X_Weight</a>, <a href="et_module.html#M002186">y_Y_Weight</a> :</td><td>重み座標を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002156">yx_X</a>, <a href="et_module.html#M002157">yx_Y</a>   :</td><td>格子点データの XY 座標(X,Y)(格子点データ型 2 次元配列)
+
+</td></tr>
+</table>
+<h4>基本変換</h4>
+<table>
+<tr><td valign="top"><a href="et_module.html#M002159">yx_et</a> :</td><td>スペクトルデータから格子データへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002160">et_yx</a> :</td><td>格子データからスペクトルデータへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002191">ax_ae</a>, <a href="et_module.html#M002189">x_e</a> :</td><td>X 方向のスペクトルデータから格子データへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002195">ay_at</a>, <a href="et_module.html#M002193">y_t</a> :</td><td>Y 方向のスペクトルデータから格子データへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002190">ae_ax</a>, <a href="et_module.html#M002188">e_x</a> :</td><td>X 方向の格子点データからスペクトルデータへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002194">at_ay</a>, <a href="et_module.html#M002192">t_y</a> :</td><td>Y 方向の格子点データからスペクトルデータへの変換
+
+</td></tr>
+</table>
+<h4>微分</h4>
+<table>
+<tr><td valign="top"><a href="et_module.html#M002163">et_Lapla_et</a>  :</td><td>スペクトルデータにラプラシアンを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002161">et_Dx_et</a>, <a href="et_module.html#M002197">ae_Dx_ae</a>, <a href="et_module.html#M002196">e_Dx_e</a> :</td><td>スペクトルデータに X 微分を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002162">et_Dy_et</a>, <a href="et_module.html#M002199">at_Dy_at</a>, <a href="et_module.html#M002198">t_Dy_t</a> :</td><td>スペクトルデータに Y 微分を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002164">et_Jacobian_et_et</a> :</td><td>2 つのスペクトルデータからヤコビアンを計算する
+
+</td></tr>
+</table>
+<h4>境界値問題</h4>
+<table>
+<tr><td valign="top"><a href="et_module.html#M002165">et_Boundaries</a>  :</td><td>ディリクレ, ノイマン境界条件の適用
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002166">et_LaplaInv_et</a> :</td><td>スペクトルデータにラプラシアンの逆変換を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002167">ey_Vor2Strm_ey</a> :</td><td>渦度から流線を計算する
+
+</td></tr>
+</table>
+<h4>積分・平均</h4>
+<table>
+<tr><td valign="top"><a href="et_module.html#M002170">IntYX_yx</a>, <a href="et_module.html#M002175">AvrYX_yx</a>   :</td><td>2 次元格子点データの全領域積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002171">y_IntX_yx</a>, <a href="et_module.html#M002176">y_AvrX_yx</a> :</td><td>2 次元格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002173">IntX_x</a>, <a href="et_module.html#M002178">AvrX_x</a>       :</td><td>1 次元(X)格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002172">x_IntY_yx</a>, <a href="et_module.html#M002177">x_AvrY_yx</a> :</td><td>2 次元格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="et_module.html#M002174">IntY_y</a>, <a href="et_module.html#M002179">AvrY_y</a>       :</td><td>1 次元(Y)格子点データの Y 方向積分および平均
+
+</td></tr>
+</table>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M002178">AvrX_x</a>&nbsp;&nbsp;
+
+        <a href="#M002175">AvrYX_yx</a>&nbsp;&nbsp;
+
+        <a href="#M002179">AvrY_y</a>&nbsp;&nbsp;
+
+        <a href="#M002173">IntX_x</a>&nbsp;&nbsp;
+
+        <a href="#M002170">IntYX_yx</a>&nbsp;&nbsp;
+
+        <a href="#M002174">IntY_y</a>&nbsp;&nbsp;
+
+        <a href="#M002197">ae_Dx_ae</a>&nbsp;&nbsp;
+
+        <a href="#M002190">ae_ax</a>&nbsp;&nbsp;
+
+        <a href="#M002201">at_Boundaries_DD</a>&nbsp;&nbsp;
+
+        <a href="#M002200">at_Boundaries_DD</a>&nbsp;&nbsp;
+
+        <a href="#M002203">at_Boundaries_DN</a>&nbsp;&nbsp;
+
+        <a href="#M002202">at_Boundaries_DN</a>&nbsp;&nbsp;
+
+        <a href="#M002205">at_Boundaries_ND</a>&nbsp;&nbsp;
+
+        <a href="#M002204">at_Boundaries_ND</a>&nbsp;&nbsp;
+
+        <a href="#M002207">at_Boundaries_NN</a>&nbsp;&nbsp;
+
+        <a href="#M002206">at_Boundaries_NN</a>&nbsp;&nbsp;
+
+        <a href="#M002199">at_Dy_at</a>&nbsp;&nbsp;
+
+        <a href="#M002194">at_ay</a>&nbsp;&nbsp;
+
+        <a href="#M002191">ax_ae</a>&nbsp;&nbsp;
+
+        <a href="#M002195">ay_at</a>&nbsp;&nbsp;
+
+        <a href="#M002196">e_Dx_e</a>&nbsp;&nbsp;
+
+        <a href="#M002188">e_x</a>&nbsp;&nbsp;
+
+        <a href="#M002165">et_Boundaries</a>&nbsp;&nbsp;
+
+        <a href="#M002161">et_Dx_et</a>&nbsp;&nbsp;
+
+        <a href="#M002162">et_Dy_et</a>&nbsp;&nbsp;
+
+        <a href="#M002158">et_Initial</a>&nbsp;&nbsp;
+
+        <a href="#M002164">et_Jacobian_et_et</a>&nbsp;&nbsp;
+
+        <a href="#M002166">et_LaplaInv_et</a>&nbsp;&nbsp;
+
+        <a href="#M002163">et_Lapla_et</a>&nbsp;&nbsp;
+
+        <a href="#M002169">et_Vor2Strm1_et</a>&nbsp;&nbsp;
+
+        <a href="#M002168">et_Vor2Strm_et</a>&nbsp;&nbsp;
+
+        <a href="#M002160">et_yx</a>&nbsp;&nbsp;
+
+        <a href="#M002167">ey_Vor2Strm_ey</a>&nbsp;&nbsp;
+
+        <a href="#M002198">t_Dy_t</a>&nbsp;&nbsp;
+
+        <a href="#M002192">t_y</a>&nbsp;&nbsp;
+
+        <a href="#M002177">x_AvrY_yx</a>&nbsp;&nbsp;
+
+        <a href="#M002172">x_IntY_yx</a>&nbsp;&nbsp;
+
+        <a href="#M002181">x_X</a>&nbsp;&nbsp;
+
+        <a href="#M002180">x_X</a>&nbsp;&nbsp;
+
+        <a href="#M002185">x_X_weight</a>&nbsp;&nbsp;
+
+        <a href="#M002184">x_X_weight</a>&nbsp;&nbsp;
+
+        <a href="#M002189">x_e</a>&nbsp;&nbsp;
+
+        <a href="#M002176">y_AvrX_yx</a>&nbsp;&nbsp;
+
+        <a href="#M002171">y_IntX_yx</a>&nbsp;&nbsp;
+
+        <a href="#M002183">y_Y</a>&nbsp;&nbsp;
+
+        <a href="#M002182">y_Y</a>&nbsp;&nbsp;
+
+        <a href="#M002187">y_Y_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M002186">y_Y_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M002193">y_t</a>&nbsp;&nbsp;
+
+        <a href="#M002156">yx_X</a>&nbsp;&nbsp;
+
+        <a href="#M002157">yx_Y</a>&nbsp;&nbsp;
+
+        <a href="#M002159">yx_et</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+
+        <span class="include-name"><a href="lumatrix.html">lumatrix</a></span>
+
+        <span class="include-name"><a href="ae_module.html">ae_module</a></span>
+
+        <span class="include-name"><a href="at_module.html">at_module</a></span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M002178" class="method-detail">
+        <a name="M002178"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002178" class="method-signature">
+
+
+
+          <span class="method-name">AvrX_x</span><span class="method-args">( x ) result(AvrX_x)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002178">AvrX_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(X)格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002184">x_X_Weight</a> をかけた総和を計算し, <a
+href="et_module.html#M002184">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002178-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002178-source">
+<pre>
+    function AvrX_x(x)
+      !
+      ! 1 次元(X)格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:im-1)   :: x          !(in)  1 次元格子点データ
+      real(8)                      :: AvrX_x     !(out) 平均値
+
+      AvrX_x = IntX_x(x)/sum(x_X_weight)
+    end function AvrX_x
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002175" class="method-detail">
+        <a name="M002175"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002175" class="method-signature">
+
+
+
+          <span class="method-name">AvrYX_yx</span><span class="method-args">( yx ) result(AvrYX_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002175">AvrYX_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの全領域平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002184">x_X_Weight</a>, <a
+href="et_module.html#M002186">y_Y_Weight</a> をかけた 総和を計算し, <a
+href="et_module.html#M002184">x_X_Weight</a>*<a
+href="et_module.html#M002186">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002175-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002175-source">
+<pre>
+    function AvrYX_yx(yx)
+      !
+      ! 2 次元格子点データの全領域平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算し, x_X_Weight*y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:jm,0:im-1)   :: yx
+      !(in)  2 次元格子点データ
+
+      real(8)                           :: AvrYX_yx
+      !(out) 平均値
+
+      AvrYX_yx = IntYX_yx(yx)/(sum(x_X_weight)*sum(y_Y_weight))
+    end function AvrYX_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002179" class="method-detail">
+        <a name="M002179"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002179" class="method-signature">
+
+
+
+          <span class="method-name">AvrY_y</span><span class="method-args">( y ) result(AvrY_y)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002179">AvrY_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002186">y_Y_Weight</a> をかけた総和を計算し, <a
+href="et_module.html#M002186">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002179-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002179-source">
+<pre>
+    function AvrY_y(y)
+      !
+      ! 1 次元(Y)格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:jm)   :: y          !(in)  1 次元格子点データ
+      real(8)                    :: AvrY_y     !(out) 平均値
+
+      AvrY_y = IntY_y(y)/sum(y_Y_weight)
+    end function AvrY_y
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002173" class="method-detail">
+        <a name="M002173"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002173" class="method-signature">
+
+
+
+          <span class="method-name">IntX_x</span><span class="method-args">( x ) result(IntX_x)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002173">IntX_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+X 方向積分
+</p>
+<p>
+1 次元(X)格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002184">x_X_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002173-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002173-source">
+<pre>
+    function IntX_x(x)      ! X 方向積分
+      !
+      ! 1 次元(X)格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:im-1)   :: x         !(in)  1 次元格子点データ
+      real(8)                      :: IntX_x    !(out) 積分値
+
+      IntX_x = sum(x*x_X_Weight)
+    end function IntX_x
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002170" class="method-detail">
+        <a name="M002170"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002170" class="method-signature">
+
+
+
+          <span class="method-name">IntYX_yx</span><span class="method-args">( yx ) result(IntYX_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002170">IntYX_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+全領域積分
+</p>
+<p>
+2 次元格子点データの全領域積分および平均.
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002184">x_X_Weight</a>, <a
+href="et_module.html#M002186">y_Y_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002170-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002170-source">
+<pre>
+    function IntYX_yx(yx)   ! 全領域積分
+      !
+      ! 2 次元格子点データの全領域積分および平均.
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:jm,0:im-1)   :: yx
+      !(in)  2 次元格子点データ
+
+      real(8)                           :: IntYX_yx
+      !(out) 積分値
+
+      integer :: i, j
+
+      IntYX_yx = 0.0d0
+      do i=0,im-1
+         do j=0,jm
+            IntYX_yx = IntYX_yx + yx(j,i) * y_Y_Weight(j) * x_X_Weight(i)
+         enddo
+      enddo
+    end function IntYX_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002174" class="method-detail">
+        <a name="M002174"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002174" class="method-signature">
+
+
+
+          <span class="method-name">IntY_y</span><span class="method-args">( y ) result(IntY_y)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002174">IntY_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Y 方向積分
+</p>
+<p>
+1 次元(Y)格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002186">y_Y_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002174-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002174-source">
+<pre>
+    function IntY_y(y)      ! Y 方向積分
+      !
+      ! 1 次元(Y)格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:jm)   :: y          !(in)  1 次元格子点データ
+      real(8)                    :: IntY_y     !(out) 積分値
+
+      IntY_y = sum(y*y_Y_Weight)
+    end function IntY_y
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002197" class="method-detail">
+        <a name="M002197"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ae_Dx_ae</span><span class="method-args">( ae ) result(ae_Dx_ae)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ae  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,-km:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに X 微分を作用する(2 次元データ).
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001553">ae_module#ae_Dx_ae</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002190" class="method-detail">
+        <a name="M002190"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ae_ax</span><span class="method-args">( ag ) result(ae_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ae_ag  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(ag,1),-km:km)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データからスペクトルデータへ変換する(2 次元データ用)
+</p>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001551">ae_module#ae_ag</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002201" class="method-detail">
+        <a name="M002201"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Boundaries_DD</span><span class="method-args">( at_data, [values] ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,0:),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> データ(m,0:km) (inout) 境界条件を適用するチェビシェフデータ(m,0:km)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値(m,2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Dirichlet 型境界条件の適用(タウ法, 2 次元配列用) 両境界での値を与える.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001350">at_module#at_Boundaries_DD</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002200" class="method-detail">
+        <a name="M002200"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Boundaries_DD</span><span class="method-args">( t_data, [values] ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (inout) 境界条件を適用するチェビシェフデータ(0:km)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Dirichlet 型境界条件の適用(タウ法, 1 次元配列用) 両境界での値を与える.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001350">at_module#at_Boundaries_DD</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002203" class="method-detail">
+        <a name="M002203"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Boundaries_DN</span><span class="method-args">( at_data, [values] ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,0:),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (inout) 境界条件を適用するチェビシェフデータ(m,0:km)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値(m,2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Dirichlet/Neumann 型境界条件の適用(タウ法, 2 次元配列用) i=0 で値, i=im
+で勾配の値を与える.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001352">at_module#at_Boundaries_DN</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002202" class="method-detail">
+        <a name="M002202"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Boundaries_DN</span><span class="method-args">( t_data, [values] ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (inout) 境界条件を適用するチェビシェフデータ(0:km)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Dirichlet/Neumann 型境界条件の適用(タウ法, 1 次元配列用) i=0 で値, i=im
+で勾配の値を与える.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001352">at_module#at_Boundaries_DN</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002205" class="method-detail">
+        <a name="M002205"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Boundaries_ND</span><span class="method-args">( at_data, [values] ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,0:),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (inout) 境界条件を適用するチェビシェフデータ(m,0:km)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値(m,2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Neumann/Dirichlet 型境界条件の適用(タウ法, 2 次元配列用) i=0 で勾配の値,
+i=im で値を与える.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001354">at_module#at_Boundaries_ND</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002204" class="method-detail">
+        <a name="M002204"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Boundaries_ND</span><span class="method-args">( t_data, [values] ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (inout) 境界条件を適用するチェビシェフデータ(0:km)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Neumann/Dirichlet 型境界条件の適用(タウ法, 1 次元配列用) i=0 で勾配の値,
+i=im で値を与える.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001354">at_module#at_Boundaries_ND</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002207" class="method-detail">
+        <a name="M002207"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Boundaries_NN</span><span class="method-args">( at_data, [values] ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,0:),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (inout) 境界条件を適用するチェビシェフデータ(m,0:km)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値(m,2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Neumann/Dirichlet 型境界条件の適用(タウ法, 2 次元配列用)
+両境界で勾配の値を与える.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001356">at_module#at_Boundaries_NN</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002206" class="method-detail">
+        <a name="M002206"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Boundaries_NN</span><span class="method-args">( t_data, [values] ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (inout) 境界条件を適用するチェビシェフデータ(0:km)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Neumann/Dirichlet 型境界条件の適用(タウ法, 1 次元配列用)
+両境界で勾配の値を与える.
+</p>
+<p>
+このサブルーチンを直接使うことを勧めない. 共通インターフェース <a
+href="et_module.html#M002206">at_Boundaries_NN</a> を用いること.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001356">at_module#at_Boundaries_NN</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002199" class="method-detail">
+        <a name="M002199"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_Dy_at</span><span class="method-args">( at_data ) result(at_Dx_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_Dx_at  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(at_data,1),0:size(at_data,2)-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,0:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力チェビシェフデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力チェビシェフデータに X 微分を作用する(2 次元配列用).
+</p>
+<p>
+チェビシェフデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのチェビシェフ変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001342">at_module#at_Dx_at</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002194" class="method-detail">
+        <a name="M002194"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">at_ay</span><span class="method-args">( ag_data ) result(at_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_ag  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(ag_data,1),0:km)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データからチェビシェフデータへ変換する(2 次元配列用).
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001340">at_module#at_ag</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002191" class="method-detail">
+        <a name="M002191"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ax_ae</span><span class="method-args">( ae ) result(ag_ae)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_ae  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(ae,1),0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ae  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,-km:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子点データへ変換する(2 次元データ用)
+</p>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001549">ae_module#ag_ae</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002195" class="method-detail">
+        <a name="M002195"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ay_at</span><span class="method-args">( at_data ) result(ag_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_at  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(at_data,1),0:im)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフデータから格子データへ変換する(2 次元配列用).
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001338">at_module#ag_at</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002196" class="method-detail">
+        <a name="M002196"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">e_Dx_e</span><span class="method-args">( e ) result(e_Dx_e)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002196">e_Dx_e</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 入力スペクトルデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>e  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに X 微分を作用する(1 次元データ).
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001554">ae_module#e_Dx_e</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002188" class="method-detail">
+        <a name="M002188"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">e_x</span><span class="method-args">( g ) result(e_g)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>e_g  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データからスペクトルデータへ変換する(1 次元データ用)
+</p>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001552">ae_module#e_g</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002165" class="method-detail">
+        <a name="M002165"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002165" class="method-signature">
+
+
+
+          <span class="method-name">et_Boundaries</span><span class="method-args">( et, [values], [cond] ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm),intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界条件を適用するデータ. 修正された値を返す.
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界での 値/勾配 分布を水平スペクトル変換したものを与える. 省略時は値/勾配
+0 となる.
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>cond  </tt></b>  <tt> </tt> :</td><td><tt>character(len=2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界条件. 省略時は &#8216;DD&#8216;
+
+<pre>
+  DD : 両端ディリクレ
+  DN,ND : ディリクレ/ノイマン条件
+  NN : 両端ノイマン
+</pre>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ディリクレ, ノイマン条件の適用. チェビシェフ空間での計算
+</p>
+<p>
+実際には中で呼ばれている <a href="at_module.html">at_module</a>
+のサブルーチン <a href="et_module.html#M002200">at_Boundaries_DD</a>, <a
+href="et_module.html#M002202">at_Boundaries_DN</a>, <a
+href="et_module.html#M002204">at_Boundaries_ND</a>, <a
+href="et_module.html#M002206">at_Boundaries_NN</a> を用いている.
+これらを直接呼ぶことも出来る.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002165-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002165-source">
+<pre>
+    subroutine et_Boundaries(et,values,cond)
+      !
+      ! ディリクレ, ノイマン条件の適用. チェビシェフ空間での計算
+      !
+      ! 実際には中で呼ばれている at_module のサブルーチン at_Boundaries_DD,
+      ! at_Boundaries_DN, at_Boundaries_ND, at_Boundaries_NN を用いている. 
+      ! これらを直接呼ぶことも出来る.
+      !
+      real(8), dimension(-km:km,0:lm),intent(inout)      :: et
+              ! 境界条件を適用するデータ. 修正された値を返す. 
+
+      real(8), dimension(-km:km,2), intent(in), optional :: values
+              ! 境界での 値/勾配 分布を水平スペクトル変換したものを与える. 
+              ! 省略時は値/勾配 0 となる. 
+
+      character(len=2), intent(in), optional             :: cond
+              ! 境界条件. 省略時は 'DD'
+              !   DD : 両端ディリクレ
+              !   DN,ND : ディリクレ/ノイマン条件
+              !   NN : 両端ノイマン
+
+      if (.not. present(cond)) then
+         if (present(values)) then
+            call at_Boundaries_DD(et,values)
+         else
+            call at_Boundaries_DD(et)
+         endif
+         return
+      endif
+
+      select case(cond)
+      case ('NN')
+         if (present(values)) then
+            call at_Boundaries_NN(et,values)
+         else
+            call at_Boundaries_NN(et)
+         endif
+      case ('DN')
+         if (present(values)) then
+            call at_Boundaries_DN(et,values)
+         else
+            call at_Boundaries_DN(et)
+         endif
+      case ('ND')
+         if (present(values)) then
+            call at_Boundaries_ND(et,values)
+         else
+            call at_Boundaries_ND(et)
+         endif
+      case ('DD')
+         if (present(values)) then
+            call at_Boundaries_DD(et,values)
+         else
+            call at_Boundaries_DD(et)
+         endif
+      case default
+         call MessageNotify('E','et_Boundaries','B.C. not supported')
+      end select
+
+    end subroutine et_Boundaries
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002161" class="method-detail">
+        <a name="M002161"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002161" class="method-signature">
+
+
+
+          <span class="method-name">et_Dx_et</span><span class="method-args">( et ) result(et_Dx_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002161">et_Dx_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに X 微分(∂x)を作用する.
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに X 方向波数 k をかけて sin(kx) &lt;-&gt; cos(kx)
+成分に入れ換える計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002161-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002161-source">
+<pre>
+    function et_Dx_et(et)
+      !
+      ! 入力スペクトルデータに X 微分(∂x)を作用する.
+      !
+      ! スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに X 方向波数 k をかけて
+      ! sin(kx) &lt;-&gt; cos(kx) 成分に入れ換える計算を行っている.
+      !
+      real(8), dimension(-km:km,0:lm)                :: et_Dx_et
+      real(8), dimension(-km:km,0:lm), intent(in)    :: et
+      integer k
+
+      do k=-km,km
+         et_Dx_et(k,:)  =  (-2*pi*k/xl)*et(-k,:)
+      enddo
+    end function et_Dx_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002162" class="method-detail">
+        <a name="M002162"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002162" class="method-signature">
+
+
+
+          <span class="method-name">et_Dy_et</span><span class="method-args">( et ) result(et_Dy_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002162">et_Dy_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの Y 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに Y 微分(∂y)を作用する.
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに Y 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002162-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002162-source">
+<pre>
+    function et_Dy_et(et)
+      !
+      ! 入力スペクトルデータに Y 微分(∂y)を作用する.
+      !
+      ! スペクトルデータの X 微分とは, 対応する格子点データに Y 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      real(8), dimension(-km:km,0:lm)               :: et_Dy_et
+      !(out) スペクトルデータの Y 微分
+
+      real(8), dimension(-km:km,0:lm), intent(in)   :: et
+      !(in) 入力スペクトルデータ
+
+      et_Dy_et = at_Dy_at(et)
+
+    end function et_Dy_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002158" class="method-detail">
+        <a name="M002158"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002158" class="method-signature">
+
+
+
+          <span class="method-name">et_Initial</span><span class="method-args">( i, j, k, l, xmin, xmax, ymin, ymax ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>i  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(X)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>j  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>k  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数(X)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数(Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xmin  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xmax  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ymin  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> Y 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ymax  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> Y 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトル変換の格子点数, 波数, 領域の大きさを設定する.
+</p>
+<p>
+他の関数や変数を呼ぶ前に, 最初にこのサブルーチンを呼んで
+初期設定をしなければならない.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002158-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002158-source">
+<pre>
+    subroutine et_Initial(i,j,k,l,xmin,xmax,ymin,ymax)
+      !
+      ! スペクトル変換の格子点数, 波数, 領域の大きさを設定する.
+      !
+      ! 他の関数や変数を呼ぶ前に, 最初にこのサブルーチンを呼んで
+      ! 初期設定をしなければならない.
+      !
+      integer,intent(in) :: i           ! 格子点数(X)
+      integer,intent(in) :: j           ! 格子点数(Y)
+      integer,intent(in) :: k           ! 切断波数(X)
+      integer,intent(in) :: l           ! 切断波数(Y)
+
+      real(8),intent(in) :: xmin, xmax     ! X 座標範囲
+      real(8),intent(in) :: ymin, ymax     ! Y 座標範囲
+
+      im = i       
+       jm = j
+      km = k       
+       lm = l
+      xl = xmax-xmin 
+       yl = ymax-ymin
+
+      call ae_initial(im,km,xmin,xmax)
+      call at_initial(jm,lm,ymin,ymax)
+
+      allocate(yx_X(0:jm,0:im-1),yx_Y(0:jm,0:im-1))
+      yx_X = spread(x_X,1,jm+1)
+      yx_Y = spread(y_Y,2,im)
+
+      call MessageNotify('M','et_initial','et_module (2009/01/09) is initialized')
+    end subroutine et_initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002164" class="method-detail">
+        <a name="M002164"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002164" class="method-signature">
+
+
+
+          <span class="method-name">et_Jacobian_et_et</span><span class="method-args">( et_a, et_b ) result(et_Jacobian_et_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002164">et_Jacobian_et_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 2 つのスペクトルデータのヤコビアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et_a  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1つ目の入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et_b  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2つ目の入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 2 つのスペクトルデータからヤコビアン
+
+    J(A,B)=(∂xA)(∂yB)-(∂yA)(∂xB)
+
+ を計算する.
+
+ 2 つのスペクトルデータのヤコビアンとは, 対応する 2 つの
+ 格子点データのヤコビアンのスペクトル変換のことである.
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002164-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002164-source">
+<pre>
+    function et_Jacobian_et_et(et_a,et_b)
+      !
+      !  2 つのスペクトルデータからヤコビアン
+      !
+      !     J(A,B)=(∂xA)(∂yB)-(∂yA)(∂xB)
+      !
+      !  を計算する.
+      !
+      !  2 つのスペクトルデータのヤコビアンとは, 対応する 2 つの
+      !  格子点データのヤコビアンのスペクトル変換のことである.
+      !
+      real(8), dimension(-km:km,0:lm)                :: et_Jacobian_et_et
+      !(out) 2 つのスペクトルデータのヤコビアン
+
+      real(8), dimension(-km:km,0:lm), intent(in)    :: et_a
+      !(in) 1つ目の入力スペクトルデータ
+
+      real(8), dimension(-km:km,0:lm), intent(in)    :: et_b
+      !(in) 2つ目の入力スペクトルデータ
+
+      et_Jacobian_et_et = et_yx( yx_et(et_Dx_et(et_a)) * yx_et(et_Dy_et(et_b)) -yx_et(et_Dy_et(et_a)) * yx_et(et_Dx_et(et_b)) )
+
+    end function et_Jacobian_et_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002166" class="method-detail">
+        <a name="M002166"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002166" class="method-signature">
+
+
+
+          <span class="method-name">et_LaplaInv_et</span><span class="method-args">( et, [values] ) result(et_LaplaInv_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002166">et_LaplaInv_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの逆ラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界値. 省略時は 0 が設定される.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+境界で一様な値を与える条件(ディリクレ条件)下で,
+入力スペクトルデータに逆ラプラシアン(∂xx+∂yy)**(-1)を作用する.
+</p>
+<p>
+Chebyshev-tau 法による計算
+</p>
+<p>
+スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002166-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002166-source">
+<pre>
+    function et_LaplaInv_et(et,values)
+      !
+      ! 境界で一様な値を与える条件(ディリクレ条件)下で, 
+      ! 入力スペクトルデータに逆ラプラシアン(∂xx+∂yy)**(-1)を作用する.
+      !
+      ! Chebyshev-tau 法による計算
+      !
+      ! スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+      ! 逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+      !
+      real(8), dimension(-km:km,0:lm),intent(in)  :: et
+      !(in) スペクトルデータ
+
+      real(8), dimension(-km:km,0:lm)             :: et_LaplaInv_et
+      !(out) スペクトルデータの逆ラプラシアン
+
+      real(8), dimension(-km:km,2), intent(in), optional :: values
+      !(in) 境界値. 省略時は 0 が設定される. 
+
+      real(8), dimension(:,:,:), allocatable  :: alu
+      integer, dimension(:,:), allocatable    :: kp
+
+      real(8), dimension(-km:km,0:lm)         :: et_work
+      real(8), dimension(0:lm,0:lm)           :: tt_work
+      real(8), dimension(0:lm,0:jm)           :: ty_work
+      real(8), dimension(-km:km)              :: value1, value2   ! 境界値
+
+      logical :: first = .true.
+      integer :: k,l
+      save    :: alu, kp, first
+
+      if (.not. present(values)) then
+         value1=0 
+          value2=0
+      else
+         value1 = values(:,1) 
+          value2 = values(:,2)
+      endif
+
+      if ( first ) then
+         first = .false.
+
+         allocate(alu(-km:km,0:lm,0:lm),kp(-km:km,0:lm))
+
+         tt_work=0
+         do l=0,lm
+            tt_work(l,l)=1
+         enddo
+         ty_work=ay_at(tt_work)
+
+         do k=-km,km
+            alu(k,:,:) = transpose(at_Dy_at(at_Dy_at(tt_work)) - (2*pi*k/xl)**2*tt_work)
+            alu(k,lm-1,:) = ty_work(:,0)
+            alu(k,lm,:)   = ty_work(:,jm)
+         enddo
+
+         call ludecomp(alu,kp)
+      endif
+
+      et_work = et
+      et_work(:,lm-1) = value1
+      et_work(:,lm)   = value2
+      et_LaplaInv_et = lusolve(alu,kp,et_work)
+
+    end function et_LaplaInv_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002163" class="method-detail">
+        <a name="M002163"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002163" class="method-signature">
+
+
+
+          <span class="method-name">et_Lapla_et</span><span class="method-args">( et ) result(et_Lapla_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002163">et_Lapla_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータのラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータにラプラシアン(∂xx+∂yy)を作用する.
+</p>
+<p>
+スペクトルデータのラプラシアンとは, 対応する格子点データに
+ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002163-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002163-source">
+<pre>
+    function et_Lapla_et(et)
+      !
+      ! 入力スペクトルデータにラプラシアン(∂xx+∂yy)を作用する.
+      !
+      ! スペクトルデータのラプラシアンとは, 対応する格子点データに
+      ! ラプラシアンを作用させたデータのスペクトル変換のことである.
+      !
+      real(8), dimension(-km:km,0:lm)                :: et_Lapla_et
+      !(out) スペクトルデータのラプラシアン
+
+      real(8), dimension(-km:km,0:lm), intent(in)    :: et
+      !(in) 入力スペクトルデータ
+
+      integer k
+
+      do k=-km,km
+         et_Lapla_et(k,:) = -(2*pi*k/xl)**2*et(k,:)
+      enddo
+
+      et_Lapla_et = et_Lapla_et + et_Dy_et(et_Dy_et(et))
+
+    end function et_Lapla_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002169" class="method-detail">
+        <a name="M002169"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002169" class="method-signature">
+
+
+
+          <span class="method-name">et_Vor2Strm1_et</span><span class="method-args">( et, [values], [rigid] ) result(et_Vor2Strm1_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002169">et_Vor2Strm1_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 流線境界値. 境界で一定なので波数 0 成分のみ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 渦度
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界条件スイッチ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>rigid  </tt></b>  <tt> </tt> :</td><td><tt>logical, dimension(2), intent(in), optional</tt>
+
+</td></tr>
+</table>
+<p>
+渦度から流線を求める.
+</p>
+<p>
+注意 : 以下の点がうまくなく現在保留中. 使用禁止
+</p>
+<pre>
+   * Y 方向の切断波数を lm=jm と設定しておかないと
+     計算結果が振動して不安定となる.
+   *  非圧縮流体計算の拡散問題の時間発展が安定に計算できない.
+      Chebyshev-tauとこの問題の相性は良くないらしい.
+</pre>
+<p>
+Chebyshev-tau 法による計算 渦度 zeta を与えて流線 psi を求める.
+</p>
+<pre>
+   \nabla^2 \psi = \zeta,
+   \psi = const. at boundaries.
+</pre>
+<p>
+粘着条件
+</p>
+<pre>
+   \DP{\psi}{y} = 0 at boundaries
+</pre>
+<p>
+応力なし条件
+</p>
+<pre>
+   \DP[2]{\psi}{y} = 0 at boundaries
+</pre>
+<p>
+デフォルトは粘着条件
+</p>
+<p>
+nabla^4 psi = nabla^2\zeta を解く 4
+階の微分方程式にすることで境界条件の数とつじつまがあう.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002169-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002169-source">
+<pre>
+    function et_Vor2Strm1_et(et,values,rigid) 
+      ! 渦度から流線を求める. 
+      !
+      ! 注意 : 以下の点がうまくなく現在保留中. 使用禁止
+      !    * Y 方向の切断波数を lm=jm と設定しておかないと
+      !      計算結果が振動して不安定となる.
+      !    *  非圧縮流体計算の拡散問題の時間発展が安定に計算できない. 
+      !       Chebyshev-tauとこの問題の相性は良くないらしい.
+      !
+      ! Chebyshev-tau 法による計算
+      ! 渦度 \zeta を与えて流線 \psi を求める.
+      !    \nabla^2 \psi = \zeta, 
+      !    \psi = const. at boundaries.
+      ! 粘着条件
+      !    \DP{\psi}{y} = 0 at boundaries
+      ! 応力なし条件
+      !    \DP[2]{\psi}{y} = 0 at boundaries
+      !
+      ! デフォルトは粘着条件
+      !
+      ! \nabla^4 \psi = \nabla^2\zeta を解く
+      ! 4 階の微分方程式にすることで境界条件の数とつじつまがあう. 
+      !
+      !
+      real(8), dimension(-km:km,0:lm),intent(in)  :: et
+      !(in) 渦度
+
+      real(8), dimension(-km:km,0:lm)             :: et_Vor2Strm1_et
+      !(out)  流線境界値. 境界で一定なので波数 0 成分のみ
+
+      real(8), dimension(2), intent(in), optional :: values
+      !(in) 境界条件スイッチ
+
+      logical, dimension(2), intent(in), optional :: rigid
+
+      real(8), dimension(:,:,:), allocatable  :: alu
+      integer, dimension(:,:), allocatable    :: kp
+
+      real(8), dimension(-km:km,0:lm)         :: et_work
+      real(8), dimension(0:lm,0:lm)           :: tt_work
+      real(8), dimension(0:lm,0:jm)           :: ty_work
+      real(8)                                 :: value1, value2   ! 境界値
+      logical                                 :: rigid1, rigid2   ! 境界条件
+
+      logical :: first = .true.
+      integer :: k,l
+      save    :: alu, kp, first
+
+      if (.not. present(values)) then
+         value1=0 
+          value2=0
+      else
+         value1 = values(1) 
+          value2 = values(2)
+      endif
+
+      if (.not. present(rigid)) then
+         rigid1=.true. 
+          rigid2=.true.
+      else
+         rigid1 = rigid(1) 
+          rigid2 = rigid(2)
+      endif
+
+      if ( first ) then
+         first = .false.
+
+         allocate(alu(-km:km,0:lm,0:lm),kp(-km:km,0:lm))
+
+         tt_work=0
+         do l=0,lm
+            tt_work(l,l)=1
+         enddo
+         do k=-km,km
+            alu(k,:,:) = transpose( at_Dy_at(at_Dy_at(at_Dy_at(at_Dy_at(tt_work)))) - 2 * (2*pi*k/xl)**2 * at_Dy_at(at_Dy_at(tt_work)) + (2*pi*k/xl)**4*tt_work )
+         enddo
+
+         ! 運動学的条件. 流線は境界で一定
+         ty_work=ay_at(tt_work)
+         do k=-km,km
+            alu(k,lm-1,:) = ty_work(:,0)
+            alu(k,lm,:)   = ty_work(:,jm)
+         enddo
+
+         ! 力学的条件粘着条件 
+         if ( rigid1 ) then
+            ty_work=ay_at(at_Dy_at(tt_work))
+         else
+            ty_work=ay_at(at_Dy_at(at_Dy_at(tt_work)))
+         endif
+         do k=-km,km
+            alu(k,lm-3,:) = ty_work(:,0)
+         enddo
+
+         ! 力学的条件粘着条件 
+         if ( rigid2 ) then
+            ty_work=ay_at(at_Dy_at(tt_work))
+         else
+            ty_work=ay_at(at_Dy_at(at_Dy_at(tt_work)))
+         endif
+         do k=-km,km
+            alu(k,lm-2,:) = ty_work(:,jm)
+         enddo
+
+         call ludecomp(alu,kp)
+      endif
+
+      et_work = et_Lapla_et(et)
+      et_work(:,lm-3) = 0               ! 力学的条件
+      et_work(:,lm-2) = 0               ! 力学的条件
+
+      et_work(:,lm-1) = 0            ! 運動学的条件. 波数 0 以外は 0 
+      et_work(0,lm-1) = value1*2     ! 運動学的条件. 波数 0 は重み 1/2
+
+      et_work(:,lm)   = 0            ! 運動学的条件. 波数 0 以外は 0 
+      et_work(0,lm)   = value2*2     ! 運動学的条件. 波数 0 は重み 1/2
+
+      et_Vor2Strm1_et = lusolve(alu,kp,et_work)
+
+    end function et_Vor2Strm1_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002168" class="method-detail">
+        <a name="M002168"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002168" class="method-signature">
+
+
+
+          <span class="method-name">et_Vor2Strm_et</span><span class="method-args">( et, [values], [rigid] ) result(et_Vor2Strm_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002168">et_Vor2Strm_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm),intent(in)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界条件スイッチ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>rigid  </tt></b>  <tt> </tt> :</td><td><tt>logical, dimension(2), intent(in), optional</tt>
+
+</td></tr>
+</table>
+<p>
+渦度から流線を求める.
+</p>
+<p>
+注意 : 以下の点がうまくなく現在保留中. 使用禁止
+</p>
+<pre>
+   * Y 方向の切断波数を lm=jm と設定しておかないと
+     計算結果が振動して不安定となる.
+   *  非圧縮流体計算の拡散問題の時間発展が安定に計算できない.
+      Chebyshev-tauとこの問題の相性は良くないらしい.
+</pre>
+<p>
+Chebyshev-tau 法による計算 渦度 zeta を与えて流線 psi を求める.
+</p>
+<pre>
+   \nabla^2 \psi = \zeta,
+   \psi = const. at boundaries.
+</pre>
+<p>
+粘着条件
+</p>
+<pre>
+   \DP{\psi}{y} = 0 at boundaries
+</pre>
+<p>
+応力なし条件
+</p>
+<pre>
+   \DP[2]{\psi}{y} = 0 at boundaries
+</pre>
+<p>
+l=0,1,lm-1,lm 成分の式の代わりに境界条件を与える.
+渦度の低次成分を無視することは nabla^4 psi = zeta^2 を解いていることに相当.
+4 階の微分方程式にすることで境界条件の数とつじつまがあう.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002168-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002168-source">
+<pre>
+    function et_Vor2Strm_et(et,values,rigid)
+      !
+      ! 渦度から流線を求める. 
+      !
+      ! 注意 : 以下の点がうまくなく現在保留中. 使用禁止
+      !    * Y 方向の切断波数を lm=jm と設定しておかないと
+      !      計算結果が振動して不安定となる.
+      !    *  非圧縮流体計算の拡散問題の時間発展が安定に計算できない. 
+      !       Chebyshev-tauとこの問題の相性は良くないらしい.
+      !
+      ! Chebyshev-tau 法による計算
+      ! 渦度 \zeta を与えて流線 \psi を求める.
+      !    \nabla^2 \psi = \zeta, 
+      !    \psi = const. at boundaries.
+      ! 粘着条件
+      !    \DP{\psi}{y} = 0 at boundaries
+      ! 応力なし条件
+      !    \DP[2]{\psi}{y} = 0 at boundaries
+      !
+      ! l=0,1,lm-1,lm 成分の式の代わりに境界条件を与える. 
+      ! 渦度の低次成分を無視することは
+      ! \nabla^4 \psi = \zeta^2 を解いていることに相当. 
+      ! 4 階の微分方程式にすることで境界条件の数とつじつまがあう. 
+
+      real(8), dimension(-km:km,0:lm),intent(in)  :: et
+      real(8), dimension(-km:km,0:lm)             :: et_Vor2Strm_et
+
+      ! 流線境界値. 境界で一定なので波数 0 成分のみ
+      real(8), dimension(2), intent(in), optional :: values
+      ! 境界条件スイッチ
+      logical, dimension(2), intent(in), optional :: rigid
+
+      real(8), dimension(:,:,:), allocatable  :: alu
+      integer, dimension(:,:), allocatable    :: kp
+
+      real(8), dimension(-km:km,0:lm)         :: et_work
+      real(8), dimension(0:lm,0:lm)           :: tt_work
+      real(8), dimension(0:lm,0:jm)           :: ty_work
+      real(8)                                 :: value1, value2   ! 境界値
+      logical                                 :: rigid1, rigid2   ! 境界条件
+
+      logical :: first = .true.
+      integer :: k,l
+      save    :: alu, kp, first
+
+      if (.not. present(values)) then
+         value1=0 
+          value2=0
+      else
+         value1 = values(1) 
+          value2 = values(2)
+      endif
+
+      if (.not. present(rigid)) then
+         rigid1=.true. 
+          rigid2=.true.
+      else
+         rigid1 = rigid(1) 
+          rigid2 = rigid(2)
+      endif
+
+      if ( first ) then
+         first = .false.
+
+         allocate(alu(-km:km,0:lm,0:lm),kp(-km:km,0:lm))
+
+         tt_work=0
+         do l=0,lm
+            tt_work(l,l)=1
+         enddo
+         do k=-km,km
+            alu(k,:,:) = transpose(at_Dy_at(at_Dy_at(tt_work)) - (2*pi*k/xl)**2*tt_work)
+         enddo
+
+         ! 運動学的条件. 流線は境界で一定
+         ty_work=ay_at(tt_work)
+         do k=-km,km
+            alu(k,lm-1,:) = ty_work(:,0)
+            alu(k,lm,:)   = ty_work(:,jm)
+         enddo
+
+         ! 力学的条件粘着条件 
+         if ( rigid1 ) then
+            ty_work=ay_at(at_Dy_at(tt_work))
+         else
+            ty_work=ay_at(at_Dy_at(at_Dy_at(tt_work)))
+         endif
+         do k=-km,km
+            alu(k,0,:) = ty_work(:,0)
+         enddo
+
+         ! 力学的条件粘着条件 
+         if ( rigid2 ) then
+            ty_work=ay_at(at_Dy_at(tt_work))
+         else
+            ty_work=ay_at(at_Dy_at(at_Dy_at(tt_work)))
+         endif
+         do k=-km,km
+            alu(k,1,:) = ty_work(:,jm)
+         enddo
+
+         call ludecomp(alu,kp)
+      endif
+
+      et_work = et
+      et_work(:,0) = 0               ! 力学的条件
+      et_work(:,1) = 0               ! 力学的条件
+
+      et_work(:,lm-1) = 0            ! 運動学的条件. 波数 0 以外は 0 
+      et_work(0,lm-1) = value1*2     ! 運動学的条件. 波数 0 は重み 1/2
+
+      et_work(:,lm)   = 0            ! 運動学的条件. 波数 0 以外は 0 
+      et_work(0,lm)   = value2*2     ! 運動学的条件. 波数 0 は重み 1/2
+
+      et_Vor2Strm_et = lusolve(alu,kp,et_work)
+
+    end function et_Vor2Strm_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002160" class="method-detail">
+        <a name="M002160"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002160" class="method-signature">
+
+
+
+          <span class="method-name">et_yx</span><span class="method-args">( yx ) result(et_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002160">et_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データからスペクトルデータへ変換する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002160-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002160-source">
+<pre>
+    function et_yx(yx)
+      !
+      ! 格子データからスペクトルデータへ変換する.
+      !
+      real(8), dimension(-km:km,0:lm)              :: et_yx
+      !(out) スペクトルデータ
+
+      real(8), dimension(0:jm,0:im-1), intent(in)  :: yx
+      !(in) 格子点データ
+
+      et_yx = at_ay(transpose(ae_ax(yx)))
+
+    end function et_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002167" class="method-detail">
+        <a name="M002167"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002167" class="method-signature">
+
+
+
+          <span class="method-name">ey_Vor2Strm_ey</span><span class="method-args">( ey, [values], [cond], [new] ) result(ey_Vor2Strm_ey)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002167">ey_Vor2Strm_ey</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:jm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 出力流線分布
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ey  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:jm),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力渦度分布
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>values  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線境界値. 境界で一定なので波数 0 成分のみ
+
+<pre>
+    省略時は 0.
+</pre>
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>cond  </tt></b>  <tt> </tt> :</td><td><tt>character(len=2), intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 境界条件スイッチ. 省略時は &#8216;RR&#8216;
+
+<pre>
+     RR : 両端粘着条件
+     RF,FR : 粘着/応力なし条件
+     FF : 両端応力なし条件
+</pre>
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>new  </tt></b>  <tt> </tt> :</td><td><tt>logical, intent(IN), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) true だと境界条件計算用行列を強制的に新たに作る.
+
+<pre>
+    default は false.
+</pre>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+渦度から流線を求める.
+</p>
+<p>
+渦度から流線を求める. Y 方向格子点空間での Chebyshev-Collocation
+法による計算
+</p>
+<p>
+渦度 zeta を与えて流線 psi を求める.
+</p>
+<pre>
+   \nabla^2 \psi = \zeta,
+   \psi = const. at boundaries.
+</pre>
+<p>
+粘着条件
+</p>
+<pre>
+   \DP{\psi}{y} = 0 at boundaries
+</pre>
+<p>
+応力なし条件
+</p>
+<pre>
+   \DP[2]{\psi}{y} = 0 at boundaries
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002167-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002167-source">
+<pre>
+    function ey_Vor2Strm_ey(ey,values,cond,new)    ! 渦度から流線を求める. 
+      !
+      ! 渦度から流線を求める. 
+      ! Y 方向格子点空間での Chebyshev-Collocation 法による計算
+      !
+      ! 渦度 \zeta を与えて流線 \psi を求める.
+      !    \nabla^2 \psi = \zeta, 
+      !    \psi = const. at boundaries.
+      ! 粘着条件
+      !    \DP{\psi}{y} = 0 at boundaries
+      ! 応力なし条件
+      !    \DP[2]{\psi}{y} = 0 at boundaries
+      !
+
+      real(8), dimension(-km:km,0:jm),intent(in)  :: ey
+              !(in) 入力渦度分布
+
+      real(8), dimension(-km:km,0:jm)             :: ey_Vor2Strm_ey
+              !(out) 出力流線分布
+
+      real(8), dimension(2), intent(in), optional :: values
+              !(in) 流線境界値. 境界で一定なので波数 0 成分のみ
+	      !     省略時は 0.
+
+      character(len=2), intent(in), optional  :: cond
+              ! (in) 境界条件スイッチ. 省略時は 'RR'
+              !      RR : 両端粘着条件
+              !      RF,FR : 粘着/応力なし条件
+              !      FF : 両端応力なし条件
+
+      logical, intent(IN), optional :: new
+              !(in) true だと境界条件計算用行列を強制的に新たに作る.
+              !     default は false.
+
+      real(8), dimension(:,:,:), allocatable  :: alu
+      integer, dimension(:,:), allocatable    :: kp
+
+      real(8), dimension(-km:km,0:jm)         :: ey_work
+      real(8), dimension(0:jm,0:jm)           :: yy
+      real(8), dimension(0:jm,0:jm)           :: yy_work
+      real(8)                                 :: value1, value2   ! 境界値
+      logical                                 :: rigid1, rigid2   ! 境界条件
+
+      logical :: first = .true.
+      logical :: new_matrix = .false.
+      integer :: k,j
+      save    :: alu, kp, first
+
+      if (.not. present(values)) then
+         value1=0 
+          value2=0
+      else
+         value1 = values(1) 
+          value2 = values(2)
+      endif
+
+      if (.not. present(cond)) then
+         rigid1=.TRUE. 
+          rigid2=.TRUE.
+      else
+         select case (cond)
+         case ('RR')
+            rigid1 = .TRUE.  
+             rigid2 = .TRUE.
+         case ('RF')
+            rigid1 = .TRUE.  
+             rigid2 = .FALSE.
+         case ('FR')
+            rigid1 = .FALSE. 
+             rigid2 = .TRUE.
+         case ('FF')
+            rigid1 = .FALSE. 
+             rigid2 = .FALSE.
+         case default
+            call MessageNotify('E','ey_Vor2Strm_ey','B.C. not supported')
+         end select
+      endif
+
+      if (.not. present(new)) then
+         new_matrix=.false.
+      else 
+         new_matrix=new
+      endif
+
+      if ( first .OR. new_matrix ) then
+         first = .false.
+
+         if ( allocated(alu) ) deallocate(alu)
+         if ( allocated(kp) ) deallocate(kp)
+         allocate(alu(-km:km,0:jm,0:jm),kp(-km:km,0:jm))
+
+         yy=0
+         do j=0,jm
+            yy(j,j)=1
+         enddo
+         do k=-km,km
+            alu(k,:,:) = transpose( ay_at(at_Dy_at(at_Dy_at(at_ay(yy)))) - (2*pi*k/xl)** 2* yy )
+         enddo
+
+         ! 運動学的条件. 流線は境界で一定
+         yy_work=yy
+         do k=-km,km
+            alu(k,0,:)   = yy_work(:,0)
+            alu(k,jm,:)  = yy_work(:,jm)
+         enddo
+
+         ! 力学的条件粘着条件 
+         if ( rigid1 ) then
+            yy_work=ay_at(at_Dy_at(at_ay(yy)))
+         else
+            yy_work=ay_at(at_Dy_at(at_Dy_at(at_ay(yy))))
+         endif
+         do k=-km,km
+            alu(k,1,:) = yy_work(:,0)
+         enddo
+
+         ! 力学的条件粘着条件 
+         if ( rigid2 ) then
+            yy_work=ay_at(at_Dy_at(at_ay(yy)))
+         else
+            yy_work=ay_at(at_Dy_at(at_Dy_at(at_ay(yy))))
+         endif
+         do k=-km,km
+            alu(k,jm-1,:) = yy_work(:,jm)
+         enddo
+
+         call ludecomp(alu,kp)
+
+         call MessageNotify('M','ey_Vor2Strm_ey', 'Matrix for stream func. calc. produced')
+      endif
+
+      ey_work = ey
+      ey_work(:,1)    = 0               ! 力学的条件
+      ey_work(:,jm-1) = 0               ! 力学的条件
+
+      ey_work(:,0) = 0            ! 運動学的条件. 波数 0 以外は 0 
+      ey_work(0,0) = value1*2     ! 運動学的条件. 波数 0 は重み 1/2
+
+      ey_work(:,jm)   = 0            ! 運動学的条件. 波数 0 以外は 0 
+      ey_work(0,jm)   = value2*2     ! 運動学的条件. 波数 0 は重み 1/2
+
+      ey_Vor2Strm_ey = lusolve(alu,kp,ey_work)
+
+    end function ey_Vor2Strm_ey
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002198" class="method-detail">
+        <a name="M002198"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">t_Dy_t</span><span class="method-args">( t_data ) result(t_Dx_t)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>t_Dx_t  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(t_data))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力チェビシェフデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力チェビシェフデータに X 微分を作用する(1 次元配列用).
+</p>
+<p>
+チェビシェフデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのチェビシェフ変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001343">at_module#t_Dx_t</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002192" class="method-detail">
+        <a name="M002192"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">t_y</span><span class="method-args">( g_data ) result(t_g)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>t_g  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+台形格子 -&gt; スペクトル
+</p>
+<p>
+格子データからチェビシェフデータへ変換する(1 次元配列用).
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001341">at_module#t_g</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002177" class="method-detail">
+        <a name="M002177"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002177" class="method-signature">
+
+
+
+          <span class="method-name">x_AvrY_yx</span><span class="method-args">( yx ) result(x_AvrY_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002177">x_AvrY_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(X)格子点
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002186">y_Y_Weight</a> をかけた総和を計算し, <a
+href="et_module.html#M002186">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002177-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002177-source">
+<pre>
+    function x_AvrY_yx(yx)
+      !
+      ! 2 次元格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:jm,0:im-1)   :: yx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1)        :: x_AvrY_yx
+      !(out) 平均された 1 次元(X)格子点
+
+      x_AvrY_yx = x_IntY_yx(yx)/sum(y_Y_weight)
+    end function x_AvrY_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002172" class="method-detail">
+        <a name="M002172"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002172" class="method-signature">
+
+
+
+          <span class="method-name">x_IntY_yx</span><span class="method-args">( yx ) result(x_IntY_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002172">x_IntY_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Y 方向積分
+</p>
+<p>
+2 次元格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002186">y_Y_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002172-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002172-source">
+<pre>
+    function x_IntY_yx(yx)  ! Y 方向積分
+      !
+      ! 2 次元格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:jm,0:im-1)   :: yx
+      !(in)  2 次元格子点データ
+
+      real(8), dimension(0:im-1)        :: x_IntY_yx
+      !(out) 積分された 1 次元(X)格子点データ
+
+      integer :: j
+      ! 作業変数
+
+      x_IntY_yx = 0.0d0
+      do j=0,jm
+         x_IntY_yx(:) = x_IntY_yx(:) + yx(j,:) * y_Y_Weight(j)
+      enddo
+    end function x_IntY_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002181" class="method-detail">
+        <a name="M002181"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_X</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_X(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標 km 次のチェビシェフ多項式の零点から定まる格子点
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001335">at_module#g_X</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002180" class="method-detail">
+        <a name="M002180"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_X</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_x(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(X)を格納した 1 次元配列.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001546">ae_module#g_x</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002185" class="method-detail">
+        <a name="M002185"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_X_weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_X_Weight(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点重み座標 各格子点における積分のための重みが格納してある
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001336">at_module#g_X_Weight</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002184" class="method-detail">
+        <a name="M002184"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_X_weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_x_weight(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 重み座標を格納した 1 次元配列. X 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001547">ae_module#g_x_weight</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002189" class="method-detail">
+        <a name="M002189"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_e</span><span class="method-args">( e ) result(g_e)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_e  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>e  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子点データへ変換する(1 次元データ用)
+</p>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001550">ae_module#g_e</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002176" class="method-detail">
+        <a name="M002176"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002176" class="method-signature">
+
+
+
+          <span class="method-name">y_AvrX_yx</span><span class="method-args">( yx ) result(y_AvrX_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002176">y_AvrX_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(Y)格子点
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002184">x_X_Weight</a> をかけた総和を計算し, <a
+href="et_module.html#M002184">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002176-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002176-source">
+<pre>
+    function y_AvrX_yx(yx)
+      !
+      ! 2 次元格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:jm,0:im-1)   :: yx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:jm)          :: y_AvrX_yx
+      !(out) 平均された 1 次元(Y)格子点
+
+      y_AvrX_yx = y_IntX_yx(yx)/sum(x_X_weight)
+    end function y_AvrX_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002171" class="method-detail">
+        <a name="M002171"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002171" class="method-signature">
+
+
+
+          <span class="method-name">y_IntX_yx</span><span class="method-args">( yx ) result(y_IntX_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002171">y_IntX_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+X 方向積分
+</p>
+<p>
+2 次元格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="et_module.html#M002184">x_X_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002171-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002171-source">
+<pre>
+    function y_IntX_yx(yx)  ! X 方向積分
+      !
+      ! 2 次元格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:jm,0:im-1)   :: yx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:jm)          :: y_IntX_yx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: i
+      ! 作業変数
+
+      y_IntX_yx = 0.0d0
+      do i=0,im-1
+         y_IntX_yx(:) = y_IntX_yx(:) + yx(:,i) * x_X_Weight(i)
+      enddo
+    end function y_IntX_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M002183" class="method-detail">
+        <a name="M002183"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Y</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_X(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標 km 次のチェビシェフ多項式の零点から定まる格子点
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001335">at_module#g_X</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002182" class="method-detail">
+        <a name="M002182"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Y</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_x(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(X)を格納した 1 次元配列.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001546">ae_module#g_x</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002187" class="method-detail">
+        <a name="M002187"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Y_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_X_Weight(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点重み座標 各格子点における積分のための重みが格納してある
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001336">at_module#g_X_Weight</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002186" class="method-detail">
+        <a name="M002186"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Y_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_x_weight(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 重み座標を格納した 1 次元配列. X 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="ae_module.html#M001547">ae_module#g_x_weight</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002193" class="method-detail">
+        <a name="M002193"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_t</span><span class="method-args">( t_data ) result(g_t)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>g_t  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフデータから格子データへ変換する(1 次元配列用).
+</p>
+<p>
+Original external subprogram is <a
+href="at_module.html#M001339">at_module#g_t</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002156" class="method-detail">
+        <a name="M002156"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">yx_X</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002156">yx_X</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), allocatable</tt>
+
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002157" class="method-detail">
+        <a name="M002157"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">yx_Y</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002157">yx_Y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), allocatable</tt>
+
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002159" class="method-detail">
+        <a name="M002159"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M002159" class="method-signature">
+
+
+
+          <span class="method-name">yx_et</span><span class="method-args">( et ) result(yx_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_module.html#M002159">yx_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子データへ変換する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002159-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002159-source">
+<pre>
+    function yx_et(et)
+      !
+      ! スペクトルデータから格子データへ変換する.
+      !
+      real(8), dimension(0:jm,0:im-1)              :: yx_et
+      !(out) 格子点データ
+
+      real(8), dimension(-km:km,0:lm), intent(in)  :: et
+      !(in) スペクトルデータ
+
+      yx_et = ax_ae(transpose(ay_at(et)))
+
+    end function yx_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

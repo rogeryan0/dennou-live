@@ -1,0 +1,410 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"> 
+<HTML lang="ja">
+ <HEAD>
+  <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <META name="author" content="whitecat">
+  <LINK REV=MADE HREF="mailto:kozuka@unyo.marushin.media.kyoto-u.ac.jp">
+  <LINK REL="CONTENTS" href="./index.html">
+  <LINK rel="stylesheet" href="./css/base.css" type="text/css">
+  <LINK rel="stylesheet" href="./css/top.css" type="text/css">
+  <TITLE>SWIG:Ruby Programing for FORTRAN</TITLE>
+ </HEAD>
+ <BODY>
+  <DIV class="title">
+   <SPAN class="main">Ruby Programing for FORTRAN</SPAN>
+   ～NArrayを使ってみよう(1)～
+  </DIV>
+  <H2>
+   内容
+  </H2>
+  <P>
+   Rubyで数値計算をするために開発されているNArrayをFORTRANでかいた関数に適用していく方法を説明します。
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   今までFORTRANで書かれた関数をRubyの組み込みライブラリを利用して呼び出せるようにSWIGでラップしていく方法を採用してきました。
+   ただ、この方法ではNArray等を利用してRubyで数値計算をしその結果をFORTRANの関数に渡すというような処理をする場合、
+   得られた結果を組み込みのライブラリへ利用者がわざわざ変換するという手間がかかってしまいます。
+   これに関しては直接NArrayを扱うようにできればユーザーにかかる手間もオーバヘッドも減らすことができ理想的でしょう。
+   というわけでSWIGでNArrayを利用するラッピングをしてみることにします。
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   複素数の足し算は前に出てきたネタですが、今回は引数に配列とその長さを渡すものにします。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%cat test7.f
+        DOUBLE COMPLEX FUNCTION ADD(ARY,LEN)
+
+        DOUBLE COMPLEX TOTAL,ARY(*)
+        INTEGER I,LEN
+
+        DO I=1,LEN
+        TOTAL=TOTAL+ARY(I)
+        END DO
+
+        ADD=TOTAL
+        RETURN
+        END
+%cat test7-c.c
+#include <stdio.h>
+
+typedef struct { double r,i; } dcomplex;
+
+int main(void)
+{
+
+  dcomplex *ary, result;
+  int i, len;
+
+  len = 10;
+  ary = (dcomplex*)malloc(sizeof(dcomplex) * len);
+
+  for (i = 0; i < len; i++) {
+    (ary + i)->r = 1.0 * i;
+    (ary + i)->i = 1.0 * i;
+  }
+
+  add_(&result, ary, &len);
+  free(ary);
+  printf("%f + %fi\n", result.r, result.i);
+  return(0);
+}
+%f77 -c test7.f; gcc -o test7 test7-c.c test7.o
+%./test7
+45.000000 + 45.000000i
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   これはまあよいとします。(FORTRANなコードも見慣れてきました。それほど違和感を覚えなくなりました)
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   さて、拡張ライブラリ化を始めます。
+   が、いきなりNArrayはきついので、まず組み込みクラスを利用して作ってみることにします。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%cat test7-builtin.i
+%module test7
+
+%{
+  typedef struct { double r,i; } dcomplex;
+%}
+
+%typemap(ruby,ignore) int *LENGTH(int tmp) {
+  tmp = 0;
+  $target = &tmp;
+}
+
+%typemap(ruby,in) dcomplex *ARRAY {
+  int i;
+  VALUE *child;
+  $target = (dcomplex *)malloc(sizeof(dcomplex)*RARRAY($source)->len);
+  for (i = 0; i < RARRAY($source)->len; i++) {
+    child = RARRAY($source)->ptr + i;
+    Check_Type(*child, T_ARRAY);
+    ($target + i)->r = NUM2DBL(*(RARRAY(*child)->ptr));
+    ($target + i)->i = NUM2DBL(*(RARRAY(*child)->ptr + 1));
+  }
+}
+
+%typemap(ruby,ignore) dcomplex *OUTPUT {
+  $target = (dcomplex*)malloc(sizeof(dcomplex));
+}
+
+%typemap(ruby,argout) dcomplex *OUTPUT {
+  $target = rb_ary_new();
+  rb_ary_push($target, rb_float_new($source->r));
+  rb_ary_push($target, rb_float_new($source->i));
+}
+
+%typemap(ruby,freearg) dcomplex *ARRAY {
+  free($source);
+}
+
+%typemap(ruby,freearg) dcomplex *OUTPUT {
+  free($source);
+}
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   以前同様複素数をFloatの配列としますので、渡すものはその配列の配列になります。
+   さて、test7-builtin.iを元にtest7-builtin_wrap.cを生成し、修正して利用することになります。
+   修正個所も大体いつもどおりですが一応示すと以下のようになります。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+    rb_scan_args(argc, argv, "10", &varg1);
+    {
+        arg0 = (dcomplex*)malloc(sizeof(dcomplex));
+    }
+    {
+        //tmp = 0;
+        tmp = RARRAY(varg1)->len;
+        arg2 = &tmp;
+    }
+    //rb_scan_args(argc, argv, "10", &varg1);
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   後はMakeして、試してみるだけです。(当然Makefileは修正しておく)
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%ruby -e 'require "test7.so"; p Test7.add_([[1.0,2.0], [-2.0, 1.0]])'
+[-1.124730827, 3.0]
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   それっぽい値ではありますがなんか違うような.....
+   うーんわからない....何故？
+   ....まあ、とりあえず気にしないことにしましょう:)
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   本題に入ります。引数、返り値両方ともNArrayを取るようにします。
+   test7-builtin.iをtest7.iとして以下のように変更します。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%cat test7.i
+%module test7
+
+%{
+#include "narray.h"
+VALUE cNArray;
+
+%}
+
+%typemap(ruby,ignore) int *LENGTH(int tmp) {
+  tmp = 0;
+  $target = &tmp;
+}
+
+%typemap(ruby,in) dcomplex *ARRAY(VALUE source) {
+  struct NARRAY *i_d_na;
+  source = na_cast_object($source, NA_DCOMPLEX);
+  GetNArray(source, i_d_na);
+  $target = (dcomplex *)NA_PTR(i_d_na,0);
+}
+
+%typemap(ruby,ignore) dcomplex *OUTPUT {
+  cNArray = rb_const_get(rb_cObject, rb_intern("NArray"));
+  $target = (dcomplex *)malloc(sizeof(dcomplex));
+}
+
+%typemap(ruby,argout) dcomplex *OUTPUT {
+  struct NARRAY *o_d_na;
+  int rank, i;
+  int *o_d_shape;
+  rank = 1;
+  o_d_shape = ALLOCA_N(int, rank);
+  for (i = 0; i < rank; i++)
+    o_d_shape[i] = 1;
+  $target = na_make_object(NA_DCOMPLEX, rank, o_d_shape, cNArray);
+  GetNArray($target, o_d_na);
+  ((dcomplex *)o_d_na->ptr)->r = $source->r;
+  ((dcomplex *)o_d_na->ptr)->i = $source->i;
+}
+
+%typemap(ruby,freearg) dcomplex *OUTPUT {
+  free($source);
+}
+
+void add_(dcomplex *OUTPUT, dcomplex *ARRAY, int *LENGTH);
+%
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   NArrayオブジェクトの内部をがりがりいじることになるのであまり美しくないですが....
+   説明はtest7_wrap.cを示してからにします。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+static VALUE
+_wrap_add_(int argc, VALUE *argv, VALUE self) {
+    VALUE varg0 ;
+    VALUE varg1 ;
+    VALUE varg2 ;
+    dcomplex *arg0 ;
+    dcomplex *arg1 ;
+    int *arg2 ;
+    int tmp ;
+    VALUE source ;
+    VALUE vresult = Qnil;
+
+    {
+        cNArray = rb_const_get(rb_cObject, rb_intern("NArray"));
+        arg0 = (dcomplex *)malloc(sizeof(dcomplex));
+    }
+    {
+        //tmp = 0;
+        //arg2 = &tmp;
+    }
+    rb_scan_args(argc, argv, "10", &varg1);
+    {
+        struct NARRAY *i_d_na;
+        source = na_cast_object(varg1, NA_DCOMPLEX);
+        GetNArray(source, i_d_na);
+//この下2行を追加
+        tmp = i_d_na->shape[0];
+        arg2 = &tmp;
+        arg1 = (dcomplex *)NA_PTR(i_d_na,0);
+    }
+    add_(arg0,arg1,arg2);
+    {
+        struct NARRAY *o_d_na;
+        int rank, i;
+        int *o_d_shape;
+        rank = 1;
+        o_d_shape = ALLOCA_N(int, rank);
+        for (i = 0; i < rank; i++)
+        o_d_shape[i] = 1;
+        vresult = na_make_object(NA_DCOMPLEX, rank, o_d_shape, cNArray);
+        GetNArray(vresult, o_d_na);
+        ((dcomplex *)NA_PTR(o_d_na, 0))->r = arg0->r;
+        ((dcomplex *)NA_PTR(o_d_na, 0))->i = arg0->i;
+    }
+    {
+        free(arg0);
+    }
+    return vresult;
+}
+....
+void Init_test7(void) {
+    int i;
+
+//下の1行を追加
+    cNArray = rb_const_get( rb_cObject, rb_intern("NArray") );
+    mTest7 = rb_define_module("Test7");
+    _mSWIG = rb_define_module_under(mTest8, "SWIG");
+....
+}
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   修正個所はそれほどないですね。まあ、引数の長さを渡すようにするだけなのでそんなに手間がかかったらやる気を失いますが.....<SPAN class="additional">NArrayのシンボルを取得するコードをいれるのを忘れていました。ごめんなさい(2001/08/04)</SPAN>
+  </P>
+  <P>
+   さて、説明に移りましょうか。まず引数の方から。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+    {
+        struct NARRAY *i_d_na;
+        source = na_cast_object(varg1, NA_DCOMPLEX);
+        GetNArray(source, i_d_na);
+        tmp = i_d_na->shape[0];
+        arg2 = &tmp;
+        arg1 = (dcomplex *)NA_PTR(i_d_na,0);
+    }
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   この部分が該当します。何をやっているか大雑把に説明すると<BR>
+   NArrayの実体を参照するためにstruct NARRAYのポインタを定義、
+   GetNArrayでNArrayオブジェクトからそのオブジェクトが持つNARRAYへ参照を得る。
+   オブジェクト所有のNARRAYから各次元ごとの要素数を保持しているshapeという配列の1次元目を得て、tmpに代入する。
+   最後にarg2(add_の第3引数に入れるint型のポインタ)がtmpを、
+   arg1(add_の第2引数、dcomplexの配列)がNA_PTRを使用してNArrayオブジェクトから取り出した配列に向ける。<BR>
+   ということになります。
+  </P>
+  <P>
+   GetNArray、NA_PTRはnarray.hにあるマクロで
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+#define GetNArray(obj,var)  Data_Get_Struct(obj, struct NARRAY, var)
+#define NA_PTR(a,p)  ((a)->ptr+(p)*na_sizeof[(a)->type])
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   のような定義になってます。GetNArrayはまあいいでしょう。
+   NA_PTRですが、第1引数に手に入れたNARRAYのポインタを突っ込み、第2引数に位置を指定します。
+   例の場合、次元が0で0番目からの要素が必要なので0を指定しています。
+  </P>
+  <P>
+   なお、おまじないとして途中にna_cast_objectを入れています。
+   これはNArrayのオブジェクトを指定した型の配列に変換したものを返します。
+   (元のオブジェクトは変化しません。)
+   与えられるオブジェクトが期待している倍精度の複素数の配列でないとcore dumpしますので、
+   例のように強制的に変えてしまうか、例外をあげることが必要です。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+    {
+        struct NARRAY *o_d_na;
+        int rank, i;
+        int *o_d_shape;
+        rank = 1;
+        o_d_shape = ALLOCA_N(int, rank);
+        for (i = 0; i < rank; i++)
+        o_d_shape[0] = 1;
+        vresult = na_make_object(NA_DCOMPLEX, rank, o_d_shape, cNArray);
+        GetNArray(vresult, o_d_na);
+        ((dcomplex *)NA_PTR(o_d_na, 0))->r = arg0->r;
+        ((dcomplex *)NA_PTR(o_d_na, 0))->i = arg0->i;
+    }
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   次に返り値のNArrayの作り方について。<BR>
+   o_d_shapeというintのポインタを宣言します。これは先に説明した次元ごとの要素数を保持する配列shapeとして利用するものです。
+   よってALLOC_Nで次元数分だけ配列を確保し、代入、そして各要素の数を入れてあげます。
+   例では1つの次元に一つの要素という配列を返せばよいので1を代入。
+   na_make_objectはNArrayオブジェクトを生成する関数で、そのオブジェクトをこの関数の返り値にに入れています。
+   ただし、このままでは何の値も代入されていないので、上と同じようにNARRAYへのポインタを手に入れ、
+   値を入れてあげます。
+  </P>
+  <P>
+   na_make_objectは少々ややこしいですね。内部実装も見ていくと楽しいですが、追求するのはやめにします。
+   とりあえず、配列の種類、次元数、次元ごとの要素数を表現するintの配列、NArrayクラスの種を与えると立派にオブジェクトができあがります。
+   定義はnarray.cにあります。
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   説明は以上です。さあ、うまく動くかチェックします。
+   なお、Narrayは必要なヘッダファイルをインストールしないようなのでmakeする際、NArrayのヘッダファイルをコピーしておきましょう。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%ruby -e 'require "narray"; require "test7";a = NArray.new(Complex,2,1);\
+ a[0,0] = Complex.new(1.0,-1.0); a[1,0] = Complex.new(-1.0,1.0);\
+ p a;p Test7.add_(a)'
+NArray.complex(2,1):
+[ [ 1.0-1.0i, -1.0+1.0i ] ]
+NArray.complex(1):
+[ -0.124724+0.0i ]
+%
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   相変わらず実数がおかしいような気がしますが、まあ何とか動いてるみたいですね。
+   他の型でもほぼ同様の作業で作ることができると思います。が、それはまたの機会に....
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   <A href="swig-f-7.html" accesskey="b">前に戻る</A>
+   <A href="swig-f.html" accesskey="in">[目次]</A>
+   <A href="swig-f-8.html" accesskey="f">先に進む</A>
+  <DIV class="footer">
+   <A href="http://jigsaw.w3.org/css-validator">
+    <IMG style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss.gif" alt="Valid CSS!">
+   </A>
+  </DIV>
+ </BODY>
+</HTML>

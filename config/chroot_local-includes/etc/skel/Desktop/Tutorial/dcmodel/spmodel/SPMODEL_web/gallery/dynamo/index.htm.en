@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>MHD dynamo in a rotating spherical shell</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="index.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> / <a href="/library/spmodel/gallery">SPMODEL Gallery</a> ] </small>
+<h1><a name="label-0" id="label-0">MHD dynamo in a rotating spherical shell</a></h1><!-- RDLabel: "MHD dynamo in a rotating spherical shell" -->
+<br>
+<a href="./img01_brad.png"><IMG src="./img01_brad-mini.jpg"></a>
+<a href="./img02_vrad.png"><IMG src="./img02_vrad-mini.jpg"></a>
+
+<ul>
+<li>The result of dynamo benchmark case 1 is shown. The left panel indicates
+  the radial component of magnetic field at the outer surface of the
+  shell. The right panel is the radial component of velocity field at the
+  middle of the shell. </li>
+<li>The columnar structure along the rotation axis with the azimuthal wave</li>
+</ul>
+<p>number 4 emerges. This pattern propagates in the retrograde direction. </p>
+<ul>
+<li><a href="../../3d-shell-wt/mhd-boussinesq/f90/MHD-bsnsq_rot-3d-shell_wt_abcn_bench.f90">Source code</a>.</li>
+<li>More detailed description about the result of dynamo benchmark is </li>
+</ul>
+<p><a href="/library/dynamo/benchmark/index.htm.en">here</a>.</p>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2009/01/19, Since: 2009/01/19 </small>
+
+</body>
+</html>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>6. Summary</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec5.4.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=../index.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h2><a name="label-0" id="label-0">6. Summary</a></h2><!-- RDLabel: "6. Summary" -->
+<p>We have demonstrated the programming technique and the programming style for
+improving readability and modifiability of the programs, which have been
+considered and implemented through the development of the SPMODEL, a series of
+hierarchical spectral models for geophysical fluid dynamics. It has been shown
+that the program source codes can be written in a form similar to the
+mathematical expressions of the original governing equations by intensively
+applying array-operation features and user-defined array-valued functions of
+the Fortran90 features. By adopting the systematic naming conventions for data
+arrays and functions like these,</p>
+<pre>(data space identifier)_(variable name)
+(output data space identifier)_(action)_(input data space identifier)</pre>
+<p>program source codes may be written in a form resembling the contraction
+convention of the tensor calculus. Since the spaces on which the input and the
+output data of the function are defined can be recognized from the function
+name, 
+we can expect that the procedure of functional operation will become more
+recognizable, and consequently reduce the possibility of programming errors.
+It is also a great advantage that the source codes of the time integration
+part of the program can be written down in a form similar to the governing
+mathematical expressions, since the setup for utilizing the spectral method is
+hidden underneath. Some typical examples of programs of geophysical fluid
+models and their numerical results have been presented.</p>
+<p>In the SPMODEL, the spaces on which argument array and the output of
+array-valued functions exist are recognized by the naming convention. One
+might suppose that this kind of problem could be more unfailingly solved by
+utilizing the features of programming language, that is, object-oriented
+programming. Since structure constructor is provided in Fortran90, defining
+the structures and their functions for corresponding data types appears to be
+an attractive solution. However, the language specification of Fortran90 is
+unsatisfactory for object-oriented programming. In particular, the fatal point
+is that inheritance of operations from the subclass modules is not supported
+so that every operation must be re-defined in the upper class modules.
+Therefore, we recommend here that, in Fortran90 programming, only the features
+of array operation enhanced from FORTRAN77 should be utilized, and not the
+structures. Sufficient benefit may be reaped just by wrapping existing library
+subroutines written in FORTRAN77 with array-valued functions of Fortran90.</p>
+<p>The programming technique and style proposed here by the SPMODEL project are
+not restricted to the spectral method. For example, they are also applicable
+to the finite difference method. The programs can be developed in a form
+similar to the governing equations by defining array-valued functions for
+finite difference calculations corresponding to the derivatives. We are now
+coordinating a unified programming coding rule applicable in various classes
+of numerical models by evolving the SPMODEL programming style
+(<a href="ref.htm">[13]</a>). </p>
+<p>We have so far proposed a solution for improving readability and modifiability
+of programs among the necessary elements for achieving understandings by
+numerical calculations instead of equations and their mathematical
+manipulations listed in <a href="sec1.htm">Section 1</a>.
+The third point, convenience of
+visualization and post-processing is even more important. To solve this
+problem, we are now proposing a convention of the output data format, placing
+special emphasis on the post-processing and visualization 
+(<a href="ref.htm">gtool4 netCDF convention<sup>[14]</sup></a>),
+and are in the process of developing a library to accomplish
+the output with this format (<a href="app2.htm">Appendix 2</a>).
+By using this library, one can
+attach supplementary information for the post-processing and visualization,
+such as information of grid points, titles, and parameters for numerical
+experiments, to the main output data. The output netCDF gtool4 data can be
+visualized with 'GPhys', 'gave' and other utilities developed by the 
+GFD Dennou Club Ruby project (<a href="app3.htm">Appendix 3</a>). 
+The figures of numerical results shown in <a href="sec5.htm">Section 5</a>
+were produced using the software.</p>
+<p>In this article, we have described our attempt in promoting shared
+understandings in the era of numerical calculations.  
+However, understandings of the more complicated realistic 
+models for meteorology and climate of Earth and planets that have been
+presented in recent years are not easily achieved even when the
+results of their numerical calculations are available.
+In order to achieve some level of understanding of the numerical
+results, it is necessary to associate the results with various conceptual
+understandings which have been obtained by models having simpler frameworks.</p>
+<p>However, the rapid progress and increase in the complexity of the models for
+meteorology and climate tend to prevent us from establishing such an
+association, resulting in the formation of a gap between simulation and
+understanding (<a href="ref.htm">[17]</a>).
+We are working to construct a computing environment for
+thinking in order to fill this gap by extending the framework of the SPMODEL
+from simple and ideal models for geophysical fluid dynamics to more complex
+and realistic models. 
+Reduction in time and labor involved in the creation of
+a program from the governing equations allows us to develop and maintain a
+wide variety of models. 
+Thanks to the unified style of the program codes,
+comparative numerical experiments between models having different
+approximation levels can be performed more readily. 
+We are currently
+developing a series of models for such comparative research. 
+We have presented
+simple models in a one-dimensional domain, models in two-dimensional planar,
+channel and spherical domains, a three-dimensional primitive model on a sphere
+and a Boussinesq fluid model in a spherical shell (<a href="ref.htm">[13]</a>).</p>
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec5.4.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=../index.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

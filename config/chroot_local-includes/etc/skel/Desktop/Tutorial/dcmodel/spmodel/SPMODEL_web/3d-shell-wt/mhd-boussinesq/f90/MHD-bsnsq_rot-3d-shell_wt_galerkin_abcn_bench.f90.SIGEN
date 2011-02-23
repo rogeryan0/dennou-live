@@ -1,0 +1,10 @@
+Subject: 回転球殻ブシネスク磁気流体モデル : ベンチマーク用プログラム
+Maintainer: 竹広真一
+Update: 2006/04/15
+Description: Christensen et al. (1999) の Case1. 
+	     Adams-Bashforth & Crank Nicholson スキーム.
+	     チェビシェフ−ガラーキン法による計算
+
+履歴
+        2006/04/15 竹広真一  新規作成
+

@@ -1,0 +1,31 @@
+BODY {
+	COLOR: #333333; FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-VARIANT: normal; FONT-WEIGHT: normal; LINE-HEIGHT: normal
+}
+TD {
+	FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-VARIANT: normal; FONT-WEIGHT: normal; LINE-HEIGHT: normal
+}
+TH {
+	FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-VARIANT: normal; FONT-WEIGHT: bold; LINE-HEIGHT: normal
+}
+DL {
+	FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-VARIANT: normal; FONT-WEIGHT: normal; LINE-HEIGHT: normal
+}
+UL {
+	FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-VARIANT: normal; FONT-WEIGHT: normal; LINE-HEIGHT: normal
+}
+
+STRONG {
+	FONT-SIZE: 11pt; FONT-STYLE: normal; FONT-VARIANT: normal; FONT-WEIGHT: bold; LINE-HEIGHT: normal
+}
+
+
+small {
+	FONT-SIZE: 8pt; FONT-STYLE: normal; FONT-VARIANT: normal; FONT-WEIGHT: normal; LINE-HEIGHT: normal
+}
+
+big {
+	FONT-SIZE: 9pt; FONT-STYLE: normal; FONT-VARIANT: normal; FONT-WEIGHT: bold; LINE-HEIGHT: normal
+}
+
+
+

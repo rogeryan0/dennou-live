@@ -1,0 +1,8 @@
+Subject: 3 次元球殻領域  拡散方程式モデル Fortran ソース置場
+Maintainer: 竹広真一
+Update: 2006/03/13
+Note: 解析解との比較チェックプログラム集. 
+      解析解の解説に関しては relative:../pub/index.htm を参照のこと.
+
+履歴
+	2006/03/13 竹広真一

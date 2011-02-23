@@ -1,0 +1,20 @@
+spml -- a Fortran 90 library for spectral model based on ispack and gtool
+
+詳しい説明は html ディレクトリ内の index.html ならびに SPMODEL の Web page, 
+
+     http://www.gfd-dennou.org/library/spmodel/
+
+を御覧ください. 
+
+インストール手順はトップディレクトリの INSTALL.ja に説明があります. 
+
+** お知らせ **
+
+このリリースから一部のモジュールにおいて格子点の宣言が変更されています. 
+もし過去の version. の  w_module(それと wa_, wt_ など)を使用していたなら,
+格子点の宣言を以下の様に修正して下さい.
+
+  (im,jm)  -> (0:im,1:jm)
+
+---
+2009/02/25 地球流体電脳倶楽部 spmodel プロジェクト<dcstaff_(at)_gfd-dennou.org>

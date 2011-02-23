@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>5.2. 2 次元 2 重周期境界領域でのβ平面順圧モデル</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>階層的地球流体スペクトルモデル集 SPMODEL</b>
+</td><td align=right>
+    << <a href=sec5.1.htm>Prev</a> |
+       <a href=../index_ja.htm>Index</a>|
+       <a href=sec5.3.htm>Next</a>    >>
+    </td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h3><a name="label-0" id="label-0">5.2. 2 次元 2 重周期境界領域でのβ平面順圧モデル</a></h3><!-- RDLabel: "5.2. 2 次元 2 重周期境界領域でのβ平面順圧モデル" -->
+<p>2 次元 2 重周期境界領域でのβ平面順圧モデルの支配方程式と境界条件は次
+のようなものである.</p>
+<center><img src=sec5.2_1.png align=bottom></center>
+<p>無限領域の場合に, この系にはモドンと呼ばれる孤立渦解が存在する
+(<a href="ref.htm">[8]</a>, <a href="ref.htm">[9]</a>). 
+その形は渦の中心を原点とする平面極座標
+(r,θ) を用いて次のように表される. </p>
+<center><img src=sec5.2_2.png align=bottom></center>
+<p>ここで a, c はそれぞれ孤立渦の半径と伝播速度, 
+q = √(β/c), そして
+k は分散関係に相当する関係式, </p>
+<center><img src=sec5.2_3.png align=bottom></center>
+<p>から定まるパラメターである. </p>
+<p>これらをプログラミングしたソースコードの全体が
+<a href="./f90/plbaro-beta_abcn_test3_f90.txt">plbaro-beta_abcn_test3.f90</a>
+である.
+支配方程式の時間積分は
+散逸項を Crank-Nicolson スキームで, 
+それ以外の項を Adams-Bashforth スキームで行なっており, 
+その主要な時間積分計算は</p>
+<pre>do it=1,nt
+    ee_DVorDt = - ee_Jacobian_ee_ee(ee_StrFunc,ee_Vor)  &amp;
+                - Beta * ee_Dx_ee(ee_StrFunc)
+
+    ee_Vor = ( (1.0D0 - ee_HVisc*delta_t/2)*ee_Vor    &amp;
+              + 3.0D0 * delta_t/2.0D0 * ee_DVorDt  &amp;
+              - 1.0D0 * delta_t/2.0D0 * ee_DVorDtB ) &amp;
+            /(1.0D0 + ee_HVisc*delta_t/2)
+
+    ee_DVorDtB = ee_DVorDt
+    ee_StrFunc = ee_LaplaInv_ee(ee_Vor)
+    ...
+enddo</pre>
+<p>とコードされている. 
+a=c=1 の場合のモドン解を初期値として時間発展させた計算結果を
+下図に示す. 渦の形が変化せず伝播していく様子が観察できる. </p>
+<center>
+<a href=../fig/plbaro-beta_abcn_test3_anim.gif><img src=../fig/plbaro-beta_abcn_test3_001.png></a>
+<br><a href=../fig/plbaro-beta_abcn_test3_anim.gif>[animation]</a>
+</center>
+
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>階層的地球流体スペクトルモデル集 SPMODEL</b>
+</td><td align=right>
+    << <a href=sec5.1.htm>Prev</a> |
+       <a href=../index_ja.htm>Index</a>|
+       <a href=sec5.3.htm>Next</a>    >>
+    </td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

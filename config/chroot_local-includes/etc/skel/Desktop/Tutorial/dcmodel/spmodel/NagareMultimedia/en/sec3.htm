@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>3. SPMODEL library (spml)</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec2.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=sec4.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h2><a name="label-0" id="label-0">3. SPMODEL library (spml)</a></h2><!-- RDLabel: "3. SPMODEL library (spml)" -->
+<h3><a name="label-1" id="label-1">3.1. Examples of subroutines and functions</a></h3><!-- RDLabel: "3.1. Examples of subroutines and functions" -->
+<p><a href="ref.htm"> "SPMOEL library" (spml) <sup>[4]</sup></a>
+is a library which provides basic 
+functions for numerical fluid dynamics calculations with the spectral method.
+These functions are provided by wrapping the subroutines of 
+<a href="ref.htm#ISPACK">ISPACK<sup>[2]</sup></a>, which
+is an existing FORTRAN77 library for spectral calculations, and by the use of
+the Fortran90 array-handling features described
+in <a href="sec2.htm">Section 2</a>. </p>
+<p>As an example of the subprograms of the SPMODEL library, subroutines and
+functions for a one-dimensional domain with cyclic boundaries are listed
+below.</p>
+<ul>
+<li><p>Initialization: setups of the number of grid points, 
+   the truncation wavenumber, and the computational domain. </p>
+<pre>subroutine ae_initial(im,km,xmin,xmax)</pre></li>
+<li><p>Forward and backward spectral transformations.</p>
+<pre>function g_e(e)
+    real(8), dimension(0:im-1)             :: g_e
+    real(8), dimension(-km:km), intent(in) :: e
+
+function e_g(g)
+    real(8), dimension(-km:km)              :: e_g
+    real(8), dimension(0:im-1), intent(in)  :: g</pre></li>
+<li><p>Differentiation: spectral transform of spatial differentiation 
+   (multiplying spectral transformed function by wavenumbers).</p>
+<pre>function e_Dx_e(e)
+    real(8), dimension(-km:km)                 :: e_Dx_e
+    real(8), dimension(-km:km), intent(in)     :: e</pre></li>
+<li><p>Integration: spatial integration and spatial average</p>
+<pre>function Int_g(g), function Avr_g(g)
+    real(8), dimension(0:im-1), intent(in)   :: g
+    real(8)                                  :: Int_g, Avr_g</pre></li>
+</ul>
+<h3><a name="label-2" id="label-2">3.2. Naming convention of functions and programming style</a></h3><!-- RDLabel: "3.2. Naming convention of functions and programming style" -->
+<p>All functions of SPMODEL library are named systematically in the fashion
+below:</p>
+<pre>(output data space identifier)_(action)_(input data space identifier)</pre>
+<p>By indicating the characters of function in the function name 
+as the action of the function and the spaces, 
+like real or spectral, on which the input and the output data 
+of the function are defined, 
+we expect that, in exchange for the lengthy names, 
+the procedure of functional operation will be in a more
+recognizable form, 
+which will consequently reduce the danger of programming errors.</p>
+<p>Conforming to the naming convention of functions, we recommend that the grid
+and the spectral data arrays be named in the following manner,</p>
+<pre>(data space identifier)_(variable name).</pre>
+<p>By the use of the systematic naming style of functions and variables on which
+these functions operate, we can arrange the program code in a form resembling
+the mathematical formula often used in the tensor calculus, as described
+below.</p>
+<p>As an example, let us show the functions of the module for one-dimensional
+domain with cyclic boundaries. 
+As listed above, the function names of spectral
+transformation and differentiation are given as:</p>
+<pre>g_e(e_Data)      ! conversion from spectral to grid data
+e_g(g_Data)      ! conversion from grid to spectral data 
+e_Dx_e(e_Data)   ! differentiation on the x coordinate
+                 ! (multiplication of wavenumber)</pre>
+<p>Prefixes "e_" and "g_" of the functions are the data space identifiers which
+indicate that the outputs of the functions are the data arrays defined on a
+spectral and a real (grid) space, respectively. 
+Suffixes "_e" and "_g" of the
+functions are the data space identifiers which indicate that the inputs of the
+functions are the data arrays defined on a spectral and a real (grid) space,
+respectively. 
+The data arrays also conform to the same naming rule; 
+e_Data and
+g_Data indicate that they are the data arrays defined on a spectral and real
+(grid) space, respectively.</p>
+<p>By using these functions, differentiation of a real data array "g_Data1" with
+respect to x with spectral transformation and storage into a real data array
+"g_Data2" can be written as follows, in one statement.</p>
+<pre>g_Data2 = g_e(e_Dx_e(e_g(g_Data1)))</pre>
+<p>Note that the prefixes and the suffixes appear in pairs in a manner similar to
+the contraction convention of the tensor calculus.</p>
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec2.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=sec4.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

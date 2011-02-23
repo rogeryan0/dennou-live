@@ -1,0 +1,140 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<HTML>
+<!-- history	堀之内 2004/03/19 (作成) -->
+<head>
+   <title>Dennou Ruby Project Homepage Menu</title>
+   <link rel="stylesheet" href="menu.css" type="text/css"> 
+   <meta http-equiv="Content-Type" content="text/html; charset=euc-jp">
+</head>
+
+<body bgcolor='#d0ffd0' 
+      TEXT = "#500000" LINK="#004070" VLINK="#884444" ALINK="#FF0000">
+<b>
+
+<table cellpadding=3 border=2  width='180' align='center'>
+<tr><td align=center>
+<a href="index-e.htm" target=_top><b>English Page</b></a><br>
+</td></tr>
+<tr><td align=center>
+<a href="body-j.html" target=_top><b>フレーム分割なし版</b></a><br>
+</td></tr>
+</table>
+
+<p><h2>目次</h2>
+
+<!-- 目次は % ruby make_index.rb -m body-j.html で作成する -->
+
+<div>
+<ol>
+
+<li> <a target=page href="body-j.html#h2:hajime">はじめに</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:version_used">用いた GPhys のバージョン</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:refman">ドキュメント</a>
+<ul><div>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:link">リンク</a>
+<ul><div>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:install">インストール</a>
+<ul><div>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:data">本チュートリアルで用いるデータ</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:netcdf data">NetCDFデータ</a>
+  <li> <a target=page href="body-j.html#h3:grads data">GrADSデータ</a>
+  <li> <a target=page href="body-j.html#h3:grib data">gribデータ</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:toriaezu">とりあえず可視化</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:saisoku contour">最速描画(コンター)</a>
+  <li> <a target=page href="body-j.html#h3:saisoku line">最速描画(折れ線)</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:file_fomats">様々なファイル形式</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:file_hanbetsu">ファイル形式の判別</a>
+  <li> <a target=page href="body-j.html#h3:grads_grib_examples">GrADS,gribファイル描画例</a>
+  <li> <a target=page href="body-j.html#h3:inspect_var_names">ファイル中の変数名の調べ方</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:irb">irbを用いた対話利用(1)</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:irb_startup">スタートアップファイルの利用(1)</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:gphys nakami">GPhysの中身を調べる</a>
+<ul><div>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:gdir">ディレクトリーをブラウズ -- GDirの利用</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:gdir-sample1">GDir利用例(1)</a>
+  <li> <a target=page href="body-j.html#h3:gdir-sample2">GDir利用例(2)</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:irb-2">irbを用いた対話利用(2)</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:irb_startup_gdir">スタートアップファイルの利用(2) -- GDir の利用</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:data sousa">データ操作の基礎</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:kiridashi">切り出し</a>
+  <li> <a target=page href="body-j.html#h3:heikin sonota">平均やその他の演算について</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:units">物理量の単位</a>
+<ul><div>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:nc kakidashi">データをファイルに書出す</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:gphys kakidashi">GPhysデータの書出し</a>
+  <li> <a target=page href="body-j.html#h3:file type conversion">ファイル形式の変換</a>
+  <li> <a target=page href="body-j.html#h3:others kakidashi">非GPhysデータの書出し -- GPhysオブジェクトを一から作る</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:big data">巨大データの扱い</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:subset_and_cloning">GPhysにおけるサブセットとクローニング</a>
+  <li> <a target=page href="body-j.html#h3:iterator for big data">巨大データ用自動分割イテレーター</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:file bunkatsu">分割ファイルをバーチャルにひとまとめ</a>
+<ul><div>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:ggraph konasi1">GGraphを使いこなす(その1)</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:graph_startup">読み込みファイルの活用</a>
+  <li> <a target=page href="body-j.html#h3:graph option">描画オプション</a>
+  <li> <a target=page href="body-j.html#h3:option shikumi">描画メソッドのオプションの仕組み</a>
+  <li> <a target=page href="body-j.html#h3:option default">オプションのデフォルト値を知る</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:ggraph konasi2">GGraphを使いこなす(その2)</a>
+<ul><div>
+  <li> <a target=page href="body-j.html#h3:contour-tone auto">コンター／トーン (レベル自動生成)</a>
+  <li> <a target=page href="body-j.html#h3:color bar">カラーバー</a>
+  <li> <a target=page href="body-j.html#h3:map projection">地図投影</a>
+  <li> <a target=page href="body-j.html#h3:pressure why">圧力軸だけは値の大きいほうが左／下に来るのはなぜ？</a>
+  <li> <a target=page href="body-j.html#h3:tone levels">トーンレベルのユーザー指定</a>
+  <li> <a target=page href="body-j.html#h3:contour levels">コンターレベルのユーザー指定</a>
+  <li> <a target=page href="body-j.html#h3:layout">レイアウトに凝る</a>
+  <li> <a target=page href="body-j.html#h3:zahyou jiku">座標軸に凝る</a>
+</div></ul>
+<li> <a target=page href="body-j.html#h2:dRuby">遠隔データにアクセスする／させる</a>
+<ul><div>
+  <li> <img src='new.png'> <a target=page href="body-j.html#h3:opendap">OPeNDAP/DODSを用いた遠隔データアクセス</a>
+  <li> <a target=page href="body-j.html#h3:dRuby-1">dRubyを使ったクライアント＆サーバー（自作編その１）</a>
+  <li> <a target=page href="body-j.html#h3:dRuby-2">dRubyを使ったクライアント＆サーバー（自作編その２）</a>
+  <li> <a target=page href="body-j.html#h3:druby_gdir_services">dRubyを使ったクライアント＆サーバー（GDirを使ったおまかせ編）</a>
+  <li> <a target=page href="body-j.html#h3:druby_ssh_tunneling">dRuby利用時のファイヤウォール越え (ssh トンネリング)</a>
+  <li> <a target=page href="body-j.html#h3:dRuby-chuui">dRuby 利用に関する注意</a>
+  <li> <a target=page href="body-j.html#h3:cgi-rdbms">CGIとリレーショナルデータベース</a>
+
+</div></ul>
+</ol>
+</div>
+
+<hr>
+
+<p><a href="index.htm" target=_top><b>GPhysチュートリアル トップ</b></a>
+<p><a href="http://ruby.gfd-dennou.org/products/gphys/" target=_top>
+     GPhys ホーム</a><br>
+<p><a href="http://www.gfd-dennou.org/arch/ruby/doc-link-j.htm" target=page>
+ドキュメンテーションリンク集</a><br>
+<p>
+
+</body>
+</html>

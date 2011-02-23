@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>2 次元熱対流(ベナール・レイリー対流など</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ <a href="index.htm.en">English</a> | Japanese ] [ <a href="/">地球流体電脳倶楽部</a> / <a href="/library/spmodel">SPMODEL プロジェクト</a> / <a href="/library/spmodel/gallery">SPMODEL ギャラリー</a> / <a href="SIGEN.htm">SIGEN</a> ] </small>
+<h1><a name="label-0" id="label-0">2 次元熱対流(ベナール・レイリー対流など</a></h1><!-- RDLabel: "2 次元熱対流(ベナール・レイリー対流など" -->
+<br>
+<a href="./bsncnv-tt-1-anim.gif"><IMG src="./bsncnv-tt-1.gif"></a>
+
+<ul>
+<li>ブシネスク流体の熱対流の温度分布. </li>
+<li>ベナール・レイリー対流の設定. 
+  上下境界面で温度固定, 内部熱源なし, 応力なし条件(free-slip).</li>
+<li>横方向は周期的境界条件. </li>
+<li>下面で温められた流体は軽くなり上昇しようとする. 
+  上面で冷やされた流体は重くなり下降しようとする. </li>
+<li>上昇流・下降流のところにプルームができる. </li>
+<li>ソースプログラムは<a href="../../2d-channel-esc/boussinesq/sample-tt/f90/bsncnv-tt-1.f90">こちら</a></li>
+</ul>
+<hr>
+<a href="./bsncnv-tt-2-anim.gif"><IMG src="./bsncnv-tt-2.gif"></a>
+
+<ul>
+<li>より横長な領域での計算.</li>
+<li>プルームの間隔(対流セルの水平スケール)は流体層の厚さと同程度.</li>
+<li>ソースプログラムは <a href="../../2d-channel-esc/boussinesq/sample-tt/f90/bsncnv-tt-2.f90">&lt;こちら</a></li>
+</ul>
+<hr>
+<a href="./bsncnv-ff-1-anim.gif"><IMG src="./bsncnv-ff-1.gif"></a>
+
+<ul>
+<li>上のベナール・レイリー対流の設定に対して, 
+  温度ではなく一様一定な熱フラックスを上下境界で与えた場合.</li>
+<li>プルームの横方向の間隔が大きくなる. 非常に横長の対流セルが生じる.</li>
+<li>ソースプログラムは <a href="../../2d-channel-esc/boussinesq/sample-ff/f90/bsncnv-ff-1.f90">こちら</a></li>
+</ul>
+<h3><a name="label-1" id="label-1">参考文献</a></h3><!-- RDLabel: "参考文献" -->
+<p>ベナール・レイリー対流については多くの標準的な(地球)流体力学の教科書に
+解説がある. 例えば, </p>
+<ul>
+<li>木村竜治, 1983 : 地球流体力学入門, 東京堂出版, pp.247.</li>
+<li>Chandrasekhar, S., 1961 : Hydrodynamic and Hdromagnetic stability.
+  Oxford University Press.</li>
+</ul>
+<p>熱境界条件の影響については, 例えば, </p>
+<ul>
+<li>Ishiwatari, M., Takehiro, S., Hayashi, Y.-Y., 1994 : 
+  The effects of thermal conditions on the cell sizes of two-dimensional convection. 
+  J. Fluid Mech., 281, 33--50. </li>
+</ul>
+<p>を参考にされたい. </p>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2009/01/15, Since: 2002/10/03 </small>
+
+</body>
+</html>

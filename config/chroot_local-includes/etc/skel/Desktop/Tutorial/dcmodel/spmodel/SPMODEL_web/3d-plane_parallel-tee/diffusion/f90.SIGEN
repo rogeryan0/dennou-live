@@ -1,0 +1,14 @@
+Subject: 拡散方程式モデル Fortran ソースファイル置場
+	 (3 次元並行平版間領域, 水平 2 重フーリエ展開+鉛直チェビシェフ展開)
+Maintainer: 竹広真一
+Update: 2009/12/30
+Note: 解析解との比較チェックプログラム集. 
+      解析解の解説に関しては 
+      <URL:http://www.gfd-dennou.org/arch/spmodel/2d-channet-et/diffsuion/pub/>
+      を参照のこと.
+
+履歴
+	2009/12/30 竹広真一 ディレクトリ作成
+
+
+

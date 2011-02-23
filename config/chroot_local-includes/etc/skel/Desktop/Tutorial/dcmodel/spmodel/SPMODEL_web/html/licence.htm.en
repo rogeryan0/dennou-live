@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>Licence</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="licence.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> ] </small>
+<h1><a name="label-0" id="label-0">Licence</a></h1><!-- RDLabel: "Licence" -->
+<p>Please read <a href="../spml/COPYRIGHT">COPYRIGHT</a> file.</p>
+<h3><a name="label-1" id="label-1">Citation</a></h3><!-- RDLabel: "Citation" -->
+<p>Takehiro, S., Ishioka, K., Nishizawa, S., Taniguchi, H., Morikawa, Y., Odaka, M., Ishiwatari, M., Hayashi, Y.-Y.,
+SPMODEL Development Group, 2007: 
+Hierarchical Spectral Models for GFD (SPMODEL),
+http://www.gfd-dennou.org/library/spmodel/, GFD Dennou Club.</p>
+<p>When you have to refer only an article of a refereed journal, please 
+cite our ariticle of online journal of Japan Society of Fluid Mechanics
+as follows:</p>
+<pre>Takehiro, S., Odaka, M., Ishioka, K., Ishiwatari, M., Hayashi, Y.-Y., 2006:
+SPMODEL: A Series of Hierarchical Spectral Models for Geophyiscal Fluid Dynamics,
+Nagare Multimedia 2006, 
+((&lt;"http://www.nagare.or.jp/mm/2006/spmodel/"|URL:http://www.nagare.or.jp/mm/2006/spmodel/&gt;))</pre>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2009/01/12, Since: 2002/02/15 </small>
+
+</body>
+</html>

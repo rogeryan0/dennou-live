@@ -1,0 +1,335 @@
+Thu Aug 26  2004   T Horinouchi
+	* gphys_io_common.rb: debug in each_along_dims_write
+Fri Aug 18  2004   T Horinouchi
+	* ggraph.rb: Added options 'tonf', 'tonc' to GGraph.tone
+Fri Aug 12  2004   T Horinouchi
+        * ggraph.rb: Added GGraph::vector. Renamed DCLExt::ug_flow_vect
+	  to DCLExt::flow_vect and revised. Added DCLExt::unit_vect;
+	  DCLExt::set_unit_vect_options, and DCLExt::next_unit_vect_options.
+	* gphys.rb: added att_names, get_att, set_att,
+	  put_att(aliased to set_att), del_att.
+	* varray.rb: added VArray#attr_copy
+	* netcdf_convention.rb: _op_attr_edit: not to delete 'long_name'
+Fri Aug 10  2004   T Horinouchi
+	* varray.rb,gphys.rb: added method convert_units
+Fri Aug  9  2004   T Horinouchi
+        * ggraph.rb: added DCLExt::ug_flow_vect
+	* removed ggraph_old.rb (to be deleted in the next release)
+Fri Aug  9  2004   T Horinouchi
+	* gphys-0.3.3 released (cvs tag gphys-0_3_3)
+	* grid.rb: delete_axes: to allow dimension specification by name(s)
+	* axis.rb(,gphys.rb): added Axis#to_gphys(datavary1d=nil), which
+	  makes a 1D GPhys object using the axis. By default, the axis's
+	  coordinate variable is used as the data.
+	  Its test program was added to gphys.rb.
+	* ggraph.rb: contour,tone: added transpose option to exchange x&y axes.
+        * grid.rb,varray.rb,gphys.rb: added transpose method.
+	* varray.rb: added VArray#del_att. VArray#coerce: support UNumeric.
+          asin, atan etc: units of the return value set to 'rad' (it was '1')
+	* unumeric.rb: debug in expection messaging in UNumeric#convert2
+          Math funcs such as log&sin: to return UNumeric (instead of Numeric).
+          Added atan2.
+          asin, atan etc: units of the return value set to 'rad' (it was '1')
+Fri Jul 16  2004   T Horinouchi
+	* ggraph.rb: 
+	  axes -- to set the uz parameter 'roffxt', when units of the left
+	  y axis is to be written to avoid the overlay with the title.
+	  line -- added a new parameter 'label'
+Thu Jul 15  2004   T Horinouchi
+	* gphys_fft.rb: added GPhys#detrend, GPhys#cos_taper, 
+	  and GPhys::COS_TAPER_SP_FACTOR (==1/0.875)
+Thu Jul 15  2004   R Mizuta
+	* grads_gridded.rb: created natts, get_att, and att_names
+Thu Jun 10  2004   T Horinouchi
+	* grads_gridded.rb: treat cray_32bit_ieee as bigendian
+Thu May 24  2004   R Mizuta
+	* coordtransform.rb: bug fixed
+Fri May 21  2004   T Horinouchi
+	* gphys-0.3.2 released (cvs tag gphys-0_3_2)
+	* gphys_io_common.rb: debug in each_along_dims_write -- the previous
+	  version did not work with the unlimited dimension.
+	* coordtransform.rb: minor change (HAVE_SSL2 -> HAVE_NUMRU_SSL2)
+Mon May 10  2004   R Mizuta
+	* grads_gridded.rb,gphys_grads_io.rb,varraygrads.rb: 
+	  supported GrADS output
+	* coordtransform.rb: linear interpolation without SSL2
+Wed May  5  2004   T Horinouchi
+	* gphys.rb: [],[]=: minor debug (handling of specification by dim name)
+	* ggraph.rb: _set_tone_levels_ (used in tone): improved --
+	  it is ok now not to specify 'patterns'.
+	  tone: added options 'clr_min', 'clr_max' (just for convenience
+	  and consitstency with contour --- one can instead directly
+	  specify the uepack parameter icolor[12])
+Tue May  4  2004   T Horinouchi
+	* gphys_fft.rb: debug & improve coordinate handling in GPhys#fft
+Sun May  2  2004   T Horinouchi
+	* gphys_fft.rb: added units handling in rawspect2powerspect
+	* unumeric.rb: debug in "/"; added the "**"
+Fri Apr  2  2004   T Horinouchi
+	* netcdf_convention.rb: NetCDF_Conventions::find -> not to raise an
+	  exception when gtool4
+Sun Mar 21  2004   T Horinouchi
+	* gphys-0.3.1 released (cvs tag gphys-0_3_1)
+	* ggraph.rb,gphys.rb: Moved GPhys#first1D & GPhys#first1D from the
+	  former to the latter.
+        * gphys_io.rb: very minor change
+Sat Mar 20  2004   T Horinouchi
+	* grads_gridded.rb: GrADS_Gridded: added reader to @ctlfile
+	* lib/numru/gphys.rb: changed required files accordingly	
+	* gphys_io.rb: Created (module GPhys::IO). 
+	  Consolidates specific IO modules such as GrADS_IO and NetCDF_IO.
+	  Figures out file type internally and forward messages to
+	  appropriate modules.
+	* gphys_io_common.rb: Created by separating from
+	  gphys_netcdf_io.rb. Internal usage only (to be used by IO,
+	  NetCDF_IO, GrADS_IO etc.)
+	* gphys_netcdf_io.rb: Separated module IO_Common into 
+	  gphys_io_common.rb.
+Fri Mar 19  2004   T Horinouchi
+	* ggraph.rb: Do not check class of a VArray (for dRuby)
+	* varray.rb: NMath --> Misc::EMath, debug: VArray#** (units treatment)
+	* unumeric.rb: scale-offset conversion --> to warn regardress $VERBOSE
+Thu Mar  4  2004   T Horinouchi
+	* varray.rb: __ntype: "lint" -> "int"
+Tue Mar  2  2004   T Horinouchi
+	* netcdf_convention.rb: minor debug in an exception message
+Tue Mar  2  2004   T Horinouchi
+	* gphys-0.3.0 released (cvs tag gphys-0_3_0)
+	* doc/index.rd: created (separated from lib/numru/gphys.rb)
+	* netcdf_convention.rb: CREATED. To hold NetCDF convensions
+	  --- better support of the User's Guide convention.
+	  Supported the Wind Profiler convention.
+	* unumeric.rb: added documentation.
+	* gphys_netcdf_io.rb,varraynetcdf.rb,varraycomposite.rb: changed
+	  according to the introduction of netcdf_convention.rb
+	* varray.rb,gphys.rb: supported atan2
+	* attributenetcdf.rb: AttributeNetCDF.new: to accept a NetCDF in
+	  addition to NetCDFVar (this is to support global attributes).
+Mon Mar  1  2004   T Horinouchi
+	* varraycomposite.rb: val: to support NArraMiss; added convention
+	* varraynetcdf.rb: convention module moved in from gphys_netcdf_io.rb.
+	  NetCDFVar#get/put re-aliasesed to (get|put)_with_miss_and_scaling
+          (by default, they are aliased to simple_(get|put)).
+	  (CAUTION: Need NArrayMiss newer THAN 1.0.1, which has a bug)
+	* gphys_netcdf_io.rb: convention module moved out to varraynetcdf.rb
+Sun Feb 29  2004   T Horinouchi
+	* unumeric.rb: added to_f, to_i
+Sat Feb 28  2004   T Horinouchi
+	* gphys_fft.rb: change to use a NumRu::Units operation in wavenum calc
+Fri Feb 27  2004   T Horinouchi
+	* unumeric.rb: created.
+	* varray.rb: Modified to use NumRu::Units
+	  - added methods units and units=
+	  - modified Math funcs, binary operators, and
+	    type3_methods (mean,max,etc).
+	* gphys.rb: added methods units and units= (forwarded to @data)
+	* axis.rb,grid.rb: minor change in response to the change in varray.rb
+Fri Feb 27  2004   T Horinouchi
+	* varray.rb: improved binary operators (to coerce unknown objects).
+	  VArray#coerce: debug.
+	  VArray#val: changed to return @ary.dup instead of @ary for
+	  consistency with other VArray subclasses and the mapping case.
+	* gphys.rb: added GPhys#coerce, 
+	  binary&math operators: changed to copy the grid
+Thu Feb  5  2004   T Horinouchi
+	* gphys_fft.rb: Debuged spect_zero_centering and spect_one_sided.
+	  Made a test part. Added rawspect2powerspect.
+Wed Feb  4  2004   T Horinouchi
+	* varray.rb: increased NArray_type1_methods (such as real, imag,
+	  random, etc.etc.) and Binary_operators (imag=).
+	* gphys_fft.rb: added new GPhys methods spect_zero_centering
+	  and spect_one_sided.
+Thu Jan 29  2004  T Horinouchi < S Nishizawa
+	* gphys_netcdf_io.rb: debug in NetCDF_IO::open
+Thu Jan 29  2004  T Horinouchi
+	* gphys-0.2.3 released
+	* axis.rb: Axis#cut/Axis#cut_rank_conserving:
+ 	  supported multiple position specification by Array/NArray
+	* gphys.rb: added a test for GPhys#cut (which depends on Axis#cut)
+	* varray.rb,gphys.rb: removed spaces before parentheses.
+Tue Jan 27  2004  T Horinouchi
+	* varraycomposite.rb: redefined methods ntype and typecode
+Tue Jan  6  2004  T Horinouchi
+	* gphys_netcdf_io.rb: created GPhys::IO_Common module, which is to 
+	  be separated in a independent file in future. 
+	  Made IO_Common::each_along_dims_write and 
+	  NetCDF_IO::each_along_dims_write, where the latter uses the former.
+	* axis.rb: debug in Axis#[] (treatment of @aux)
+	* gphys.rb: added GPhys#rename
+Mon Jan  5  2004  T Horinouchi
+	* varraynetcdf.rb: aliased VArrayNetCDF.new2 to VArrayNetCDF.def_var
+	* gphys.rb: created GPhys#dim_index.
+	  GPhys#[], GPhys#[]= : enhanced to support specification by Hash
+	  (with keys representing axis names. e.g., gphys['x'=>2..-3]).
+Sun Jan  4  2004  T Horinouchi
+	* grid.rb: unify Grid#axis and Grid#get_axis (so, get_axis
+	  is kept only for backward compatibility)
+	* gphys.rb: replaced Grid#get_axis calls with Grid#axis calls.
+	  Created GPhys#grid_copy to return a deep clone of the grid 
+	  (@grid.copy).
+	* gphys_netcdf_io.rb: separated NetCDF_IO::write_grid from 
+	  NetCDF_IO::write
+	* varraynetcdf.rb: VArrayNetCDF.new2 (class method): to allow
+	  dimension specification by name.
+Thu Nov 20  2003  T Horinouchi
+	* gphys_fft.rb: to use FFTW3 if exists
+Mon Nov 17  2003  T Horinouchi
+	* lib/numru/gphys.rb: to require gphys_operations
+	* gphys_fft.rb: created
+	* varray.rb: VArray#name modified to return a copy (dup) of the name
+	* varray.rb: added "abs" to NArray_type1_methods
+	* varray.rb: added a new method VArray#replace_val
+	* gphys.rb: added a new method GPhys#replace_val
+Mon Nov 10  2003  R Mizuta
+        * ggraph.rb: debug in tone, options added to axes, and
+          support of String in xx_set_params
+Sun Nov  9  2003  T Horinouchi
+	* gphys_netcdf_io.rb: debug in __to_na_of_netcdf.
+Fri Nov  7  2003  T Horinouchi
+	* gphys-0.2.2 released
+	* bin/grads2nc.rb: created. (file format converter)
+	* bin/install.rb: created. (to install files in bin/)
+	* lib/numru/gphys.rb: to require "gphys_grads_io.rb"
+	* gphys_grads_io.rb: added an RD document
+Wed Nov  5  2003  T Horinouchi
+	* varray.rb: added to_i, to_f and to_type to NArray_type1_methods
+Tue Oct 28  2003  R Mizuta
+	* grads_gridded.rb: bugs fixed and ruby-1.8 support
+	* gphys_grads_io.rb: transforms GrADS into NetCDF in the test code.
+Tue Oct 28  2003  T Horinouchi
+	* varraynetcf.rb: VArrayNetCDF#write: debug unlim-dim treatment etc.
+	  VArrayNetCDF#val=: improved unlimited dim treatment.
+Fri Oct 24  2003  T Horinouchi
+	* gphys.rb: enhanced GPhys#mean etc (VArray::NArray_type3_methods)
+	  to accept specification by name
+	* grid.rb: changed Grid#axnames and Grid#lost_axes to duplicate
+	  the resultant array to return.
+Thu Oct 23  2003  T Horinouchi
+	* gphys.rb: debug - Binary operators, GPhys#shape_coerce
+	* varray.rb: aliases set_att to put_att
+Wed Oct  1  2003  T Horinouchi
+	* subsetmapping.rb: debug for the irregular mapping
+	* axis.rb: Axis[] was modified to accept NArray and Array
+Fri Sep 26  2003  T Horinouchi
+	* gphys-0.2.1 released
+	* varray.rb,varraycomposite.rb: set_att changed to return self
+	* gphys_netcdf_io.rb: support multiple gphys output in a single
+	  file
+	* testdata/cira86.dat: (added) text file to hold the CIRA86 data
+	* sample/cira86_to_nc.rb: converts the CIRA data into NetCDF file
+	  via GPhys.
+Tue Sep 23  2003  T Horinouchi
+	* axis.rb,grid.rb: use sprintf("%g",..) to format lost axis info.
+	* varraycomposite.rb: further debug in [].
+	* varray.rb: debug for NArray_type3_methods (NArrayMiss handling)
+	* gphys_netcdf_io.rb: found bug in missing data handling. Not 
+	  fully fixed but disabled -- waiting for the NArrayMiss handling
+	  support by RubyDCL.
+Mon Sep 22  2003  T Horinouchi
+	* axis.rb: to require "numru/gphys/varraycomposite"
+	* varraycomposite.rb: support the rubber dim. debug in [].
+	* gphys_netcdf_io.rb: NetCDF_IO.open: support multiple files.
+	  Added a RD doc.
+Thu Sep 18  2003  T Horinouchi
+	* gphys-0.2.0 released
+	* doc/grads_gridded.html: (generated from grads_gridded.rb)
+	* gphys.rb,grid.rb,varray.rb,ggraph.rb: added 3rd&4th args to "eval"
+	  for backtrace
+Tue Sep 16  2003  R Mizuta
+	* gphys_grads_io.rb: (created)
+	* varraygrads.rb: (created) 
+	* grads_gridded.rb: (created) classes for GrADS gridded datasets
+	* testdata/T.jan.dat: (created) GrADS binary data
+	* testdata/T.jan.ctl: (created) GrADS control file for T.jan.dat
+Wed Sep  3  2003  T Horinouchi
+	* gphys.rb: modified GPhys#axis, GPhys#coord to support spec by	name
+	* varray.rb: added VArray#file
+	* varraynetcdf.rb: added VArrayNetCDF#file
+Tue Sep  2  2003  T Horinouchi
+	* gphys-0.1.0 released
+	* sample/druby_serv2.rb: enhanced to accept a port specified
+	* sample/druby_cli2.rb: changed to use the current GGraph.
+Fri Aug 29  2003  T Horinouchi
+	* axis.rb: renamed Axis#mean to Axis#average, Axis#integ to 
+	  Axis#integrate (thus renaming Grid#mean and GPhys#mean
+	  to Grid#average and GPhys#average and so on). Test programs are
+	  changed accordingly (axis.rb, grid.rb, gphys.rb, ggraph.rb,
+	  and ggraph_old.rb).
+	* gphys.rb: GPhys#coord added (coord(i) is same as axis(i).pos)
+	* grid.rb,gphys.rb: renamed collapsed_axes to lost_axes
+	* varray.rb: set VArray#attr private. Defined VArray#(set|get)_att
+	  VArray#att_names. Aso changed corresponding to this change are
+	  varraynetcdf.rb, axis.rb, coordtransform.rb, grid.rb
+	  gphys_netcdf_io.rb, varraycomposite.rb, ggraph.rb ggraph_old.rb
+	* varray.rb: added type1 methods such as sort and type2 methods
+	  such as mean, min, max. (type2 had been supported)
+	  Changed gphys.rb accordingly.
+	* gphys.rb: made GPhys#grid protected
+Thu Aug 28  2003  T Horinouchi
+	* grid.rb: modified Grid::[] to support the rubber dimension
+	* gphys.rb: modified GPhys::[] & []= to support the rubber dimension
+Thu Aug 28  2003  T Horinouchi
+	* gphys-0.0.6 released
+Wed Aug 27  2003  T Horinouchi
+	* gphys.rb: added RD indexes
+	* ggraph.rb: further built and documentation written. Now it has
+	  a basic graphic functionality.
+Tue Aug 26  2003  T Horinouchi
+	* axis.rb: refined Axis#[] (no change in behavior). added Axis#cut*
+	* grid.rb: modified Grid#cut* to depend on Axis#cut*
+	* ggraph.rb: further built
+Mon Aug 25  2003  T Horinouchi
+	* gphys.rb: added GPhys#cut*
+	* grid.rb: slightly editted
+Mon Aug 25  2003  T Horinouchi
+	* gphys-0.0.5 released
+	* ggraph.rb: slightly enhanced (still underconstruction)
+Fri Aug 22  2003  T Horinouchi
+	* varray.rb: debug VArray#inspect
+	* grid.rb: added Grid#cut, Grid#cut_rank_conserving
+	* ggraph.rb: enhanced (with many changes; but still underconstruction)
+Wed Aug 20  2003  T Horinouchi
+	* gphys.rb: added methods axis and collapsed_axes, so that one
+	  does not have to put like gphys.grid.axis(1). Also added is
+	  rank, which of course must be.
+	* grid.rb: renamed collapsed to collapsed_axes. Updated.
+	* ggraph.rb: slightly modified (still underconstruction)
+	* ggraph_old.rb: Updated
+Tue Aug 19  2003  T Horinouchi
+	* sample/druby_cli1.rb,sample/druby_serv1.rb: updated
+	* sample/druby_cli2.rb,sample/druby_serv2.rb: created
+Sun Aug 11  2003  T Horinouchi
+	* gphys-0.0.4 released
+	* varray.rb: added documentation; minor changes
+	* varraynetcdf.rb,varraycomposite.rb: minor changes
+Sun Aug 10  2003  T Horinouchi
+	* varraycomposite.rb: made to realize a composite VArray class
+	  VArrayComposite.
+Fri Aug  8  2003  T Horinouchi
+	* varray.rb: minor change in inspect.
+	* axis.rb: change implimentation of Axis#mean and Axis#integ
+	  --- to simplify the source code and not to use Proc.
+	  Also, use of the observer pattern to notify addion of similar
+	  methods was eliminated, so to add some has to be done before
+	  Grid or GPhys is loaded.
+	* grid.rb,gphys.rb: minor changes corresponding to the change in
+	  axis.rb (see above).
+Mon Jun 23  2003  T Horinouchi
+	* gphys-0.0.3 released (although the revision is still
+	  underway)
+	* start CVS
+Jun 12-23  2003  T Horinouchi
+	* Many updates such as direcotry reorganization, addition of
+	  coord*.rb, debug, etc.etc.
+Wed Jun 11  2003  T Horinouchi
+	* axis.rb: loc -> pos
+	* grid.rb: delete attr_reader axes and define axis/set_axis methods
+	* gphys_netcdf_io.rb: define write
+Mon Jun  9  2003  T Horinouchi
+	* axis.rb,grid.rb,gphys.rb: define copy (I will probably change
+	  the name). This is to make a deep clone, which possbly read
+	  data in a file (or files) and store them on memoty.
+Sun Jun  8  2003  T Horinouchi
+	* ggraph.rb: saved and start writing from scratch (far from completed)
+Wed May 14  2003  T Horinouchi
+	* gphys-0.0.2 released

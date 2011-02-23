@@ -1,0 +1,350 @@
+% 表題   SPMODEL サンプルプログラムドキュメント
+%        1 次元移流拡散方程式 (周期境界条件) 
+%
+% 履歴   2002/09/04 竹広 真一
+%        2004/02/18 小高 正嗣
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4j,12pt]{jarticle}
+%
+% プリアンブル
+%
+\usepackage{Dennou6}                      % dennou-sty-6 を使用
+
+\Dtitle[1 次元移流拡散方程式モデル]       % ヘッダ部タイトル, モデル名と同じ
+{ {\large SPMODEL サンプルプログラム} \\  % ここは変更しない 
+  1 次元移流拡散方程式モデル \\           % モデル名
+  {\large advdiff1.f90, advdiff2.f90, advdiff3.f90}     % プログラム名
+}
+%
+\Dauthor[竹広 真一, 小高 正嗣]{竹広 真一, 小高 正嗣}            % 著者
+\Ddate{2004 年 3 月 19 日}                % 日付
+\Dnoparindent                             % 段落の字下げをしない
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% 本文開始
+%
+% 基本的な章節構成は以下の通り. 
+%
+%   1. はじめに 
+%   2. 支配方程式系
+%   3. 離散化
+%   4. 利用モジュールとその他の設定
+%   5. 数値実験
+%   6. 参考文献
+%   -. 謝辞
+% 
+% 必要に応じて構成を変更すること.
+%
+\begin{document}
+
+\maketitle                                % タイトルの作成
+\tableofcontents                          % 目次の作成
+\pagebreak                                
+
+%----------------------------------------------------------------------
+\Dparskip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{概要}
+
+SPMODEL サンプルプログラム『advdiff1.f90』, 『advdiff2.f90』および
+『advdiff3.f90』に用いられている基礎方程式と境界条件, および, このプロ
+グラムを用いた数値実験の方法について解説する. 基礎方程式は, 1 次元の移
+流拡散方程式である.  計算はスペクトル法を用いて行い, 展開はフーリエ級
+数を用いて行う. 波数切断は三角切断である. スペクトル変換と逆変換および
+微分演算には, SPMODEL  ライブラリ(spml)を用いている. 時間積分法は
+『advdiff1.f90』では Euler  スキーム, 『advdiff2.f90』と『advdiff3.f90』
+では移流項に  Adams-Bashforth スキームを用い,  拡散項には Crank
+Nicholson スキームを用いる. 『advdiff3.f90』では, 移流項と拡散項を計算
+する時刻レベルをずらして方法(operator splitting method)を用いた. 数値実
+験では初期にデルタ関数的な分布を与えた場合の時間発展を計算する.
+
+
+{\bf プログラム名} \\                  % プログラム名
+{\footnotesize
+advdiff1.f90, advdiff2.f90, advdiff3.f90
+}
+
+{\bf プログラム取得元}\\               % プログラム取得先
+{\footnotesize
+http:\slash \slash www.gfd-dennou.org\slash arch\slash spmodel\slash 1d-cyclic-e\slash advection-diffusion\slash SIGEN.htm
+}
+
+{\bf SPMODEL サンプルプログラム目次}\\ % サンプルプログラム目次(変更しない)
+{\footnotesize
+ http:\slash \slash www.gfd-dennou.org\slash arch\slash spmodel\slash sample.htm 
+}
+
+{\bf SPMODEL の使い方}\\               % SPMODEL の使い方(変更しない)
+{\footnotesize
+http:\slash \slash www.gfd-dennou.org\slash arch\slash spmodel\/
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{支配方程式系}
+ここでは支配方程式系と境界条件を記す. 
+
+\subsection{支配方程式系}
+支配方程式は 1 次元の移流拡散方程式である.
+\begin{eqnarray}
+   \DP{C}{t} + u\DP{C}{x} = D\DP[2]{C}{x},
+   \Deqlab{支配方程式系}  
+\end{eqnarray}
+
+各記号は以下の量をあらわす. 以下では $u$ は定数とする.
+\begin{table}[h]
+ \begin{center}
+  \begin{tabular}{c l l  } \hline
+   記号    &\qquad\qquad&  変数/物理定数   \\ \hline 
+   $x$      && 水平位置        \\
+   $t$      && 時間            \\ 
+   $u$      && 流速            \\ 
+   $C$      && 振幅            \\ 
+   $D$      && 拡散係数        \\ \hline
+  \end{tabular} 
+ \end{center}
+ \caption{変数, 物理定数の定義}
+% \Dtablab{}
+\end{table}
+
+\subsection{境界条件}
+
+水平方向の境界条件は周期境界条件である. 
+すなわち, 水平計算領域を $x_{m}$ とすると,
+\[
+  C(x+x_{m}) = C(x),
+\]
+である.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{離散化}
+この節では方程式系の空間離散化および使用した時間積分法について説明, 
+プログラム内で実際に用いられている方程式を記述する.
+
+\subsection{水平離散化}
+支配方程式の離散表現は以下のようになる.
+\begin{eqnarray}
+   \DP{C_{i}(t)}{t} + u\DP{C_{i}(t)}{x} = D\DP[2]{C_{i}(t)}{x}.
+\Deqlab{空間離散化した式}
+\end{eqnarray}
+ここで下付き添字 $i$ は水平格子点 $x_{i}$ 上での値を示す. 
+
+
+\subsection{水平方向のスペクトル表現}
+空間離散化した支配方程式\Deqref{空間離散化した式}をスペクトル法を用い
+て表現する. 空間方向のスペクトル展開はフーリエ級数を用いて行う. 以下で
+は $k$ を $x$ 方向波数, $K$ を切断波数, $I$ を $x$ 方向格子点数とする.
+
+$C_{i}(t)$ はスペクトル逆変換によって以下のように展開される:
+\begin{equation}
+  C_{i}(t) = \sum _{k=0}^{K}
+  \exp\left(\frac{2\pi i k x_{i}}{x_{m}}\right)\hat C_{k}.
+  \Deqlab{スペクトル逆変換}
+\end{equation}
+スペクトル係数 $\hat C_{k}$ は以下のスペクトル変換によって与えられる:
+\begin{equation}
+  \hat C_{k} = \frac{1}{I}
+  \sum _{i=0}^{I-1}\exp\left(-\frac{2\pi i k x_{i}}{x_{m}}\right)C_{i}.
+  \Deqlab{スペクトル変換}
+\end{equation}
+\Deqref{スペクトル逆変換}, \Deqref{スペクトル変換}より, 
+\Deqref{空間離散化した式}のスペクトル表現は以下のようになる.
+\begin{equation}
+  \DP{\hat C_{k}}{t} =
+  - u \left(\frac{2\pi i k}{x_{m}}\right) \hat C_{k}
+  +  D\left(\frac{2\pi i k}{x_{m}}\right)^{2}\hat C_{k}.
+  \Deqlab{支配方程式のスペクトル表現}
+\end{equation}
+
+\newpage
+\subsection{時間積分}
+ここでは時間積分法について記述し, プログラム内で実際に用いられている方
+程式を記述する. 以下では $\Delta t$ を時間格子間隔, 時刻 $\tau \Delta
+t$  における $\hat C_{k}$ の値を $\hat C_{k}^{\tau}$ 等と表す.
+
+\subsubsection{Euler スキーム}
+
+Euler スキームを用いて\Deqref{支配方程式のスペクトル表現}式を時間方向
+に離散化すると, 以下のように表される.
+\begin{equation}
+  \hat C_{k}^{\tau +1} = \hat C_{k}^{\tau} 
+  + \Delta t \left\{
+    - u \left(\frac{2\pi i k}{x_{m}}\right) \hat C_{k}^{\tau} 
+    + D\left(\frac{2\pi i k}{x_{m}}\right)^{2}\hat C_{k}^{\tau}\right\} .
+  \Deqlab{Euler スキームにより離散化された式}
+\end{equation}
+
+\subsubsection{Adams-Bashforth + Crank Nicholson スキーム}
+
+移流項に Adams-Bashforth スキーム, 拡散項には Crank Nicholoson スキー
+ムを適用して\Deqref{支配方程式のスペクトル表現}式を時間方向に離散化す
+る.
+%
+\begin{equation}
+  \frac{\hat C_{k}^{\tau+1} - \hat C_{k}^{\tau}}{\Delta t} =
+    - \frac{u}{2}\left(\frac{2\pi i k}{x_{m}}\right)
+      \left(3\hat C_{k}^{\tau} - \hat C_{k}^{\tau-1}\right)
+    + \frac{D}{2}
+       \left(\frac{2\pi i k}{x_{m}}\right)^{2}
+      \left(\hat C_{k}^{\tau+1}+\hat C_{k}^{\tau}\right)
+\end{equation}
+%
+したがって, 
+%
+\begin{equation}
+  \left\{
+  1 - \frac{D\Delta t }{2}\left(\frac{2\pi i k}{x_{m}}\right)^{2}\right\}
+  \hat C_{k}^{\tau +1}
+  = \hat C_{k}^{\tau}  
+    - \frac{u\Delta t}{2}\left(\frac{2\pi i k}{x_{m}}\right)
+      \left(3\hat C_{k}^{\tau} - \hat C_{k}^{\tau-1}\right)
+    + \frac{D\Delta t }{2}
+       \left(\frac{2\pi i k}{x_{m}}\right)^{2}\hat C_{k}^{\tau}
+\end{equation}
+%
+となる.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{使用モジュールとその他の設定}
+
+スペクトル変換と逆変換, 微分演算は SPMODEL ライブラリ (spml) の
+ae\_module に含まれる関数を用いて行う. spml が下位で使用する ISPACK の
+仕様から, 格子点数 $I$ は偶数で, かつ $I/2=2^{a}3^{b}5^{c}$ ($a, b, c$ 
+は 0 または整数) でなければならない. 非線形項の計算によって生じるエリ
+アジングを防ぐため, 格子点数 $I$ と切断波数 $K$ は $I>3K$ を満たすよう
+に与える.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{数値実験}
+
+\begin{figure}[p]
+\begin{center}
+\Depsf[][100mm]{./figs/advdiff1-1.ps}
+\caption{Euler スキームを用いた場合の数値計算の結果. 
+         $t=0.0, 0.1, 0.2$ における分布. 破線は解析解を表す.}
+\Dfiglab{advdiff1-1}
+
+\Depsf[][100mm]{./figs/advdiff1-2.ps}
+\caption{Euler スキームを用いた場合の数値計算の結果. $x$-$t$ 断面図.} 
+\Dfiglab{advdiff1-2}
+\end{center}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\Depsf[][100mm]{./figs/advdiff2-1.ps}
+\caption{Adams-Bashforth + Crank Nicholson スキームを用いた場合の数値計算の結果. 
+         $t=0.0, 0.1, 0.2$ における分布. 破線は解析解を表す.}
+\Dfiglab{advdiff2-1}
+
+\Depsf[][100mm]{./figs/advdiff2-2.ps}
+\caption{Adams-Bashforth + Crank Nicholson スキームを用いた場合の数値計算の結果. $x$-$t$ 断面図.} 
+\Dfiglab{advdiff2-2}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[p]
+\begin{center}
+\Depsf[][100mm]{./figs/advdiff3-1.ps}
+\caption{Adams-Bashforth + Crank Nicholson スキームと operator splitting 法
+        を用いた場合の数値計算の結果. 
+         $t=0.0, 0.1, 0.2$ における分布. 破線は解析解を表す.}
+\Dfiglab{advdiff3-1}
+
+\Depsf[][100mm]{./figs/advdiff3-2.ps}
+\caption{Adams-Bashforth + Crank Nicholson スキームと operator splitting 法
+         を用いた場合の数値計算の結果. $x$-$t$ 断面図.} 
+\Dfiglab{advdiff3-2}
+\end{center}
+\end{figure}
+
+$x$ 方向無限領域での\Deqref{支配方程式系}式の解析解の一つとして
+%
+\begin{equation}
+  C(x,t) = \frac{C_0}{2\sqrt{\pi D t}} \exp\left[-\frac{(x-ut)^2}{4Dt}\right]
+\end{equation}
+%
+が存在する. これは初期状態 $t=0$ で $x=0$ にデルタ関数的な分布が,  時
+間がたつにつれて移流されつつ拡散し分布が広がっていく解である.
+
+そこで, 初期条件として
+%
+\begin{equation}
+  C(x,0) = \frac{1}{2\sqrt{\pi D t_{0}}}
+           \exp\left[-\frac{(x-0.25x_{m})^2}{4Dt_{0}}\right]
+\end{equation}
+%
+を与えることにする. ここで $t_{0}=10^{-2}$ とした. 水平計算領域の大き
+さ $x_{m}$は $x_{m}=5.0$ とする. その他のパラメータ $u, D$ はそれぞれ
+$u=10.0, D=1.0$ とする.
+
+格子点数 $I$ と切断波数 $K$ はそれぞれ $I=64, K=31$ とする. 時間格子間
+隔は, 『advdiff1.f90』(Euler スキームを用いる場合)では $\Delta
+t=10^{-4}$ sec, 『advdiff2.f90』と『advdiff3.f90』(Adams-Bashforth +
+Crank Nicholson スキームを用いる場合)では $\Delta t=10^{-3}$ sec であ
+る. 計算ステップ数はそれぞれ 2,000 と 200 である.
+
+計算結果を\Dfigref{advdiff1-1}$\sim$\Dfigref{advdiff3-2}に示す. 
+\Dfigref{advdiff1-1}, \Dfigref{advdiff2-1}, \Dfigref{advdiff3-1}
+では解析解を破線で示しているが, 数値解とほぼ一致しているた
+め図中では区別ができないことに注意されたい.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section{参考文献}
+\begin{description}
+ \item 竹広真一, 石岡圭一, 森川靖大, 小高正嗣, 石渡正樹, 林祥介, SPMODEL 開発グループ, 
+       2004: 
+       階層的地球流体力学スペクトルモデル集 (SPMODEL),\\
+       http:\slash \slash www.gfd-dennou.org\slash arch\slash spmodel\slash ,
+       地球流体電脳倶楽部. 
+
+  \item Spiegelman, M., 2002: Myth \& Methods in Modelling, \\
+        http:\slash \slash www.ldeo.columbia.edu\slash \~\,spieg\slash mmm\slash
+
+\end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage                                  % 改ページ
+\section*{謝辞}                           % 謝辞. このまま利用する.
+\markright{謝辞}                          % ヘッダに表示
+\addcontentsline{toc}{section}{謝辞}      % 目次に表示
+
+本資源は, 地球流体電脳倶楽部のインターネット上での学術知識の集積と活用
+の実験の一環として
+\begin{center}
+ http:\slash \slash www.gfd-dennou.org\slash arch\slash spmodel\slash 
+\end{center}
+において公開されているものである 
+(\copyright 地球流体電脳倶楽部スペクトルモデルプロジェクト 
+spmodel@gfd-dennou.org 2002. ). 
+本資源は, 著作者の諸権利に抵触しない(迷惑をかけない)限りにおいて自由に
+利用していただいて構わない. なお, 利用する際には今一度自ら内容を確かめ
+ることをお願いする(無保証無責任原則).
+
+本資源に含まれる元資源提供者(図等の版元等を含む)からは,  直接的な形で
+の WEB 上での著作権または使用許諾を得ていない場合があるが,  勝手ながら, 
+「未来の教育」のための実験という学術目的であることをご理解いただけるも
+のと信じ,  学術標準の引用手順を守ることで諸手続きを略させていただいて
+いる.  本資源の利用者には, この点を理解の上,  注意して扱っていただける
+ようお願いする.  万一, 不都合のある場合には
+\begin{center}
+ spmodel@gfd-dennou.org
+\end{center}
+まで連絡していただければ幸いである. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+

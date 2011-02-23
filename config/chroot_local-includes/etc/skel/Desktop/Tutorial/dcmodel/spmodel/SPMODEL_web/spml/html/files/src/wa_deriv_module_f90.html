@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: wa_deriv_module.f90</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+  <div id="fileHeader">
+    <h1>wa_deriv_module.f90</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>src/wa_deriv_module.f90
+
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Sun Mar 01 07:35:26 +0900 2009</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <p>
+&#8212;
+</p>
+<hr size="10"></hr><pre>
+    Copyright (c) 2002-2008 Shin-ichi Takehiro. All rights reserved.
+</pre>
+<hr size="10"></hr><p>
+表題 <a href="../../classes/wa_deriv_module.html">wa_deriv_module</a>
+</p>
+<pre>
+ spml/wa_deriv_module モジュールは球面上での流体運動を
+ 球面調和函数を用いたスペクトル法によって数値計算するための
+ モジュール wa_module の下部モジュールであり, スペクトル法の
+ 微分計算のための Fortran90 関数を提供する.
+
+ 球面上の 1 層モデル用 w_deriv_module モジュールを多層モデル用に
+ 拡張したものであり, 同時に複数個のスペクトルデータ, 格子点データに
+ 対する変換が行える.
+
+ 内部で ISPACK の SPPACK と SNPACK の Fortran77 サブルーチンを呼んでいる.
+ スペクトルデータおよび格子点データの格納方法や変換の詳しい計算法に
+ ついては ISPACK/SNPACK,SPPACK のマニュアルを参照されたい.
+</pre>
+<p>
+履歴 2002/02/02 竹広真一
+</p>
+<pre>
+     2002/02/07  竹広真一  関数,変数名前再変更
+     2002/03/30  竹広真一  モジュール名変更
+     2002/05/25  竹広真一  格子点座標を区別すべく命名法変更
+     2002/10/07  竹広真一  λ, μ座標系用微分追加
+     2006/03/08  竹広真一  コメントを RDoc 用に修正
+     2007/11/21  竹広真一  初期化サブルーチンメッセージ出力
+     2008/05/31  竹広真一  初期化サブルーチン削除
+     2008/06/21  佐々木洋平 水平方向の格子点データ配列の始点を 1 から 0 へ.
+     2008/06/28  佐々木洋平 コメントを RDoc 用に微修正
+     2008/07/07  竹広真一  配列最終次元の不定性を許容する変更
+     2009/01/29  佐々木洋平 コメントを RDoc 用に微修正
+
+     制限
+        ・変換する格子点データ, スペクトルデータの配列の大きさは決めうち
+</pre>
+<p>
+This file provides the following module.
+</p>
+<ul>
+<li><b><a href="../../classes/wa_deriv_module.html">wa_deriv_module</a></b>
+
+</li>
+</ul>
+
+    </div>
+
+
+
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
+
+      <div class="name-list">
+
+        <a href="w_base_module_f90.html">src/w_base_module.f90</a>&nbsp;&nbsp;
+
+        <a href="wa_base_module_f90.html">src/wa_base_module.f90</a>&nbsp;&nbsp;
+
+        <a href="w_deriv_module_f90.html">src/w_deriv_module.f90</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+
+   </div>
+
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

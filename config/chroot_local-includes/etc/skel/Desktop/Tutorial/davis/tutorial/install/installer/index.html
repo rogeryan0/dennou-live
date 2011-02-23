@@ -1,0 +1,229 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>NumRu Installer</title>
+<link href="http://ruby.gfd-dennou.org/tutorial/install/dennou-ruby-install.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h1><a name="label-0" id="label-0">NumRu Installer -- the auto install script of Dennou Ruby products</a></h1><!-- RDLabel: "NumRu Installer &shy;&shy; the auto install script of Dennou Ruby products" -->
+<p>Last modified: &lt;2007-04-27 06:08:01 koshiro&gt;</p>
+<p>This is a Ruby script for auto-installation of Dennou Ruby products.
+With this installer, you can install Dennou Ruby products much more easily than install manually.
+Now all packages of Dennou Ruby products related GAVE can be installed.
+(Ruby-SSL2 and Ruby/Msise90 are not supported.)</p>
+<font color="red">*** This software is not maintained now! ***</font>
+
+<h2><a name="label-1" id="label-1">Download</a></h2><!-- RDLabel: "Download" -->
+<p><a href="http://ruby.gfd-dennou.org/products/installer/numru-install.rb">numru-install.rb</a>
+(Ver. 3.4.7)</p>
+<h2><a name="label-2" id="label-2">Required environment</a></h2><!-- RDLabel: "Required environment" -->
+<p>Ruby 1.6.7 or later, which includes URI module as a standard library, is required.</p>
+<p>This installer should work on any UNIX OS(Linux, FreeBSD, Solaris, Cygwin on Windows, etc.), but GNU gzip and GNU patch are required.</p>
+<p>We have already checked that this installer works correctly on the following environment:</p>
+<ul>
+<li>Vine Linux 2.6 + Ruby 1.6.7</li>
+<li>Vine Linux 3.1 + Ruby 1.8.2</li>
+<li>Debian GNU/Linux 3.1 + Ruby 1.8.2</li>
+<li>Cygwin(on Windows XP Professional) + Ruby 1.8.4</li>
+</ul>
+<h2><a name="label-3" id="label-3">How to use</a></h2><!-- RDLabel: "How to use" -->
+<p>Type the following command:</p>
+<p><kbd>$ ruby numru-install.rb</kbd></p>
+<p>And answer several quiestions.</p>
+<p>If your Internet connection is via a firewall or proxy, you must set
+the environment variable "http_proxy" with the following syntax:</p>
+<p>(sh, bash) <kbd>$ export http_proxy=http://your.proxy.server:8080/</kbd></p>
+<p>(csh, tcsh) <kbd>% setenv http_proxy http://your.proxy.server:8080/</kbd></p>
+<p>And if your have to use passive mode when you connect FTP server through
+the firewall, you must set the environment variable "FTP_PASSIVE_MODE":</p>
+<p>(sh, bash) <kbd>$ export FTP_PASSIVE_MODE=YES</kbd></p>
+<p>(csh, tcsh) <kbd>% setenv FTP_PASSIVE_MODE YES</kbd></p>
+<p>After installation, make a point of checking your environment variable "PATH" and "RUBYLIB".</p>
+<h2><a name="label-4" id="label-4">Related information</a></h2><!-- RDLabel: "Related information" -->
+<h3><a name="label-5" id="label-5">Patches for Cygwin</a></h3><!-- RDLabel: "Patches for Cygwin" -->
+<p>For some products, installation is failed on Cygwin environment.
+NumRu Installer "numru-install.rb" uses patches to solve this problem:</p>
+<ul>
+<li>DCL C version (5.3.x) -- <a href="http://ruby.gfd-dennou.org/products/installer/patches/dcl53c_cygwin.patch.gz">dcl53c_cygwin.patch.gz</a> (Thanks to Endo-san)
+<ul>
+<li>Change first lines of csh script "dclcc": <kbd>#!/bin/csh -f</kbd> -&gt; <kbd>#!/bin/tcsh -f</kbd> (Cygwin package of csh is not provided)</li>
+</ul></li>
+<li>NetCDF (3.6.1) -- <a href="http://ruby.gfd-dennou.org/products/installer/patches/netcdf361_cygwin.patch.gz">netcdf361_cygwin.patch.gz</a>
+<ul>
+<li>Comment out the code to create a `whatis' file. (make failure after makewhatis returns status 255)</li>
+</ul></li>
+</ul>
+<h2><a name="label-6" id="label-6">Change log</a></h2><!-- RDLabel: "Change log" -->
+<dl>
+<dt><a name="label-7" id="label-7">Feb 13, 2006 (3.4.7)</a></dt><!-- RDLabel: "Feb 13, 2006 (3.4.7)" -->
+<dd>
+<ul>
+<li>apply netcdf361_cygwin.patch.gz if needed.</li>
+</ul>
+</dd>
+<dt><a name="label-8" id="label-8">Feb 8, 2006 (3.4.6)</a></dt><!-- RDLabel: "Feb 8, 2006 (3.4.6)" -->
+<dd>
+<ul>
+<li>change URL of narray.</li>
+<li>change installation check method "installed?" for ruby-fftw3.</li>
+</ul>
+</dd>
+<dt><a name="label-9" id="label-9">Jun 27, 2005 (3.4.5)</a></dt><!-- RDLabel: "Jun 27, 2005 (3.4.5)" -->
+<dd>
+<ul>
+<li>add installation check by method "installed?" after installation.</li>
+<li>change module NumRu::Fetch::http_get_list</li>
+<li>stop using getopts.</li>
+<li>use an external Ruby process to load ruby library for installation check.</li>
+</ul>
+</dd>
+<dt><a name="label-10" id="label-10">May 24, 2005 (3.4.4)</a></dt><!-- RDLabel: "May 24, 2005 (3.4.4)" -->
+<dd>
+<ul>
+<li>remove rubydcl150_cygwin.patch.gz.</li>
+</ul>
+</dd>
+<dt><a name="label-11" id="label-11">Mar 17, 2005 (3.4.3)</a></dt><!-- RDLabel: "Mar 17, 2005 (3.4.3)" -->
+<dd>
+<ul>
+<li>change download site of ruby-gnome, ruby-gnome2: voxel.net -&gt; JAIST</li>
+</ul>
+</dd>
+<dt><a name="label-12" id="label-12">Mar 3, 2005 (3.4.2)</a></dt><!-- RDLabel: "Mar 3, 2005 (3.4.2)" -->
+<dd>
+<ul>
+<li>deal with installation failure of the import library of narray on Cygwin + Ruby 1.8.2.</li>
+</ul>
+</dd>
+<dt><a name="label-13" id="label-13">Mar 3, 2005 (3.4.1)</a></dt><!-- RDLabel: "Mar 3, 2005 (3.4.1)" -->
+<dd>
+<ul>
+<li>use 3.6.1 beta release on Cygwin if the latest version of netcdf is 3.6.0-p?</li>
+</ul>
+</dd>
+<dt><a name="label-14" id="label-14">Mar 3, 2005 (3.4.0)</a></dt><!-- RDLabel: "Mar 3, 2005 (3.4.0)" -->
+<dd>
+<ul>
+<li>connect only one time to FTP server when checking version of Dennou Ruby Products.</li>
+<li>change URL of fftw: Japan mirror site -&gt; original site</li>
+</ul>
+</dd>
+<dt><a name="label-15" id="label-15">Mar 1, 2005 (3.3.3)</a></dt><!-- RDLabel: "Mar 1, 2005 (3.3.3)" -->
+<dd>
+<ul>
+<li>deal with changing the installation script of narray_miss.</li>
+<li>change regular expression for checking latest version of packages.</li>
+<li>change URL of fftw: original site -&gt; Japan mirror site</li>
+</ul>
+</dd>
+<dt><a name="label-16" id="label-16">Jan 15, 2005 (3.3.2)</a></dt><!-- RDLabel: "Jan 15, 2005 (3.3.2)" -->
+<dd>
+<ul>
+<li>deal with changing the installation script of gphys.</li>
+</ul>
+</dd>
+<dt><a name="label-17" id="label-17">Jan 6, 2005 (3.3.1)</a></dt><!-- RDLabel: "Jan 6, 2005 (3.3.1)" -->
+<dd>
+<ul>
+<li>apply rubydcl150_cygwin.patch.gz if needed.</li>
+<li>change a configure option on Linux and a pacth file on Cygwin for netcdf.</li>
+<li>use 3.6.1 beta release on Cygwin if the latest version of netcdf is 3.6.0.</li>
+</ul>
+</dd>
+<dt><a name="label-18" id="label-18">Dec 22, 2004 (3.3.0)</a></dt><!-- RDLabel: "Dec 22, 2004 (3.3.0)" -->
+<dd>
+<ul>
+<li>deal with changing of the tarball name and URL of dcl-C.</li>
+<li>deal with changing the installation script of gave.</li>
+</ul>
+</dd>
+<dt><a name="label-19" id="label-19">Aug 12, 2004 (3.2.1)</a></dt><!-- RDLabel: "Aug 12, 2004 (3.2.1)" -->
+<dd>
+<ul>
+<li>bug fix.</li>
+</ul>
+</dd>
+<dt><a name="label-20" id="label-20">Aug 12, 2004 (3.2.0)</a></dt><!-- RDLabel: "Aug 12, 2004 (3.2.0)" -->
+<dd>
+<ul>
+<li>change class RbLib: deal with changing installation script of narray_miss.</li>
+</ul>
+</dd>
+<dt><a name="label-21" id="label-21">Aug 11, 2004 (3.1.0)</a></dt><!-- RDLabel: "Aug 11, 2004 (3.1.0)" -->
+<dd>
+<ul>
+<li>change class RubySoft: deal with changing installation script of gave.</li>
+<li>name of package is changed: misc -&gt; numru-misc</li>
+<li>bug fix.</li>
+</ul>
+</dd>
+<dt><a name="label-22" id="label-22">Jul 15, 2004 (3.0.0)</a></dt><!-- RDLabel: "Jul 15, 2004 (3.0.0)" -->
+<dd>
+<ul>
+<li>add packages: fftw, ruby-fftw3, multibitnums, gpv, numru-units, ruby-{gnome|gnome2}-all, gave</li>
+<li>change module NumRu::Fetch::ftp_fetch, NumRu::Fetch::ftp_get_list: add check environment variable 'FTP_PASSIVE_MODE'</li>
+<li>revise module NumRu::Install
+<ul>
+<li>add checking of GTK version</li>
+<li>add class Installer: add self-version-check and self-download function</li>
+<li>add method 'install' to class RubySoft</li>
+<li>add class RubyLib, which is superclass of RbExtLib and RbLib</li>
+<li>change method 'current_ver'(Software, RubySoft): version + GTK version</li>
+<li>add method 'current_ver_disp' for class Software</li>
+<li>revise the scheme of checking package dependencies:add method 'get_dep_check_pkgs' and revise method 'check_depend'</li>
+<li>add module function 'upgrade'</li>
+</ul></li>
+<li>change package dependencies:
+<ul>
+<li>rubydcl requires ruby-{gnome|gnome2}-all</li>
+<li>gphys requires ruby-fftw3 and numru-units</li>
+</ul></li>
+<li>'gpatch' is used, if found, instead of 'patch'.</li>
+<li>bug fix.</li>
+</ul>
+</dd>
+<dt><a name="label-23" id="label-23">Dec 18, 2003 (2.0.1)</a></dt><!-- RDLabel: "Dec 18, 2003 (2.0.1)" -->
+<dd>
+<ul>
+<li>bug fix. Thanks to Nishizawa-san.
+<ul>
+<li>change uncompress command: 'zcat' -&gt; 'gzip -dc'</li>
+<li>rescue exceptions in Net::HTTP#get (for Ruby 1.6.7)</li>
+</ul></li>
+<li>apply netcdf350_cxx_gcc3.patch if needed</li>
+</ul>
+</dd>
+<dt><a name="label-24" id="label-24">Dec 10, 2003 (2.0.0)</a></dt><!-- RDLabel: "Dec 10, 2003 (2.0.0)" -->
+<dd>
+<ul>
+<li>add packages: misc, met, gphys</li>
+<li>revise module NumRu::Install
+<ul>
+<li>select download directory</li>
+<li>select installation prefix and Ruby libraries directory</li>
+<li>check file and version dependencies</li>
+<li>apply patches</li>
+<li>extra processing for Cygwin</li>
+</ul></li>
+</ul>
+</dd>
+<dt><a name="label-25" id="label-25">Jun 27, 2003 (1.0.0)</a></dt><!-- RDLabel: "Jun 27, 2003 (1.0.0)" -->
+<dd>
+<ul>
+<li>first release.</li>
+<li>Thanks to Gotoken-san: contributed by coding module NumRu::Fetch</li>
+</ul>
+</dd>
+</dl>
+<br>
+<hr>
+<address>
+Copyright (C) 2003-2006 GFD Dennou Club. All rights reserved.
+</address>
+
+
+</body>
+</html>

@@ -1,0 +1,5352 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: eee_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">eee_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/eee_module_f90.html">
+
+                src/eee_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="eee_module.html">eee_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a href="../files/src/eee_module_f90.html">eee_module.f90</a>,v 1.3
+2009-02-28 21:33:46 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/eee_module モジュールは周期境界条件の下での 3 次元矩形領域の
+流体運動をスペクトル法により数値計算するための Fortran90 関数を 提供する.
+</p>
+<p>
+内部で ISPACK/P3PACK の Fortran77 サブルーチンを呼んでいる.
+スペクトルデータおよび格子点データの格納方法については ISPACK/P3PACK
+のマニュアルを参照されたい.
+</p>
+<h2>関数・変数の名前と型について</h2>
+<h3>命名法</h3>
+<ul>
+<li>関数名の先頭 (eee_, zyx_, x_, y_) は, 返す値の形を示している.
+
+<table>
+<tr><td valign="top">eee_ :</td><td>スペクトルデータ(第 1,2 3 次元がそれぞれ Z, Y,X 方向波数)
+
+</td></tr>
+<tr><td valign="top">eee2 :</td><td>2 つのスペクトルデータの並んだもの
+
+</td></tr>
+</table>
+<p>
+zyx_ :; 3 次元格子点データ(第 1,2 3 次元がそれぞれ Z, Y,X 方向の格子点)
+</p>
+<table>
+<tr><td valign="top">yx_ :</td><td>XY 方向 2 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">zy_ :</td><td>YZ 方向 2 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">zx_ :</td><td>XZ 方向 2 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">x_ :</td><td>X 方向 1 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">y_ :</td><td>Y 方向 1 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">z_ :</td><td>Z 方向 1 次元格子点データ
+
+</td></tr>
+</table>
+</li>
+<li>関数名の間の文字列(Dx, Dy, Dz, Lapla, LaplaInv)は,
+その関数の作用を表している.
+
+</li>
+<li>関数名の最後 (_eee_eee,_eee,_zyx, _x, _y) は, 入力変数の形が
+スペクトルデータおよび格子点データであることを示している.
+
+<table>
+<tr><td valign="top">_eee     :</td><td>スペクトルデータ
+
+</td></tr>
+<tr><td valign="top">_eee_eee :</td><td>2 つのスペクトルデータ
+
+</td></tr>
+<tr><td valign="top">_eee2    :</td><td>2 つのスペクトルデータの並んだもの
+
+</td></tr>
+<tr><td valign="top">_zyx     :</td><td>3 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">_x       :</td><td>X 方向 1 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">_y       :</td><td>Y 方向 1 次元格子点データ.
+
+</td></tr>
+</table>
+</li>
+</ul>
+<h3>各データの種類の説明</h3>
+<ul>
+<li>zyx : 2 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:km-1,0:jm-1,0:im-1).
+
+</li>
+<li>im, jm, km はそれぞれ X, Y Z 座標の格子点数であり, サブルーチン <a
+href="eee_module.html#M001281">eee_initial</a> にてあらかじめ設定しておく.
+
+</li>
+<li>第 1 次元が Z 座標の格子点位置番号, 第 2 次元が Y 座標, 第 3 次元が X
+座標の格子点位置番号であることに注意. (X, Y, Zの順ではない)
+
+</li>
+</ul>
+</li>
+<li>eee : スペクトルデータ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(-nm:nm,-mm:mm,-lm:lm).
+
+</li>
+<li>lm, mm, nm はそれぞれ X, Y, Z方向の最大波数であり, サブルーチン <a
+href="eee_module.html#M001281">eee_initial</a> にてあらかじめ設定しておく.
+(X, Y, Z 方向波数の順ではない)ことに注意.
+
+</li>
+<li>スペクトルデータの格納のされ方については ISPACK/P3PACK の
+マニュアルを参照すること.
+
+</li>
+</ul>
+</li>
+<li>eee2 : 2 つのスペクトルデータのならび.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2).
+
+</li>
+</ul>
+</li>
+<li>x, y, z : X, Y, Z 方向 1 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元はそれぞれ real(8), dimension(0:im-1), real(8),
+dimension(0:jm-1), および real(8), dimension(0:km-1).
+
+</li>
+</ul>
+</li>
+<li>eee_ で始まる関数が返す値はスペクトルデータに同じ.
+
+</li>
+<li>zyx_ で始まる関数が返す値は 3 次元格子点データに同じ.
+
+</li>
+<li>x_, y_ z_ で始まる関数が返す値は 1 次元格子点データに同じ.
+
+</li>
+<li>スペクトルデータに対する微分等の作用とは, 対応する格子点データに
+微分などを作用させたデータをスペクトル変換したものことである.
+
+</li>
+</ul>
+<h2>変数・手続き群の要約</h2>
+<h4>初期化</h4>
+<table>
+<tr><td valign="top"><a href="eee_module.html#M001281">eee_Initial</a> :</td><td>スペクトル変換の格子点数, 切断波数の設定
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001282">eee_ChangeResolution</a> :</td><td>解像度設定の変更
+
+</td></tr>
+</table>
+<h4>座標変数</h4>
+<table>
+<tr><td valign="top"><a href="eee_module.html#M001272">x_X</a>, <a href="eee_module.html#M001273">y_Y</a>, <a href="eee_module.html#M001274">z_Z</a>    :</td><td>格子点座標(X,Y座標)を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001275">x_X_Weight</a>, <a href="eee_module.html#M001276">y_Y_Weight</a>,  <a href="eee_module.html#M001277">z_Z_Weight</a> :</td><td>重み座標を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001278">zyx_X</a>, <a href="eee_module.html#M001279">zyx_Y</a>, <a href="eee_module.html#M001280">zyx_Z</a>  :</td><td>格子点データの XYZ 座標(X,Y,Z) (格子点データ型 3 次元配列)
+
+</td></tr>
+</table>
+<h4>基本変換</h4>
+<table>
+<tr><td valign="top"><a href="eee_module.html#M001283">zyx_eee</a> :</td><td>スペクトルデータから格子データへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001284">eee_zyx</a> :</td><td>格子データからスペクトルデータへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001285">xyz_zyx</a> :</td><td>格子点データの添え字順序変換
+
+</td></tr>
+</table>
+<h4>微分</h4>
+<table>
+<tr><td valign="top"><a href="eee_module.html#M001286">eee_Lapla_eee</a>       :</td><td>スペクトルデータにラプラシアンを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001287">eee_LaplaInv_eee</a>    :</td><td>スペクトルデータにラプラシアンの逆変換を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001288">eee_Dx_eee</a>          :</td><td>スペクトルデータに X 微分を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001289">eee_Dy_eee</a>          :</td><td>スペクトルデータに Y 微分を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001290">eee_Dz_eee</a>          :</td><td>スペクトルデータに Z 微分を作用させる
+
+</td></tr>
+</table>
+<h4>非線形計算</h4>
+<table>
+<tr><td valign="top"><a href="eee_module.html#M001291">eee2_RotVelxVor_eee2</a>   :</td><td>Euler 方程式の非線形項を計算する
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001292">eee_VorFromZeta_eee2</a>   :</td><td>渦度 2 成分(ζ_1, ζ_2)ら渦度の 1 成分を計算する
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001293">eee_VelFromZeta_eee2</a>   :</td><td>渦度 2 成分(ζ_1, ζ_2)ら速度の 1 成分を計算する
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001294">eee2_ZetaFromVor_eee_eee_eee</a> :</td><td>渦度から渦度 2 成分(ζ_1, ζ_2)を計算する
+
+</td></tr>
+</table>
+<h4>積分・平均</h4>
+<table>
+<tr><td valign="top"><a href="eee_module.html#M001295">IntZYX_zyx</a>, <a href="eee_module.html#M001314">AvrZYX_zyx</a>   :</td><td>3 次元格子点データの全領域積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001296">z_IntYX_zyx</a>, <a href="eee_module.html#M001315">z_AvrYX_zyx</a> :</td><td>3 次元格子点データの X,Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001298">x_IntZY_zyx</a>, <a href="eee_module.html#M001317">x_AvrZY_zyx</a> :</td><td>3 次元格子点データの Y,Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001297">y_IntZX_zyx</a>, <a href="eee_module.html#M001316">y_AvrZX_zyx</a> :</td><td>3 次元格子点データの Z,X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001299">zy_IntX_zyx</a>, <a href="eee_module.html#M001318">zy_AvrX_zyx</a> :</td><td>3 次元格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001300">zx_IntY_zyx</a>, <a href="eee_module.html#M001319">zx_AvrY_zyx</a> :</td><td>3 次元格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001301">yx_IntZ_zyx</a>, <a href="eee_module.html#M001320">yx_AvrZ_zyx</a> :</td><td>3 次元格子点データの Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001302">IntYX_yx</a>,  <a href="eee_module.html#M001321">AvrYX_yx</a>  :</td><td>2 次元(XY)格子点データの X,Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001303">y_IntX_yx</a>, <a href="eee_module.html#M001322">y_AvrX_yx</a> :</td><td>2 次元(XY)格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001304">x_IntY_yx</a>, <a href="eee_module.html#M001323">x_AvrY_yx</a> :</td><td>2 次元(XY)格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001308">IntZX_zx</a>, <a href="eee_module.html#M001324">AvrZX_zx</a>   :</td><td>2 次元(ZX)格子点データの Z,X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001310">z_IntX_zx</a>, <a href="eee_module.html#M001325">z_AvrX_zx</a> :</td><td>2 次元(ZX)格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001309">x_IntZ_zx</a>, <a href="eee_module.html#M001326">x_AvrZ_zx</a> :</td><td>2 次元(ZX)格子点データの Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001305">IntZY_zy</a>, <a href="eee_module.html#M001327">AvrZY_zy</a>   :</td><td>2 次元(YZ)格子点データの Y,Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001306">y_IntZ_zy</a>, <a href="eee_module.html#M001329">y_AvrZ_zy</a> :</td><td>2 次元(YZ)格子点データの Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001307">z_IntY_zy</a>, <a href="eee_module.html#M001328">z_AvrY_zy</a> :</td><td>2 次元(YZ)格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001311">IntX_x</a>, <a href="eee_module.html#M001330">AvrX_x</a>       :</td><td>1 次元(X)格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001312">IntY_y</a>, <a href="eee_module.html#M001331">AvrY_y</a>       :</td><td>1 次元(Y)格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001313">IntZ_z</a>, <a href="eee_module.html#M001332">AvrZ_z</a>       :</td><td>1 次元(Z)格子点データの Z 方向積分および平均
+
+</td></tr>
+</table>
+<h4>スペクトル解析</h4>
+<table>
+<tr><td valign="top"><a href="eee_module.html#M001333">EnergyHelicityFromZeta_eee2</a>  :</td><td>全エネルギーと全ヘリシティーを計算する.
+
+</td></tr>
+<tr><td valign="top"><a href="eee_module.html#M001334">ESpectralFromZeta</a>            :</td><td>エネルギースペクトルを計算する.
+
+</td></tr>
+</table>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M001330">AvrX_x</a>&nbsp;&nbsp;
+
+        <a href="#M001321">AvrYX_yx</a>&nbsp;&nbsp;
+
+        <a href="#M001331">AvrY_y</a>&nbsp;&nbsp;
+
+        <a href="#M001324">AvrZX_zx</a>&nbsp;&nbsp;
+
+        <a href="#M001314">AvrZYX_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001327">AvrZY_zy</a>&nbsp;&nbsp;
+
+        <a href="#M001332">AvrZ_z</a>&nbsp;&nbsp;
+
+        <a href="#M001334">ESpectralFromZeta</a>&nbsp;&nbsp;
+
+        <a href="#M001333">EnergyHelicityFromZeta_eee2</a>&nbsp;&nbsp;
+
+        <a href="#M001311">IntX_x</a>&nbsp;&nbsp;
+
+        <a href="#M001302">IntYX_yx</a>&nbsp;&nbsp;
+
+        <a href="#M001312">IntY_y</a>&nbsp;&nbsp;
+
+        <a href="#M001308">IntZX_zx</a>&nbsp;&nbsp;
+
+        <a href="#M001295">IntZYX_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001305">IntZY_zy</a>&nbsp;&nbsp;
+
+        <a href="#M001313">IntZ_z</a>&nbsp;&nbsp;
+
+        <a href="#M001291">eee2_RotVelxVor_eee2</a>&nbsp;&nbsp;
+
+        <a href="#M001294">eee2_ZetaFromVor_eee_eee_eee</a>&nbsp;&nbsp;
+
+        <a href="#M001282">eee_ChangeResolution</a>&nbsp;&nbsp;
+
+        <a href="#M001288">eee_Dx_eee</a>&nbsp;&nbsp;
+
+        <a href="#M001289">eee_Dy_eee</a>&nbsp;&nbsp;
+
+        <a href="#M001290">eee_Dz_eee</a>&nbsp;&nbsp;
+
+        <a href="#M001281">eee_Initial</a>&nbsp;&nbsp;
+
+        <a href="#M001287">eee_LaplaInv_eee</a>&nbsp;&nbsp;
+
+        <a href="#M001286">eee_Lapla_eee</a>&nbsp;&nbsp;
+
+        <a href="#M001293">eee_VelFromZeta_eee2</a>&nbsp;&nbsp;
+
+        <a href="#M001292">eee_VorFromZeta_eee2</a>&nbsp;&nbsp;
+
+        <a href="#M001284">eee_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001323">x_AvrY_yx</a>&nbsp;&nbsp;
+
+        <a href="#M001317">x_AvrZY_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001326">x_AvrZ_zx</a>&nbsp;&nbsp;
+
+        <a href="#M001304">x_IntY_yx</a>&nbsp;&nbsp;
+
+        <a href="#M001298">x_IntZY_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001309">x_IntZ_zx</a>&nbsp;&nbsp;
+
+        <a href="#M001272">x_X</a>&nbsp;&nbsp;
+
+        <a href="#M001275">x_X_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M001285">xyz_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001322">y_AvrX_yx</a>&nbsp;&nbsp;
+
+        <a href="#M001316">y_AvrZX_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001329">y_AvrZ_zy</a>&nbsp;&nbsp;
+
+        <a href="#M001303">y_IntX_yx</a>&nbsp;&nbsp;
+
+        <a href="#M001297">y_IntZX_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001306">y_IntZ_zy</a>&nbsp;&nbsp;
+
+        <a href="#M001273">y_Y</a>&nbsp;&nbsp;
+
+        <a href="#M001276">y_Y_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M001320">yx_AvrZ_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001301">yx_IntZ_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001325">z_AvrX_zx</a>&nbsp;&nbsp;
+
+        <a href="#M001315">z_AvrYX_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001328">z_AvrY_zy</a>&nbsp;&nbsp;
+
+        <a href="#M001310">z_IntX_zx</a>&nbsp;&nbsp;
+
+        <a href="#M001296">z_IntYX_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001307">z_IntY_zy</a>&nbsp;&nbsp;
+
+        <a href="#M001274">z_Z</a>&nbsp;&nbsp;
+
+        <a href="#M001277">z_Z_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M001319">zx_AvrY_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001300">zx_IntY_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001318">zy_AvrX_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001299">zy_IntX_zyx</a>&nbsp;&nbsp;
+
+        <a href="#M001278">zyx_X</a>&nbsp;&nbsp;
+
+        <a href="#M001279">zyx_Y</a>&nbsp;&nbsp;
+
+        <a href="#M001280">zyx_Z</a>&nbsp;&nbsp;
+
+        <a href="#M001283">zyx_eee</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M001330" class="method-detail">
+        <a name="M001330"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001330" class="method-signature">
+
+
+
+          <span class="method-name">AvrX_x</span><span class="method-args">( x ) result(AvrX_x)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001330">AvrX_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(X)格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001330-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001330-source">
+<pre>
+    function AvrX_x(x)
+      !
+      ! 1 次元(X)格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:im-1), intent(IN) :: x       !(in)  1 次元格子点データ
+      real(8)                                :: AvrX_x  !(out) 平均値
+
+      AvrX_x = IntX_x(x)/sum(x_X_weight)
+    end function AvrX_x
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001321" class="method-detail">
+        <a name="M001321"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001321" class="method-signature">
+
+
+
+          <span class="method-name">AvrYX_yx</span><span class="method-args">( yx ) result(AvrYX_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001321">AvrYX_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの全領域平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>*<a
+href="eee_module.html#M001276">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001321-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001321-source">
+<pre>
+    function AvrYX_yx(yx)
+      !
+      ! 2 次元格子点データの全領域平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算し, x_X_Weight*y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:jm-1,0:im-1), intent(IN)   :: yx
+      !(in)  2 次元格子点データ
+
+      real(8)                             :: AvrYX_yx    
+      !(out) 平均値
+
+      AvrYX_yx = IntYX_yx(yx)/(sum(x_X_weight)*sum(y_Y_weight))
+    end function AvrYX_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001331" class="method-detail">
+        <a name="M001331"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001331" class="method-signature">
+
+
+
+          <span class="method-name">AvrY_y</span><span class="method-args">( y ) result(AvrY_y)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001331">AvrY_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001276">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001331-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001331-source">
+<pre>
+    function AvrY_y(y)
+      !
+      ! 1 次元(Y)格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:jm-1), intent(IN) :: y      !(in)  1 次元格子点データ
+      real(8)                                :: AvrY_y !(out) 平均値
+
+      AvrY_y = IntY_y(y)/sum(y_Y_weight)
+    end function AvrY_y
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001324" class="method-detail">
+        <a name="M001324"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001324" class="method-signature">
+
+
+
+          <span class="method-name">AvrZX_zx</span><span class="method-args">( zx ) result(AvrZX_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001324">AvrZX_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの全領域平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>*<a
+href="eee_module.html#M001277">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001324-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001324-source">
+<pre>
+    function AvrZX_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの全領域平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, z_Z_Weight をかけた
+      ! 総和を計算し, x_X_Weight*z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx
+      !(in)  2 次元(ZX)格子点データ
+
+      real(8)                             :: AvrZX_zx    
+      !(out) 平均値
+
+      AvrZX_zx = IntZX_zx(zx)/(sum(x_X_weight)*sum(z_Z_weight))
+    end function AvrZX_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001314" class="method-detail">
+        <a name="M001314"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001314" class="method-signature">
+
+
+
+          <span class="method-name">AvrZYX_zyx</span><span class="method-args">( zyx ) result(AvrZYX_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001314">AvrZYX_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 3 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの全領域平均.
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001276">y_Y_Weight</a>, <a
+href="eee_module.html#M001277">z_Z_Weight</a> を かけた総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>*<a
+href="eee_module.html#M001276">y_Y_Weight</a>*<a
+href="eee_module.html#M001277">z_Z_Weight</a> の総和で割る
+ことで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001314-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001314-source">
+<pre>
+    function AvrZYX_zyx(zyx)
+      !
+      ! 2 次元格子点データの全領域平均.
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight, z_Z_Weight を
+      ! かけた総和を計算し, x_X_Weight*y_Y_Weight*z_Z_Weight の総和で割る
+      ! ことで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in)  3 次元格子点データ
+
+      real(8)                                    :: AvrZYX_zyx
+      !(out) 積分値
+
+      AvrZYX_zyx = IntZYX_zyx(zyx)/(sum(x_X_weight)*sum(y_Y_weight)*sum(z_Z_weight))
+
+    end function AvrZYX_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001327" class="method-detail">
+        <a name="M001327"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001327" class="method-signature">
+
+
+
+          <span class="method-name">AvrZY_zy</span><span class="method-args">( zy ) result(AvrZY_zy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001327">AvrZY_zy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zy  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの全領域平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a>, <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001277">z_Z_Weight</a>*<a
+href="eee_module.html#M001276">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001327-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001327-source">
+<pre>
+    function AvrZY_zy(zy)
+      !
+      ! 2 次元(ZY)格子点データの全領域平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight, y_Y_Weight をかけた
+      ! 総和を計算し, z_Z_Weight*y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1), intent(IN)   :: zy
+      !(in)  2 次元(ZY)格子点データ
+
+      real(8)                             :: AvrZY_zy    
+      !(out) 平均値
+
+      AvrZY_zy = IntZY_zy(zy)/(sum(y_Y_weight)*sum(z_Z_weight))
+    end function AvrZY_zy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001332" class="method-detail">
+        <a name="M001332"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001332" class="method-signature">
+
+
+
+          <span class="method-name">AvrZ_z</span><span class="method-args">( z ) result(AvrZ_z)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001332">AvrZ_z</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>z  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Z)格子点データの Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001277">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001332-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001332-source">
+<pre>
+    function AvrZ_z(z)
+      !
+      ! 1 次元(Z)格子点データの Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算し, 
+      ! z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1), intent(IN) :: z      !(in)  1 次元格子点データ
+      real(8)                                :: AvrZ_z !(out) 平均値
+
+      AvrZ_z = IntZ_z(z)/sum(z_Z_weight)
+    end function AvrZ_z
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001334" class="method-detail">
+        <a name="M001334"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001334" class="method-signature">
+
+
+
+          <span class="method-name">ESpectralFromZeta</span><span class="method-args">( esp, eee2 ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>esp  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:), intent(OUT)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> エネルギースペクトル
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee2  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 渦度成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+渦度成分(ζ_1, ζ_2)からエネルギースペクトルを計算する.
+</p>
+<pre>
+  * esp のサイズで求められる波数範囲が定められる
+  * esp の総和が EFFromZeta で求められるエネルギー
+    (全領域平均値)に等しい
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001334-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001334-source">
+<pre>
+    subroutine ESpectralFromZeta(esp,eee2)
+      !
+      ! 渦度成分(ζ_1, ζ_2)からエネルギースペクトルを計算する. 
+      !
+      !   * esp のサイズで求められる波数範囲が定められる
+      !   * esp の総和が EFFromZeta で求められるエネルギー
+      !     (全領域平均値)に等しい
+      !
+      real(8), dimension(:), intent(OUT)  :: esp
+      ! エネルギースペクトル
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in) :: eee2
+      ! 渦度成分(ζ_1, ζ_2)
+
+      integer kmax
+      ! 作業変数
+
+      kmax=size(esp)
+      call p3espt(nm,mm,lm,kmax,eee2,esp)
+
+    end subroutine ESpectralFromZeta
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001333" class="method-detail">
+        <a name="M001333"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001333" class="method-signature">
+
+
+
+          <span class="method-name">EnergyHelicityFromZeta_eee2</span><span class="method-args">( eee2 ) result(EnergyHelicityFromZeta_eee2)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001333">EnergyHelicityFromZeta_eee2</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> エネルギーヘリシティー
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee2  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 渦度成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+渦度成分(ζ_1, ζ_2)から全領域平均エネルギーとヘリシティーを計算する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001333-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001333-source">
+<pre>
+    function EnergyHelicityFromZeta_eee2(eee2)
+      !
+      ! 渦度成分(ζ_1, ζ_2)から全領域平均エネルギーとヘリシティーを計算する. 
+      !
+      real(8), dimension(2)                         :: EnergyHelicityFromZeta_eee2
+      ! エネルギーヘリシティー
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in) :: eee2
+      ! 渦度成分(ζ_1, ζ_2)
+
+      real(8) :: E, H           ! エネルギー, ヘリシティー
+      
+      call p3cnsv(nm,mm,lm,eee2,E,H)
+
+      EnergyHelicityFromZeta_eee2(1) = E 
+       EnergyHelicityFromZeta_eee2(2) = H
+
+    end function EnergyHelicityFromZeta_eee2
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001311" class="method-detail">
+        <a name="M001311"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001311" class="method-signature">
+
+
+
+          <span class="method-name">IntX_x</span><span class="method-args">( x ) result(IntX_x)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001311">IntX_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(X)格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001311-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001311-source">
+<pre>
+    function IntX_x(x)
+      !
+      ! 1 次元(X)格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:im-1)   :: x          !(in)  1 次元格子点データ
+      real(8)                      :: IntX_x     !(out) 積分値
+
+      IntX_x = sum(x*x_X_Weight)
+    end function IntX_x
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001302" class="method-detail">
+        <a name="M001302"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001302" class="method-signature">
+
+
+
+          <span class="method-name">IntYX_yx</span><span class="method-args">( yx ) result(IntYX_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001302">IntYX_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(YX)格子点データの全領域積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001302-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001302-source">
+<pre>
+    function IntYX_yx(yx)
+      !
+      ! 2 次元(YX)格子点データの全領域積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:jm-1,0:im-1), intent(IN)   :: yx          
+      !(in)  2 次元(YX)格子点データ
+
+      real(8)                             :: IntYX_yx
+      !(out) 積分値
+
+      integer :: i, j
+      ! 作業変数
+
+      IntYX_yx = 0.0d0
+      do i=0,im-1
+         do j=0,jm-1
+            IntYX_yx = IntYX_yx + yx(j,i) * y_Y_Weight(j) * x_X_Weight(i)
+         enddo
+      enddo
+    end function IntYX_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001312" class="method-detail">
+        <a name="M001312"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001312" class="method-signature">
+
+
+
+          <span class="method-name">IntY_y</span><span class="method-args">( y ) result(IntY_y)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001312">IntY_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001312-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001312-source">
+<pre>
+    function IntY_y(y)
+      !
+      ! 1 次元(Y)格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:jm-1)   :: y          !(in)  1 次元格子点データ
+      real(8)                      :: IntY_y     !(out) 積分値
+
+      IntY_y = sum(y*y_Y_Weight)
+    end function IntY_y
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001308" class="method-detail">
+        <a name="M001308"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001308" class="method-signature">
+
+
+
+          <span class="method-name">IntZX_zx</span><span class="method-args">( zx ) result(IntZX_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001308">IntZX_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの全領域積分および平均.
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a>, <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001308-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001308-source">
+<pre>
+    function IntZX_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの全領域積分および平均.
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight, x_X_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx          
+      !(in)  2 次元(ZX)格子点データ
+
+      real(8)                             :: IntZX_zx
+      !(out) 積分値
+
+      integer :: i, k
+      ! 作業変数
+
+      IntZX_zx = 0.0d0
+      do i=0,im-1
+         do k=0,km-1
+            IntZX_zx = IntZX_zx + zx(k,i) * x_X_Weight(i) * z_Z_Weight(k)
+         enddo
+      enddo
+    end function IntZX_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001295" class="method-detail">
+        <a name="M001295"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001295" class="method-signature">
+
+
+
+          <span class="method-name">IntZYX_zyx</span><span class="method-args">( zyx ) result(IntZYX_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001295">IntZYX_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 3 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの全領域積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001276">y_Y_Weight</a>, <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001295-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001295-source">
+<pre>
+    function IntZYX_zyx(zyx)
+      !
+      ! 2 次元格子点データの全領域積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight, z_Z_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in)  3 次元格子点データ
+
+      real(8)                                    :: IntZYX_zyx
+      !(out) 積分値
+
+      integer :: i, j, k
+      ! 作業変数
+
+      IntZYX_zyx = 0.0d0
+      do i=0,im-1
+         do j=0,jm-1
+            do k=0,km-1
+               IntZYX_zyx = IntZYX_zyx + zyx(k,j,i) * z_Z_Weight(k) * y_Y_Weight(j) * x_X_Weight(i)
+            enddo
+         enddo
+      end do
+    end function IntZYX_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001305" class="method-detail">
+        <a name="M001305"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001305" class="method-signature">
+
+
+
+          <span class="method-name">IntZY_zy</span><span class="method-args">( zy ) result(IntZY_zy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001305">IntZY_zy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zy  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの全領域積分および平均.
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a>, <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001305-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001305-source">
+<pre>
+    function IntZY_zy(zy)
+      !
+      ! 2 次元(ZY)格子点データの全領域積分および平均.
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight, y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1), intent(IN)   :: zy          
+      !(in)  2 次元(ZY)格子点データ
+
+      real(8)                             :: IntZY_zy
+      !(out) 積分値
+
+      integer :: j, k
+      ! 作業変数
+
+      IntZY_zy = 0.0d0
+      do j=0,jm-1
+         do k=0,km-1
+            IntZY_zy = IntZY_zy + zy(k,j) * y_Y_Weight(j) * z_Z_Weight(k)
+         enddo
+      enddo
+    end function IntZY_zy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001313" class="method-detail">
+        <a name="M001313"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001313" class="method-signature">
+
+
+
+          <span class="method-name">IntZ_z</span><span class="method-args">( z ) result(IntZ_z)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001313">IntZ_z</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>z  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Z)格子点データの Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001313-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001313-source">
+<pre>
+    function IntZ_z(z)
+      !
+      ! 1 次元(Z)格子点データの Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1)   :: z         !(in)  1 次元格子点データ
+      real(8)                      :: IntZ_z     !(out) 積分値
+
+      IntZ_z = sum(z*z_Z_Weight)
+    end function IntZ_z
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001291" class="method-detail">
+        <a name="M001291"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001291" class="method-signature">
+
+
+
+          <span class="method-name">eee2_RotVelxVor_eee2</span><span class="method-args">( eee2 ) result(eee2_RotVelxVor_eee2)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001291">eee2_RotVelxVor_eee2</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 非線形項のスペクトルデータの 2 つの成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee2  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから Euler 方程式の非線形項
+
+    ▽x(u x ω)
+
+ の 2 成分を計算する.
+
+ (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001291-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001291-source">
+<pre>
+    function eee2_RotVelxVor_eee2(eee2)
+      !
+      !  渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから Euler 方程式の非線形項
+      !
+      !     ▽x(u x ω) 
+      !
+      !  の 2 成分を計算する.
+      !
+      !  (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2)     :: eee2_RotVelxVor_eee2
+      !(out) 非線形項のスペクトルデータの 2 つの成分
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in)  :: eee2
+      !(in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+      call p3elnl(nm,mm,lm,km,jm,im,eee2,eee2_RotVelxVor_eee2, ws,wg,itk,tk,itj,tj,iti,ti)
+
+    end function eee2_RotVelxVor_eee2
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001294" class="method-detail">
+        <a name="M001294"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001294" class="method-signature">
+
+
+
+          <span class="method-name">eee2_ZetaFromVor_eee_eee_eee</span><span class="method-args">( eee_1, eee_2, eee_3 ) result(eee2_ZetaFromVor_eee_eee_eee)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001294">eee2_ZetaFromVor_eee_eee_eee</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 渦度の 2 成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee_1  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 渦度スペクトルデータの各成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee_2  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 渦度スペクトルデータの各成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee_3  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 渦度スペクトルデータの各成分
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 渦度のスペクトルから渦度 2 成分(ζ_1, ζ_2)を計算する.
+
+ (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001294-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001294-source">
+<pre>
+    function eee2_ZetaFromVor_eee_eee_eee(eee_1,eee_2,eee_3)
+      !
+      !  渦度のスペクトルから渦度 2 成分(ζ_1, ζ_2)を計算する.
+      !
+      !  (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2)     :: eee2_ZetaFromVor_eee_eee_eee
+      !(out) 渦度の 2 成分(ζ_1, ζ_2)
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)  :: eee_1, eee_2, eee_3
+      !(in) 渦度スペクトルデータの各成分
+
+      integer :: l,m,n
+
+      do l=-lm,lm
+         do m=-mm,mm
+            do n=-nm,nm
+               if ( l /= 0 ) then
+                  eee2_ZetaFromVor_eee_eee_eee(n,m,l,1) = eee_2(n,m,l)
+                  eee2_ZetaFromVor_eee_eee_eee(n,m,l,2) = eee_3(n,m,l)
+               elseif( m /= 0 ) then
+                  eee2_ZetaFromVor_eee_eee_eee(n,m,l,1) = eee_3(n,m,l)
+                  eee2_ZetaFromVor_eee_eee_eee(n,m,l,2) = eee_1(n,m,l)
+               else
+                  eee2_ZetaFromVor_eee_eee_eee(n,m,l,1) = eee_1(n,m,l)
+                  eee2_ZetaFromVor_eee_eee_eee(n,m,l,2) = eee_2(n,m,l)
+               endif
+            enddo
+         enddo
+      enddo
+
+    end function eee2_ZetaFromVor_eee_eee_eee
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001282" class="method-detail">
+        <a name="M001282"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001282" class="method-signature">
+
+
+
+          <span class="method-name">eee_ChangeResolution</span><span class="method-args">( id ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>id  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+</td></tr>
+</table>
+<p>
+解像度設定の変更. <a href="eee_module.html#M001281">eee_Initial</a>
+で設定する際に かえってくるオプショナル引数 id の値を用いる.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001282-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001282-source">
+<pre>
+    subroutine eee_ChangeResolution(id)
+      !
+      ! 解像度設定の変更. eee_Initial で設定する際に
+      ! かえってくるオプショナル引数 id の値を用いる. 
+      ! 
+      integer, intent(in) :: id
+
+      if (id .gt. nparams .or. id .lt. 1) then
+         write(*,*)&quot;id is invalid&quot;
+      end if
+
+      im = params(id)%im
+      jm = params(id)%jm
+      km = params(id)%km
+      lm = params(id)%lm
+      mm = params(id)%mm
+      nm = params(id)%nm
+      itk =&gt; params(id)%itk
+      tk =&gt; params(id)%tk
+      itj =&gt; params(id)%itj
+      tj =&gt; params(id)%tj
+      iti =&gt; params(id)%iti
+      ti =&gt; params(id)%ti
+      x_X =&gt; params(id)%x_X
+      y_Y =&gt; params(id)%y_Y
+      z_Z =&gt; params(id)%z_Z
+      x_X_Weight =&gt; params(id)%x_X_Weight
+      y_Y_Weight =&gt; params(id)%y_Y_Weight
+      z_Z_Weight =&gt; params(id)%z_Z_Weight
+      zyx_X =&gt; params(id)%zyx_X
+      zyx_Y =&gt; params(id)%zyx_Y
+      zyx_Z =&gt; params(id)%zyx_Z
+      w =&gt; params(id)%w
+      ws =&gt; params(id)%ws
+      wg =&gt; params(id)%wg
+      zyx_tmp =&gt; params(id)%zyx_tmp
+
+    end subroutine eee_ChangeResolution
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001288" class="method-detail">
+        <a name="M001288"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001288" class="method-signature">
+
+
+
+          <span class="method-name">eee_Dx_eee</span><span class="method-args">( eee ) result(eee_Dx_eee)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001288">eee_Dx_eee</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに X 微分(∂x)を作用する.
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに X 方向波数 l をかけて 実部 &lt;-&gt;
+虚部成分に入れ換える計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001288-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001288-source">
+<pre>
+    function eee_Dx_eee(eee)
+      !
+      ! 入力スペクトルデータに X 微分(∂x)を作用する.
+      !
+      ! スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに X 方向波数 l をかけて
+      ! 実部 &lt;-&gt; 虚部成分に入れ換える計算を行っている.
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm)              :: eee_Dx_eee
+      !(out) スペクトルデータの X 微分
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)  :: eee
+      !(in) 入力スペクトルデータ
+
+      integer l,m,n
+      ! 作業変数
+
+
+      do l=-lm,lm
+         do m=-mm,mm
+            do n=-nm,nm
+               eee_Dx_eee(n,m,l) = -l*eee(-n,-m,-l)
+            enddo
+         enddo
+      enddo
+    end function eee_Dx_eee
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001289" class="method-detail">
+        <a name="M001289"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001289" class="method-signature">
+
+
+
+          <span class="method-name">eee_Dy_eee</span><span class="method-args">( eee ) result(eee_Dy_eee)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001289">eee_Dy_eee</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに Y 微分(∂y)を作用する.
+</p>
+<p>
+スペクトルデータの Y 微分とは, 対応する格子点データに Y 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに Y 方向波数 m をかけて 実部 &lt;-&gt;
+虚部成分に入れ換える計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001289-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001289-source">
+<pre>
+    function eee_Dy_eee(eee)
+      !
+      ! 入力スペクトルデータに Y 微分(∂y)を作用する.
+      !
+      ! スペクトルデータの Y 微分とは, 対応する格子点データに Y 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに Y 方向波数 m をかけて
+      ! 実部 &lt;-&gt; 虚部成分に入れ換える計算を行っている.
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm)              :: eee_Dy_eee
+      !(out) スペクトルデータの X 微分
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)  :: eee
+      !(in) 入力スペクトルデータ
+
+      integer l,m,n
+      ! 作業変数
+
+
+      do l=-lm,lm
+         do m=-mm,mm
+            do n=-nm,nm
+               eee_Dy_eee(n,m,l) = -m*eee(-n,-m,-l)
+            enddo
+         enddo
+      enddo
+    end function eee_Dy_eee
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001290" class="method-detail">
+        <a name="M001290"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001290" class="method-signature">
+
+
+
+          <span class="method-name">eee_Dz_eee</span><span class="method-args">( eee ) result(eee_Dz_eee)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001290">eee_Dz_eee</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに Z 微分(∂z)を作用する.
+</p>
+<p>
+スペクトルデータの Z 微分とは, 対応する格子点データに Z 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに Z 方向波数 n をかけて 実部 &lt;-&gt;
+虚部成分に入れ換える計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001290-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001290-source">
+<pre>
+    function eee_Dz_eee(eee)
+      !
+      ! 入力スペクトルデータに Z 微分(∂z)を作用する.
+      !
+      ! スペクトルデータの Z 微分とは, 対応する格子点データに Z 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに Z 方向波数 n をかけて
+      ! 実部 &lt;-&gt; 虚部成分に入れ換える計算を行っている.
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm)              :: eee_Dz_eee
+      !(out) スペクトルデータの X 微分
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)  :: eee
+      !(in) 入力スペクトルデータ
+
+      integer l,m,n
+      ! 作業変数
+
+
+      do l=-lm,lm
+         do m=-mm,mm
+            do n=-nm,nm
+               eee_Dz_eee(n,m,l) = -n*eee(-n,-m,-l)
+            enddo
+         enddo
+      enddo
+    end function eee_Dz_eee
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001281" class="method-detail">
+        <a name="M001281"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001281" class="method-signature">
+
+
+
+          <span class="method-name">eee_Initial</span><span class="method-args">( i, j, k, l, m, n, [id] ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>i  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(X)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>j  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>k  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(Z)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数(X)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>m  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数(Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>n  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数(X)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>id  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(out), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解像度領域情報番号
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトル変換の格子点数, 波数を設定する. 領域の範囲は
+[0,2pi]x[0,2pi]x[0,2pi] に決め打ち
+</p>
+<p>
+他の関数や変数を呼ぶ前に, 最初にこのサブルーチンを呼んで
+初期設定をしなければならない.
+</p>
+<p>
+オプショナル引数 id を用いて異なる解像度, 領域を同時に 扱うことができる. <a
+href="eee_module.html#M001281">eee_Initial</a> を解像度, 領域ごとに呼んで
+引数 id をキープし, <a
+href="eee_module.html#M001282">eee_ChangeResolution</a> で切替える.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001281-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001281-source">
+<pre>
+    subroutine eee_Initial(i,j,k,l,m,n,id)
+      !
+      ! スペクトル変換の格子点数, 波数を設定する.
+      ! 領域の範囲は [0,2pi]x[0,2pi]x[0,2pi] に決め打ち
+      !
+      ! 他の関数や変数を呼ぶ前に, 最初にこのサブルーチンを呼んで
+      ! 初期設定をしなければならない.
+      !
+      ! オプショナル引数 id を用いて異なる解像度, 領域を同時に
+      ! 扱うことができる. eee_Initial を解像度, 領域ごとに呼んで
+      ! 引数 id をキープし, eee_ChangeResolution で切替える. 
+      !
+      integer,intent(in) :: i           ! 格子点数(X)
+      integer,intent(in) :: j           ! 格子点数(Y)
+      integer,intent(in) :: k           ! 格子点数(Z)
+      integer,intent(in) :: l           ! 切断波数(X)
+      integer,intent(in) :: m           ! 切断波数(Y)
+      integer,intent(in) :: n           ! 切断波数(X)
+
+      integer, intent(out), optional :: id  ! 解像度領域情報番号
+
+      character(len=3) cid
+      integer :: ii, jj, kk
+
+      im = i         
+       jm = j         
+       km = k
+      lm = l         
+       mm = m         
+       nm = n
+
+      if ( nparams .ge. nparams_max ) then
+         call MessageNotify('W','eee_initial', 'too many call of eee_Initial, nothing was done.')
+         if ( present(id) ) id = -1
+         return
+      end if
+
+      nparams = nparams + 1
+
+      params(nparams)%im = im
+      params(nparams)%jm = jm
+      params(nparams)%km = km
+      params(nparams)%lm = lm
+      params(nparams)%mm = mm
+      params(nparams)%nm = nm
+
+      allocate(params(nparams)%itk(5))
+      allocate(params(nparams)%itj(5))
+      allocate(params(nparams)%iti(5))
+      allocate(params(nparams)%tk(km*2))
+      allocate(params(nparams)%tj(jm*2))
+      allocate(params(nparams)%ti(im*2))
+      allocate(params(nparams)%w(km*jm*im))
+      allocate(params(nparams)%ws((2*lm+1)*(2*mm+1)*(2*nm+1)))
+      allocate(params(nparams)%wg(km*jm*im*4))
+      allocate(params(nparams)%zyx_tmp(0:km-1,0:jm-1,0:im-1))
+
+      allocate(params(nparams)%x_X(0:im-1))
+      allocate(params(nparams)%x_X_Weight(0:im-1))
+      allocate(params(nparams)%y_Y(0:jm-1))
+      allocate(params(nparams)%y_Y_Weight(0:jm-1))
+      allocate(params(nparams)%z_Z(0:km-1))
+      allocate(params(nparams)%z_Z_Weight(0:km-1))
+      allocate(params(nparams)%zyx_X(0:km-1,0:jm-1,0:im-1))
+      allocate(params(nparams)%zyx_Y(0:km-1,0:jm-1,0:im-1))
+      allocate(params(nparams)%zyx_Z(0:km-1,0:jm-1,0:im-1))
+
+      call eee_ChangeResolution(nparams)
+
+      call p3init(km,jm,im,itk,tk,itj,tj,iti,ti)
+
+      do ii=0,im-1
+         x_X(ii) = 2*pi/im*ii
+      enddo
+      x_X_Weight = 2*pi/im
+
+      do jj=0,jm-1
+         y_Y(jj) = 2*pi/jm*jj
+      enddo
+      y_Y_Weight = 2*pi/jm
+
+      do kk=0,km-1
+         z_Z(kk) = 2*pi/km*kk
+      enddo
+      z_Z_Weight = 2*pi/km
+
+      zyx_X = spread(spread(x_X,1,jm),1,km)
+      zyx_Y = spread(spread(y_Y,2,im),1,km)
+      zyx_Z = spread(spread(z_Z,2,jm),3,im)
+
+      if ( present(id) ) id = nparams
+
+      write(cid,'(I3)') nparams
+      call MessageNotify('M','eee_initial','eee_module is initialized')
+      call MessageNotify('M','eee_initial', 'Resolution ID is '//trim(adjustl(cid)))
+    end subroutine eee_initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001287" class="method-detail">
+        <a name="M001287"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001287" class="method-signature">
+
+
+
+          <span class="method-name">eee_LaplaInv_eee</span><span class="method-args">( eee ) result(eee_LaplaInv_eee)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001287">eee_LaplaInv_eee</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの逆ラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに逆ラプラシアン(∂xx+∂yy+∂zz)**(-1)を作用する.
+</p>
+<p>
+スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに全波数 (l**2 + m**2 + n**2) で割る
+計算を行っている. l=m=n=0 成分には 0 を代入している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001287-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001287-source">
+<pre>
+    function eee_LaplaInv_eee(eee)
+      !
+      ! 入力スペクトルデータに逆ラプラシアン(∂xx+∂yy+∂zz)**(-1)を作用する.
+      !
+      ! スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+      ! 逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに全波数 (l**2 + m**2 + n**2) で割る
+      ! 計算を行っている. l=m=n=0 成分には 0 を代入している. 
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm)             :: eee_LaplaInv_eee
+      !(out) スペクトルデータの逆ラプラシアン
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in) :: eee
+      !(in) スペクトルデータ
+
+      integer l,m,n
+
+      do l=-lm,lm
+         do m=-mm,mm
+            do n=-nm,nm
+               if ( l.ne.0 .or. m.ne.0 .or. n.ne.0 ) then
+                  eee_LaplaInv_eee(n,m,l) = -eee(n,m,l)/(l**2+m**2+n**2)
+               else
+                  eee_LaplaInv_eee(n,m,l) = 0.0
+               endif
+            enddo
+         enddo
+      enddo
+    end function eee_LaplaInv_eee
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001286" class="method-detail">
+        <a name="M001286"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001286" class="method-signature">
+
+
+
+          <span class="method-name">eee_Lapla_eee</span><span class="method-args">( eee ) result(eee_Lapla_eee)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001286">eee_Lapla_eee</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータのラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータにラプラシアン(∂xx+∂yy+∂zz)を作用する.
+</p>
+<p>
+スペクトルデータのラプラシアンとは, 対応する格子点データに
+ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに全波数 (l**2 + m**2 + n**2) をかける
+計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001286-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001286-source">
+<pre>
+    function eee_Lapla_eee(eee)
+      !
+      ! 入力スペクトルデータにラプラシアン(∂xx+∂yy+∂zz)を作用する.
+      !
+      ! スペクトルデータのラプラシアンとは, 対応する格子点データに
+      ! ラプラシアンを作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに全波数 (l**2 + m**2 + n**2) をかける
+      ! 計算を行っている. 
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm)              :: eee_Lapla_eee
+      !(out) スペクトルデータのラプラシアン
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)  :: eee
+      !(in) 入力スペクトルデータ
+
+      integer l,m,n
+      ! 作業変数
+
+         do l=-lm,lm
+            do m=-mm,mm
+               do n=-nm,nm
+                  eee_Lapla_eee(n,m,l) = -(l**2+m**2+n**2)*eee(n,m,l)
+               enddo
+            enddo
+         enddo
+    end function eee_Lapla_eee
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001293" class="method-detail">
+        <a name="M001293"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001293" class="method-signature">
+
+
+
+          <span class="method-name">eee_VelFromZeta_eee2</span><span class="method-args">( eee2, isw ) result(eee_VelFromZeta_eee2)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001293">eee_VelFromZeta_eee2</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 非線形項のスペクトルデータの 2 つの成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee2  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>isw  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 出力する渦度の成分のインデックス(1,2,3)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから速度スペクトルの 1 成分
+ を計算する.
+
+ (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001293-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001293-source">
+<pre>
+    function eee_VelFromZeta_eee2(eee2,isw)
+      !
+      !  渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから速度スペクトルの 1 成分
+      !  を計算する.
+      !
+      !  (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm)     :: eee_VelFromZeta_eee2
+      !(out) 非線形項のスペクトルデータの 2 つの成分
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in)  :: eee2
+      !(in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+      integer, intent(IN) :: isw
+      !(in) 出力する渦度の成分のインデックス(1,2,3)
+
+      call p3getu(nm,mm,lm,eee2,eee_VelFromZeta_eee2,isw)
+
+    end function eee_VelFromZeta_eee2
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001292" class="method-detail">
+        <a name="M001292"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001292" class="method-signature">
+
+
+
+          <span class="method-name">eee_VorFromZeta_eee2</span><span class="method-args">( eee2, isw ) result(eee_VorFromZeta_eee2)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001292">eee_VorFromZeta_eee2</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 非線形項のスペクトルデータの 2 つの成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee2  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>isw  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 出力する渦度の成分のインデックス(1,2,3)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから渦度のスペクトルの 1 成分
+ を計算する.
+
+ (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001292-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001292-source">
+<pre>
+    function eee_VorFromZeta_eee2(eee2,isw)
+      !
+      !  渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから渦度のスペクトルの 1 成分
+      !  を計算する.
+      !
+      !  (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm)     :: eee_VorFromZeta_eee2
+      !(out) 非線形項のスペクトルデータの 2 つの成分
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(in)  :: eee2
+      !(in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+      integer, intent(IN) :: isw
+      !(in) 出力する渦度の成分のインデックス(1,2,3)
+
+      call p3geto(nm,mm,lm,eee2,eee_VorFromZeta_eee2,isw)
+
+    end function eee_VorFromZeta_eee2
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001284" class="method-detail">
+        <a name="M001284"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001284" class="method-signature">
+
+
+
+          <span class="method-name">eee_zyx</span><span class="method-args">( zyx ) result(eee_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001284">eee_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データからスペクトルデータへ変換する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001284-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001284-source">
+<pre>
+    function eee_zyx(zyx)
+      !
+      ! 格子データからスペクトルデータへ変換する.
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm)              :: eee_zyx
+                                                      !(out)  スペクトルデータ
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(in)  :: zyx
+                                                      !(in) 格子点データ
+
+      zyx_tmp = zyx
+      call p3g2sa(nm,mm,lm,km,jm,im,zyx_tmp,eee_zyx,w,itk,tk,itj,tj,iti,ti)
+    end function eee_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001323" class="method-detail">
+        <a name="M001323"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001323" class="method-signature">
+
+
+
+          <span class="method-name">x_AvrY_yx</span><span class="method-args">( yx ) result(x_AvrY_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001323">x_AvrY_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001276">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001323-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001323-source">
+<pre>
+    function x_AvrY_yx(yx)
+      !
+      ! 2 次元格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:jm-1,0:im-1), intent(IN)   :: yx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1)          :: x_AvrY_yx
+      !(out) 平均された 1 次元(X)格子点データ
+
+      x_AvrY_yx = x_IntY_yx(yx)/sum(y_Y_weight)
+    end function x_AvrY_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001317" class="method-detail">
+        <a name="M001317"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001317" class="method-signature">
+
+
+
+          <span class="method-name">x_AvrZY_zyx</span><span class="method-args">( zyx ) result(x_AvrZY_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001317">x_AvrZY_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Y,Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a>, <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001276">y_Y_Weight</a>*<a
+href="eee_module.html#M001277">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001317-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001317-source">
+<pre>
+    function x_AvrZY_zyx(zyx)
+      !
+      ! 3 次元格子点データの Y,Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight, z_Z_Weight をかけた
+      ! 総和を計算し, y_Y_Weight*z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1)          :: x_AvrZY_zyx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      x_AvrZY_zyx = x_IntZY_zyx(zyx)/(sum(y_Y_weight)*sum(z_Z_weight))
+
+    end function x_AvrZY_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001326" class="method-detail">
+        <a name="M001326"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001326" class="method-signature">
+
+
+
+          <span class="method-name">x_AvrZ_zx</span><span class="method-args">( zx ) result(x_AvrZ_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001326">x_AvrZ_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001277">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001326-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001326-source">
+<pre>
+    function x_AvrZ_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算し, 
+      ! z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx
+      !(in) 2 次元(ZX)格子点データ
+
+      real(8), dimension(0:im-1)          :: x_AvrZ_zx
+      !(out) 平均された 1 次元(X)格子点データ
+
+      x_AvrZ_zx = x_IntZ_zx(zx)/sum(z_Z_weight)
+    end function x_AvrZ_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001304" class="method-detail">
+        <a name="M001304"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001304" class="method-signature">
+
+
+
+          <span class="method-name">x_IntY_yx</span><span class="method-args">( yx ) result(x_IntY_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001304">x_IntY_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(YX)格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001304-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001304-source">
+<pre>
+    function x_IntY_yx(yx)
+      !
+      ! 2 次元(YX)格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:jm-1,0:im-1), intent(IN)   :: yx      
+      !(in)  2 次元(YX)格子点データ
+
+      real(8), dimension(0:im-1)        :: x_IntY_yx 
+      !(out) 積分された 1 次元(X)格子点データ
+
+      integer :: j
+      ! 作業変数
+
+      x_IntY_yx = 0.0d0
+      do j=0,jm-1
+         x_IntY_yx(:) = x_IntY_yx(:) + yx(j,:) * y_Y_Weight(j)
+      enddo
+    end function x_IntY_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001298" class="method-detail">
+        <a name="M001298"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001298" class="method-signature">
+
+
+
+          <span class="method-name">x_IntZY_zyx</span><span class="method-args">( zyx ) result(x_IntZY_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001298">x_IntZY_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Y,Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a>, <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001298-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001298-source">
+<pre>
+    function x_IntZY_zyx(zyx)
+      !
+      ! 3 次元格子点データの Y,Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight, z_Z_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1)          :: x_IntZY_zyx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: j, k
+      ! 作業変数
+
+      x_IntZY_zyx = 0.0d0
+      do j=0,jm-1
+         do k=0,km-1
+            x_IntZY_zyx(:) = x_IntZY_zyx(:) + zyx(k,j,:) * y_Y_Weight(j)* z_Z_Weight(k)
+         enddo
+      enddo
+    end function x_IntZY_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001309" class="method-detail">
+        <a name="M001309"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001309" class="method-signature">
+
+
+
+          <span class="method-name">x_IntZ_zx</span><span class="method-args">( zx ) result(x_IntZ_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001309">x_IntZ_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001309-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001309-source">
+<pre>
+    function x_IntZ_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx          
+      !(in)  2 次元(ZX)格子点データ
+
+      real(8), dimension(0:im-1)          :: x_IntZ_zx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: k
+      ! 作業変数
+
+      x_IntZ_zx = 0.0d0
+      do k=0,km-1
+         x_IntZ_zx(:) = x_IntZ_zx(:) + zx(k,:) * z_Z_Weight(k)
+      enddo
+    end function x_IntZ_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001272" class="method-detail">
+        <a name="M001272"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_X</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001272">x_X</a>  </tt></b>  <tt> =&gt; null()   </tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(X)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001275" class="method-detail">
+        <a name="M001275"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_X_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001275">x_X_Weight</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点重み(X) X 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001285" class="method-detail">
+        <a name="M001285"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001285" class="method-signature">
+
+
+
+          <span class="method-name">xyz_zyx</span><span class="method-args">( zyx ) result(xyz_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001285">xyz_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,0:jm-1,0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データの添え字順序変更
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001285-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001285-source">
+<pre>
+    function xyz_zyx(zyx)
+      !
+      ! 格子データの添え字順序変更
+      !
+      real(8), dimension(0:im-1,0:jm-1,0:km-1)             :: xyz_zyx
+                                                        !(out) 格子点データ
+
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(in)  :: zyx
+                                                      !(in) 格子点データ
+      integer :: i,j,k
+
+      do k=0,km-1
+         do j=0,jm-1
+            do i=0,im-1
+               xyz_zyx(i,j,k) = zyx(k,j,i)
+            enddo
+         enddo
+      enddo
+
+    end function xyz_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001322" class="method-detail">
+        <a name="M001322"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001322" class="method-signature">
+
+
+
+          <span class="method-name">y_AvrX_yx</span><span class="method-args">( yx ) result(y_AvrX_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001322">y_AvrX_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001322-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001322-source">
+<pre>
+    function y_AvrX_yx(yx)
+      !
+      ! 2 次元格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:jm-1,0:im-1), intent(IN)   :: yx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:jm-1)          :: y_AvrX_yx
+      !(out) 平均された 1 次元(Y)格子点データ
+
+      y_AvrX_yx = y_IntX_yx(yx)/sum(x_X_weight)
+    end function y_AvrX_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001316" class="method-detail">
+        <a name="M001316"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001316" class="method-signature">
+
+
+
+          <span class="method-name">y_AvrZX_zyx</span><span class="method-args">( zyx ) result(y_AvrZX_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001316">y_AvrZX_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X,Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>*<a
+href="eee_module.html#M001277">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001316-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001316-source">
+<pre>
+    function y_AvrZX_zyx(zyx)
+      !
+      ! 3 次元格子点データの X,Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, z_Z_Weight をかけた
+      ! 総和を計算し, x_X_Weight*z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:jm-1)          :: y_AvrZX_zyx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      y_AvrZX_zyx = y_IntZX_zyx(zyx)/(sum(x_X_weight)*sum(z_Z_weight))
+
+    end function y_AvrZX_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001329" class="method-detail">
+        <a name="M001329"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001329" class="method-signature">
+
+
+
+          <span class="method-name">y_AvrZ_zy</span><span class="method-args">( zy ) result(y_AvrZ_zy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001329">y_AvrZ_zy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zy  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001277">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001329-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001329-source">
+<pre>
+    function y_AvrZ_zy(zy)
+      !
+      ! 2 次元(ZY)格子点データの Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算し, 
+      ! z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1), intent(IN)   :: zy
+      !(in) 2 次元(ZY)格子点データ
+
+      real(8), dimension(0:jm-1)          :: y_AvrZ_zy
+      !(out) 平均された 1 次元(X)格子点データ
+
+      y_AvrZ_zy = y_IntZ_zy(zy)/sum(z_Z_weight)
+    end function y_AvrZ_zy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001303" class="method-detail">
+        <a name="M001303"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001303" class="method-signature">
+
+
+
+          <span class="method-name">y_IntX_yx</span><span class="method-args">( yx ) result(y_IntX_yx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001303">y_IntX_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(YX)格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001303-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001303-source">
+<pre>
+    function y_IntX_yx(yx)
+      !
+      ! 2 次元(YX)格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:jm-1,0:im-1), intent(IN)   :: yx
+      !(in) 2 次元(YX)格子点データ
+
+      real(8), dimension(0:jm-1)          :: y_IntX_yx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: i
+      ! 作業変数
+
+      y_IntX_yx = 0.0d0
+      do i=0,im-1
+         y_IntX_yx(:) = y_IntX_yx(:) + yx(:,i) * x_X_Weight(i)
+      enddo
+    end function y_IntX_yx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001297" class="method-detail">
+        <a name="M001297"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001297" class="method-signature">
+
+
+
+          <span class="method-name">y_IntZX_zyx</span><span class="method-args">( zyx ) result(y_IntZX_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001297">y_IntZX_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X,Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001297-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001297-source">
+<pre>
+    function y_IntZX_zyx(zyx)
+      !
+      ! 3 次元格子点データの X,Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, z_Z_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:jm-1)          :: y_IntZX_zyx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: i, k
+      ! 作業変数
+
+      y_IntZX_zyx = 0.0d0
+      do i=0,im-1
+         do k=0,km-1
+            y_IntZX_zyx(:) = y_IntZX_zyx(:) + zyx(k,:,i) * x_X_Weight(i)* z_Z_Weight(k)
+         enddo
+      enddo
+    end function y_IntZX_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001306" class="method-detail">
+        <a name="M001306"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001306" class="method-signature">
+
+
+
+          <span class="method-name">y_IntZ_zy</span><span class="method-args">( zy ) result(y_IntZ_zy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001306">y_IntZ_zy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zy  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001306-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001306-source">
+<pre>
+    function y_IntZ_zy(zy)
+      !
+      ! 2 次元(ZY)格子点データの Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1), intent(IN)   :: zy          
+      !(in)  2 次元(ZY)格子点データ
+
+      real(8), dimension(0:jm-1)          :: y_IntZ_zy
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: k
+      ! 作業変数
+
+      y_IntZ_zy = 0.0d0
+      do k=0,km-1
+         y_IntZ_zy(:) = y_IntZ_zy(:) + zy(k,:) * z_Z_Weight(k)
+      enddo
+    end function y_IntZ_zy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001273" class="method-detail">
+        <a name="M001273"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Y</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001273">y_Y</a>  </tt></b>  <tt> =&gt; null()   </tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(Y)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001276" class="method-detail">
+        <a name="M001276"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Y_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001276">y_Y_Weight</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点重み(Y) Y 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001320" class="method-detail">
+        <a name="M001320"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001320" class="method-signature">
+
+
+
+          <span class="method-name">yx_AvrZ_zyx</span><span class="method-args">( zyx ) result(yx_AvrZ_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001320">yx_AvrZ_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001277">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001320-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001320-source">
+<pre>
+    function yx_AvrZ_zyx(zyx)
+      !
+      ! 3 次元格子点データの Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた
+      ! 総和を計算し, z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:jm-1,0:im-1)          :: yx_AvrZ_zyx
+      !(out) 積分された 1 次元(YX)格子点データ
+
+      yx_AvrZ_zyx = yx_IntZ_zyx(zyx)/sum(z_Z_weight)
+
+    end function yx_AvrZ_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001301" class="method-detail">
+        <a name="M001301"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001301" class="method-signature">
+
+
+
+          <span class="method-name">yx_IntZ_zyx</span><span class="method-args">( zyx ) result(yx_IntZ_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001301">yx_IntZ_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm-1,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001277">z_Z_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001301-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001301-source">
+<pre>
+    function yx_IntZ_zyx(zyx)
+      !
+      ! 3 次元格子点データの Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:jm-1,0:im-1)          :: yx_IntZ_zyx
+      !(out) 積分された 1 次元(YX)格子点データ
+
+      integer :: k 
+      ! 作業変数
+
+      yx_IntZ_zyx = 0.0d0
+      do k=0,km-1
+         yx_IntZ_zyx(:,:) = yx_IntZ_zyx(:,:) + zyx(k,:,:) * z_Z_Weight(k)
+      enddo
+
+    end function yx_IntZ_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001325" class="method-detail">
+        <a name="M001325"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001325" class="method-signature">
+
+
+
+          <span class="method-name">z_AvrX_zx</span><span class="method-args">( zx ) result(z_AvrX_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001325">z_AvrX_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(Z)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001325-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001325-source">
+<pre>
+    function z_AvrX_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx
+      !(in) 2 次元(ZX)格子点データ
+
+      real(8), dimension(0:km-1)          :: z_AvrX_zx
+      !(out) 平均された 1 次元(Z)格子点データ
+
+      z_AvrX_zx = z_IntX_zx(zx)/sum(x_X_weight)
+    end function z_AvrX_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001315" class="method-detail">
+        <a name="M001315"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001315" class="method-signature">
+
+
+
+          <span class="method-name">z_AvrYX_zyx</span><span class="method-args">( zyx ) result(z_AvrYX_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001315">z_AvrYX_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X,Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>*<a
+href="eee_module.html#M001276">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001315-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001315-source">
+<pre>
+    function z_AvrYX_zyx(zyx)
+      !
+      ! 3 次元格子点データの X,Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算し, x_X_Weight*y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1)          :: z_AvrYX_zyx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      z_AvrYX_zyx = z_IntYX_zyx(zyx)/(sum(x_X_weight)*sum(y_Y_weight))
+
+    end function z_AvrYX_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001328" class="method-detail">
+        <a name="M001328"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001328" class="method-signature">
+
+
+
+          <span class="method-name">z_AvrY_zy</span><span class="method-args">( zy ) result(z_AvrY_zy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001328">z_AvrY_zy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(Z)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zy  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた総和を計算し, <a
+href="eee_module.html#M001276">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001328-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001328-source">
+<pre>
+    function z_AvrY_zy(zy)
+      !
+      ! 2 次元(ZY)格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1), intent(IN)   :: zy
+      !(in) 2 次元(ZY)格子点データ
+
+      real(8), dimension(0:km-1)          :: z_AvrY_zy
+      !(out) 平均された 1 次元(Z)格子点データ
+
+      z_AvrY_zy = z_IntY_zy(zy)/sum(y_Y_weight)
+    end function z_AvrY_zy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001310" class="method-detail">
+        <a name="M001310"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001310" class="method-signature">
+
+
+
+          <span class="method-name">z_IntX_zx</span><span class="method-args">( zx ) result(z_IntX_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001310">z_IntX_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001310-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001310-source">
+<pre>
+    function z_IntX_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx          
+      !(in)  2 次元格子点データ
+
+      real(8), dimension(0:km-1)        :: z_IntX_zx 
+      !(out) 積分された 1 次元(X)格子点データ
+
+      integer :: i
+      ! 作業変数
+
+      z_IntX_zx = 0.0d0
+      do i=0,im-1
+         z_IntX_zx(:) = z_IntX_zx(:) + zx(:,i) * x_X_Weight(i)
+      enddo
+    end function z_IntX_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001296" class="method-detail">
+        <a name="M001296"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001296" class="method-signature">
+
+
+
+          <span class="method-name">z_IntYX_zyx</span><span class="method-args">( zyx ) result(z_IntYX_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001296">z_IntYX_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X,Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a>, <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001296-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001296-source">
+<pre>
+    function z_IntYX_zyx(zyx)
+      !
+      ! 3 次元格子点データの X,Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1)          :: z_IntYX_zyx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: i, j
+      ! 作業変数
+
+      z_IntYX_zyx = 0.0d0
+      do i=0,im-1
+         do j=0,jm-1
+            z_IntYX_zyx(:) = z_IntYX_zyx(:) + zyx(:,j,i) * x_X_Weight(i)* y_Y_Weight(j)
+         enddo
+      enddo
+    end function z_IntYX_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001307" class="method-detail">
+        <a name="M001307"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001307" class="method-signature">
+
+
+
+          <span class="method-name">z_IntY_zy</span><span class="method-args">( zy ) result(z_IntY_zy)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001307">z_IntY_zy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zy  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001307-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001307-source">
+<pre>
+    function z_IntY_zy(zy)
+      !
+      ! 2 次元(ZY)格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1), intent(IN)   :: zy          
+      !(in)  2 次元格子点データ
+
+      real(8), dimension(0:km-1)        :: z_IntY_zy 
+      !(out) 積分された 1 次元(X)格子点データ
+
+      integer :: j
+      ! 作業変数
+
+      z_IntY_zy = 0.0d0
+      do j=0,jm-1
+         z_IntY_zy(:) = z_IntY_zy(:) + zy(:,j) * y_Y_Weight(j)
+      enddo
+    end function z_IntY_zy
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001274" class="method-detail">
+        <a name="M001274"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">z_Z</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001274">z_Z</a>  </tt></b>  <tt> =&gt; null()   </tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(Y)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001277" class="method-detail">
+        <a name="M001277"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">z_Z_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001277">z_Z_Weight</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点重み(Y) Z 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001319" class="method-detail">
+        <a name="M001319"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001319" class="method-signature">
+
+
+
+          <span class="method-name">zx_AvrY_zyx</span><span class="method-args">( zyx ) result(zx_AvrY_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001319">zx_AvrY_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001276">y_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001319-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001319-source">
+<pre>
+    function zx_AvrY_zyx(zyx)
+      !
+      ! 3 次元格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた
+      ! 総和を計算し, y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1,0:im-1)          :: zx_AvrY_zyx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      zx_AvrY_zyx = zx_IntY_zyx(zyx)/sum(y_Y_weight)
+
+    end function zx_AvrY_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001300" class="method-detail">
+        <a name="M001300"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001300" class="method-signature">
+
+
+
+          <span class="method-name">zx_IntY_zyx</span><span class="method-args">( zyx ) result(zx_IntY_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001300">zx_IntY_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001276">y_Y_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001300-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001300-source">
+<pre>
+    function zx_IntY_zyx(zyx)
+      !
+      ! 3 次元格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1,0:im-1)          :: zx_IntY_zyx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: j
+      ! 作業変数
+
+      zx_IntY_zyx = 0.0d0
+      do j=0,jm-1
+         zx_IntY_zyx(:,:) = zx_IntY_zyx(:,:) + zyx(:,j,:) * y_Y_Weight(j)
+      enddo
+    end function zx_IntY_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001318" class="method-detail">
+        <a name="M001318"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001318" class="method-signature">
+
+
+
+          <span class="method-name">zy_AvrX_zyx</span><span class="method-args">( zyx ) result(zy_AvrX_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001318">zy_AvrX_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた 総和を計算し, <a
+href="eee_module.html#M001275">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001318-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001318-source">
+<pre>
+    function zy_AvrX_zyx(zyx)
+      !
+      ! 3 次元格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた
+      ! 総和を計算し, x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1,0:jm-1)          :: zy_AvrX_zyx
+      !(out) 積分された 2 次元(ZY)格子点データ
+
+      zy_AvrX_zyx = zy_IntX_zyx(zyx)/sum(x_X_weight)
+
+    end function zy_AvrX_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001299" class="method-detail">
+        <a name="M001299"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001299" class="method-signature">
+
+
+
+          <span class="method-name">zy_IntX_zyx</span><span class="method-args">( zyx ) result(zy_IntX_zyx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001299">zy_IntX_zyx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zyx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_module.html#M001275">x_X_Weight</a> をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001299-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001299-source">
+<pre>
+    function zy_IntX_zyx(zyx)
+      !
+      ! 3 次元格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1), intent(IN)   :: zyx
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1,0:jm-1)          :: zy_IntX_zyx
+      !(out) 積分された 2 次元(ZY)格子点データ
+
+      integer :: i
+      ! 作業変数
+
+      zy_IntX_zyx = 0.0d0
+      do i=0,im-1
+         zy_IntX_zyx(:,:) = zy_IntX_zyx(:,:) + zyx(:,:,i) * x_X_Weight(i)
+      enddo
+
+    end function zy_IntX_zyx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001278" class="method-detail">
+        <a name="M001278"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">zyx_X</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001278">zyx_X</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:,:,:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点(X)座標(3 次元) 各格子点(i,j,k)の位置の X 座標を格納した格子データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001279" class="method-detail">
+        <a name="M001279"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">zyx_Y</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001279">zyx_Y</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:,:,:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点(Y)座標(3 次元) 各格子点(i,j,k)の位置の Y 座標を格納した格子データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001280" class="method-detail">
+        <a name="M001280"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">zyx_Z</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001280">zyx_Z</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:,:,:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点(Z)座標(3 次元) 各格子点(i,j,k)の位置の Z 座標を格納した格子データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001283" class="method-detail">
+        <a name="M001283"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001283" class="method-signature">
+
+
+
+          <span class="method-name">zyx_eee</span><span class="method-args">( eee ) result(zyx_eee)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_module.html#M001283">zyx_eee</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:jm-1,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子データへ変換する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001283-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001283-source">
+<pre>
+    function zyx_eee(eee)
+      !
+      ! スペクトルデータから格子データへ変換する.
+      !
+      real(8), dimension(0:km-1,0:jm-1,0:im-1)             :: zyx_eee 
+                                                        !(out) 格子点データ
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm), intent(in) :: eee
+                                                        !(in)  スペクトルデータ
+
+      call p3s2ga(nm,mm,lm,km,jm,im,eee,zyx_eee,w,itk,tk,itj,tj,iti,ti)
+    end function zyx_eee
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

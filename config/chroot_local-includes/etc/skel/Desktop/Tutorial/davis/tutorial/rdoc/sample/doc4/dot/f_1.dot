@@ -1,0 +1,32 @@
+digraph TopLevel {
+    compound = true
+    bgcolor = lightcyan1
+    fontname = Arial
+    fontsize = 8
+    label = "gphys_tone2.rb"
+    node [
+        fontname = Arial,
+        fontsize = 8,
+        color = black
+    ]
+
+    GPhys_tone [
+        fontcolor = black,
+        URL = "classes/GPhys_tone.html",
+        shape = ellipse,
+        color = palegoldenrod,
+        style = filled,
+        label = "GPhys_tone"
+    ]
+
+    GPhys_cont [
+        URL = "classes/GPhys_cont.html",
+        label = "GPhys_cont"
+    ]
+
+    GPhys_cont -> GPhys_tone [
+
+    ]
+
+}
+

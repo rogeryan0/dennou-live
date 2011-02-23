@@ -1,0 +1,786 @@
+%表題  SPMODEL レファレンスマニュアル
+%
+%      3 次元球領域の拡散方程式の解析解
+%      チェビシェフ関数展開を利用した計算チェック用
+%
+%履歴  2008/01/03 作成  竹広真一
+%      2008/04/13 作成  竹広真一 typo 修整
+%
+\documentclass[a4j,12pt]{jarticle}
+\usepackage{Dennou6}
+
+\Dtitle[球領域での拡散方程式解]
+       {3 次元球領域での\\拡散型方程式の解析解}
+\Dauthor{竹広真一}
+\Ddate{平成 20 年 4 月 13 日}
+
+\Dparskip
+
+\begin{document}
+
+\maketitle
+
+この文章では, 球面調和函数--チェビシェフ関数展開を利用した
+3 次元球領域での流体計算のための SPMODEL ライブラリ(spml)の
+モジュール wu\_module のテストのために, 
+3 次元球領域での拡散型方程式のさまざまな境界条件に対する
+解を(できるだけ)解析的に求めることを行う. 
+
+  \section{拡散方程式}
+
+    半径 $ao$ の球内の 3 次元領域での拡散問題を考える. 
+    支配方程式は 3 次元拡散方程式
+    %
+    \begin{equation}
+      \Deqlab{拡散方程式}
+      \DP{\phi}{t} = \kappa \Dlapla \phi
+    \end{equation}
+    %
+    $\phi$ は拡散する物理量であり, 例えば温度, 組成濃度, 磁場などである.
+    $x$, $y$ はそれぞれ壁に平行および垂直方向の座標, 
+    $\kappa$ は拡散率(正数)である. 
+    $\Dlapla$ は 3 次元ラプラシアンであり, 
+    緯度経度動径座標系$ (\lambda,\varphi,r)$ での表現は
+    %
+    \begin{equation}
+      \Dlapla = \frac{1}{r^2}\DP{}{r}\left(r^2\DP{}{r}\right)
+             + \frac{1}{r^2\cos\varphi}\DP{}{\varphi}
+                 \left(\cos\varphi\DP{}{\varphi}\right)
+             + \frac{1}{r^2\cos^2\varphi}\DP[2]{}{\lambda}.
+    \end{equation}
+    %
+
+    一般的な境界条件は, 内外境界球面での物理量とその $r$ 微分の
+    線形結合で与えられる(混合型境界条件). 
+    %
+    \begin{eqnarray}
+      \Deqlab{混合型境界条件}
+      & & \alpha_{1}\DP{\phi}{r} + \alpha_{0}\phi =0, 
+          \quad {\rm at} \quad r=a,\\
+    \end{eqnarray}
+    %
+    ここで $\alpha_{i}$ は定数係数であり, 以下の条件を満たしている
+    ものとする. 
+    %
+    \begin{equation}
+      \alpha_{1}\cdot\alpha_{0} \le 0, \quad
+    \end{equation}
+    %
+    ただし $\alpha_1$ と $\alpha_0$ は同時には 
+    0 にはならないものとする. 
+
+    \subsection{球面調和関数展開}
+
+      緯度・経度方向には球面調和関数で展開して解くことができる. 
+      以下, その 1 波数成分のみ取りだして扱う. 
+      時間に関しても指数型の解を仮定し, 
+      %
+      \begin{equation}
+        \Deqlab{球面調和函数展開}
+        \phi(x,y,t)=\tilde{\phi}_{lm}(r)Y_{lm}(\lambda,\varphi)e^{\sigma t}
+      \end{equation}
+      %
+      これを支配方程式に代入すると, 
+      %
+      \begin{equation}
+        \Deqlab{拡散方程式球面調和函数展開}
+          \sigma \tilde{\phi}_{lm} = 
+              \kappa \left[
+                \frac{1}{r^2}\DD{}{r}\left(r^2\DD{\tilde{\phi}_{lm}}{r}\right)
+                  -\frac{l(l+1)}{r^2}\tilde{\phi}_{lm}\right],
+      \end{equation}
+      %
+      境界条件は, 
+      %
+      \begin{equation}
+        \Deqlab{混合型境界条件上球面調和函数展開}
+        \alpha_{1}\DD{\tilde{\phi}_{lm}}{r} 
+             + \alpha_{0}\tilde{\phi}_{lm} =0 
+               \quad {\rm at} \quad r=a.
+      \end{equation}
+      %
+
+    \subsection{最大成長率の見積もり}
+
+      成長率の最大値を領域積分から見積もることができる. 
+      \Deqref{拡散方程式球面調和函数展開} $r^2\tilde{\phi}_{lm}^*$ をかけて
+      $r$ 方向に全領域積分を行い, 部分積分を繰り返すと, 
+      %
+      \begin{eqnarray*}
+        \sigma \int_0^a r^2|\tilde{\phi}_{lm}|^2 dr &=&
+               \int_0^a dr r^2 \tilde{\phi}_{lm}^*  
+                \kappa \left[
+                    \frac{1}{r^2}\DD{}{r}\left(r^2\DD{\tilde{\phi}_{lm}}{r}\right)
+                   -\frac{l(l+1)}{r^2}\tilde{\phi}_{lm}\right]\\
+        &=& \kappa \int_0^a dr \tilde{\phi}_{lm}^*
+                     \DD{}{r}\left(r^2\DD{\tilde{\phi}_{lm}}{r}\right)
+             -\kappa l(l+1) \int_0^a |\tilde{\phi}_{lm}|^2 dr\\
+        &=&  \kappa\left[
+                  r^2\tilde{\phi}_{lm}^*\DD{\tilde{\phi}_{lm}}{r}\right]_0^a 
+             -\kappa \int_0^a 
+                  r^2\left|\DD{\tilde{\phi}_{lm}}{r}\right|^2 dr
+             -\kappa l(l+1) \int_0^a |\tilde{\phi}_{lm}|^2 dr\\
+      \end{eqnarray*}
+      %
+      ここで, 境界条件を用いて右辺第 1 項目を見積もると
+      %
+      \begin{eqnarray*}
+        & & \left[r^2\tilde{\phi}_{lm}^*\DD{\tilde{\phi}_{lm}}{r}\right]_0^a\\
+        &=& \left\{
+        \begin{array}{cc}
+          \Ddsty -\frac{\alpha_{1}}{\alpha_{0}}
+               a^2\left|\DD{\tilde{\phi}_{lm}}{r}\right|^2_{r=a}
+          & (\alpha_{0}\neq0)\\
+          \Ddsty -\frac{\alpha_{0}}{\alpha_{1}}
+               a^2|\tilde{\phi}_{lm}|^2_{r=a}
+          & (\alpha_{1}\neq0)
+        \end{array}
+        \right\}\\
+        &=& -\left\{
+        \begin{array}{cc}
+          \Ddsty \frac{\alpha_{1,o}}{\alpha_{0,o}}
+               r_o^2\left|\DD{\tilde{\phi}_{lm}}{r}\right|^2_{r=r_o}
+          & (\alpha_{0,o}\neq0)\\
+          \Ddsty \frac{\alpha_{0,o}}{\alpha_{1,o}}
+               r_o^2|\tilde{\phi}_{lm}|^2_{r=r_o}
+          & (\alpha_{1,o}\neq0)
+        \end{array}
+        \right\}\\
+        & \le & 0.
+      \end{eqnarray*}
+      %
+      したがって, 
+      %
+      \begin{eqnarray*}
+        \sigma \int_0^a r^2|\tilde{\phi}_{lm}|^2 dr
+        &\le& 
+             -\kappa \int_0^a 
+                  r^2\left|\DD{\tilde{\phi}_{lm}}{r}\right|^2 dr
+             -\kappa l(l+1) \int_0^a |\tilde{\phi}_{lm}|^2 dr
+         < -\kappa l(l+1) \int_0^a |\tilde{\phi}_{lm}|^2 dr,\\
+        \sigma &<& 
+            \frac{\Ddsty -\kappa l(l+1)\int_0^a |\tilde{\phi}_{lm}|^2 dr}
+                 {\Ddsty \int_0^a r^2|\tilde{\phi}_{lm}|^2 dr}. 
+      \end{eqnarray*}
+      %
+      よって成長率の最大値は負であることがわかる. 
+
+    \subsection{一般解}
+
+      支配方程式を変形すると
+      %
+      \begin{displaymath}
+        \frac{1}{r^2}\DD{}{r}\left(r^2\DD{\tilde{\phi}_{lm}}{r}\right)
+          +\left[\frac{-\sigma}{\kappa} -\frac{l(l+1)}{r^2}\right]\tilde{\phi}_{lm}=0.
+      \end{displaymath}
+      %
+      さらに動径座標を
+      \begin{equation}
+        \tilde{r} = \sqrt{\frac{-\sigma}{\kappa}}r, \quad
+        r  = \sqrt{\frac{\kappa}{-\sigma}}\tilde{r},
+      \end{equation}
+      %
+      と変形すると,
+      %
+      \begin{displaymath}
+        \frac{1}{\tilde{r}^2}\DD{}{\tilde{r}}
+             \left(\tilde{r}^2\DD{\tilde{\phi}_{lm}}{\tilde{r}}\right)
+          +\left[1 -\frac{l(l+1)}{\tilde{r}^2}\right]\tilde{\phi}_{lm},
+      \end{displaymath}
+      %
+      この微分方程式は球ベッセルの微分方程式であり, 
+      その原点で特異性のない一般解は $l$ 次の第 1 種球ベッセル函数 
+      ${\cal J}_l(\tilde{r})$で表される.
+      %
+      \begin{equation}
+        \Deqlab{拡散方程式球面調和函数展開一般解}
+        \tilde{\phi}_{lm} = A_1 {\cal J}_l(\tilde{r}) 
+               = A_1 {\cal J}_l\left(\sqrt{\frac{-\sigma}{\kappa}}r\right) 
+      \end{equation}
+
+
+    \subsection{外側ディリクレ型境界条件の場合}
+
+      外側での境界条件がディリクレ型の
+      %
+      \begin{equation}
+        \Deqlab{ディリクレ型境界条件球面調和函数展開}
+        \tilde{\phi}_{lm} =0 \quad {\rm at} \quad r=a.
+      \end{equation}
+      %
+      場合を考える. これを一般解
+      \Deqref{拡散方程式球面調和函数展開一般解}に代入すると
+      %
+      \begin{equation}
+           {\cal J}_l\left(a \alpha\right) =0.
+      \end{equation}
+      % 
+      ただし $\Ddsty \alpha = \sqrt{\frac{-\sigma}{\kappa}}$ とおいた. 
+      球ベッセル函数の零点から動径波数 $\alpha$ と
+      成長率 $\sigma = -\kappa \alpha^2$ が定められる. 
+      \footnote{
+        球ベッセル関数の形は
+        %
+        \begin{equation}
+          {\cal J}_l(x) = a_l(x) \sin x + b_l(x) \cos x,
+        \end{equation}
+        %
+        と表される. ここで $a_l(x), b_l(x)$ は $x$ の有理多項式である. 
+        この形を代入すると
+        %
+        \begin{displaymath}
+          a_l(a\alpha) \sin(a\alpha) + b_l(a\alpha) \cos(a\alpha)
+         = \sin[a\alpha+\theta_l]=0, 
+        \end{displaymath}
+        %
+        ただし
+        \begin{eqnarray*}
+          \sin\theta_l  &=&
+          \frac{b_l(a\alpha)}
+               {\sqrt{a_l(a\alpha)^2 + b_l(a\alpha)^2}}\\
+          \cos\theta_l  &=&
+          \frac{a_l(a\alpha)}
+               {\sqrt{a_l(a\alpha)^2 + b_l(a\alpha)^2}}.
+        \end{eqnarray*}
+        %
+        したがって $\theta$ が $\alpha$ に対してそれほど急激に
+        変化しないならば, この式の形は $\sin[a\alpha]$ によって
+        だいたいさだまるだろう. 
+        したがって
+        %
+        \begin{eqnarray}
+          & & a\alpha+\theta_l = n\pi, \quad n=1,2,\ldots, \nonumber\\
+          & & {\rm i.e.}\quad
+          \alpha =\sqrt{\frac{-\sigma}{\kappa}}= \frac{n\pi-\theta_l}{a}, 
+          \quad
+          \sigma = -\kappa \left(\frac{n\pi-\theta_l}{a}\right)^2
+              \quad n=1,2,\ldots.
+        \end{eqnarray}
+        %
+        特に $l=0$ の場合, $a_0(x) =1/x , b_0=0$ であるから
+        %
+        \begin{eqnarray*}
+          \sin\theta_0 = 0, \quad \cos\theta_0 = 1 \quad 
+          {\rm i.e.} \quad \theta_0=0,
+        \end{eqnarray*}
+        %
+        となるので
+        \begin{eqnarray}
+          \alpha =\sqrt{\frac{-\sigma}{\kappa}}= \frac{n\pi}{a}, 
+          \quad
+          \sigma = -\kappa \left(\frac{n\pi}{a}\right)^2
+              \quad n=1,2,\ldots
+        \end{eqnarray}
+      }
+      係数 $A_1$ は初期条件から定まる. 
+
+    \subsection{外側ノイマン型境界条件の場合}
+
+      外側での境界条件がノイマン型の
+      %
+      \begin{equation}
+        \Deqlab{ノイマン型境界条件球面調和函数展開}
+        \DD{\tilde{\phi}_{lm}}{r} =0 \quad {\rm at} \quad y=a, 
+      \end{equation}
+      %
+      の場合を考える. これを一般解
+      \Deqref{拡散方程式球面調和函数展開一般解}に代入して整理すると
+      %
+      \begin{equation}
+           \alpha{\cal J}'_l\left(a \alpha\right)  = 0. 
+      \end{equation}
+      % 
+      ただし $\Ddsty \alpha = \sqrt{\frac{-\sigma}{\kappa}}$ とおいた. 
+      %
+      係数行列の行列式が 0 であることから, 成長率を定める分散関係に相当する
+      式が得られる. 
+      球ベッセル函数の微分の零点から動径波数 $\alpha$ と
+      成長率 $\sigma = -\kappa \alpha^2$ が定められる. 
+      係数 $A_1$ は初期条件から定められる. 
+
+
+    \subsection{領域外部の境界領域でラプラス方程式に従う場合}
+
+      有限の熱伝導率を持つ物質で球殻内外領域が満たされている場合の
+      熱拡散問題, あるいはポロイダル磁場の拡散の問題の場合には
+      球殻領域の拡散方程式を次のような混合型の境界条件の下で
+      解くことになる
+      \footnote{
+        領域外部の支配方程式は
+        %
+        \begin{displaymath}
+          \Dlapla \phi =0, 
+        \end{displaymath}
+        %
+        緯度経度に関して球面調和関数変換すると
+        %
+        \begin{displaymath}
+          \Deqlab{拡散方程式球面調和函数展開}
+          \frac{1}{r^2}\DD{}{r}\left(r^2\DD{\tilde{\phi}_{lm}}{r}\right)
+                    -\frac{l(l+1)}{r^2}\tilde{\phi}_{lm}=0
+        \end{displaymath}
+        %
+        この方程式の独立な 2 つの解は $r^{-(l+1)}, r^l$ である. 
+         $\infty$ で発散しない解を求めると
+        \begin{displaymath}
+          \tilde{\phi}_{lm} = C_1 r^{-(l+1)}
+              \quad \left(r \ge a \right).
+        \end{displaymath}
+        %
+        境界 $r=a$ で値と 1 階微分が連続であることから
+        \begin{eqnarray*}
+          \tilde{\phi}_{lm}|_{r=a} =  C_1 r^{-(l+1)a}, \quad
+          \left.\DD{\tilde{\phi}_{lm}}{r}\right|_a =  -(l+1) C_1 r^{-(l+2)a}
+        \end{eqnarray*}
+        %
+        これらより $C_1$ を消去すると $r=a$ での境界条件
+        %
+        \begin{displaymath}
+          \left.\DD{\tilde{\phi}_{lm}}{r}\right|_a
+              +\frac{(l+1)}{a}\tilde{\phi}_{lm}|_a=0,
+        \end{displaymath}
+        %
+        が得られる. 
+      }.
+      %
+      \begin{equation}
+        \Deqlab{両端混合型境界条件球面調和展開}
+         \left.\DD{\tilde{\phi}_{lm}}{r}\right|_a
+              +\frac{(l+1)}{a}\tilde{\phi}_{lm}|_a=0,\quad
+      \end{equation}
+      %
+      これを一般解
+      \Deqref{拡散方程式球面調和函数展開一般解}に代入して整理すると, 
+      %
+      \begin{equation}
+           {\cal J}'_l\left(a \alpha\right) 
+             +\frac{l+1}{a\alpha}{\cal J}_l\left(a \alpha\right) =0.
+      \end{equation}
+      %
+      ここで球ベッセル関数の性質
+      \begin{displaymath}
+         {\cal J}'_l(x)  = {\cal J}_{l-1}(x) - \frac{l+1}{x}{\cal J}_l(x),
+      \end{displaymath}
+      %
+      を適用すると, 
+      %
+      \begin{equation}
+        {\cal J}_{l-1}\left(a \alpha\right)  = 0.
+      \end{equation}
+      %
+      球ベッセル函数の零点から動径波数 $\alpha$ と
+      成長率 $\sigma = -\nu \alpha^2$ が定められる. 
+
+  \section{非圧縮流体の粘性拡散解}
+
+    半径 $a$ の 3 次元球領域での非圧縮流体の運動を考える. 
+    非圧縮速度場はトロイダル・ポロイダルポテンシャルを用いて
+    次のように表すことができる. 
+    %
+    \begin{eqnarray}
+      \Deqlab{速度分解}
+      \Dvect{u} &=& \Drot(\psi \Dvect{r}) + \Drot\Drot(\phi\Dvect{r}).
+    \end{eqnarray}
+    %
+    ストークス近似の下でこれらポテンシャルの従う方程式は
+    \footnote{
+      方程式の導出に関しては
+      `3 次元回転球殻内での粘性流体(非圧縮ナビエーストークス方程式)の定式化'
+      を参照されたい. 
+    }
+    % 
+    \begin{eqnarray}
+      \Deqlab{トロイダル運動}
+          \DP{}{t} (L_2 \psi)
+       &=& \nu L_2\Dlapla \psi, \\
+      \Deqlab{ポロイダル運動}
+         \DP{}{t} (L_2 \Dlapla \phi)
+       &=& \nu L_2\Dlapla\Dlapla \phi,
+    \end{eqnarray}
+    ここで式中の演算子 $L_2$ は
+    半径 1 の球面上の 2 次元ラプラシアンの逆符号のものであり,
+    % 
+    \begin{eqnarray}
+       L_{2} &\equiv&  -r^{2}\Dlapla +\DP{}{r}r^{2}\DP{}{r}  \nonumber\\
+             &=& -\left[
+                   \frac{1}{\cos^{2}\varphi}\DP[2]{}{\lambda}
+                 +
+                   \frac{1}{\cos\varphi}\DP{}{\varphi}
+                   \left(\cos\varphi\right)\DP{}{\varphi} \right].
+    \end{eqnarray}
+ 
+    運動学的境界条件は, 内外球面にて法線方向の
+    速度成分が 0 となることである. 
+    ポテンシャルで表現すれば,
+    \begin{equation}
+      \phi = 0, \quad \mbox{at} \quad r=a
+    \end{equation}
+    %
+    力学的境界条件が自由すべりの場合は
+    \begin{equation}
+      \Deqlab{速度ポテンシャル自由すべり条件}
+      \DP[2]{\phi}{r} = \DP{}{r}\left(\frac{\psi}{r}\right) = 0,
+      \quad \mbox{at} \quad r=a
+    \end{equation}
+    %
+    粘着条件の場合には, 
+    \begin{eqnarray*}
+      \Deqlab{速度ポテンシャル無次元粘着条件}
+         \DP{\phi}{r} = 0, \quad
+         \psi = 0
+         \quad \mbox{at} \quad r=a
+    \end{eqnarray*}
+
+    \subsection{球面調和関数展開}
+
+      緯度・経度方向には球面調和関数で展開して解くことができる. 
+      以下, その 1 波数成分のみ取りだして扱う. 
+      時間に関しても指数型の解を仮定し, 
+      %
+      \begin{equation}
+        \Deqlab{ポテンシャル球面調和函数展開}
+        \psi(x,y,t)=\tilde{\psi}_{lm}(r)Y_{lm}(\lambda,\varphi)e^{\sigma t},
+        \quad
+        \phi(x,y,t)=\tilde{\phi}_{lm}(r)Y_{lm}(\lambda,\varphi)e^{\sigma t}
+      \end{equation}
+      %
+      これを支配方程式に代入すると, 
+      %
+      \begin{eqnarray*}
+          & &
+          \sigma l(l+1)\tilde{\psi}_{lm} =
+              \nu l(l+1) \left[
+                \frac{1}{r^2}\DD{}{r}\left(r^2\DD{\tilde{\psi}_{lm}}{r}\right)
+                  -\frac{l(l+1)}{r^2}\tilde{\psi}_{lm}\right],\\
+          & &
+          \sigma l(l+1)
+                 \left[\frac{1}{r^2}\DD{}{r}\left(r^2\DD{}{r}\right)
+                        -\frac{l(l+1)}{r^2}\right]\tilde{\phi}_{lm}
+            =
+              \nu l(l+1) 
+                 \left[\frac{1}{r^2}\DD{}{r}\left(r^2\DD{}{r}\right)
+                        -\frac{l(l+1)}{r^2}\right]^2 \tilde{\phi}_{lm}
+      \end{eqnarray*}
+      %
+      したがって $l\neq 0$ のモードに対して
+      \begin{eqnarray}
+        \Deqlab{トロイダルポテンシャル方程式球面調和函数展開}
+          & &
+          \sigma \tilde{\psi}_{lm} =
+              \nu \left[
+                \frac{1}{r^2}\DD{}{r}\left(r^2\DD{\tilde{\psi}_{lm}}{r}\right)
+                  -\frac{l(l+1)}{r^2}\tilde{\psi}_{lm}\right],\\
+          & &
+        \Deqlab{ポロイダルポテンシャル方程式球面調和函数展開}
+          \sigma 
+                 \left[\frac{1}{r^2}\DD{}{r}\left(r^2\DD{}{r}\right)
+                        -\frac{l(l+1)}{r^2}\right]\tilde{\phi}_{lm}
+             = \nu 
+                 \left[\frac{1}{r^2}\DD{}{r}\left(r^2\DD{}{r}\right)
+                        -\frac{l(l+1)}{r^2}\right]^2 \tilde{\phi}_{lm}.
+      \end{eqnarray}
+      
+      境界条件は自由すべりの場合, 
+      %
+      力学的境界条件が
+      \begin{equation}
+        \Deqlab{速度ポテンシャル自由すべり条件}
+        \tilde{\phi}_{lm} = \DD[2]{\tilde{\phi}_{lm}}{r} = 0, \quad
+        \DD{}{r}\left(\frac{\tilde{\psi}_{lm}}{r}\right) = 0,
+        \quad \mbox{at} \quad r=a.
+      \end{equation}
+      %
+      粘着条件の場合には, 
+      \begin{eqnarray*}
+        \Deqlab{速度ポテンシャル無次元粘着条件}
+           \tilde{\phi}_{lm} = \DD{\tilde{\phi}_{lm}}{r} = 0, \quad
+           \tilde{\psi}_{lm} = 0
+           \quad \mbox{at} \quad r=a.
+      \end{eqnarray*}
+
+    \subsection{最大成長率の見積もり}
+
+      境界条件が粘着条件の場合には, 最大成長率が負となることを
+      支配方程式を全積分することで求められる. 
+      トロイダルポテンシャルに関しては, 拡散方程式の両端ディリクレ
+      境界条件の場合と同じであるから最大成長率が負であることが分かる. 
+
+      ポロイダルポテンシャルについては, 演算子 ${\cal D}_l$ を
+      %
+      \begin{displaymath}
+        {\cal D}_l \equiv \frac{1}{r^2}\DD{}{r}\left(r^2\DD{}{r}\right)
+                        -\frac{l(l+1)}{r^2}
+      \end{displaymath}
+      %
+      と定義すると, 任意の 2 つの関数 $f(r),g(r)$ に対して
+      %
+      \begin{eqnarray*}
+        \int_0^a f(r) {\cal D}_l g(r) r^2 dr
+        &=& \int_0^a f
+             \left[\frac{1}{r^2}\DD{}{r}\left(r^2\DD{}{r}\right)
+                        -\frac{l(l+1)}{r^2}\right]g r^2 dr\\
+        &=& \int_0^a f \DD{}{r}\left(r^2\DD{g}{r}\right)
+             - \int_0^a l(l+1)fg dr\\
+        &=& \left[ f r^2\DD{g}{r} \right]_0^a
+             - \int_0^a \DD{f}{r}\left(r^2\DD{g}{r}\right) dr
+             - \int_0^a l(l+1)fg dr\\
+        &=& \left[ f r^2\DD{g}{r} \right]_0^a
+             - \left[ r^2\DD{f}{r} g \right]_0^a
+             + \int_0^a g \DD{}{r}\left(r^2\DD{f}{r}\right)
+             - \int_0^a l(l+1)fg dr\\
+        &=& \left[ f r^2\DD{g}{r} \right]_0^a
+             - \left[ r^2\DD{f}{r} g \right]_0^a
+             + \int_0^a g(r) {\cal D}_l f(r) r^2 dr
+      \end{eqnarray*}
+      %
+      $f=\psi^*_{lm}(r), g={\cal D}_l\psi_{lm}(r)$ と選ぶと
+      境界条件\Deqref{速度ポテンシャル無次元粘着条件}を用いて
+      \begin{eqnarray*}
+        \int_0^a \psi^*_{lm}(r)
+                 {\cal D}_l{\cal D}_l\psi_{lm}(r) r^2 dr        
+        &=& \left[ \psi^*_{lm} r^2\DD{{\cal D}_l\psi_{lm}}{r} 
+            \right]_0^a
+             - \left[ r^2\DD{\psi^*_{lm}}{r}
+                     {\cal D}_l\psi_{lm} \right]_0^a
+             + \int_0^a {\cal D}_l\psi^*_{lm}{\cal D}_l\psi_{lm} r^2 dr\\
+        &=& \int_0^a |{\cal D}_l\psi_{lm}|^2 r^2 dr
+      \end{eqnarray*}
+      
+      ポロイダルポテンシャルの式
+      \Deqref{ポロイダルポテンシャル方程式球面調和函数展開}に
+      $\phi^*_{lm}r^2$ をかけて積分すると
+      \begin{eqnarray*}
+        \sigma \int_0^a
+             \tilde{\phi}^*_{lm}{\cal D}_l\tilde{\phi}_{lm}r^2 dr 
+        &=& \nu \int_0^a
+             \tilde{\phi}^*_{lm}{\cal D}_l{\cal D}_l\tilde{\phi}_{lm}r^2 dr,\\
+      \end{eqnarray*}
+      %
+      左辺は拡散方程式の右辺の式変形と同様に計算できて, 
+      \begin{displaymath}
+        \sigma \int_0^a
+             \tilde{\phi}^*_{lm}{\cal D}_l\tilde{\phi}_{lm}r^2 dr 
+        =-\sigma \int_0^a \left[
+              r^2\left|\DD{\tilde{\phi}_{lm}}{r}\right|^2 
+             + l(l+1) \int_0^a |\tilde{\phi}_{lm}|^2 \right]dr
+      \end{displaymath}
+      %
+      であるから, 
+      \begin{displaymath}
+        -\sigma \int_0^a \left[
+              r^2\left|\DD{\tilde{\phi}_{lm}}{r}\right|^2 
+                       + l(l+1) |\tilde{\phi}_{lm}|^2 \right]dr
+        = \nu\int_0^a |{\cal D}_l\psi_{lm}|^2 r^2 dr, 
+      \end{displaymath}
+      %
+      よって
+      \begin{displaymath}
+        \sigma = - \nu
+           \frac{\Ddsty \int_0^a |{\cal D}_l\psi_{lm}|^2 r^2 dr}
+                {\Ddsty \int_0^a \left[
+                        r^2\left|\DD{\tilde{\phi}_{lm}}{r}\right|^2 
+                        + l(l+1) |\tilde{\phi}_{lm}|^2 \right]dr}.
+      \end{displaymath}
+
+
+    \subsection{一般解}
+
+      拡散方程式の場合と同様に支配方程式を変形すると
+      %
+      \begin{eqnarray*}
+        & & 
+        \frac{1}{r^2}\DD{}{r}\left(r^2\DD{\tilde{\psi}_{lm}}{r}\right)
+          +\left[\frac{-\sigma}{\kappa} -\frac{l(l+1)}{r^2}\right]
+             \tilde{\psi}_{lm}=0,\\
+        & &
+        \left\{
+          \frac{1}{r^2}\DD{}{r}\left(r^2\DD{\tilde{\psi}_{lm}}{r}\right)
+            +\left[\frac{-\sigma}{\kappa} -\frac{l(l+1)}{r^2}\right]
+        \right\}
+        \left[
+          \frac{1}{r^2}\DD{}{r}\left(r^2\DD{}{r}\right)-\frac{l(l+1)}{r^2}
+        \right]
+             \tilde{\psi}_{lm}=0.
+      \end{eqnarray*}
+      %
+      成長率 $\sigma <0$ に対してのこれらの一般解は
+      %
+      \begin{eqnarray}
+        \Deqlab{トロイダルポテンシャル球面調和函数展開一般解}
+        & &
+        \tilde{\psi}_{lm} 
+               = A_1 {\cal J}_l\left(\sqrt{\frac{-\sigma}{\kappa}}r\right),\\
+        & &
+        \Deqlab{ポロイダルポテンシャル球面調和函数展開一般解}
+        \tilde{\phi}_{lm} 
+               = B_1 r^l 
+               + B_2 {\cal J}_l\left(\sqrt{\frac{-\sigma}{\kappa}}r\right) 
+      \end{eqnarray}
+      %
+      ポロイダルポテンシャルに作用する 2 つのカッコでくくられた演算子は
+      交換可能であることに注意されたい.
+
+
+    \subsection{外側粘着条件の場合のトロイダルポテンシャル}
+
+      この場合は拡散方程式での外側ディリクレ問題と同じである. 
+
+    \subsection{外側自由すべり条件の場合のトロイダルポテンシャル}
+
+      この場合の境界条件\Deqref{速度ポテンシャル自由すべり条件}を書き換えると
+      %
+      \begin{displaymath}
+        \DD{\tilde{\psi}_{lm}}{r} - \frac{\tilde{\psi}_{lm}}{r}=0, 
+        \quad {\rm at} \quad r=a
+      \end{displaymath}
+      %
+      これに\Deqref{トロイダルポテンシャル球面調和函数展開一般解}を
+      代入して整理すると
+      %
+      \begin{equation}
+           \alpha{\cal J}'_l\left(a \alpha\right) 
+            -{\cal J}_l\left(a\alpha\right)/a  =0,
+      \end{equation}
+      %
+      この分散関係から動径波数 $\alpha$ と
+      成長率 $\sigma = -\nu \alpha^2$ が定められる. 
+
+      係数 $A_12$ は初期条件から定まる. 
+
+    \subsection{外側粘着条件の場合のポロイダルポテンシャル}
+
+      この場合の境界条件は\Deqref{速度ポテンシャル自由すべり条件}より
+      %
+      \begin{displaymath}
+        \tilde{\phi}_{lm}= \DD{\tilde{\phi}_{lm}}{r}=0, 
+        \quad {\rm at} \quad r=a.
+      \end{displaymath}
+      %
+      一般解\Deqref{ポロイダルポテンシャル球面調和函数展開一般解}を
+      これに代入して整理すると
+      \begin{equation}
+        \left(
+        \begin{array}{cc}
+           a^l & {\cal J}_l\left(a \alpha\right) \\
+           la^{l-1} & \alpha{\cal J}'_l\left(a \alpha\right)
+        \end{array}
+        \right)
+        \left(
+        \begin{array}{c}
+          B_1 \\ B_2 
+        \end{array}
+        \right)
+        =0,
+      \end{equation}
+      %
+      %
+      左辺の係数行列式が 0 なる条件が固有値 $\alpha$ を定める
+      分散関係となる. 
+      %
+      \begin{equation}
+        \left|
+        \begin{array}{cc}
+           a^l      & {\cal J}_l\left(a\alpha\right) \\
+           la^{l-1} & \alpha{\cal J}'_l\left(a\alpha\right)
+        \end{array}
+        \right| = 0.
+      \end{equation}
+      この分散関係から動径波数 $\alpha$ と
+      成長率 $\sigma = -\nu \alpha^2$ が定められる. 
+
+      係数 $B_1, B_2$ の組合せは, 求まった $\alpha$ を用いて
+      %
+      \begin{equation}
+        \left(
+        \begin{array}{c}
+          B_1 \\ B_2 
+        \end{array}
+        \right)
+        = 
+        \left(
+        \begin{array}{c}
+          {\cal J}_l(a\alpha) \\
+          - a^l
+        \end{array}
+        \right)
+      \end{equation}
+      %
+      と与えられる. 
+
+
+    \subsection{上側自由すべり条件の場合のポロイダルポテンシャル}
+
+      この場合の境界条件は\Deqref{速度ポテンシャル自由すべり条件}より
+      %
+      \begin{displaymath}
+        \tilde{\phi}_{lm}= \DD[2]{\tilde{\phi}_{lm}}{r}=0, 
+        \quad {\rm at} \quad r=a
+      \end{displaymath}
+      %
+      これに一般解\Deqref{ポロイダルポテンシャル球面調和函数展開一般解}を
+      代入して整理すると
+      \begin{equation}
+        \left(
+        \begin{array}{cc}
+           a^l & {\cal J}_l\left(a\alpha\right) \\
+           l(l-1)a^{l-2} & \alpha^2{\cal J}''_l\left(a \alpha\right)
+        \end{array}
+        \right)
+        \left(
+        \begin{array}{c}
+          B_1 \\ B_2 
+        \end{array}
+        \right)
+        =0,
+      \end{equation}
+      %
+      左辺の係数行列式が 0 なる条件が固有値 $\alpha$ を定める
+      分散関係となる. 
+      \footnote{
+        球ベッセル函数の 2 階微分は球ベッセルの満たす微分方程式から
+        \begin{displaymath}
+          {\cal J}''= -\frac{2}{r}{\cal J}'
+                      -\left[1-\frac{l(l+1)}{r^2}\right]{\cal J}, \quad
+          {\cal N}''= -\frac{2}{r}{\cal N}'
+                      -\left[1-\frac{l(l+1)}{r^2}\right]{\cal N}
+        \end{displaymath}
+        と計算される. 
+      }
+      %
+      \begin{equation}
+        \left|
+        \begin{array}{cc}
+           a^l & {\cal J}_l\left(a\alpha\right)\\
+           l(l-1)a^{l-2} &  \alpha^2{\cal J}''_l\left(a \alpha\right)
+        \end{array}
+        \right| = 0.
+      \end{equation}
+      この分散関係から動径波数 $\alpha$ と
+      成長率 $\sigma = -\nu \alpha^2$ が定められる. 
+
+      係数 $B_1, B_2$ の組合せは, 求まった $\alpha$ を用いて
+      %
+      \begin{equation}
+        \left(
+        \begin{array}{c}
+          B_1 \\ B_2 
+        \end{array}
+        \right)
+        = 
+        \left(
+        \begin{array}{c}
+           {\cal J}_l\left(a\alpha\right)\\
+           -a^l 
+        \end{array}
+        \right)
+      \end{equation}
+      %
+      で定められる. 
+      
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

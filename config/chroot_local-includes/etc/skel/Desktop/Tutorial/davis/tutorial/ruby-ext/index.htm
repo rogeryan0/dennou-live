@@ -1,0 +1,903 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="test/html; charset=Shift_JIS">
+<title>Ruby拡張ライブラリ作成チュートリアル</title>
+<link rel="stylesheet" href="dennou-ruby.css" type="text/css">
+</head>
+<body>
+<H1>Ruby拡張ライブラリ作成チュートリアル</H1>
+<HR>
+
+<H2>目次</H2>
+<ol>
+<li>準備
+<li>まずはC言語プログラムを呼び出す
+<li>簡単な数値のやりとり
+<li>NArray配列を渡す
+<li>Swigを使ってお手軽変換
+<!--<li>戻り値にNArray配列-->
+<li>参考文献
+</ol>
+
+<H2>準備</H2>
+<p>このチュートリアルではRuby 1.8系列の使用を前提にしています。
+確認はすべてRuby 1.8.4 [i386-Cygwin]で行いました。</p>
+<p>NArrayはVersion 0.5.8を用いています。</p>
+<p>またそれ以外に以外に以下のものが必要です。</p>
+<H3>Cコンパイラ</H3>
+<p>
+Rubyのコンパイルに用いたものと同じものが必要です。
+バイナリパッケージを導入した場合はどのコンパイラでビルドされたものか
+知る必要がありますが、UNIX系ではたいていgccです。
+</p>
+<H3>ruby.h, mkmf.rb</H3>
+<p>
+Rubyをソースコードから自分でビルドした場合はインストールされていると
+思いますが、バイナリパッケージを導入した場合はruby.hやmkmf.rbがあるか
+確認する必要があります。開発用パッケージとして別パッケージで提供
+されていることがあります。
+</p>
+<H3>narray.h, narray_config.h</H3>
+<p>
+NArrayをインストールすれば通常は一緒にインストールされると思いますが、
+もし無ければNArrayのソースコードをダウンロードして展開し、
+</p><p>
+<pre class="source">
+% <span class="command">ruby extconf</span>
+</pre>
+</p><p>
+としてください。narray.hとnarray_config.hを適当な場所に置きます。
+通常はnarray.soと同じディレクトリに置きます。
+</p>
+<H3>Swig</H3>
+<p>
+<a href="http://www.swig.org/">Swig</a>
+はC/C++の関数をスクリプト言語から呼び出せるようにするための
+ラッパー関数自動生成ツールです。
+各プラットフォームでバイナリパッケージが提供されています。
+無ければSwigのホームページからソースコードをダウンロードして
+コンパイルしてください。
+</p>
+<p>このチュートリアルではSwig Version 1.3系列の使用を前提にしています。
+確認はすべてSwig Version 1.3.25にて行いました。</p>
+
+<HR>
+<H2>まずはC言語プログラムを呼び出す</H2>
+
+<p>
+まずは一番簡単なものでRubyからの呼び出し方を練習してみます。
+よくある練習「Hello, world!」です。
+</p>
+
+<p>
+<a href="hello/hello.c">hello.c<a>
+<pre class="source">
+#include &lt;stdio.h&gt;
+void hello()
+{
+  printf(&quot;Hello, world!\n&quot;);
+}
+</pre>
+</p>
+
+<p>
+これをRubyから呼び出すには、Rubyのメソッドとして登録するコードが
+必要になります。
+ここではライブラリ名を&quot;test&quot;としています。
+</p>
+
+<p>
+<a href="hello/test1.c">test1.c</a>
+<pre class="source">
+#include &quot;ruby.h&quot;
+
+void hello();
+
+VALUE wrap_hello(self)
+     VALUE self;
+{
+  hello();
+  return Qnil;
+}
+
+void Init_test()
+{
+  VALUE module;
+
+  module = rb_define_module(&quot;Test&quot;);
+  rb_define_module_function(module, &quot;hello&quot;, wrap_hello, 0);
+}
+</pre>
+</p>
+
+<p>
+Rubyでrequire 'test'とすればこのライブラリが読み込まれます。
+Rubyはライブラリを読み込んだらまず
+「Init_ライブラリ名」
+という関数を実行します。
+ここにC言語で書いた関数をメソッドとして登録するコードを書きます。
+ここではTestというモジュールを作成して、
+そこにhelloという名前でモジュール関数を登録しています。
+</p>
+<p>
+モジュールを作成するには以下の関数を用います。
+</p>
+
+<p>
+<pre class="source">
+VALUE rb_define_module(const char *name);
+</pre>
+</p>
+<ul>
+<li>引数はモジュールの名前
+</ul>
+<p>
+ここでVALUE型構造体とはRubyのオブジェクトを格納している構造体です。
+</p>
+
+<p>
+C言語の関数をRubyのモジュール関数として登録するにはいくつかの方法がありますが、
+ここでは最も簡単な方法を示します。
+
+<pre class="source">
+void rb_define_module_function
+           (VALUE module, const char *name, VALUE (*func)(), int argc);
+</pre>
+</p>
+
+
+<ul>
+<li>
+第一引数には関数を追加するモジュールを格納したVALUE型構造体を与えます。
+<li>
+第二引数にはRubyにおける関数名を与えます。
+<li>
+第三引数には実際に呼び出すC言語の関数を与えます。
+関数の型はVALUE型です。
+<li>
+最後の引数は呼び出す関数の引数の数ですが、
+selfというオブジェクトが第一引数として渡されるため、
+ラッパー関数に渡される引数の数はこれより1つ多くなります。
+</ul>
+
+
+<p>
+Rubyから直接呼び出す関数は戻り値としてRubyのオブジェクトを返す
+必要があります。
+今は特に何も戻り値が必要でないので、Rubyの「nil」に
+対応する「Qnil」という定数を与えています。
+</p>
+
+<p>
+このプログラムをコンパイルしてみましょう。
+Rubyには拡張ライブラリをコンパイルするためのMakefileを作る仕組みが
+あります。
+必要なソースコードを一つのディレクトリにまとめ、同じディレクトリに
+「extconf.rb」という名前のファイルを作り、以下の内容を書きます。
+</p>
+
+<p>
+<a href="hello/extconf.rb">extconf.rb<a>
+<pre class="source">
+require 'mkmf'
+create_makefile('test')
+</pre>
+</p>
+
+<p>
+ここではtestという名前で拡張ライブラリを作るための
+Makefileを作成するように指示しています。
+</p>
+
+<p>
+Makefileを作り、Makeします。
+
+<pre class="source">
+% <span class="command">ruby extconf.rb</span>
+% <span class="command">make</span>
+</pre>
+</p>
+
+<p>
+これにより「test.so」ができます（環境によっては拡張子が異なるかもしれません）。
+</p>
+<p>
+これをRubyから実行してみましょう。
+
+<pre class="source">
+% <span class="command">ruby -r'test' -e'Test.hello'</span>
+Hello world!
+</pre>
+</p>
+
+
+<HR>
+<H2>簡単な数値のやりとり</H2>
+<p>
+まずはRubyから呼び出したい関数を作ってみましょう。
+例として二つの数値を足す関数を考えます。
+</p>
+<p>
+<a href="add/add.c">add.c</a>
+<pre class="source">
+int add(a, b)
+     int a, b;
+{
+  return( a + b );
+}
+</pre>
+</p>
+
+<p>
+この関数が正しく動くことを確認するために、
+これを呼び出すCのプログラムを書いてみましょう。
+</p>
+
+<p>
+<a href="add/main.c">main.c</a>
+<pre class="source">
+#include &lt;stdio.h&gt;
+
+int add(int a, int b);
+
+int main()
+{
+  int a, b;
+
+  a = 1;
+  b = 2;
+  printf( &quot;%d + %d = %d\n&quot;, a, b, add(a, b) );
+}
+</pre>
+</p>
+
+<p>
+<pre class="source">
+% <span class="command">cc -o add.exe add.c main.c</span>
+% <span class="command">./add.exe</span>
+1 + 2 = 3
+</pre>
+</p>
+
+<p>
+正しく動くことが確認できました。
+</p>
+
+<p>
+これをRubyから呼び出すには、データの変換が必要です。
+Rubyでは数値を含めすべてのものがオブジェクトとして扱われます。
+個々のオブジェクトはCの構造体として実装されています。
+ですからC言語で書いたライブラリと数値のやりとりをするには
+構造体から数値を取り出したり、数値を構造体に入れる必要があります。
+整数型や浮動小数点型は簡単に相互変換するマクロ、関数があります。
+</p>
+<ul>
+<li>
+RubyのIntegerオブジェクト -> int型<br>
+FIX2INT
+<li>
+Rubyの任意のオブジェクト -> int型<br>
+NUM2INT
+<li>
+31bit以内に収まるint型 -> RubyのIntegerオブジェクト<br>
+INT2FIX
+<li>
+整数 -> RubyのInteger/Bignumオブジェクト<br>
+INT2NUM
+<li>
+Rubyの任意のオブジェクト -> double型<br>
+NUM2DBL
+<li>
+float型 -> RubyのFloatオブジェクト<br>
+rb_float_new(float)
+</ul>
+<p>
+これらを用いてデータを変換しC言語で書いた関数を呼び出すラッパー関数を
+作ってみます。
+</p>
+<p>
+<a href="add/test2.c">test2.c</a>
+<pre class="source">
+#include &quot;ruby.h&quot;
+
+int add(int a, int b);
+
+VALUE wrap_add(self, aa, bb)
+     VALUE self, aa, bb;
+{
+  int a, b, result;
+  
+  a = FIX2INT(aa);
+  b = FIX2INT(bb);
+  result = add(a,b);
+  return INT2FIX(result);
+}
+
+void Init_test()
+{
+  VALUE module;
+
+  module = rb_define_module(&quot;Test&quot;);
+  rb_define_module_function(module, &quot;add&quot;, wrap_add, 2);
+}
+</pre>
+</p>
+
+<p>
+Makefileを作り、Makeします。extconf.rbは先程と同じものを用います。
+
+<pre class="source">
+% <span class="command">ruby extconf.rb</span>
+% <span class="command">make</span>
+</pre>
+</p>
+
+<p>
+Rubyから実行してみましょう。
+
+<pre class="source">
+% <span class="command">ruby -r'test' -e'Test.add(1,2)'</span>
+3
+</pre>
+</p>
+
+
+<HR>
+<H2>NArray配列を渡す</H2>
+<p>
+まずはRubyから呼び出したい関数を作ってみましょう。
+例として一次元配列の全要素をかけ算する関数を考えます。
+</p>
+
+<p>
+<a href="mul_all/mul_all.c">mul_all.c<a>
+<pre class="source">
+float mul_all(array,nx)
+     float array[];
+     int nx;
+{
+  float result = 1.0;
+  int i;
+
+  for(i=0; i&lt;nx; i++){
+    result = result * array[i];
+  }
+  return(result);
+}
+</pre>
+</p>
+
+<p>
+この関数が正しく動くことを確認するために、
+これを呼び出すCのプログラムを書いてみましょう。
+</p>
+
+<p>
+<a href="mul_all/main.c">main.c<a>
+<pre class="source">
+#include &lt;stdio.h&gt;
+
+float mul_all(float array[], int nx);
+
+int main()
+{
+  int n = 5;
+  float a[n];
+  int i;
+  
+  for(i=0; i&lt;n; i++){
+    a[i] = i+1;
+    printf(&quot;%f\n&quot;,a[i]);
+  }
+  printf(&quot;mul_all()=%f\n&quot;, mul_all(a,n));
+}
+</pre>
+
+<pre class="source">
+% <span class="command">cc -o mul_all.exe mul_all.c main.c</span>
+% <span class="command">./mul_all.exe</span>
+1.000000
+2.000000
+3.000000
+4.000000
+5.000000
+mul_all()=120.000000
+</pre>
+</p>
+
+
+<p>
+正しく動くことが確認できました。
+</p>
+
+<p>
+これをRubyから呼び出す際に前回と異なるのは
+オブジェクトの変換です。
+NArrayはnarray.hの中で以下のような構造体として定義されています。
+Rubyのオブジェクトを格納しているVALUE構造体にはこのNARRAY構造体への
+ポインタが格納されています。
+
+<pre class="source">
+/* struct for Numerical Array */
+struct NARRAY {
+  int    rank;    /* # of dimension */
+  int    total;   /* # of total element */
+  int    type;    /* data type */
+  int   *shape;
+  char  *ptr;     /* pointer to data */
+  VALUE  ref;     /* NArray object wrapping this structure */
+};
+</pre>
+</p>
+
+<p>
+必要なラッパー関数は以下のようになります。
+</p>
+
+<p>
+<a href="mul_all/test3.c">test3.c<a>
+<pre class="source">
+#include &quot;ruby.h&quot;
+#include &quot;narray.h&quot;
+
+float mul_all(float array[], int nx);
+
+VALUE wrap_mul_all(self, na)
+     VALUE self, na;
+{
+  VALUE na2;
+  struct NARRAY *n_na;
+  float result;
+
+  na2 = na_cast_object(na, NA_SFLOAT);
+  GetNArray(na2,n_na);
+  result = mul_all((float*)n_na->ptr, n_na->total);
+  return( rb_float_new(result) );
+}
+
+void Init_test()
+{
+  VALUE module;
+
+  rb_require(&quot;narray&quot;);
+  module = rb_define_module(&quot;Test&quot;);
+  rb_define_module_function(module, &quot;mul_all&quot;, wrap_mul_all, 1);
+}
+</pre>
+</p>
+
+<p>
+ここではGetNArrayでオブジェクトからNArrayの構造体を取り出し、
+その中から配列へのポインタを取り出しています。
+その際、na_cast_objectで配列をSFloat型に強制的に型変換しています。
+もし型が違うとメモリ破壊エラーを起こすからです。
+注意すべきこととしては、配列の中身を操作する際には
+ポインタ変数に代入を行ってはいけないということです。
+ポインタの指す実メモリを読み書きしてください。
+そうしないとオブジェクトが破壊され、メモリ破壊エラーを起こします。
+</p>
+
+<p>
+このプログラムをコンパイルするのにはやはりextconf.rbを作成して
+Makefileを作る必要があります。ここではnarray.hを読み込んでいますので、
+以下のように書きます。
+</p>
+
+<p>
+<a href="mul_all/extconf.rb">extconf.rb<a>
+<pre class="source">
+require 'mkmf'
+
+dir_config('narray',$sitearchdir,$sitearchdir)
+
+if ( ! ( have_header('narray.h') && have_header('narray_config.h') ) ) then
+   print <<-EOS
+   ** configure error **  
+   Header narray.h or narray_config.h is not found. If you have these files in 
+   /narraydir/include, try the following:
+
+   % ruby extconf.rb --with-narray-include=/narraydir/include
+
+   EOS
+   exit(-1)
+end
+
+if /cygwin|mingw/ =~ RUBY_PLATFORM
+  unless have_library('narray')
+   print <<-EOS
+   ** configure error **  
+   libnarray.a is not found.
+   % ruby extconf.rb --with-narray-lib=/narraydir/lib
+
+   EOS
+   exit(-1)
+  end    
+
+end
+ 
+create_makefile('test')
+</pre>
+</p>
+
+<p>
+作成したライブラリをRubyから呼んでみましょう。
+Cygwin以外の環境では一行目の
+require 'narray'は要らないかもしれません。
+
+<pre class="source">
+% <span class="command">ruby extconf.rb</span>
+% <span class="command">make</span>
+% <span class="command">irb</span>
+irb(main):001:0> require 'narray'
+=> true
+irb(main):002:0> require 'test'
+=> true
+irb(main):003:0> a = NArray.sfloat(5).indgen!(1,1)
+=> NArray.sfloat(5): 
+[ 1.0, 2.0, 3.0, 4.0, 5.0 ]
+irb(main):004:0> Test.mul_all(a)
+=> 120.0
+</pre>
+</p>
+
+
+<p>
+上の例では関数をモジュール関数としてRubyに登録しましたが、
+もうちょっとRubyらしい使い方をしてみましょう。
+mul_allをNArrayのクラスメソッドとして登録してみます。
+ラッパー関数を以下のようにします。
+</p>
+
+<p>
+<a href="mul_all/test4.c">test4.c<a>
+<pre class="source">
+#include &quot;ruby.h&quot;
+#include &quot;narray.h&quot;
+
+float mul_all(float array[], int nx);
+
+VALUE wrap_mul_all(self)
+     VALUE self;
+{
+  VALUE na2;
+  struct NARRAY *n_na;
+  float result;
+
+  na2 = na_cast_object(self, NA_SFLOAT);
+  GetNArray(na2,n_na);
+  result = multiple((float*)n_na->ptr, n_na->total);
+  return( rb_float_new(result) );
+}
+
+void Init_test()
+{
+  VALUE class_na;
+
+  rb_require(&quot;narray&quot;);
+  class_na = rb_const_get(rb_cObject, rb_intern(&quot;NArray&quot;));
+  rb_define_method(class_na, &quot;mul_all&quot;, wrap_mul_all, 0);
+}
+</pre>
+</p>
+
+<p>
+ここではselfという引数の中に呼び出し元であるNArrayオブジェクトが
+格納されています。
+</p>
+
+<p>
+コンパイルして使ってみましょう。
+
+<pre class="source">
+% <span class="command">ruby extconf.rb</span>
+% <span class="command">make</span>
+% <span class="command">irb</span>
+irb(main):001:0> require 'narray'
+=> true
+irb(main):002:0> require 'test'
+=> true
+irb(main):003:0> NArray.sfloat(5).indgen!(1,1).mul_all
+=> 120.0
+</pre>
+</p>
+
+<p>
+ちょっとスマートになった気がしませんか。
+</p>
+
+<HR>
+<H2>Swigを使ってお手軽変換</H2>
+<p>
+ラッパー関数を作成する作業は、数が少ないときには
+簡単ですが、数が増えると大変です。
+特に大規模なライブラリの移植を考えているときには
+同じような作業を繰り返さなくてはいけません。
+
+このようなときに便利なものがあります。
+ラッパー関数を自動生成してくれる
+<a href="http://www.swig.org/">Swig</a>
+というツールがあります。
+</p>
+
+<p>
+ここではSwig Version 1.3.25 (Compiled with g++ [i686-pc-cygwin])
+を使って解説していきます。
+</p>
+
+<H3>簡単な数値のやりとり</H3>
+<p>
+まずは簡単な数値のやりとりから練習しましょう。
+Swigを使ってラッパー関数を作るときには拡張子が「.i」のファイルに
+Cの関数のプロトタイプ宣言を記述します。
+ソースコード本体からプロトタイプ宣言を切り離してヘッダーファイルに
+まとめている場合はヘッダーファイルを読み込めば作業が楽になります。
+</p>
+
+<p>
+先程練習に使った関数です。
+</p>
+<p>
+<a href="add/add.c">add.c</a>
+<pre class="source">
+int add(a, b)
+     int a, b;
+{
+  return( a + b );
+}
+</pre>
+</p>
+
+<p>
+これに対するラッパー関数を作成するには、
+Swigに対する入力ファイルとして次のようなものを作成します。
+</p>
+<p>
+<a href="add/test5.i">test5.i</a>
+<pre class="source">
+%module test
+%{
+%}
+
+extern int add(int a, int b);
+</pre>
+</p>
+
+<p>
+ここでは
+「%module test」で「Test」というモジュールに
+関数を作成することを指示しています。
+それに引き続く「%{ ... %}」の中に必要なインクルードファイルなどを記述します。
+</p>
+
+<p>
+これをSwigで処理してラッパー関数を作ります。
+
+<pre class="source">
+% <span class="command">swig -ruby test5.i</span>
+</pre>
+</p>
+<p>
+うまくいけば「test5_wrap.c」というファイルが生成されます。
+</p>
+
+<p>
+コンパイルします。Makefileの作成にはやはり以下の内容のextconf.rbを利用します。
+</p>
+<p>
+<a href="add/extconf.rb">extconf.rb</a>
+<pre class="source">
+require 'mkmf'
+create_makefile('test')
+</pre>
+<pre class="source">
+% <span class="command">ruby extconf.rb</span>
+% <span class="command">make</span>
+% <span class="command">ruby -r'test' -e'p Test.add(1,2)'</span>
+3
+</pre>
+</p>
+<p>
+自分でラッパー関数を書いたときと同じように動くことが分かります。
+</p>
+
+<H3>NArray配列を渡す</H3>
+<p>
+次に一次元NArray配列のかけ算を行う関数をラップしてみましょう。
+<a href="mul_all/mul_all.c">mul_all.c</a>
+に対するSwig入力ファイルは次のようになります。
+</p>
+<p>
+
+<a href="mul_all/test6.i">test6.i</a>
+<pre class="source">
+%module test
+%{
+#include &quot;narray.h&quot;
+%}
+
+%typemap(ruby,in) (float *NARRAY, int LENGTH ){
+  VALUE na;
+  struct NARRAY *n_na;
+
+  na = na_cast_object($input, NA_SFLOAT);
+  GetNArray(na, n_na);
+  $1 = (float*)n_na->ptr;
+  $2 = n_na->total;
+}
+
+extern float mul_all(float *NARRAY, int LENGTH);
+</pre>
+</p>
+
+<p>
+NArrayは標準のデータ型ではないので、Swigに変換の仕方を教えてあげる必要が
+あります。それを行っているのが「%typemap」の部分です。
+</p>
+
+<p>
+まず一行目の
+<pre class="source">
+%typemap(ruby,in) (float *NARRAY, int LENGTH ){
+</pre>
+</p>
+<p>
+ですが、ここではどの引数に対する処理であるかを示しています。
+<pre class="source">
+(ruby,in)
+</pre>
+</p>
+<p>
+はRubyに変換するときの処理で、関数への入力として用いられる引数に
+対する処理であることを示しています。次に
+<pre class="source">
+(float *NARRAY, int LENGTH )
+</pre>
+</p>
+<p>
+は、関数のプロトタイプ宣言において
+この名前が使われている引数の組に対する処理であることを示します。
+</p>
+
+<p>
+二行目以降には以前ラッパー関数に書いたのと同じようにNARRAY構造体への
+ポインタを取り出すコードを書いています。
+ここで用いられている特殊な変数名として
+「$input」「$1」「$2」があります。
+「$input」はRubyから与えられるVALUE型引数オブジェクトになります。
+「$1」「$2」はC言語の関数へ渡す引数になります。
+引数の型は一行目で指示したとおりになります。
+</p>
+
+<p>
+ここでは二つの引数を一度に処理していますが、
+このようにまとめて処理すると、Ruby側からは引数が一つしか見えません。
+つまりNArrayオブジェクトを一つ引数として渡すと、
+float型配列へのポインタとint型数値がmul_allに渡されます。
+戻り値のfloat型数値はFloat型オブジェクトとしてRuby側に渡されます。
+</p>
+
+<p>
+Swigで処理してコンパイルしてみましょう。
+<a href="mul_all/extconf.rb">extconf.rb</a>
+は「NArray配列を渡す」で用いたものを再利用してください。
+
+<pre class="source">
+% <span class="command">swig -ruby test6.i</span>
+% <span class="command">ruby extconf.rb</span>
+% <span class="command">make</span>
+% <span class="command">irb</span>
+irb(main):001:0> require 'narray'
+=> true
+irb(main):002:0> require 'test'
+=> true
+irb(main):003:0> Test.mul_all(NArray.sfloat(5).indgen!(1,1))
+=> 120.0
+</pre>
+</p>
+
+<!--
+<HR>
+<H2>戻り値にNArray配列</H2>
+<p>
+計算結果としてNArray配列をRuby側に渡したいこともあると思います。
+そのような場合には以下の二つの方法が考えられます。
+</p>
+<ol>
+<li>引数として出力用のNArrayオブジェクトを渡しておき、
+そのNArrayの中身を書き換える。
+<li>ラッパー関数の中で新たにNArrayオブジェクトを作成して
+計算結果を格納し、関数の戻り値としてNArray配列を渡す。
+</ol>
+<p>
+一番目は入力用にNArrayオブジェクトを渡す場合と同じです。
+ここでは二番目の方法について説明していきます。
+</p>
+
+<p>
+NArrayオブジェクトをCのプログラム中で作成するには以下の関数を用います。
+<pre class="source">
+VALUE na_make_object(int type, int rank, int *shape, VALUE klass);
+</pre>
+</p>
+<ul>
+<li>第一引数は変数の型です。以下のものがnarray.hに定義されています。
+<pre class="source">
+enum NArray_Types {
+  NA_NONE,
+  NA_BYTE,      /* 1 */
+  NA_SINT,      /* 2 */
+  NA_LINT,      /* 3 */
+  NA_SFLOAT,    /* 4 */
+  NA_DFLOAT,    /* 5 */
+  NA_SCOMPLEX,  /* 6 */
+  NA_DCOMPLEX,  /* 7 */
+  NA_ROBJ,      /* 8 */
+  NA_NTYPES     /* 9 */
+};
+</pre>
+<li>第二引数は配列の次元です。
+<li>第三引数は配列の各次元の要素数です。
+<li>最後の引数にはNArrayクラスを入れる必要があります。
+以下のようにすればNArrayクラスへの参照を取り出すことができます。
+<pre class="source">
+klass = rb_const_get(rb_cObject, rb_intern("NArray"));
+</pre>
+</ul>
+
+<p>
+例として一次元配列の値を逆順に並べ替えるプログラムを考えましょう。
+
+<pre class="source">
+void invert(in, out, nx)
+  int *in, *out, nx;
+{
+  int i;
+
+  for(i==0; i&lt;nx; i++){
+    out[nx-i-1] = in[i];
+  }
+  return 0;
+}
+</pre>
+</p>
+
+
+
+
+<p>（続きはまだ書いていません）</p>
+-->
+
+<HR>
+<H2>参考文献</H2>
+<ul>
+<li>
+<a href="http://www.swig.org/">
+http://www.swig.org/
+</a><br>
+Swig本家<br>
+<a href="http://www.swig.org/Doc1.3/index.html">
+http://www.swig.org/Doc1.3/index.html
+</a><br>
+本家のドキュメント
+
+<li>
+<a href="http://www.gfd-dennou.org/arch/ruby/tutorial/swig/">
+http://www.gfd-dennou.org/arch/ruby/tutorial/swig/
+</a><br>
+電脳Rubyチュートリアル<br>
+Swigによる拡張ライブラリー自動生成のチュートリアル<br>
+やや古いが基本は同じ
+
+<li>
+README.EXT.ja<br>
+Rubyの拡張ライブラリの作り方<br>
+Rubyソースコードパッケージの中にある
+
+<li>
+narray.h<br>
+NArrayのヘッダファイル<br>
+基本的にドキュメントがないのでヘッダを読むしかない
+</ul>
+
+</body>
+</html>

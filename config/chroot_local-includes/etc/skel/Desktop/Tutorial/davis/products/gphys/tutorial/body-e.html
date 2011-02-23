@@ -1,0 +1,3518 @@
+<html>
+
+<head>
+  <!-- base href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/" -->
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>GPhys tutorial</title>
+
+  <link rel="stylesheet" href="dennou-ruby.css" type="text/css">
+</head>
+
+<body>
+
+<br>
+<h1> GPhys tutorial</h1>
+
+<p></p><h4> Takeshi Horinouchi.</h4>
+<p> Created: August in 2003</p>
+<p> The last revision: August 2006 </p>
+<!-- <p>最終改訂: 2005年7月21日 <br> -->
+
+<p>This page was transrated by
+  <a href="http://www.ocn.ne.jp/translation/webpage.html">OCN</a>
+  automatically.
+</p>
+
+<hr>
+
+<h2> Contents</h2>
+
+<!-- 目次は % ruby make_index.rb body-e.html で作成する -->
+
+<hr>
+<h2><a name="h2:hajime"> First.</a></h2>
+
+<p> GPhys is the class to deal with data of the physical quantity. To
+assume here becomes latticed from additional information about the
+price of the physical quantity in the several information and each
+point and also its physical quantity about the grid point by the
+physical quantity of scatter-ized continuum. We assume that it's
+explained gradually for details, and GPhys is convenient at such time.</p><ul>
+  <li> An analysis would like to visualize data in the file of NetCDF and the GrADS, grib form.</li><li> I'd like to develop simulation code of fluid easily.</li></ul>
+<p> The file format which can handle GPhys is 3 of NetCDF, GrADS,grib
+for the moment. Support of grib will be one GPhys 0.4.0. I'd like to
+increase the supported form in the future.</p><br>
+
+<p> I'll touch the 2nd simulation by this tutorial and concentrate
+visualization in handling of the data which becomes a file already in
+the center. The one which exists in a local host basically is handled,
+but data also indicates an example of the all easy Thurber and client
+who access the data which exists in a remote host.</p><br>
+
+<p> At below GPhys. Drawing library of a NI accessory An example using
+GGraph comes out much. But. GGraph? Thoroughly. GPhys. It's in the
+position as one of the use examples which are so, GPhys. It isn't the
+mandatory component which is so. Therefore even if there are no GGraph
+and <a href="http://ruby.gfd-dennou.org/products/ruby-netcdf/" target="_top">RubyDCL</a> of the subcontractor for itself, GPhys moves (It's used by the shape that I tell <a href="#h2:gphys%20nakami">here</a> to have written it with <tt>require "numru/gphys" in that case.) Independently, the user of GPhys can develop his drawing library with GGraph. For example <a href="http://ruby.gfd-dennou.org/products/gave/" target="_top">gave</a> of a graphical user interface isn't using GGraph.</tt></p><tt><br>
+
+<a name="h3:version_used">
+</a></tt><p></p><h3><tt><a name="h3:version_used"> The version of used GPhys</a></tt></h3><tt><a name="h3:version_used"><br>
+</a>
+
+</tt><p><tt> The sample program in this tutorial was executed and checked in <a href="http://ruby.gfd-dennou.org/products/gphys/gphys-0.4.0.tar.gz">GPhys-0.4.0</a>, using the new function by which the part is <a href="http://ruby.gfd-dennou.org/products/gphys/gphys-0.5.0.tar.gz">GPhys-0.5.0</a>,
+when, it was checked in 0.5.0 (A related one was a part of GDir and was
+specified in the body). Many programs also move in 0.3.5.</tt></p><hr>
+<tt><a name="h2:refman">
+</a></tt><p></p><h2><tt><a name="h2:refman"> Document</a></tt></h2><tt><a name="h2:refman"><br>
+</a>
+
+</tt><p><tt> I have here for a reference manual of GPhys:.</tt></p><ul>
+<tt>  </tt><li><tt> <a href="http://ruby.gfd-dennou.org/products/gphys/doc/" target="_top">GPhys reference manual</a></tt></li></ul>
+
+<p><tt> It's made in only partial way up to now, but a manual of drawing library GGraph mentioned later is maintained.</tt></p><tt><br>
+
+</tt><hr>
+
+<tt><a name="h2:link">
+</a></tt><p></p><h2><tt><a name="h2:link"> Link</a></tt></h2><p></p>
+<ul>
+<tt><a name="h2:link"> </a></tt><p></p><li><tt><a name="h2:link"> </a><a href="http://www.gfd-dennou.org/arch/ruby/doc-link-e.htm">Documentation link</a>: Manuals of various resources</tt></li><li><tt> <a href="http://ruby.gfd-dennou.org/products/gphys/" target="_top">GPhys home</a></tt><ul>
+<tt>     </tt><li><tt> <a href="http://ruby.gfd-dennou.org/products/gphys/doc/" target="_top">Reference manual</a></tt></li><li><tt> <a href="http://ruby.gfd-dennou.org/products/gphys/gphys-intro-E/" target="_top">Overview of GPhys</a></tt></li></ul>
+<tt> </tt></li>
+</ul>
+
+<hr>
+<tt><a name="h2:install">
+</a></tt><p></p><h2><tt><a name="h2:install"> Installation</a></tt></h2><tt><a name="h2:install"><br>
+</a>
+
+</tt><p></p><h3><tt> Installation of a package</tt></h3>
+
+<p><tt> Since putting it in several OS, it can be installed
+automatically including a dependence library. Refer to a "installing,
+guide" section of a <a href="http://ruby.gfd-dennou.org/index.htm" target="_top">Dennou Ruby home page.</a></tt></p><h3><tt><a href="http://ruby.gfd-dennou.org/index.htm" target="_top"> Installation from a source</a></tt></h3>
+
+<p>
+Hereinafter we assume that the version of GPhys is 0.3.0. GPhys is
+written only in Ruby, so installation is just copied in a suitable
+pass. Below does that:.
+<table width="80%"><tr><td><pre class="source">
+% <span class="command">tar xvzf gphys-0.4.0.tar.gz</span> 
+% <span class="command">cd gphys-0.4.0</span> 
+% <span class="command">ruby install.rb</span>
+</pre></td></tr></table>
+
+<p>But, there is something to have to install variously in front of it. Please refer to a <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys" target="_top">GPhys home page</a>
+for more information. A necessary one is NArray, NArrayMiss,RubyNetCDF,
+RubyDCL. There is also something which needs RubyFFTW3 in the function
+of FFT. Like mentioning above if it isn't visualized, there may be no
+RubyDCL.</p><br>
+
+<hr>
+<h2><tt><a name="h2:data"> The data used in this tutorial</a></tt></h2>
+
+<h3><tt><a name="h3:netcdf data"> NetCDF data</a></tt></h3>
+
+</tt><p> A NetCDF file as <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/T.jan.nc"><tt>T.jan.nc</tt></a> is included in a distribution package of GPhys for tests, so that will be used (<tt>in the subdirectory as testdata</tt>). The same one can also be downloaded from <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/T.jan.nc">here</a>.
+The contents are the climate value of January of the temperature of the
+whole ball by a NCEP re-analysis. We assume that this file is copied in
+a directory for work and the following menu is carried out there.</p>
+
+</a></tt><p><tt><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/T.jan.nc"> </a><a name="ncdump T.jan.nc">First, I'll see the outline of this file. Command ncdump of a NetCDF accessory is used.</a></tt>
+<table width="80%"><tr><td><pre class="source">
+% <span class="command">ncdump -c T.jan.nc</span> 
+netcdf.  T.jan { 
+dimensions:
+        lon  =  36 ; 
+        lat  =  19 ; 
+        level  =  9 ; 
+variables:
+        float  lon (lon)  ;
+                lon:units  =  " degrees_east"  ;
+                lon:long_name  =  " Longitude"  ;
+                lon:actual_range  =  0.f, 357.5f ; 
+        float  lat (lat)  ;
+                lat:units  =  " degrees_north"  ;
+                lat:actual_range  =  90.f, -90.f ; 
+                lat:long_name  =  " Latitude"  ;
+        float  level (level)  ;
+                level:units  =  " millibar"  ;
+                level:long_name  = "Level" ;
+                level:positive = "down" ;
+                level:GRIB_id = 100s ;
+                level:GRIB_name = "hPa" ;
+                level:actual_range = 10.f, 1000.f ;
+        float T(level, lat, lon) ;
+                T:long_name = "Monthly Mean Air temperature" ;
+                T:actual_range = -72.66724f, -24.35f ;
+                T:units = "degC" ;
+                T:add_offset = 0.f ;
+                T:scale_factor = 1.f ;
+                T:missing_value = -9.96921e+36f ;
+..snip.. 
+
+data: 
+
+ lon = 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 
+    160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290,   
+    300, 310, 320, 330, 340, 350 ; 
+
+ lat = 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, -10, -20, -30, -40, -50, -60,
+    -70, -80, -90 ; 
+
+ level = 1000, 850, 600, 400, 250, 150, 70, 30, 10 ;
+}
+</pre></td></tr></table>
+
+<tt><a name="ncdumped"></a>
+</tt></p><p><tt> Original one NCEP. The data is level. 2.5 times of
+resolution. I make it rough here and have reserved the data size. Data
+has been also killed in vertical direction. The temperature <tt>T.</tt>
+The HA longitude. A parallel. By three-dimensional data of the
+pressure. But, it's a longitudinal axis "It turns around fast." It's a
+style of a C language, so dimensional indication of ncdump </tt>is <tt>, T (level, lat, lon), but the dimension is placed on the reverse by order </tt>of <tt>lon,
+lat, level by multidimensional data of Ruby (This is a style of NArray
+and a multidimensional data library of all RubyNetCDF and GPhys, etc.
+is based. Therefore, as Fortran, it's how to place, an arrangement
+subscript is added to a Array class in Ruby, and it always starts from
+a zero.) The longitude, latitude and high grid point value are stocked
+in one dimension variable<tt> <tt><tt>lon</tt>, </tt>lat, level</tt> with the same name as a dimensional name.</tt></p><tt><br>
+
+</tt><ul>
+<tt>  </tt><li><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/T.jan.nc">Download : NetCDF file T.jan.nc</a></tt></li></ul>
+
+<tt><a name="h3:grads data">
+</a></tt><p></p><h3><tt><a name="h3:grads data"> GrADS data</a></tt></h3><tt><a name="h3:grads data"><br>
+</a>
+
+</tt><p><tt> Even the GrADS form has prepared something of the same
+contents basically with NetCDF data above-mentioned. This is also
+included in a distribution package of GPhys. In case of GrADS, I split
+up into a control file of a text format and a binary data file. Like
+mentioning later it's the one of a control file to use it for a
+bootstrap for reading. It's necessary to download a data file in the
+same directory, but that may forget the file name.</tt></p><ul>
+<tt>  </tt><li><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/T.jan.ctl">Download : GrADS control file T.jan.ctl</a></tt></li><li><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/T.jan.dat">Download : GrADS data file T.jan.dat</a></tt></li></ul>
+
+<tt><a name="h3:grib data">
+</a></tt><p></p><h3><tt><a name="h3:grib data"> grib data</a></tt></h3><tt><a name="h3:grib data"><br>
+</a>
+
+</tt><p><tt> Even the (grib ver.1) form has prepared something of the
+same contents basically with NetCDF data above-mentioned. This is also
+included in a distribution package of GPhys. It's GPhys after 0.4.0 to
+correspond to the grib form. grib ver.2 isn't being supported. grib 2
+isn't used so much for the moment as a practical problem, and much
+software doesn't correspond.</tt></p><ul>
+<tt>  </tt><li><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/T.jan.grib">Download : grib file T.jan.grib</a></tt></li></ul>
+
+<hr>
+<tt><a name="h2:toriaezu">
+</a></tt><p></p><h2><tt><a name="h2:toriaezu"> Let's visualize</a></tt></h2><tt><a name="h2:toriaezu"><br>
+</a>
+
+<a name="h3:saisoku contour">
+</a></tt><p></p><h3><tt><a name="h3:saisoku contour"> Fastest drawing (Contour)</a></tt></h3><tt><a name="h3:saisoku contour"><br>
+</a>
+
+</tt><p><tt> I'll write a figure right away. Graphic library GGraph for
+GPhys visualization is included in a GPhys distribution package, so
+that will be used. GGraph is a module and offers the drawing method as
+the module function. For example the method on which a contour figure is
+written (the module function) </tt>is <tt>GGraph::contour. Further
+GPhys and GGraph have put it in a module as NumRu and have protected
+name space like other computer Ruby libraries.
+<a name="full_name_numru"></a>
+Therefore a full name
+will be <tt><tt>NumRu:</tt>:GPhys,NumRu::GGraph</tt>.</tt></p><tt><br>
+
+</tt><p><tt> In the two-dimensional drawing method in GGraph (<tt>contour</tt>, <tt>tone</tt>),
+it chose the first grid point automatically for the 3th, 4th, .. dimensions, if the data has more than three dimensions.
+therefore the following
+program indicates the temperature of the 3rd dimension of first grid
+point = undermost layer (1000hPa) (A line number is put for convenience
+of the explanation. It isn't included actually.).</tt></p>
+<p><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour1000mb_1.rb"><tt>contour1000mb_1.rb</tt></a>
+<a name="contour1000mb_1"></a>
+<table width="80%"><tr><td><pre class="source">
+1: require "numru/ggraph"
+2: include NumRu
+3: gphys = GPhys::IO.open('T.jan.nc', 'T')
+4: DCL.gropn(1)
+5: DCL.sgpset('lcntl', false) ; DCL.uzfact(0.7)
+6: GGraph.contour( gphys )
+7: DCL.grcls
+</pre></td></tr></table>
+
+</p><p><tt> It's executed as follows.</tt>
+<table width="80%"><tr><td><pre class="source">
+% <span class="command">ruby contour1000mb_1.rb</span>
+</pre></td></tr></table>
+
+</p><p><tt> Then the next figure is shown to a screen.</tt></p><tt><br>
+
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour1000mb_1.png">contour1000mb_1.rb execution result<br><img src="contour1000mb_1s.jpg"></a><br>
+
+</tt></p><p>The 1st and 2nd lines of the above program is the spell called each time. The first <tt>require "numru/ggraph"</tt> loads all necessary libraries. Next <tt>include NumRu</tt> doesn't have to do, but <tt>GGraph</tt> or <tt>DCL</tt> have to call all <a href="#full_name_numru">full names</a>, that is <tt>NumRu::GGraph</tt> or <tt>NumRu::DCL</tt> in that case.</p>
+<br>
+<p>The 3rd line <tt>gphys = GPhys::IO.open('T.jan.nc', ' T')</tt>
+create <tt>GPhys</tt> object corresponding the variable <tt>T</tt> in the file <tt>T.jan.nc</tt>,
+and give the variable name of <tt>gphys</tt> to the object.
+The <tt>GPhys::IO.open</tt> recognize type of the file automatically, and through the process to a corresponding lower level module.
+This time, the file is <tt>NetCDF</tt>,
+<tt>GPhys::NetCDF_IO.open</tt> is called.
+The module <tt>GPhys::NetCDF_IO</tt> interprete <tt>NetCDF</tt> file.
+As users do not specify exprefitly,
+it interprete following the convention of NetCDF User's guide:
+variables for axes are interpreted following the rule that dimension name = variable name, and thier references are kept in the <tt>GPhys</tt> object (here variable <tt>gphys</tt>).
+Interpretation of missing value is also done,
+and the object has information of the missing value if attribute of valid_range or missing_value exists.
+Specifically it return <tt>NArrayMiss</tt>, which is <tt>NArray</tt> with handling missing value, when we get values (mentioned below).
+</p>
+<br>
+
+<p>The 4th line <tt>DCL.gropn(1)</tt> is graphic
+equipment initialization of <tt>DCL</tt>. An argument is shown to 1 in case of
+and terminal screen. The 5th line isn't usually necessary, but
+interpretation of a control character is restrained here and the size
+of the character put on the coordinate axis is set to 0.7 times (<tt>DCL.uzfact(0.7)</tt>)</p><br>
+
+<p>It's drawing increasingly by the 6th line. <tt>GGraph.contour(gphys)</tt>
+does contour line indication of data of the <tt>GPhys</tt> object by which it
+was given to an argument. As shown in being above-mentioned the first
+point is chosen automatically about the after 3rd dimension, so it'll
+be a plot of horizontal distribution in 1000 mb. I find out that 1000
+mb was chosen from indication of <tt>level=1000 milibar</tt> indicated outside the limits in the upper right on a figure.<!-- なお, この図では表示すべき文字列が長いので 'm' 以降が表示されていない. 
+これを回避する方法は後述する. --> <tt>GGraph.contour</tt>
+does the interpretation which are coordinate axes automatically (I pay
+attention to x axis's and y axis's being written right.) so that it may
+be showed by a drawing. It's because Anders Kjor is included in the
+unit of the indicated x and y axis, that control character
+interpretation was restrained by the 5th line actually.
+</p>
+<br>
+<p>The 7th line is a complete process of DCL.
+</p>
+<p>
+When removing the 5th line which isn't always necessary above, it
+can visualize it from opening of a file by 6 lines and process to
+complete it altogether. The way to customize a figure will be described
+later. It's important for a program not to become long suddenly in the
+case.
+</p>
+<br>
+
+<a name="h3:saisoku line"></a>
+<h3>Fastest drawing (polygonal line)</h3>
+<br>
+
+
+<p>
+<a name="cut introduced"></a>
+I'll draw a polygonal line by the same way.
+The 6 lines of <tt>GGraph.contour(gphys)</tt> in the upper program should be changed to <tt>GGraph.line (gphys)</tt>
+But, in this case it is not interesting
+because the first grid point (that is North Pole) is selected
+as the second dimension (latitude).
+So let's draw vertical profile around Japan.
+The method <tt>cut</tt> of <tt>GPhys</tt>
+cut subset of data in real space.
+There are two ways to specify the dimension to cut,
+specify all dimension values one by one, and those of some dimension by dimension name.
+The following 2 lines will return
+completely the same result.
+<table width="80%"><tbody><tr><td><pre class="source">
+gp_jpn = gphys.cut(135,35,true)
+gp_jpn = gphys.cut('lon'=&gt;135,'lat'=&gt;35)
+</pre></td></tr></tbody></table>
+</p>
+<p>
+Designation method of an argument in in case of is <tt>NArray</tt>
+at first, <tt>[]</tt>, it's like the method. Not true, but the "rubber
+dimension" by false should be used as follows therefore to answer to
+data of optional number of dimension (rank) with the name more than two
+dimensions like a designated case. The rubber dimension is equivalent
+to true in arbitrary number (designation of the total range).
+<table width="80%"><tbody><tr><td><pre class="source">
+gp_jpn = gphys.cut(135,35,false)
+</pre></td></tr></tbody></table>
+</p>
+<p>(It's a by-talk, but, by a language as yorick, the rubber
+dimension?. if, it can be expressed. In other words, (135,35..) Etc..
+To this, the appearance is easy to understand, in Ruby. It isn't
+possible to make. become independent, so it can't be used.)
+</p>
+<br>
+<p>
+Then, I'll draw a figure.
+</p>
+<br>
+<p>
+<a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/line_1.rb">line_1.rb</a>
+<table width="80%"><tbody><tr><td><pre class="source">
+1: require "numru/ggraph" 
+2: include NumRu 
+3: gphys = GPhys::IO.open('T.jan.nc', 'T') 
+4: DCL.gropn(1) 
+5: DCL.sgpset('lcntl', false); DCL.uzfact(0.7) 
+6: GGraph.line(gphys.cut(135,35,false)) 
+7: DCL.grcls
+</pre></td></tr></tbody></table>
+</p>
+<p>
+A result will be so:.
+</p>
+<br>
+<p>
+<a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/line_1.png">line_1.rb execution result<br><img src="line_1s.jpg"></a>
+<br>
+</p>
+<p>You indicate "lon=130.0 degrees_east", "lat=40.0
+degress_north" outside the upper right limits. The grid point that cut
+is closest, I come to choose, when designating a center exactly, the
+one with the smaller grid point number is chosen. The <a href="#ncdump%20T.jan.nc">longitude is stocked in the east-&gt; west and latitude in the north-&gt; south, so</a> such parallel and longitude are chosen.
+</p>
+<br>
+<p>Now, when the pressure which is a vertical coordinate
+comes to the transverse, somehow I don't think it's vertical profile.
+So a transverse will be replaced with vertical axis, and it indicates
+pressure axis by the logarithm scale. Also I'll make sure that the
+information on the upper right outside the limits won't break in full
+display (<tt>DCL.sgpset('lfull',true)</tt>).
+</p>
+<br>
+<p>
+<a name="line_2"></a>
+<a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/line_2.rb">line_2.rb</a>
+<table width="80%"><tbody><tr><td><pre class="source">
+1: require "numru/ggraph" 
+2: include NumRu 
+3: gphys = GPhys::IO.open ('T.jan.nc', 'T') 
+4: DCL.gropn (1) 
+5: DCL.sgpset ('isub', 96)  # control character of subscription: '_' --&gt; '`' 
+6: DCL.sgpset ('lfull',true); DCL.uzfact (0.6) 
+7: GGraph.set_fig ('itr'=&gt; 2, 'viewport'=&gt; [0.250.70.150.6]) 
+8: GGraph.line (gphys.cut (135,35,false) and true, 'exchange'=&gt;true) 
+9: DCL.grcls
+</pre></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/line_2.png">line_2.rb execution result<br><img src="line_2s.png"></a><br>
+
+</tt></p><p><tt> By an upper program To make the vertical axis a logarithm scaling. By the 6th line, GGraph.fig The option which is so <tt>itr.</tt> O is set (<a href="http://ruby.gfd-dennou.org/products/gphys/doc/ggraph.html" target="_top">GGraph manual</a> referring). In this case. When a control code is invalidated. Ravel who can arrive at an axis becomes too good-looking, so <tt>DCL.sgpset('lcntl'. false)</tt> The one of ,5 line, not it's so and to invalidate <tt>DCL.sgpset('isub'. The letter which </tt>is
+96) and indicates with a bottom, '_' empty '`' I did NI change. And
+also. In response to full display. viewport. O is being changed (for
+the default value, [0.20.80.20.8]). GGraph.fig HA is the method as
+which the limit of the new figure is defined. The 2nd argument of
+GGraph.line is called at true. It's possible to omit the 2nd argument
+and true is the default value. The 7th line is calling GGraph.line,
+but an option of GGraph.line is the 3rd argument (after a while), so
+true of the 2nd argument is set positively (It's easy to make a
+mistake, so, if the 2nd argument is besides true/false, I notify the
+user by an exception.) And <tt>'exchange'=&gt;true</tt> is designated
+as an option. By this, default though, a coordinate, I come to write a
+vertical line and data on a transverse. It'll be explained later again
+about an option.</tt></p><hr>
+<tt><a name="h2:file_fomats">
+</a></tt><p></p><h2><tt><a name="h2:file_fomats"> The various file formats</a></tt></h2><tt><a name="h2:file_fomats"><br>
+</a>
+
+</tt><p><tt> <a name="h3:file_hanbetsu">It's possible to deal with a
+file of the NetCDF, GrADS, grib form in the same way in GPhys. But,
+extraction by the GrADS form isn't supported for the moment.</a></tt></p><p></p><h3><tt><a name="h3:file_hanbetsu"> Distinction of the file format</a></tt></h3><tt><a name="h3:file_hanbetsu"><br>
+</a>
+
+</tt><p><tt> <tt>file</tt> can get an object in the class where the pass expressed in a character string or NumRu::NetCDF represents a file directly in <tt>GPhys::IO.open (file, varname)</tt>. The kind of pass in case of and file is distinguished between automatically. The rule is as follows.</tt></p><ol>
+<tt> </tt><li><tt> A suffix, 'nc', 'ctl', 'grib': supposes NetCDF, GrADS, grib respectively.</tt></li><li><tt> Besides that. The first one of a file is read and distinguished.</tt></li></ol>
+
+<p><tt> <a name="h3:grads_grib_examples">It's possible to designate and read the file format positively. <tt><tt><tt>GPhy</tt></tt>s::NetCDF_IO.open, GPhys::GrADS_IO.open, GPhys::Grib_IO.open</tt> is used respectively.</a></tt></p><p></p><h3><tt><a name="h3:grads_grib_examples"> GrADS,grib file drawing example</a></tt></h3><tt><a name="h3:grads_grib_examples"><br>
+</a>
+
+</tt><p><tt> The next program just changed only the file name to <tt>T.jan.ctl</tt> </tt>from <tt>T.jan.nc by 3 line of <a href="#contour1000mb_1">contour1000mb_1.rb above-mentioned. All except for that can completely draw data of the GrADS form by the same program.</a></tt></p><p><tt><a href="#contour1000mb_1"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour1000mb_grd.rb"></a><a name="contour1000mb_grd">contour1000mb_grd.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 2: include NumRu 
+ 3: gphys = GPhys::IO.open('T.jan.ctl', 'T') 
+ 4: DCL.gropn(1) 
+ 5: DCL.sgpset('lcntl', false); DCL.uzfact(0.7) 
+ 6: GGraph.contour(gphys) 
+ 7: DCL.grcls
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> Equally, the next program draws data of a grib file. GPhys more than 0.4.0 is necessary for execution.</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour1000mb_grib.rb"></a><a name="contour1000mb_grib">contour1000mb_grib.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 2: include NumRu 
+ 3: gphys = GPhys::IO.open('T.jan.grib', 'TMP') 
+ 4: DCL.gropn(1) 
+ 5: DCL.sgpset('lcntl', false); DCL.uzfact(0.7) 
+ 6: GGraph.contour(gphys) 
+ 7: DCL.grcls
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> At the top A variable name, former. ' T' I don't go
+out. ' TMP' I pay attention to become. A variable doesn't have the name
+during grib filing. <a name="h3:inspect_var_names">There is just a number decided according to the kind of variables. Since putting it </a></tt><a name="h3:inspect_var_names">in <tt>GPhys::Grib_IO, the name used for its number </tt></a><tt>in <a href="http://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html">wgrib
+is assigned. That's 'TMP' about the temperature. But, the name of the
+plural which is also different in the same variable is used in wgrib,
+so the variable name in <tt>GPhys::Grib_IO</tt> isn't always parallel with actual output of the wgrib command. Refer to the next about then how to do.</a></tt></p><p></p><h3><tt><a href="http://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html"> How to check it the variable name which is being filed</a></tt></h3><tt><a href="http://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html"><br>
+</a>
+
+</tt><p><tt> <a name="inspect_varnames">When it's a NetCDF file, it's checked by the <tt>ncdump</tt> command by a </a>command line <a href="#h2:data">as
+mentioned above. When it's a GrADS file, a control file is a text, so
+that should be seen. When using GPhys, but I don't depend on the kind
+of files, and it's checked by the same way.</a></tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/inspect_varnames.rb">inspect_varnames.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/gphys" 
+ 2: p NumRu::GPhys::IO.var_names('T.jan.grib') 
+ 3: p NumRu::GPhys::IO.var_names('T.jan.ctl') 
+ 4: p NumRu::GPhys::IO.var_names('T.jan.nc')
+</pre></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p><tt> A result is as follows.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby inspect_varnames.rb</span> 
+["TMP"]
+["T"]
+["lon", "lat", "level", "T"]
+</pre></td></tr></tbody></table>
+
+</p><p><tt> A grib file finds out that "TMP", GrADS, NetCDF file has a
+variable as "T". A variable name as other "lon","lat", "level" also
+goes out by a NetCDF file, in NetCDF, this, a coordinate variable can
+also open </tt>in <tt>GPhys::IO.open as the GPhys object which makes
+itself a coordinate variable. To make the program a file in only this
+purpose will seem but troublesome. Next interactive directions are
+introduced.</tt></p><hr>
+<tt><a name="h2:irb">
+</a></tt><p></p><h2><tt><a name="h2:irb"> Dialogue use using irb (1)</a></tt></h2><tt><a name="h2:irb"><br>
+</a>
+
+</tt><p> The command as irb of standard attachment is the one like
+shell which interprets and executes a program of ruby by the line unit
+in an interactive session in Ruby. There is also something else as irb
+- shell to carry out on emacs. A cut and paste did the result which did
+a variable name check <a href="#inspect_varnames">above-mentioned in irb in below</a>. <br>
+<tt>irb (main): 001:0&gt;</tt> etc. is a prompt of irb, and it's output of an execution result of each line below the "=&gt;".
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb.</span> 
+irb (main):001:0&gt;<span class="command">require "numru/gphys"</span> 
+=&gt; true
+irb (main):002:0&gt;<span class="command">include NumRu</span> 
+=&gt; Object
+irb (main):003:0&gt;<span class="command">GPhys::IO.var_names('T.jan.grib')</span> 
+=&gt; ["TMP"]
+irb (main):004:0&gt;<span class="command">GPhys::IO.var_names('T.jan.ctl')</span> 
+=&gt; ["T"]
+irb (main):005:0&gt;<span class="command">GPhys::IO.var_names('T.jan.nc')</span> 
+=&gt; ["lon", "lat", "level", "T"]
+</pre></td></tr></tbody></table>
+
+</p><p><tt>Input of the 1st line is different from the former<tt> require "numru/ggraph"</tt> and is <tt>require "numru/gphs"</tt>.
+When it's done this way, only the GPhys body is read, and graphic
+library GGraph isn't read. (Even when a figure isn't written of course,
+<tt>require "numru/ggraph"</tt>, may, to this, a start-up would be for a short while earlier.)</tt></p><p><tt>irb indicates an execution result of the command in p by default, so it's different from <a href="#inspect_varnames">a program above-mentioned</a> and p isn't worn positively.</tt></p><p></p><h3><tt><a href="#inspect_varnames"> Use of a startup file (1)</a></tt></h3><tt><a href="#inspect_varnames"><br>
+</a>
+
+</tt><p><tt> It's troublesome that <tt><tt>requi</tt>re "numru/gphys",include NumRu</tt> calls "spell" each time at the time of session starting of irb, so using a startup file, I hope that it automates.</tt></p><ul>
+<tt>  </tt><li><tt> In a way 1: home directory. At the time of the
+start which is irb when a file as irbrc is prepared and the code I'd
+like to carry out first is written, require .</tt></li><li><tt> In the
+file which is suitable when not liking that that is always carried out
+at the time when way 2: irb is used, require, should, a code is written
+and irb which carries that out is prepared by an another name.</tt></li></ul>
+
+<p><tt> A writer gets a way of 2. Both concrete instances are saturated with below.</tt></p><p></p><h4><tt> .irbrc use example (way 1)</tt></h4><tt><br>
+
+</tt><p><tt> When it's used, but GPhys doesn't use , GGraph.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">cat ~/.irbrc</span> 
+require "numru/gphys"include
+NumRu% <span class="command">irb.</span> 
+irb (main): 001:0&gt;<span class="command">GPhys::IO.var_names('T.jan.grib')</span> 
+=&gt; ["TMP"]
+irb (main): 002:0&gt;<span class="command">GPhys::IO.var_names('T.jan.ctl')</span> 
+=&gt; ["T"]
+irb (main): 003:0&gt;<span class="command">GPhys::IO.var_names('T.jan.nc')</span> 
+=&gt; ["lon", "lat", "level", "T"]
+</pre></td></tr></tbody></table>
+
+</p><p><tt> The example when GGraph also uses it.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">cat ~/.irbrc</span> 
+require "numru/ggraph"
+include NumRu
+include GGraph
+DCL.swpset('iwidth',700) # image width
+DCL.swpset('iheight',700) # image height
+DCL.swpset('lwait',false) # don't wait mouse click to show the next page
+DCL.gropn(1)
+DCL.sgpset('isub',96)  # control character of subscription: '_' --&gt; '`'
+DCL.sgpset('lfprop',true) # to use the propotional font
+</pre></td></tr></tbody></table>
+
+</p><p><tt> Thus <tt>require "numru/gphys"</tt>, when doing drawing </tt>as well as <tt>include
+NumRu, I hope that you'll execute the order called in common. Further
+the default size of the screen is made 700 x 700 at the top, and such
+as changing it to of<tt>the control code to lose the wait when drawing
+it, make sure that the next page will be indicated without mouse clicks
+and express a done lucky subscript_</tt>vanity<tt> '</tt>, it's being
+done. When even establishing a startup file, 2 lines are just input
+after a irb start as follows, and a figure can be taken out. Further
+html arranges for it and, the Japanese quotation mark is made the em.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb.</span> 
+ *** MESSAGE (SWDOPN)  *** GRPH1 : STARTED / IWS = 1. 
+irb (main):001:0&gt;<span class="command">gphys = GPhys::IO.open ('T.jan.nc', 'T')</span> 
+=&gt; &lt;GPhys grid=&lt;3D grid &lt;axis pos=&lt;'lon' in 'T.jan.nc'  sfloat[36]&gt;&gt;
+       &lt;axis pos=&lt;'lat' in 'T.jan.nc'  sfloat[19]&gt;&gt;
+       &lt;axis pos=&lt;'level' in 'T.jan.nc'  sfloat[9]&gt;&gt;&gt;
+   data=&lt;'T' in 'T.jan.nc'  sfloat[36, 19, 9]&gt;&gt;
+irb(main):002:0&gt;<span class="command">contour(gphys.mean (0))</span> 
+=&gt; nil
+</pre></td></tr></tbody></table>
+
+</p><p><tt> The point of view of the output which is </tt>as a result of <tt>gphys = GPhys::IO.open ('T.jan.nc', 'T') here will be explained later. 2 lines of <tt>mean in input of an eye (0)</tt> is an average about the first dimension (the= longitude). Refer to <a href="#h3:heikin%20sonota">here for more information.</a></tt></p><p><tt><a href="#h3:heikin%20sonota"> irb session execution result </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/irbsample_contour1.png">above-mentioned<br><img src="irbsample_contour1s.png"></a><br><br>
+
+<a name="h4:irb_start_up_no_irbrc">
+</a></tt></p><p></p><h4><tt><a name="h4:irb_start_up_no_irbrc"> ., the example for which irbrc isn't used (way 2)</a></tt></h4><tt><a name="h4:irb_start_up_no_irbrc"><br>
+
+</a></tt><p><tt><a name="h4:irb_start_up_no_irbrc"> </a><a name="souce .irbrc_ggraph">I'll
+the code carried out be written on a file of the name which isn't
+recognized as a startup file of irb as follows and it be started by
+Elias. Following alias? I hope that you write in cshrc.</a></tt><table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">alias irb_ggraph 'irb -r ~/.irbrc_ggraph'</span> 
+% <span class="command">cat ~/.irbrc_ggraph.rb</span> 
+require "numru/ggraph"
+include NumRu
+include GGraph
+DCL.swpset('iwidth',700) # image width
+DCL.swpset('iheight',700)  # image height
+DCL.swpset('lwait',false) # don't wait mouse click to show the next page
+DCL.gropn(1)
+DCL.sgpset('isub',96)  # control character of subscription: '_' --&gt; '`'
+DCL.sgpset('lfprop',true) # to use the propotional font
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a name="souce .irbrc_ggraph"> In this way, irb for sessions of GGraph is set under the name as irb_ggraph. You can draw at 2 lines as follows as expected.</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb_ggraph</span> 
+ *** MESSAGE (SWDOPN)  *** GRPH1 : STARTED / IWS = 1. 
+irb (main):001:0&gt;<span class="command">gphys = GPhys::IO.open('T.jan.nc', 'T')</span> 
+=&gt; &lt;GPhys grid=&lt;3D grid &lt;axis pos=&lt;'lon' in 'T.jan.nc'  sfloat[36]&gt;&gt;
+       &lt;axis pos=&lt;'lat' in 'T.jan.nc'  sfloat[19]&gt;&gt;
+       &lt;axis pos=&lt;'level' in 'T.jan.nc'  sfloat[9]&gt;&gt;&gt;
+   data=&lt;'T' in 'T.jan.nc'  sfloat[36, 19, 9]&gt;&gt;
+irb(main):002:0&gt;<span class="command">contour(gphys.mean(0))</span> 
+=&gt; nil
+</pre></td></tr></tbody></table>
+
+</p>
+<p>A writer uses this way habitually.<p>
+
+
+<hr>
+<a name="h2:gphys nakami">
+</a><p></p><h2><a name="h2:gphys nakami"> The contents of GPhys are checked.</a></h2><a name="h2:gphys nakami"><br>
+</a>
+
+<p> Without writing a figure, the way to check the contents of the data
+easily is explained. I'll use dialogue shell irb in Ruby introduced at
+the top. We assume that a startup file isn't used for a generality as a
+tutorial. When using it, first a few lines should be omitted suitably.
+A cut and paste made the screen of kterm below, but html arranges for
+it and the Japanese quotation mark is made the em.
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb</span> 
+irb(main):001:0&gt;<span class="command">require "numru/gphys"</span> 
+=&gt; true
+irb(main):002:0&gt;<span class="command">include NumRu</span> 
+=&gt; Object
+irb(main):003:0&gt;<span class="command">T</span>   &lt;-It's put in with T here, and a tab is input twice (There is also a case to which the file name doesn't go out like the bottom.),
+T.jan.ctl T.jan.dat T.jan.grib T.jan.nc ToDo
+irb(main):003:0&gt;<span class="command">GPhys::IO.var_names('T.jan.nc')</span>   # for GPhys &gt;= 0.4.0
+=&gt; ["lon", "lat", "level", "T"]
+irb(main):004:0&gt;<span class="command">gphys = GPhys::IO.open('T.jan.nc', 'T')</span> 
+=&gt; &lt;GPhys grid=&lt;3D grid &lt;axis pos=&lt;'lon' in 'T.jan.nc'  sfloat[36]&gt;&gt;
+       &lt;axis pos=&lt;'lat' in 'T.jan.nc'  sfloat[19]&gt;&gt;
+       &lt;axis pos=&lt;'level' in 'T.jan.nc'  sfloat[9]&gt;&gt;&gt;
+   data=&lt;'T' in 'T.jan.nc'  sfloat[36, 19, 9]&gt;&gt;
+irb(main):005:0&gt;
+</pre></td></tr></tbody></table>
+
+</p><p> irb. The result which carried out each HA line. The leaving
+indication function It outputs in standard output using p. Indication
+by p may not always be clean, but it's convenient. 12 lines of input of
+an eye (001,002) is an usual spell. By 3 line <tt>T.</tt> After NI
+continues. TAB. It'll input a key twice. By many cases. A list of the
+file names which start from T should be indicated. This is probably.
+irb. It isn't its own function. Keystroke is controlled. Because it's
+the function of the library as readline. There is also a case it won't
+be so. Input of the actual 3 line which continues and becomes redo
+(The 2nd time of 003) HA. GPhys. 0.4.0. The function which was so and
+was supported Using <tt>GPhys::IO.var_names, one during filing
+GPhys-ization, a possible variable name is indicated. And 4 lines of
+GPhys object is made about variable 'T' by input of an eye (<tt>gphys = GPhys::NetCDF_IO.open ('T.jan.nc', 'T')</tt>).
+The one by which the result was indicated in p is migrating to 4 lines.
+It's a little indistinct, but it's data T of three dimensions in lon,
+lat, level, and you can realize that each is stocked in file T.jan.nc.
+A numeric type and length of each dimension are also indicated. How to
+place the dimension is like Fortran and the dimension which "turns
+around fastest" comes first (<a href="#ncdumped">Refer</a> here.)</tt></p><tt><br>
+
+</tt><p><tt> Then, I'll execute the next program.</tt></p><tt><br>
+
+<a name="inspect"></a>
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/inspect.rb">inspect.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/gphys" 
+ 2: include NumRu 
+ 3: p gphys = GPhys::NetCDF_IO.open('T.jan.nc', 'T') 
+ 4: p 'name = '+gphys.name, 'rank:',gphys.rank, 'shape:', gphys.shape 
+ 5: print ' [1st dim] name:', gphys.coord(0).name. 
+ 6:     ' long_name:',gphys.coord(0).get_att('long_name'). 
+ 7:     ' units:',gphys.coord(0).get_att('units'). 
+ 8:     " min,max:# {gphys.coord(0).min} and# {gphys.coord(0).max}, \n" 
+ 9: prs = gphys.coord(2).val. 
+10: t_jpn = gphys.cut(135,35,true).val. 
+11: print "\n# {gphys.coord(0).name} \t# {gphys.name}\ n" 
+12: for i in 0...prs.length do 
+13:   print prs[i], "\t", t_jpn[i], "\n" 
+14: end
+</pre></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p><tt> irb isn't used this time, so p has to call positively (3 line etc). An execution result is indicated below.</tt></p><tt><br>
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby inspect.rb</span> 
+&lt;GPhys grid=&lt;3D grid &lt;axis pos=&lt;'lon' in 'T.jan.nc'  sfloat[36]&gt;&gt;
+        &lt;axis pos=&lt;'lat' in 'T.jan.nc'  sfloat[19]&gt;&gt;
+        &lt;axis pos=&lt;'level' in 'T.jan.nc'  sfloat[9]&gt;&gt;&gt;
+   data=&lt;'T'in 'T.jan.nc'  sfloat[36, 19, 9]&gt;&gt;
+"name = T"
+"rank:"
+3
+"shape:"
+[36, 19, 9]
+[1st dim]  name:lon  long_name:Longitude  units:degrees_east  min,max:0.0 degrees_east,350.0 degrees_east 
+
+lon T
+1000.0 -5.50255870819092
+850.0  -13.0088624954224
+600.0  -23.8766059875488
+400.0  -41.1900672912598
+250.0  -52.6089935302734
+150.0  -51.7955780029297
+70.0   -55.255916595459
+30.0   -51.0108757019043
+10.0   -43.6157722473145
+</pre></td></tr></tbody></table>
+
+<p><tt> I'll explain 4 line after a while of a program.</tt></p><tt><br>
+
+</tt><p><tt> 4 line:</tt></p><p>
+</p><pre><tt> 
+     p 'name = '+gphys.name, 'rank:',gphys.rank, 'shape:', gphys.shape
+</tt></pre>
+<p><tt> The name of HA GPhys OBUEJEKUTO (name), number of dimension (rank) and the length of each dimension (shape) are indicated.</tt></p><tt><br>
+
+</tt><p><tt> 5-8 line:</tt></p><p>
+</p><pre><tt> 
+     print ' [1st dim] name:', gphys.coord (0) .name, ' long_name:',gphys.coord
+     (0) .get_att ('long_name'), ' units:',gphys.coord (0) .get_att
+     ('units')," \n"
+</tt></pre>
+<p><tt> An order of HA no continuation. 第. 567. Because the line ends
+by a comma. Because it's clear, need of continuation is interpreted so.
+<tt>gphys.coord (<i>idim</i>)</tt> HA. The dimension of the <tt><i>idim</i></tt>
+turn eye (I count from 0.) The data in which the coordinate value which
+is so is stocked is returned (, further. GPhys also arranges and
+manages information about each dimension besides the coordinate value.
+Information about each dimension? <tt>gphys.axis (<i>idim</i>)</tt> It's so and it's obtained. The coordinate value is to that. <tt>pos.</tt> The thing to which the method is applied also gives it to us. In other words. <tt>gphys.axis (<i>idim</i>). pos</tt>. HA<tt> gphys.coord (<i>idim</i>)</tt>
+The same result is returned. Any more explanation isn't done for
+easiness here). The coordinate value? VArray. (=Virtual Array) I say
+so. An object in a class with the same function is returned basically
+with multi-dimentional array. VArray. HA. As well as a multidimensional
+numerical data. It's possible to have the name and the "attribute" of
+optional 個. The attribute is the set of the optional name (character
+string) and value. The specification of the price? NetCDF. It's similar
+(one-dimensional arrangement of a figure or character string). VArray.
+The data body which is so? Even NArray is good and the variable I'm
+doing NetCDF filing of is also fine. I'm the latter here. Data isn't
+read until I need in this case. It won't be to press a memory
+immediately to come near and open a huge data file. That output is
+compared with 5-8 line of a program, <tt>gphys.coord (0). name</tt>, the name, <tt>gphys.coord (0). get_att ('long_name')</tt>, attribute long_name, <tt>gphys.coord (0). max</tt>
+would find out that the maximum of the coordinate value is returned.
+When I try to read the attribute which doesn't exist, a return value
+will be nil (An exception doesn't occur.)</tt></p><tt><br>
+
+</tt><p><tt> Then 9 line (<tt>prs = gphys.coord (2). val</tt>) (is counted from a zero), and, the 2nd dimension, or the price of the pressure (variable name<tt> level</tt>)
+is read. Method val in VArray returns the price of the data in NArray.
+Therefore reading of variable value from a file occurs (here, for the
+first time) here.</tt></p><tt><br>
+
+</tt><p><tt> After an eye (<tt>t_jpn = gphys.cut (135,35,true). val</tt>)
+chose 10 lines of 1 vertical profile around Japan from well, data is
+read. It's explained at the next join about the specification of the
+data reading.</tt></p><tt><br>
+
+</tt><p><tt> An eye indicates 11 lines of respective name (name), and
+the price of the pressure and the temperature by each grid point is
+extracted by 12-14 line.</tt></p><tt><br>
+
+</tt><hr>
+<tt><a name="h2:gdir">
+</a></tt><p></p><h2><tt><a name="h2:gdir"> A directory is browsed, use of-- GDir</a></tt></h2><tt><a name="h2:gdir"><br>
+</a>
+
+</tt><p><tt> Class GDir which represents a directory in the file system
+for GPhys was introduced from GPhys-0.5.0. It's like Dir of Ruby
+inclusion, the biggest difference?</tt></p><ul>
+<tt>  </tt><li><tt> GPhys-ization, you can make the file in which a possible variable is put treatment as a directory and make it a GDir object.</tt></li></ul>
+
+<p><tt> It's a fact. Or "ls" makes the "cd" a file of NetCDF, and can
+do a variable. Further, when HDF and NetCDF-4 support the form for
+which the directory structure can be taken during filing in the future,
+it's expected to make sure that that can also be made a GDir object.</tt></p><p><tt> It starts to be the next in the main difference in the other than above.</tt></p><ul>
+<tt>  </tt><li><tt> The root directory for GDir can be set as an
+optional directory in the file system. It isn't possible to see the
+directory which isn't in the tree under the root directory in that case.</tt></li><li><tt> Anything's method of the Dir class isn't being supported.</tt></li><li><tt>
+I function. For example one in the directory, ls, the file judged as a
+case, follower's directory, a variable (When a data file is being
+represented.) and a text file, it's possible to classify 3 kinds.</tt></li></ul>
+
+<p><tt> Refer to a online manual of <a href="http://ruby.gfd-dennou.org/products/gphys/doc/gdir.html">Gdir for more information. </a><a name="h3:gdir-sample1"></a></tt></p><p></p><h3><tt><a name="h3:gdir-sample1"> GDir use example (1)</a></tt></h3><tt><a name="h3:gdir-sample1"><br>
+</a>
+
+</tt><p><tt> GDir is suitable for dialogue use using irb. When it's used, when I prepare in a <a href="#h3:irb_startup_gdir">startup file, it's convenient, but directions in raw irb are indicated in order to use it only by copy and paste here.</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">pwd</span> 
+/hogehoge/TUTORIAL
+% <span class="command">irb</span> 
+irb(main):001:0&gt; <span class="command">require "numru/gphys"</span> 
+=&gt; true
+irb(main):002:0&gt; <span class="command">include NumRu</span> 
+=&gt; Object
+irb(main):003:0&gt; <span class="command">GDir.top</span> 
+=&gt; "/" # default top directory
+irb(main):004:0&gt; <span class="command">GDir.top = Dir.pwd</span>     # The top directory is changed to the present directory,
+=&gt; "/hogehoge/TUTORIAL"
+irb(main):005:0&gt; <span class="command">GDir.pwd</span> 
+=&gt; "/"
+irb(main)006:0&gt; <span class="command">GDir.ls</span> 
+Directories:
+  'T.jan.ctl/'
+  'T.jan.grib/'
+  'T.jan.nc/'
+  'testdir/'
+Text files?:
+  'ToDo'
+irb(main):007:0&gt; <span class="command">GDir.ls_l</span>       # It's indicated more conversantly,
+Directories:
+   423 Sep 16  2003 T.jan.ctl/  # file size, the time of a renewal date and the name
+ 13167 Mar 10 13:03 T.jan.grib/
+ 26664 Aug 28 2003 T.jan.nc/
+   512 Jul 21 13:13 testdir/
+Text files?:
+      206 Mar 23 2004 ToDo
+=&gt; nil
+irb(main):008:0&gt; <span class="command">GDir.cd 'T.jan.nc'</span> 
+=&gt; /T.jan.nc/
+irb(main):009:0&gt; <span class="command">GDir.ls</span> 
+Data:
+ 'lon'
+ 'lat'
+ 'level'
+ 'T'
+=&gt; nil
+irb(main):010:0&gt; <span class="command">GDir.ls_l</span>      #.  More conversantly, Data:
+   lon.    [lon=36]         ' Longitude'      (degrees_east)
+   lat.    [lat=19]         ' Latitude'       (degrees_north)
+   level.  [level=9]        'Level' (millibar)
+   T       [lon=36,lat=19,level=9] 'Temperature'   (degC)
+=&gt; nil
+irb(main):022:0&gt; temp = GDir.data 'T'
+=&gt; &lt;GPhys grid=&lt;3D grid &lt;axis pos=&lt;'lon' in '/hogehoge/TUTORIAL/T.jan.nc'  sfloat[36]&gt;&gt;
+        &lt;axis pos=&lt;'lat' in '/hogehoge/TUTORIAL/T.jan.nc' sfloat[19]&gt;&gt;
+        &lt;axis pos=&lt;'level' in '/hogehoge/TUTORIAL/T.jan.nc'  sfloat[9]&gt;&gt;&gt;
+     data=&lt;'T' in '/hogehoge/TUTORIAL/T.jan.nc'  sfloat[36, 19, 9]&gt;&gt;
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a href="#h3:irb_startup_gdir">
+Thus it's possible to search to handle it as a directory including a
+file for a desired variable from the data set put in order
+hierarchically and open as a GPhys object. </a><a name="h3:gdir-sample2"></a></tt></p><p></p><h3><tt><a name="h3:gdir-sample2"> GDir use example (2)</a></tt></h3><tt><a name="h3:gdir-sample2"><br>
+</a>
+
+</tt><p><tt> A current directory (It was class variable of GDir.)
+chisel of GDir was used by an upper example, so a GDir object didn't
+appear positively. The example which handles a GDir object is indicated
+this time.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb</span> 
+irb(main):001:0&gt; <span class="command">require "numru/gphys"</span> 
+=&gt; true
+irb(main):002:0&gt; <span class="command">include NumRu</span> 
+=&gt; Object
+irb(main):003:0&gt; <span class="command">GDir.top = Dir.pwd</span>     # The top directory is changed to the present directory,
+=&gt; "/hogehoge/TUTORIAL"
+irb(main):004:0&gt; <span class="command">dir = GDir.cwd</span>    # A current directory is acquired,
+=&gt; /
+irb(main):005:0&gt; <span class="command">dir.class</span> 
+=&gt; NumRu::GDir # dir is a GDir object:
+irb(main)006:0&gt; <span class="command">dir.ls</span> 
+Directories:
+  'T.jan.ctl/'
+  'T.jan.grib/'
+  'T.jan.nc/'
+  'testdir/'
+Text files?:
+  'ToDo'
+=&gt; nil
+irb(main):007:0&gt; <span class="command">dir2 = dir.dir ('T.jan.grib/')</span> 
+=&gt; /T.jan.grib/
+irb(main):008:0&gt; <span class="command">dir2.ls_l</span> 
+Data:  TMP   [lon=36,lat=19,level=9] 'Temperature'   (K)
+=&gt; nil
+irb(main):009:0&gt; temp = dir2.data('TMP')
+=&gt; &lt;GPhys grid=&lt;3D grid &lt;axis pos=&lt;'lon' in 'TMP'  36&gt;&gt;
+        &lt;axis pos=&lt;'lat' in 'TMP'  19&gt;&gt;
+        &lt;axis pos=&lt;'level' in 'TMP'  9&gt;&gt;&gt;
+   data=&lt;'TMP' in '/hogehoge/TUTORIAL/T.jan.grib'  [36, 19, 9]&gt;&gt;
+</pre></td></tr></tbody></table>
+
+</p><p><tt> A condition of a top directory and a sub-directory were
+opened as a GDir object for a current directory of GDir and (variable
+name dir2) and data in it were opened as a GPhys object by this example.</tt></p><hr>
+<tt><a name="h2:irb-2">
+</a></tt><p></p><h2><tt><a name="h2:irb-2"> Dialogue use using irb (2)</a></tt></h2><tt><a name="h2:irb-2"><br>
+</a>
+
+<a name="h3:irb_startup_gdir">
+</a></tt><p></p><h3><tt><a name="h3:irb_startup_gdir"> Use of a startup file (2)  Use of-- GDir</a></tt></h3><tt><a name="h3:irb_startup_gdir"><br>
+</a>
+
+</tt><p><tt> File for <a href="#h4:irb_start_up_no_irbrc">above-mentioned irb reading. I'll can add setting about GDir to irbrc_ggraph</a>
+and use irb like shell. "Like shell", when driving in with ls and ls_l,
+a directory and a variable are listed, and a directory is changed in
+cd, and a GPhys variable can be opened easily, and (The command name is
+made open.) it's said that they do. <a name="souce .irbrc_ggraph(2)"></a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">alias irb_ggraph 'irb -r ~/.irbrc_ggraph'</span> 
+% <span class="command">cat ~/.irbrc_ggraph.rb</span> 
+print "Start interactive GGraph session\n" 
+
+require "numru/ggraph"
+include NumRu
+include GGraph 
+
+#&lt;&lt; GDir Setting&gt;&gt;
+GDir.top='/'
+GDir.cd(Dir.pwd)
+def  cwd; GDir.cwd; end        # returns the current working directory of GDir
+def pwd; GDir.pwd; end        # prints the current working directory of GDir
+def ls(path=nil); GDir.cwd.ls(path); end         # listing
+def ls_l(path=nil); GDir.cwd.ls_l(path); end     # verbose listing
+alias dir ls_l
+def cd(path); GDir.cd(path); end
+def open_all_data; GDir.cwd.open_all_data; end  # --&gt; Hash of GPhys objs in cwd
+def data(path); GDir.cwd.data(path); end        # --&gt; GPhysalias open data 
+
+#&lt;&lt; Graphic Setting&gt;&gt;
+DCL.swpset('iwidth',700)  # window width
+DCL.swpset('iheight',700)  # window height
+###DCL.swpset ('ldump',true)  # dump image files
+DCL.swpset('lwait',false)  # don't wait mouse click to show the next page
+###DCL.swpset('lalt',true) # background plot
+DCL.sgscmn(10)  (# change colomap see below)
+###DCL.sgscmn(5) # change colomap (see below) 
+
+DCL.gropn(1)
+DCL.sgpset('lfprop',true)    #.  to.  use.  the.  propotional.  font
+DCL.sgpset('lcorner',false)  # don't show the corner mark
+DCL.sgpset('isub', 96)  # control character of subscription: '_' --&gt; '`'
+DCL.glpset('lmiss',true)  # handle data missing
+=begin
+color map number
+ 1: dcl_original
+ 2: black-orange-yellow-white
+ 3: black-blue-cyan-white
+ 4: blue-cyan-white-yellow-red
+ 5: gray_scale
+ 6: pastel_rainbow
+ 7: black-rainbow-black
+ 8: white_yellow_red
+ 9: white_blue_black
+ 10: short_green_original
+ 11: black-rainbow-white 
+ 12: pink-ra
+=end
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a name="souce .irbrc_ggraph(2)"> Then, it'll draw data using this. The command name is irb_ggraph by alias at the top.</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb_ggraph</span> 
+Start interactive GGraph session *** MESSAGE (SWDOPN)  *** GRPH1 : STARTED / IWS
+= 1. 
+irb(main):001:0&gt; <span class="command">ls</span> 
+Directories:
+  'T.jan.ctl/'
+  'T.jan.grib/'
+  'T.jan.nc/'
+  'testdir/'
+Text files?:
+  'ToDo'
+=&gt; nil
+irb(main):002:0&gt; <span class="command">cd 'T.jan.nc/'</span> 
+=&gt; /hogehoge/TUTORIAL/T.jan.nc/
+irb(main):003:0&gt; <span class="command">ls.</span> 
+Data:
+  'lon'
+  'lat'
+  'level'
+  'T'
+=&gt; nil
+irb(main):004:0&gt; <span class="command">temp = open 'T'</span> 
+=&gt; &lt;GPhys grid=&lt;3D grid &lt;axis pos=&lt;'lon' in '/hogehoge/TUTORIAL/T.jan.nc'  sfloat[36]&gt;&gt;
+       &lt;axis pos=&lt;'lat' in '/hogehoge/TUTORIAL/T.jan.nc'  sfloat[19]&gt;&gt;
+        &lt;axis pos=&lt;'level' in '/hogehoge/TUTORIAL/T.jan.nc'  sfloat[9]&gt;&gt;&gt;
+   data=&lt;'T' in '/hogehoge/TUTORIAL/T.jan.nc'  sfloat[36, 19, 9]&gt;&gt;
+irb(main):005:0&gt; <span class="command">tone temp</span> 
+=&gt; nil
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a name="souce .irbrc_ggraph(2)"> Illustration of data and an analysis can be done while looking for a directory like shell this.</a></tt></p><p><tt><a name="souce .irbrc_ggraph(2)"> Execution result of the session </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/tone_irbggp.png">above-mentioned<br><img src="tone_irbggp_s.png"></a><br>
+</tt></p><tt><br>
+
+</tt><hr>
+<tt><a name="h2:data sousa">
+</a></tt><p></p><h2><tt><a name="h2:data sousa"> Basis of a data manipulation</a></tt></h2><tt><a name="h2:data sousa"><br>
+</a>
+
+</tt><p><tt> <a name="h3:kiridashi">I'll put a basis of a data
+manipulation in GPhys in order here. When dealing with huge data,
+attention about the data reading which should be minded is also
+described.</a></tt></p><p></p><h3><tt><a name="h3:kiridashi"> Short straight-bladed knife</a></tt></h3><tt><a name="h3:kiridashi"><br>
+</a>
+
+</tt><p><tt> It was stated that method<tt> cut</tt> is able to cut GPhys down at the <a href="#cut%20introduced">top. In the data short straight-bladed knife method of GPhys, <tt>cut</tt> and<tt>, [,]</tt>, there are 2 kinds. <tt>cut</tt>, a physical coordinate, it's designated, and, it's cut down, <tt>[,]</tt>,
+for, a grid point of data is cut down based on an index (subscript as=
+arrangement). The respective specifications are indicated by an example
+first.</a></tt></p><tt><br>
+
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/kiridashi.rb">kiridashi.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+require "numru/gphys"
+include NumRu
+gphys = GPhys::NetCDF_IO.open('T.jan.nc', 'T')
+print "gphys: rank=# {gphys.rank}  shape=# {gphys.shape.inspect}, \n" 
+
+gp135 = gphys.cut('lon'=&gt;0..90)  # An axis of the name as lon, up to 0-90 times,
+print "gp135: rank=# {gp135.rank}  shape=# {gp135.shape.inspect}, \n" 
+
+gprg1 = gphys.cut(100.0..150.0, 30..50, 850) # The 12th dimension of is an area, and the 3rd dimension is the price,
+print "gprg1 rank=# {gprg1.rank}  shape=#{gprg1.shape.inspect}" " 0th dim: # {gprg1.coord (0). Min}. . # {gprg1.coord(0). max}, \n" 
+
+gprg2 = gphys[0..3, -3..-1, 0] # It's like the top, but by an arrangement subscript, designation
+print "gprg2 rank=# {gprg2.rank}  shape=# {gprg2.shape.inspect}", " 0th dim: # {gprg2.coord (0). Min} .. # {gprg2.coord (0). max} \n"
+p gprg2 # leaving indication
+</pre></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p><tt> Execution results in below:.</tt></p><tt><br>
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby -Ke kiridashi.rb</span> 
+gphys: rank=3 shape=[36, 19, 9]
+gp135: rank=3 shape=[10, 19, 9]
+gprg1 rank=2 shape=[6, 3]  0th dim: 100.0 degrees_east .. 150.0 degrees_east
+gprg2 rank=2 shape=[4, 3]  0th dim: 0.0 degrees_east .. 30.0 degrees_east
+&lt;GPhys grid=&lt;2D grid &lt;axis pos=&lt;'lon' shape=[4]  subset of a NumRu::VArrayNetCDF&gt;&gt;
+        &lt;axis pos=&lt;'lat' shape=[3]  subset of a NumRu::VArrayNetCDF&gt;&gt;&gt;
+   data=&lt;'T' shape=[4, 3]  subset of a NumRu::VArrayNetCDF&gt;&gt;
+</pre></td></tr></tbody></table>
+<p></p><tt><br>
+
+</tt><p><tt> The one from the last line Leaving indication by p (<tt>p gprg2</tt>)
+The result which is so? ' lon'. ' lat'. ' T' The data which is so, both
+are "subset. of. Please show that it's a NumRu::VArrayNetCDF". I'm
+here. (<tt>Just like arranging a NetCDF variable, VArrayNetCDF</tt> is
+a class like the socket to show it.). Well, "short straight-bladed
+knife" in GPhys just defines all references to which the reach to the
+original data was limited. When defining more GPhys objects about the
+data I'm doing NetCDF filing of like this example, <tt>VArrayNetCDF</tt>
+which becomes a saucer has only a reference to a NetCDF variable as the
+internal data. Therefore, kiridashi.rb above-mentioned, as much as it
+was carried out, for, the price of the variable isn't read (The
+investigation attribute is read as the need arises.) Reading of the
+price isn't performed until purpose of visualization needs actually.</tt></p><tt><br>
+
+</tt><p><tt> The case of <tt>GGraph.contour(gphys)</tt> in <a href="#contour1000mb_1">the first example of visualization</a>,
+then a two-dimensional subset (lowest data) is cut down first almost,
+and only data necessary to illustration is read after that. Original
+data, several, 100 MB of four dimensions, even if it's data, it's no
+problem.</a></tt></p><tt><br>
+
+
+</tt><p><tt> Now, because a short straight-bladed knife is a reference, if<tt> writing the price in <tt>gprg2</tt> above-mentioned, change will be reflected by a NetCDF file in gphys</tt>
+and Omoto. But a file is opened in Read - only by default, so I don't
+need the worry to which the file is changed carelessly. Actually, the
+first argument of GPhys::NetCDF_IO.open is going to understand a NetCDF
+object or a character string. If and it's a character string, a NetCDF
+object of read - only is opened and used inside.</tt></p><tt><br>
+
+</tt><p><tt>
+When I'd like to permit writing in, it's necessary to give the NetCDF
+object which opened as writing in possible beforehand as follows to
+GPhys::NetCDF_IO.open.</tt></p><tt><br>
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+file = NetCDF.open('T.jan.nc', 'a') # the mode 'a' permits edit of a file
+gphys = GPhys::NetCDF_IO.open(file, 'T')
+</pre></td></tr></tbody></table>
+
+<p>Arguments of <tt>NetCDF.open</tt>
+are the file name and an input/output mode (It's possible to omit.) The
+input/output mode is same as the specification of the built-in File
+class in Ruby (And that's same as the specification of the C language.)
+But, NetCDF needs the purpose 'b' which is always binary, KU, the
+reading is possible by every mode again.</p>
+
+<a name="h3:heikin sonota">
+</a><p></p><h3><tt><a name="h3:heikin sonota"> About an average and other calculation.</a></tt></h3><tt><a name="h3:heikin sonota"><br>
+</a>
+
+</tt><p><tt> GPhys. Data is cut down and. It's possible to get the
+average and do mathematics calculation and statistical operation.
+Because calculation about data is unnecessary to a short
+straight-bladed knife. A GPhys object just maintained a reference to
+the variable I'm doing NetCDF filing of, such as I get the average,
+when it is, it'll be calculated with the reading of the actual data.
+Data leaves the file already and is maintained on the memory. Since
+putting it in GPhys, but data on the memory is also dealt with just
+equally with the data in the file. Therefore the user doesn't have to
+classify both of them. But, it's better to try to calculate after a
+necessary part is cut down so that a memory isn't pressed when dealing
+with huge data.</tt></p><tt><br>
+
+</tt><p><tt> It's known immediately never data is in the file or
+whether class GPhys is in NArray indeed. VArray of a GPhys follower (=
+Virtual Array) absorbs this difference. For example above-mentioned
+VArrayNetCDF is a sub-class in VArray. (Correspondence to the
+unsupported format will depend, and is main work to make VArray which
+deals.)</tt></p><tt><br>
+
+</tt><p><tt> Now, a lower program indicates vertical profile of the
+whole ball average temperature. Be careful about almost no source's
+changing </tt>with <a href="#line_2"><tt>line_2.rb.</tt></a></p><a href="#line_2"><tt><br>
+
+</tt></a><p><a href="#line_2"><tt> </tt></a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/line_3.rb"><tt>line_3.rb</tt></a>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 2: include NumRu 
+ 3: gphys = GPhys::IO.open('T.jan.nc', 'T') 
+ 4: DCL.gropn(1) 
+ 5: DCL.sgpset('isub', 96) 
+ 6: DCL.sgpset('lfull',true) 
+ 7: DCL.uzfact(0.6) 
+ 8: GGraph.set_fig('itr'=&gt; 2, 'viewport'=&gt; [0.250.70.150.6]) 
+ 9: GGraph.line(gphys.mean(0,1), true, 'exchange'=&gt;true) 
+10: DCL.grcls
+</pre></td></tr></tbody></table>
+
+</p><p><tt> A figure of the result is the bottom. I pay attention to
+information's on the upper right outside the limits changing to the one
+which shows an average.</tt></p><tt><br>
+
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/line_3.png">line_3.rb execution result<br><img src="line_3s.png"></a><br>
+</tt></p><tt><br>
+
+</tt><p><tt> I'm getting the average of the 12th dimension in mean (01)
+here. The dimension is also counted from 0 like an array element.
+Method mean in GPhys does a arithmetic mean equivalent in the weight of
+each grid point. The directions are same as method mean in NArray (And
+there is a method of sum, max, min, stddev equally.)</tt></p><tt><br>
+
+</tt><p><tt> Now, because data makes the sample discrete by 90N-90S,
+and a thing is an included reason, in fact an average is the top
+integrated by trapezium rules and Simpson formulas, etc., and it's
+natural to divide it by the length. It's possible to balance in method
+average at such real space:.</tt></p><tt><br>
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+9: GGraph.line(gphys.average(1).average(0), true, 'exchange'=&gt;true)
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt><p><tt> Such. The method operated in real space? It's 2, average
+and integrate up to now. Integration algorithm of default is a
+trapezium rule together, (, when it changes, but algorithm interprets
+only a user's guide of , NetCDF by the character of the grid, I know
+and don't get the character of the grid actually, so well). it's
+necessary to do these every each dimension, so it's being called
+average (1) .average (0) again. I pay attention to being not the
+average which considered that the longitudinal space of the grid point
+around the pole is also still short in this case. it's expected to make
+sure that you can establish the coordinate system for which spherical
+coordinates was necessary in the future and make them interpret.</tt></p><tt><br>
+
+</tt><hr>
+<tt><a name="h2:units">
+</a></tt><p></p><h2><tt><a name="h2:units"> The unit of the physical quantity</a></tt></h2><tt><a name="h2:units"><br>
+</a>
+
+</tt><p><tt> VArray, GPhys recognizes the unit of the physical quantity.</tt></p><tt><br>
+
+</tt><p><tt> The unit is designated by attribute "units", and
+&lt;ahref="http://ruby.gfd-dennou.org/products/numru-units"
+target=_top&gt;NumRu::Units carries out the operation. When I choose as
+this for example multiply by VAray and GPhys, you multiply by the unit.
+I do (for example, km and conversion between m, degree_C and K) after
+the summation of the data and the difference with the unit with the
+difference for the fixed number double and/ or the offset will do the
+conversion which adds the 2nd item to the unit of the initial term
+later.</tt></p><tt><br>
+
+</tt><p><tt> A class of the numerical value with the unit as <a href="http://ruby.gfd-dennou.org/products/gphys/doc/unumeric.html">NumRu::UNumeric</a>
+using this (scalar) is defined in the package of GPhys. GPhys, VArray,
+UNumeric can carry out 2 item operation freely. (In a class of a
+result, of GPhys, VArray, UNumeric, it's added in turn. For example, an
+operation result of UNumric and GPhys is GPhys.)</tt></p><tt><br>
+
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/op_units.rb">op_units.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/gphys" 
+ 1: include NumRu 
+ 2: temp = GPhys::NetCDF_IO.open('T.jan.nc', 'T') 
+ 3: p (temp.data.get_att('units')) 
+ 4: p ( (temp * temp).data.get_att('units')) 
+ 5: p ( (temp * temp).units.to_s) 
+ 6: 
+ 7: R = UNumeric [287.04, 'J.K-1.kg-1'] # Gas const of dry air 
+ 8: p ( (R * temp).data.get_att('units'))  # Bad, because temperature should be in
+ K 
+ 9: zeroK = UNumeric[0.0, 'K'] 
+10: tempK = zeroK + temp 
+11: p ( (R * tempK).data.get_att('units'))
+</pre></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p><tt> Execution results in below:.</tt></p><tt><br>
+
+</tt><p>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby op_units.rb</span>
+" degC"
+"degC2"
+"degC2"
+"J.K^(-1.0). degC.kg-1"
+"J.kg-1"
+</pre></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p><tt> I find out that unit "degC" of the temperature is squared and becomes "degC2" as the result by which the 4th line </tt>is <tt>(temp
+* temp). 7 lines of several gaseous fixed R = 287.04 [J.kg-1.K-1] is
+prepared by an eye, and you multiply 8 lines by the temperature by an
+eye. The unit of the result was" J.K^ (-1.0). degC.kg-1". K and degC
+have not canceled it, so it's a little indistinct, but really to hang
+on a gas constant and be significant when I think, would usually
+remember that it's absolute temperature (probably). So, using the
+unit's which is as a result of the addition being added to the first
+item by , 9,10 line, I change to Kelvin:.</tt></p><p></p><pre><tt> 
+    zeroK = UNumeric [0.0, 'K'] tempK
+    = zeroK + temp
+</tt></pre>
+
+<p><tt> The unit of (11 line) and the result which hangs R on this result has gone out with "J.kg-1".</tt></p><tt><br>
+
+</tt><hr>
+<tt><a name="h2:nc kakidashi">
+</a></tt><p></p><h2><tt><a name="h2:nc kakidashi"> Data is extracted in a file.</a></tt></h2><tt><a name="h2:nc kakidashi"><br>
+</a>
+
+</tt><p><tt> <a name="h3:gphys kakidashi">When GPhys is used, own
+describing file can be extracted easily. (After it's processed as the
+need arises.) I deal with the instance output in a file after NetCDF
+reads own describing data as GPhys already first almost. The style
+change in a file is also easy as it'll be indicated later. The data
+which follows and is own describing, and, the example which is
+extracted from one in a file after composing a GPhys object, is
+indicated. The file format extracted up to now has not supported
+extraction of GrADS yet only at NetCDF or grib.</a></tt></p><p></p><h3><tt><a name="h3:gphys kakidashi"> Extraction of GPhys data</a></tt></h3><tt><a name="h3:gphys kakidashi"><br>
+</a>
+
+</tt><p><tt> It's possible to extract the whole of a GPhys object in a
+file while keeping own description. A NetCDF file is read by the next
+example and the small group which limited territory is extracted in a
+NetCDF file. A coordinate variable corresponds to extracted territory,
+and is also cut down right.</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/ncwrite1.rb">ncwrite1.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+1: require "numru/gphys" 
+2: include NumRu 
+3: gphys = GPhys::NetCDF_IO.open('T.jan.nc', 'T') 
+4: outfile = NetCDF.create('tmp.nc') 
+5: GPhys::NetCDF_IO.write(outfile, gphys.cut('level'=&gt;1000..250).mean(0)) 
+6: GPhys::NetCDF_IO.write(outfile, gphys.cut('level'=&gt;1000..250).mean(0,1).rename('T00')) 
+7: outfile.close
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby ncwrite1.rb</span> 
+% <span class="command">ncdump -c tmp.nc</span> 
+netcdf tmp {
+dimensions:
+        lat = 19 ;
+        level = 5 ;
+variables:
+        float lat(lat) ;  
+               lat:units = "degrees_north" ;
+               lat:actual_range = 90.f, -90.f;
+               lat:long_name = "Latitude" ;
+        float level(level) ;
+...(snip)... 
+       float T(level, lat) ;
+...(snip)...
+        float T00(level) ;
+...(snip)...
+// global attributes:
+               :history = "2004-03-19 19:40:17 JST horinout&gt; NumRu::GPhys::NetCDF_IO.write
+T" ;
+data: 
+
+ lat = 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, -10, -20, -30, -40, -50, -60, -70, -80, -90 ; 
+
+ level = 1000, 850, 600, 400, 250 ;
+}
+</pre></td></tr></tbody></table>
+
+</p><p><tt> 第 of a <a href="#ncwrite1">source 56. Like a line. GPhys::NetCDF_IO.write </a><a name="h3:file type conversion">Repeatedly,
+O can write more than one variables on one file. But, only one variable
+of the same name can be written by the restrictions of NetCDF, so I'm
+changing the name of the data written on the 2nd with 'T00' here. When
+not changing the name, the name of the two data is same, so an
+exception occurs. On the other hand, coordinate variable in case of is
+often shared in more than one GPhys, so when there is something
+homonymous of existence, the dimension and the size (shape) are
+checked, and when it's identical, it's regarded as the same one and
+writing in is omitted. When being not identical, an exception occurs. A
+coordinate variable as <tt>level</tt> is shared by an upper example.</a></tt></p><p></p><h3><tt><a name="h3:file type conversion"> Change in the file format</a></tt></h3><tt><a name="h3:file type conversion"><br>
+</a>
+
+</tt><p><tt> A style change in a file can be performed easily by a thing through GPhys.</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/convert.rb">convert.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/gphys" 
+ 2: include NumRu 
+ 3: 
+ 4: usage = "\nUSAGE:\n % #{$0}  in_file out_file\n" 
+ 5: ifpath = ARGV.shift || raise (usage) 
+ 6: ofpath = ARGV.shift || raise (usage) 
+ 7: 
+ 8: raise "File # {ofpath}  present. Delete it if needed." if File.exist?
+ (ofpath) 
+ 9: case ofpath 
+10: when /\.nc$/ 
+11:   ofile = NetCDF.create (ofpath) 
+12: when /\.grib$/ 
+13:   ofile = Grib.create (ofpath) 
+14: else 
+15:  raise "unsupported file type judged by suffix): "+ofpath 
+16: end 
+17: 
+18: GPhys::IO.var_names_except_coordinates (ifpath). each do |varname| 
+19:   GPhys::IO.write (ofile, GPhys::IO.open (ifpath, varname)) 
+20: end 
+21: 
+22: ofile.close
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> The style of the file in a change destination has been
+decided according to the suffix (is it .nc? grib) by this program. The
+style of the input file is distinguished between automatically, so you
+have to do nothing in particular. Still, 19 lines are input by an eye,
+it's extracted in a file after all variables which are being filed are
+read for the memory once, so it isn't suitable for handling of huge
+data. A handling method of huge data is mentioned later. Further for
+the bug, the above program can't convert it to a grib file in <b>GPhys 0.4.0. I need after 0.4.1 which will be released from now on.</b></tt></p><p><tt> Example (But, the 3rd one can't normally be carried out in GPhys 0.4.0.):</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby convert.rb T.jan.grib tmp1.nc</span> 
+% <span class="command">ruby convert.rb T.jan.ctl tmp2.nc</span> 
+% <span class="command">ruby convert.rb T.jan.nc tmp.grib</span> 
+% <span class="command">ls tmp*</span> 
+tmp.grib tmp1.nc tmp2.nc
+</pre></td></tr></tbody></table>
+
+</p><p><tt> Confirmation of the filing which could be done:</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ncdump -h tmp1.nc</span> 
+netcdf tmp1 {
+dimensions:
+         lon = 36 ;
+         lat = 19 ;
+         level = 9 ; 
+
+variables:
+         float lon (lon)  ;
+                 lon:long_name  =  " longitude"  ;
+                 lon:units  =  " degrees_east"  ;
+                 lon:short_name  =  "lon" ;
+         float lat(lat) ;
+                 lat:long_name = "latitude" ;
+                 lat:units = "degrees_north" ;
+                 lat:short_name = "lat" ;
+         long level(level) ;
+                 level:long_name = "isobaric level" ;
+                 level:units = "hPa" ;
+         double TMP(level, lat, lon) ;
+                 TMP:time = "0000-01-01 00:00:0.0" ;
+                 TMP:long_name = "Temperature" ;
+                 TMP:units = "K" ;
+                 TMP:standard_name = "air_temperature" ; 
+
+// global attributes:
+        :history = "2005-03-21 18:06:19 JST horinout&gt; NumRu::GPhys::NetCDF_IO.write TMP" ;
+}
+</pre></td></tr></tbody></table>
+
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">wgrib tmp.grib</span> 
+1:0:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=1000:TR=1:P1=0:P2=0:TimeU=0:1000 mb:anl:NAve=0 
+2:1463:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=850:TR=1:P1=0:P2=0:TimeU=0:850 mb:anl:NAve=0 
+3:2926:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=600:TR=1:P1=0:P2=0:TimeU=0:600 mb:anl:NAve=0 
+4:4389:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=400:TR=1:P1=0:P2=0:TimeU=0:400 mb:anl:NAve=0 
+5:5852:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=250:TR=1:P1=0:P2=0:TimeU=0:250 mb:anl:NAve=0 
+6:7315:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=150:TR=1:P1=0:P2=0:TimeU=0:150 mb:anl:NAve=0 
+7:8778:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=70:TR=1:P1=0:P2=0:TimeU=0:70 mb:anl:NAve=0 
+8:10241:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=30:TR=1:P1=0:P2=0:TimeU=0:30 mb:anl:NAve=0 
+9:11704:d=00010100:TMP:kpds5=11:kpds6=100:kpds7=10:TR=1:P1=0:P2=0:TimeU=0:10 mb:anl:NAve=0
+</pre></td></tr></tbody></table>
+
+<tt><a name="h3:others kakidashi">
+</a></tt></p><p></p><h3><tt><a name="h3:others kakidashi"> An extraction-- GPhys object of non-GPhys data is made with one.</a></tt></h3><tt><a name="h3:others kakidashi"><br>
+</a>
+</tt><p><tt> (by Seiya Saizawa and 改: Horinouchi)</tt></p><p><tt> When extracting a NetCDF file from one, you can write that GPhys is used easily.</tt></p><p><tt>
+I'm not reading a file by the following program and compose a GPhys
+object from one including coordinate information, and that's output in
+a NetCDF file. A program doesn't have to deal with the method of
+RubyNetCDF directly by going through a GPhys object once, and becomes
+easy.</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/ncwrite2.rb">ncwrite2.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+require "numru/gphys"
+include NumRu 
+
+nlon = 36
+nlat = 18 
+
+lon_a = VArray.new(NArray.sfloat(nlon).indgen(0,360.0/nlon),
+                   {"long_name"=&gt;"longitude", "units"=&gt;"degrees_east"},
+                   "lon")
+lon = Axis.new.set_pos(lon_a) 
+
+lat_a = VArray.new(NArray.sfloat(nlat).indgen 0,180/nlat),
+                   {"long_name"=&gt;"latitude", "units"=&gt;"degrees_north"},
+                   "lat")
+lat = Axis.new.set_pos(lat_a) 
+
+data = VArray.new(NArray.sfloat(nlon,nlat).indgen,
+                   {"long_name"=&gt;"temperature", "units"=&gt;"K"},
+                   "T")
+gphys = GPhys.new(Grid.new(lon,lat). data) 
+
+file = NetCDF.create("tmp.nc")
+GPhys::NetCDF_IO.write(file,gphys)
+file.close
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> I'll check the contents of file tmp.nc which can execute and make the program above-mentioned:.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby ncwrite2.rb</span> 
+% <span class="command">ncdump -c tmp.nc</span> 
+netcdf tmp {
+dimensions:
+        lon = 36 ;
+        lat = 18 ;
+variables:
+        float lon(lon) ;   
+            lon:long_name = "longitude" ;
+            lon:units = "degrees_east" ;
+        float lat(lat) ;
+            lat:long_name = "latitude" ;
+            lat:units = "degrees_north" ;
+        float T(lat, lon) ;
+            T:long_name = "temperature" ;
+            T:units = "K" ; 
+
+// global attributes:
+        :history = "2004-04-19 12:02:36 JST horinout&gt; NumRu::GPhys::NetCDF_IO.write T" ;
+data: 
+
+ lon = 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150,
+    160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290,
+    300, 310, 320, 330, 340, 350 ; 
+
+ lat = 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150,
+ 160, 170;
+}
+</pre></td></tr></tbody></table><tt> Axis Class and GPhys Class object are made after VArray Class object of a variable is made once.</tt></p>
+
+
+
+<hr>
+<a name="h2:big data">
+</a><p></p><h2><a name="h2:big data"> Handling of huge data</a></h2><a name="h2:big data"><br>
+</a>
+
+<p> <a name="h3:subset_and_cloning">The number of complete changes,
+several, more than 100 MB, when dealing with data, when it's read
+together, a memory of a computer would be pressed. There are several
+devices to avoid that in GPhys.</a></p><p></p><h3><a name="h3:subset_and_cloning"> Subset in GPhys and cloning</a></h3><a name="h3:subset_and_cloning"><br>
+</a>
+
+<p> The, first, for, design policy of GPhys which says "Unless I need, data isn't read." For example, <tt>[,]</tt>, and<tt>, reading of a file doesn't occur by subset cutting by cut</tt>. Could you see the following example?
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb</span> 
+irb(main):001:0&gt; <span class="command">require "numru/gphys"</span> 
+=&gt; true
+irb(main):002:0&gt; <span class="command">include NumRu</span> 
+=&gt; Object
+irb(main):003:0&gt; <span class="command">gphys = GPhys::IO.open ('T.jan.nc','T')</span> 
+=&gt; &lt;GPhys grid=&lt;3D grid &lt;axis pos=&lt;'lon' in 'T.jan.nc'  sfloat[36]&gt;&gt;
+       &lt;axis pos=&lt;'lat' in 'T.jan.nc'  sfloat[19]&gt;&gt;        &lt;axis pos=&lt;'level' in 'T.jan.nc'  sfloat[9]&gt;&gt;&gt;
+   data=&lt;'T' in 'T.jan.nc'  sfloat[36, 19, 9]&gt;&gt;
+irb(main):004:0&gt;<span class="command">sub = gphys.cut ('lon'=&gt;0,'lat'=&gt;10..60)</span> 
+=&gt; &lt;GPhys grid=&lt;2D grid &lt;axis pos=&lt;'lat' shape=[6]  subset of a NumRu::VArrayNetCDF&gt;&gt;
+       &lt;axis pos=&lt;'level' shape=[9]  subset of a NumRu::VArrayNetCDF&gt;&gt;&gt;
+   data=&lt;'T' shape=[6, 9]  subset of a NumRu::VArrayNetCDF&gt;&gt;
+</pre></td></tr></tbody></table>
+
+</p><p> <tt>sub. = In the indication which is </tt>as a result of gphys.cut ('lon'=&gt;0,'lat'=&gt;10..60). ' lat'. ' T' NITSUI, since, <tt>subset. It's indicated </tt>with
+of a NumRu::VArrayNetCDF. It's because when doing subset making of this
+in VArray, a new object copies and doesn't maintain the price, but a
+reference to an original object and representation method of a subset
+are maintained. A short straight-bladed knife of the data even an
+example of visualization <a href="#h3:saisoku%20contour">above-mentioned visualizes, <tt>[,]</tt>, and<tt>, it's that to do </tt>in
+cut, the data read from a file is used for taking pictures. If
+therefore just just illustrating, a GPhys object may be made dealing
+with the whole of huge data.</a></p><a href="#h3:saisoku%20contour"><br>
+
+</a><p><a href="#h3:saisoku%20contour"> Further of the price, when<tt> I'd like to read and make a copy, the copy</tt>
+method should be used. This makes so-called deep clone where a new
+object doesn't include a reference to an old object (An object tree is
+copied wholly.) Refer to the next.</a></p><a href="#h3:saisoku%20contour"><br>
+
+</a><p><a href="#h3:saisoku%20contour"> Continuation of the above irb session:</a>
+<table width="80%"><tbody><tr><td><pre class="source">
+irb(main):005:0&gt; <span class="command">csub = sub.copy</span> 
+=&gt; &lt;GPhys grid=&lt;2D grid &lt;axis pos=&lt;'lat' sfloat[6] val=[60.0,50.0,40.0,30.0,...]&gt;&gt;
+       &lt;axis pos=&lt;'level' sfloat[9] val=[1000.0,850.0,600.0,400.0,...]&gt;&gt;&gt;
+   data=&lt;'T' sfloat[6, 9]  val=[4.25522947311401,4.68513584136963,9.936279296875,14.2176637649536,...]&gt;&gt;
+</pre></td></tr></tbody></table>
+
+</p><p><a href="#h3:saisoku%20contour"> The part of the price is indicated this time. Data is read, and is maintained on the memory as a NArray object.</a></p><a href="#h3:saisoku%20contour"><br>
+
+</a><a name="h3:iterator for big data">
+</a><p></p><h3><a name="h3:iterator for big data"> Auto partition ITERETA for huge data</a></h3><a name="h3:iterator for big data"><br>
+</a>
+
+<p> Now, the policy "data doesn't read" unless I needed, was explained
+at the top, but they often come to the "need". When carrying out an
+operation like <tt>gphys.mean (0)</tt> and<tt> gphys3 = gphys1 + gphys2, for example it's so. When reading and extracting a file as it was told at a join of a change in the <a href="#h3:file%20type%20conversion">file format later, reading occurs once.</a></tt></p><tt><a href="#h3:file%20type%20conversion"><br>
+
+</a></tt><p><tt><a href="#h3:file%20type%20conversion">
+It's considered to decide not to press a memory by reading a little in
+such case. For example, as follows, (This is non-automation example.
+Next an automation example is indicated.)</a></tt></p><tt><a href="#h3:file%20type%20conversion"><br>
+
+</a></tt><p><tt><a href="#h3:file%20type%20conversion"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/iterate_over_dim_1.rb">iterate_over_dim_1.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/gphys" 
+ 2: include NumRu 
+ 3: 
+ 4: gphys = GPhys::NetCDF_IO.open('T.jan.nc', 'T') 
+ 5: 
+ 6: #&lt; all at once &gt; 
+ 7: print "Case 1: all at once\n" 
+ 8: p gphys.mean(0,1).val
+ 9: 
+10: #&lt; iterate over the last dimension &gt; 
+11: print "\nCase 2: iterated\n" 
+12: nz = gphys.axis(2).length
+13: for i in 0...nz 
+14: p gphys[false,i].mean(0,1).val
+15: end
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby iterate_over_dim_1.rb</span> 
+Case 1: all at onceNArrayMiss.sfloat (9): [5.058, -0.5645, -14.03, -32.75,
+-49.6, -57.47, -61.5, -53.99, -42.25] 
+
+Case 2:  iterated 5.05842492176078-0.564510100069102-14.0251893160636-32.7455883360746-49.5988384046053-57.4673908077485-61.4999143366228-53.9931640625-42.247435809576.
+</pre></td></tr></tbody></table>
+
+</p><p><tt> But the result the occasion set to one side and the
+occasion using ITERETA give isn't same as a Ruby object by an upper
+example. Because the latter is more than one zero dimensions while the
+former is one of one-dimensional data.</tt></p><tt><br>
+
+</tt><p><tt> ITERETA which supports to divide calculation to huge data into GPhys and do is mounted. That's used as follows.</tt></p><tt><br>
+
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/iterate_over_dim_2.rb">iterate_over_dim_2.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/gphys" 
+ 2: include NumRu 
+ 3: gphys = GPhys::NetCDF_IO.open('T.jan.nc', 'T') 
+ 4: 
+ 5: &lt; # all at once&gt;. 
+ 6: ofile1 = NetCDF.create('tmp1.nc') 
+ 7: gp10 = gphys*10 
+ 8: GPhys::NetCDF_IO.write(ofile1, gp10) 
+ 9: ofile1.close 
+10: 
+11: #&lt; iterate over the last dimension &gt; 
+12: ofile2 = NetCDF.create('tmp2.nc') 
+13: GPhys::NetCDF_IO.each_along_dims_write(gphys, ofile2, -1)  do |sub| 
+14: sub10 = sub*10 
+15: [sub10] 
+16: end 
+17: ofile2.close
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> In the first half After the price of the data is done
+10 times. It'll be obvious to extract in a file as "tmp1.nc". The
+second half may be incomprehensible. Well, the same calculation is
+completely done, and, "tmp2.nc" It's extracted in the file which says
+so. But, in the case. I turn a loop about the last dimension. <tt>GPhys::NetCDF_IO.each_along_dims_write</tt>
+The GPhys object designated by an argument of HA the 1st is divided
+along the dimension designated by the 3rd argument and it's made an
+argument in a block, and (by an upper example, variable<tt> sub</tt>)
+and a return value in a block ( [sub10] which is 15 lines of eye at the
+top) are written in the file designated by the 2nd argument. The data
+I'd like to write on a file isn't always one, so the return value is
+made arrangement of a GPhys object. Because a return value should be
+the whole subset in the case, after restoring the whole right, I write
+notes. This last point is important, and therefore a result becomes
+same as the case when split application wasn't performed like an
+example in the first half.</tt></p><tt><br>
+
+</tt><p><tt> The length of the last dimension will be 1 </tt>in <tt>sub at the top. When saying roughly, the following loop is being carried out.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+for i in 0...gphys.shape [-1]
+  sub = gphys[false, i..i] # doesn't put out the last dimension and makes it length 1 by i..i.
+  ...
+end
+</pre></td></tr></tbody></table>
+</p><p><tt> Since putting it in the return value in a block for the whole restoration, the partitioned dimension isn't supposed to go off.</tt></p><tt><br>
+
+</tt><p><tt> Further, arrangement with more than one GPhys objects is also fine for the first argument </tt>of <tt>GPhys::NetCDF_IO.each_along_dims_write
+by one GPhys object. I also increase in the number of an argument in a
+block according to the number of the GPhys object of input. Later,
+it'll be possible to designate the dimension under the name, not the
+number. Next, the example:</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+GPhys::NetCDF_IO.each_along_dims_write( [gp1,gp2,gp3], ofile2, 'level') do |sub1, sub2, sub3|
+  ...
+</pre></td></tr></tbody></table>
+
+</p><p><tt> gp1, gp2, gp3 is divided along common axis 'level' here.
+Everything has an axis as 'level' of course, and when it isn't
+equivalent in its length, it'll be an error.</tt></p><tt><br>
+
+</tt><p><tt> An output file, more than one, it's possible to designate
+it and separate the destination. The dimension used for division again,
+more than one, it's possible to designate it:.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+GPhys::NetCDF_IO.each_along_dims_write(gp, [ofile1, ofile2], 'lat', 'level') do |sub|
+  ....
+  [res1, res2]
+end
+</pre></td></tr></tbody></table>
+</p><p><tt> <tt>res1</tt> is written by <tt>ofile2</tt> on <tt><tt>o</tt>file1, res2</tt>
+here. When the number of the return value is bigger than the number of
+files, more than one object enters a (it was designated, last) output
+file together.</tt></p><tt><br>
+
+</tt><p><tt> <tt>GPhys::NetCDF_IO.each_along_dims_write</tt> extracts a result in a NetCDF file. In the future, I'll plan also to make the method as <tt>GPhys::each_along_dims</tt>
+which isn't extracted in a file. The input data is huge for this, but
+when saying that it's small, the result of the processing will be
+useful. (If the result was also huge, it couldn't help be taken out in
+a file, so that was mounted first.)</tt></p><tt><br>
+
+</tt><hr>
+<tt><a name="h2:file bunkatsu">
+</a></tt><p></p><h2><tt><a name="h2:file bunkatsu"> A division file, virtually, bundle</a></tt></h2><tt><a name="h2:file bunkatsu"><br>
+</a>
+
+</tt><p><tt> A subset of the data GPhys is, it's the whole, but it's
+melted, I explained already that you're able to handle it. When one of
+data is divided into more than one file actually contrary to that, it's
+possible to handle it. <b>But, this function is mounted only about NetCDF at present.</b></tt></p><tt><br>
+
+</tt><p><tt> For example we'll assume that data of the temperature of the daily mean splits </tt>with <tt><tt><tt>T.</tt></tt>2001.nc,T.2002.nc,
+T.2003.nc every year. The moment I'll get the average of this data for
+3 years and get the average from November in 2001 to February in 2002,
+(The person on a weather relation is good?) The necessity to attach
+these files first is ARU by a usual application program, well, wax. But
+it should be done as follows in GPhys.</tt></p><p>
+<table width="80%"><tbody><tr><td><pre class="source">
+gphys = GPhys::IO.open( ['T.2001.nc','T.2002.nc','T.2002.nc'],'T')
+</pre></td></tr></tbody></table>
+
+</p><p><tt> Or.</tt></p><p>
+<table width="80%"><tbody><tr><td><pre class="source">
+gphys = GPhys::IO.open(/T. (\d\d\d\d). nc/, 'T')
+</pre></td></tr></tbody></table>
+
+</p><p><tt> The former is informing GPhys::IO.open that it's to put a
+file in one-dimensional arrangement and is one-dimensional division.
+Two-dimensional division uses two-dimensional arrangement. The latter
+designates a file by a regular expression. It's necessary to put the
+pattern which changes by a file in parentheses here. When a parenthesis
+is one, it's meant that it's one-dimensional division.</tt></p><p><tt>
+Then, up to now, if, I'll give a demonstration of reading of a division
+file using the same data. First first a file will be divided, and
+that's read and a figure is drawn once more.</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/multiple_files.rb">multiple_files.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 2: include NumRu 
+ 3: gp = GPhys::IO.open ('T.jan.nc', 'T') 
+ 4: 
+ 5: # &lt; (create test files: divide into 4 files 2 by 2)&gt;. 
+ 6: 
+ 7: GPhys::IO.write(f=NetCDF.create('tmp00.nc'), gp[0..17,0..9, {0..6,6}]) 
+ 8: f.close 
+ 9: GPhys::IO.write(f=NetCDF.create('tmp01.nc'), gp[0..17,10..-1, {0..6,6}]) 
+10: f.close 
+11: GPhys::IO.write(f=NetCDF.create('tmp10.nc'), gp[18..-1,0..9, {0..6,6}]) 
+12: f.close 
+13: GPhys::IO.write(f=NetCDF.create('tmp11.nc'), gp[18..-1,10..-1, {0..6,6}]) 
+14: f.close 
+15: 
+16: # &lt; open two-dimentionally divided data&gt;. 
+17: 
+18: files = /tmp (\d) (\d). nc/ 
+19: p gpcompo = GPhys::IO.open(files, 'T') 
+20: 
+21: # &lt; test graphics&gt;. 
+22: 
+23: DCL.gropn(1) 
+24: DCL.sgpset('lcntl', false); DCL.uzfact (0.7) 
+25: DCL.sldiv('y',2,1) 
+26: GGraph.contour(gpcompo) 
+27: GGraph.contour(gpcompo[false,1]) 
+28: DCL.grcls 
+29: 
+30: #&lt; clean up&gt;. 
+31: 
+32: File.unlink('tmp00.nc') 
+33: File.unlink('tmp01.nc') 
+34: File.unlink('tmp10.nc') 
+35: File.unlink('tmp11.nc')
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> 2 divides data respectively about the longitude and a
+parallel at the top, and it's put in 4 files as tmp00.nc, tmp01.nc,
+tmp10.nc, tmp11.nc. That, using<tt> a regular expression, /tmp (\d) (\d). It's designated by the shape as the nc/</tt> and GPhys object<tt> gpcompo</tt>
+is opened. When the result is illustrated, distribution of temperature
+of whole ball is indicated like the bottom. It's still lowest about the
+3rd dimension (the pressure) and, only the 7th layer is cut down from
+the bottom. I pay attention to 2nd on a lower figure becoming a figure
+of 70 mb. Made file<tt> tmp??nc</tt> is put out at the end of a program.</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/multiple_files.png">multiple_files.rb execution result<br>
+<img src="multiple_files_s.jpg"></a><br>
+
+</tt></p><hr>
+<tt><a name="h2:ggraph konasi1">
+</a></tt><p></p><h2><tt><a name="h2:ggraph konasi1"> GGraph is managed (its 1).</a></tt></h2><tt><a name="h2:ggraph konasi1"><br>
+</a>
+
+</tt><p><tt> <a name="h3:graph_startup">I return to a topic of visualization again.</a></tt></p><p></p><h3><tt><a name="h3:graph_startup"> Utilization of a reading file</a></tt></h3><tt><a name="h3:graph_startup"><br>
+</a>
+
+</tt><p><tt> Above-mentioned. Use of a irb startup file for <a href="#souce%20.irbrc_ggraph">GGraph? </a><a name="contour1000mb_2.rb">It
+isn't necessary to limit to only irb. It's usually possible to employ
+the processing which is also at the time of GGraph use in a program as
+gathered one like the bottom. But, when the contents of the startup
+file are rewritten, the execution contents change, so I don't recommend
+to use it for the program kept lengthily. Because setting which will be
+different from dialogue processing in program execution later would be
+sometimes desirable, (For example it won't be usually better to change
+the parameter 'lwait' of DCL.) it would be better to prepare a startup
+file apart from one for irb actually.</a></tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour1000mb_2.rb">contour1000mb_2.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require File.expand_path("~/.irbrc_ggraph.rb") # one for irb is diverted. 
+ 2: gphys = GPhys::IO.open('T.jan.nc', 'T') 
+ 3: GGraph.contour(gphys) 
+ 4: DCL.grcls
+</pre></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p><tt> <a name="h3:graph option"><tt>It's being used to develop <tt>File.expand_path</tt> as a home directory here.</tt></a></tt></p><p></p><h3><tt><a name="h3:graph option"> Drawing option</a></tt></h3><tt><a name="h3:graph option"><br>
+</a>
+
+</tt><p><tt> I'll make sure that a message outside the upper right
+limits ("lon=130.0 degrees_east") won't be indicated in the polygonal
+line written at the <a href="#line_2">top
+for now. When doing that, Anders Kjor isn't included in the indicated
+character any more, so you don't have to restrain control character
+interpretation:.</a></tt></p><tt><a href="#line_2"><br>
+
+</a></tt><p><tt><a href="#line_2"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/line_4.rb">line_4.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+1: require "numru/ggraph" 
+2: include NumRu 
+3: gphys = GPhys::IO.open('T.jan.nc', 'T') 
+4: DCL.gropn(1) 
+5: DCL.uzfact(0.7) 
+6: GGraph.set_fig('itr'=&gt; 2) 
+7: GGraph.line(gphys.cut(135,35,false), true, 'exchange'=&gt;true, 'annot'=&gt;false) 
+8: DCL.grcls
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> The option 'annotate' was made false here. An option
+name can omit the back by right truncation (Abbreviation which agrees
+with more than 2 option name of course can't be done.)</tt></p><tt><br>
+
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/line_4.png">line_4.rb execution result<br><img src="line_4s.jpg"></a><br>
+
+
+<a name="h3:option shikumi">
+</a></tt></p><p></p><h3><tt><a name="h3:option shikumi"> Mechanism of an option of the drawing method</a></tt></h3><tt><a name="h3:option shikumi"><br>
+</a>
+
+</tt><p><tt> Several options of the drawing method had come out up to now, but maybe it was confused at a form </tt>such as <tt>'exchange'=&gt;true, so it's explained. It can be put in the upper program.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+GGraph.line(gphys.cut(135,35,false), true, 'exchange'=&gt;true, 'annot'=&gt;false)
+</pre></td></tr></tbody></table>
+
+</p><p><tt> HA.</tt>
+<table width="80%"><tbody><tr><td><pre class="source"> 
+GGraph.line(gphys.cut(135,35,false), true, {'exchange'=&gt;true, 'annot'=&gt;false})
+</pre></td></tr></tbody></table>
+
+</p><p><tt> The abbreviation which is so (The grammatical top of Ruby is so.) And.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+{'exchange'=&gt;true, 'annot'=&gt;false}
+</pre></td></tr></tbody></table>
+
+</p><p><tt> A definition of HA and association arrangement (Hash) is
+meant. One which lines key =&gt; value at the end of an argument it
+means that is regarded as a definition of association arrangement. The
+association arrangement false assigns true to character string
+'exchange' and to which is assigned to character string 'annot' is made
+with an upper example. When I break apart like the bottom separately,
+it would be easy to understand.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+hash = {'exchange'=&gt;true, 'annot'=&gt;false}
+GGraph.line(gphys.cut(135,35,false), true, hash)
+</pre></td></tr></tbody></table>
+<tt> In other words, association
+arrangement is being just given to the 3rd argument of GGraph.line and
+a key word argument (the argument distinguished under the name, not
+order) isn't used. A key word argument doesn't exist in grammar of
+Ruby, but it's using association arrangement.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+GGraph.line(gphys.cut(135,35,false). true, 'exchange'=&gt;true, 'annot'=&gt;false)
+</pre></td></tr></tbody></table>
+<tt> Be so, it's said that they can express and a key word argument can be used substantially.</tt></p><tt><br>
+
+</tt><p><tt> <a name="h3:option default">Since putting it in
+association arrangement Hash, "key" has to be perfect matching, but
+it's devised so that I may finish by right truncation in GGraph.
+They're KeywordOpt included in a </a><a href="http://ruby.gfd-dennou.org/products/misc" target="_top">Misc library</a>,
+not the GPhys body and KeywordOptAutoHelp which is the sub-class to
+support that. A Misc library collected expensive libraries of the
+public who supports Ruby programming in general.</tt></p><p></p><h3><tt> I know the default value of the option.</tt></h3><tt><br>
+
+
+</tt><p><tt> It's on a <a href="http://ruby.gfd-dennou.org/products/gphys/doc/ggraph.html" target="_top">GGraph manual</a>, but the default value of the option of each method is also checked as follows. I'll use dialogue shell irb in Ruby here. <tt>irb (main) :001:0&gt;</tt> etc. is a prompt of irb below. The line where I have no prompts is output by irb.</tt></p><tt><br>
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb</span> 
+irb(main):001:0&gt; <span class="command">require "numru/ggraph"</span> 
+=&gt; true
+irb(main):002:0&gt; <span class="command">include NumRu</span> 
+=&gt; Object
+irb(main):003:0&gt; <span class="command">GGraph.line(nil, true, 'help'=&gt;true)</span> 
+&lt;&lt; Description of options&gt;&gt;
+   option.  name.    default.  value.    #.  description:
+   "title"        nil.      #.  Title.  of.  the.  figure(if  nil.  internally.
+                         #.  determined)
+   "annotate"     true.     #.  if.  false.  do.  not.  put.  texts.  on.  the.  right.
+                         #.  margin.  even.  when.  newframe==true
+   "exchange"     false.    #.  whether.  to.  exchange.  x and y axes 
+   "index"        1 # line/mark index 
+   "type"         1 # line type 
+   "label"        nil.      #.  if.  a String is given, it's shown as the label 
+   "max"  nil   #  maximam data value
+   "min" nil     # minimam data value
+   "help"        false   # show help message if true
+ Current values={"annotate"=&gt;true, "help"=&gt;true, "title"=&gt;nil, "type"=&gt;1, "max"=&gt;nil, "exchange"=&gt;false, "index"=&gt;1, "min"=&gt;nil, "label"=&gt;nil}
+NumRu::Misc::HelpMessagingException: ** help messaging done **
+        from /usr/local/lib/ruby/site_ruby/1.8/numru/misc/keywordopt.rb:343:in `interpret'
+        from /usr/local/lib/ruby/site_ruby/1.8/numru/ggraph.rb:2389:in
+ `line'
+        from (irb):3
+irb(main):004:0&gt;
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt><p><tt> After driving 2 lines you promise first (<tt>require "numru/ggraph"</tt> and<tt> include NumRu</tt>) in at the top, option<tt> 'help'=&gt;true</tt> is designated, and <tt>GGraph.line</tt>
+is being carried out. Then the message indicated by one under it is
+indicated. Execution is stopped at this time, and it isn't drawn, so a
+dummy is fine for data. nil is being given at the top (<tt>the 1st argument </tt>of GGraph.line).</tt></p><tt><br>
+
+</tt><p><tt> Then continuously, it'll indicate an option of the other drawing methods.</tt></p><tt><br>
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+irb(main):004:0&gt; <span class="command">GGraph.contour(nil, true, 'help'=&gt;true)</span> 
+&lt;&lt; Description of options&gt;&gt;
+   option.  name.    default.  value.    #.  description:
+   "title"        nil.      #.  Title.  of.  the.  figure(if  nil.  internally. determined)
+   "annotate"     true.     #.  if.  false.  do.  not.  put.  texts.  on.  the.  right.
+                         #.  margin.  even.  when.  newframe==true
+   "transpose"    false.    #.  if.  true.  exchange.  x and y axes 
+   "min"  nil.      #.  minimum.  contour.  value.
+   "max"  nil.      #.  maximum.  contour.  value.
+   "nlev"         nil.      #.  number.  of.  levels.
+   "interval"     nil.      #.  contour.  interval.
+   "nozero"       nil.      #.  delete.  zero.  contour.
+   "coloring"     false.    #.  set.  color.  contours.  with.  ud_coloring
+   "clr_min"      13 # (if coloring)  minimum color id 
+   "clr_max"      100 # (if coloring)  maximum color id 
+   "help"         false.    #.  show.  help.  message.  if.  true.
+   "levels"       nil.      #.  contour.  levels.  (Array/NArray  of.  Numeric)
+   "index"        nil.      #.  (if  levels)  line.  index (es)  (Array/NArray  of.
+                         #.  integers.  Integer.  or.  nil)
+   "line_type"    nil.      #.  (if  levels)  line.  type (s)  (Array/NArray  of.
+                         #.  integers.  Integer.  or.  nil)
+   "label"        nil.      #.  (if  levels)  contour.  label (s)  (Array/NArray  of.
+                         #.  String.  String.  true.  false.  nil).  nil.  is.
+                         #.  recommended.
+   "label_height"         nil.      #.  (if  levels)  label.  height (s)  (Array/NArray
+                         #.  of.  Numeric.  Numeric.  or.  nil).  nil is recommended.
+  Current values={"label_height"=&gt;nil.  " annotate"=&gt;true.  "help"=&gt;true, "title"=&gt;nil, "coloring"=&gt;false, "transpose"=&gt;false, "max"=&gt;nil, "nlev"=&gt;nil, "line_type"=&gt;nil, "min"=&gt;nil, "clr_max"=&gt;100, "index"=&gt;nil, "levels"=&gt;nil, "interval"=&gt;nil, "nozero"=&gt;nil, "label"=&gt;nil, "clr_min"=&gt;13}
+NumRu::Misc::HelpMessagingException: ** help messaging done **
+        from /usr/local/lib/ruby/site_ruby/1.6/numru/misc/keywordopt.rb:343:in `interpret'
+        from /usr/local/lib/ruby/site_ruby/1.6/numru/ggraph.rb:1350:in `contour'
+        from (irb):4
+irb(main):005:0&gt;
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt><p><tt> An execution stop is performed by giving an exception as <tt>NumRu::Misc::HelpMessagingException</tt>
+so that it may be showed by this results. When using irb, when an
+exception rises, control returns to the user and the next prompt is
+indicated. When making the program a file, when an exception usually
+rises, execution stops. When not wanting to make them stop, you should
+protect at begin - rescure - end join like the bottom.</tt></p><tt><br>
+
+<a name="help_ggraph"></a>
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/help_ggraph.rb">help_ggraph.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+require "numru/ggraph"
+include NumRu
+begin
+  print "\n** optoions of GGraph.line **\n"
+  GGraph.line(nil, true, 'help'=&gt;true)
+rescue
+end
+begin
+  print "\n** optoions of GGraph.contour **\n"
+  GGraph.contour(nil, true, 'help'=&gt;true)
+rescue
+end
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> So an execution result is omitted like a case of irb. Other methods on which a help option can be put </tt>are <tt><tt><tt><tt>GGra</tt></tt></tt>ph.fig, GGraph.axes, GGraph.mark,GGraph.tone.</tt></p><tt><br>
+
+
+
+<hr>
+<a name="h2:ggraph konasi2">
+</a><p></p><h2><a name="h2:ggraph konasi2"> GGraph is managed (its 2).</a></h2><a name="h2:ggraph konasi2"><br>
+</a>
+
+<p> <a name="h3:contour-tone auto">The drawing method of GGraph has
+various options so that it may be understood by help message indication
+above-mentioned. Designation by an option is finite then, but it can be
+established much effectively after that by changing the default value.
+An example is indicated below.</a></p><p></p><h3><a name="h3:contour-tone auto"> contour/tone (level auto-generation)</a></h3><a name="h3:contour-tone auto"><br>
+</a>
+
+<p> <a name="contour101">I'll execute the next program.</a></p><p><a name="contour101"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour101.rb">contour101.rb</a>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 1: include NumRu 
+ 2: gphys = GPhys::IO.open('T.jan.nc', 'T') 
+ 3: 
+ 4 #&lt; Opening of DCL and setting&gt; 
+ 5: DCL.gropn(1) 
+ 6: DCL.sldiv('y',2,2) #  In 2x2, screen split and the 'y'=yoko: upper left-&gt; upper right-&gt; lower left. 
+ 7: DCL.sgpset('lcntl', false) # doesn't interpret a control character. 
+ 8: DCL.sgpset('lfull',true) # full display 
+ 9: DCL.uzfact(0.75)  # The character string size of the coordinate axis, 0.75 times 
+10: DCL.sgpset('lfprop',true) # uses a proportional font. 
+11: 
+12: #&lt; Drawing by GGraph&gt; 
+13: GGraph.set_fig('viewport'=&gt; [0.150.750.150.6])  # set_*:, much effective setting 
+14: # The 1st of 
+15: GGraph.contour(gphys) 
+16: GGraph.tone(gphys, false, 'ltone'=&gt;false)  # In less than zero, shading 
+17: # The 2nd of 
+18: GGraph.next_fig('itr'=&gt;2) # It's effective setting only next to the next_*:. 
+19: GGraph.contour(gphys.average(0), true, 'color'=&gt;true) # iridescent contour 
+20: # The 3rd of 
+21: GGraph.set_axes('xunits'=&gt;'','yunits'=&gt;'') # the unit of the empty character string--&gt; axis isn't written. 
+22: GGraph.tone gphys.cut true,true,70)) # Default of tone is color indication. 
+23: GGraph.contour(gphys.cut(true,true,70), false) # 2nd argument false -&gt; stack describing 
+24: # The 4th of 
+25: GGraph.set_linear_contour_options('min'=&gt;0, 'nlev'=&gt;20) 
+26: # Default change in contour. next where only next time is effective_linear.. 
+27: GGraph.contour(gphys.average(0)) 
+28: 
+29: #&lt; end&gt; 
+30: DCL.grcls
+</pre></td></tr></tbody></table>
+
+</p><p> When it's carried out, 4 of contour and figure of the painting
+should be indicated like the bottom. It's written during programming,
+so explanation in each line won't be that necessary. Only the part is
+explained here. The price will be shading to the range of less than
+zero by <tt>'ltone'=&gt;false</tt> by the 16th line. An option of
+tone library UEPACK in DCL is just as it is for this. But, while
+'ltone' == false is default in UEPACK, 'ltone' == true is made default
+in GGraph.</p><br>
+
+<p> And also. I add that I concern in general. In GGraph It's generally drawn, the method <tt><i>hogehoge</i></tt>. NI vs., with the selling point of. <tt>set which changes the default value of the option_<i>hogehoge</i></tt> But it exists. . The method as <tt>next_<i>hogehoge</i></tt>
+is too long, and to make it an option or is prepared for the person to
+whom it itself doesn't prefer using an option, and I have an influence
+on only next <tt><i>hogehoge</i></tt> (as that a result gives an option to <tt><i>hogehoge</i></tt> it means that). I correct and in case of <tt>contour</tt>, splits up into <tt>(set|next) of self-reading level generation_linear_contour_options</tt> and <tt>(set|next) which designates the level positively_contour_levels</tt>. About <tt>tone which does painting/shading, like.</tt></p><tt><br>
+
+</tt><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour101.png">contour101.rb execution result<br>
+   <img src="contour101s.png"></a><br>
+</tt></p><tt><br>
+
+</tt><p><tt> When option<tt> coloring</tt> is set </tt>in <tt>contour,
+color contour is generated. The color assigned to the minimum value of
+contour and the greatest by an option in that case can be designated (<tt>clr_min</tt> and<tt> clr_max</tt>).</tt></p><tt><br>
+
+</tt><p><tt> contour/tone level? I have to do the specific level
+specification explained by the next clause. It's generated at equal
+intervals. In the case. Perfect trusting can also be done and. (1) the
+minimum value (<tt>min</tt>). (2) the maximum (<tt>max</tt>) (3) space (<tt>interval</tt>) or the number (<tt>nlev</tt>).
+It's possible to designate and control optional 個 over 3 parameters
+where it's so. When both of the space and the number are designated.
+The latter is ignored. Last generation? <tt>DCL.udgcl [ab]</tt> Because it's entrusted to <tt>DCL.uegtl [ab]</tt>. It was designated, it's biggest/, the minimum value is changed to the good price of the cut. Of course. A parameter </tt>of <tt>(UD|UE) PACK in <tt>icycle</tt> is also interpreted. When option<tt> ltone</tt> is made <tt>false</tt> to do shading in <tt>tone</tt>, level generation is just just stopped, so if parameter<tt> ltone</tt> </tt>in <tt>UEPACK is <tt>true</tt>
+actually, the color tone will be indicated as expected (And, anyway
+this incomprehensible name is adopted just as it is because I draw
+attention I say.) There is an option from which the price takes zero
+contour only <tt>contour</tt> (<tt>nozero</tt>).</tt></p><tt><br>
+
+<a name="h3:color bar">
+</a></tt><p></p><h3><tt><a name="h3:color bar"> Color bar</a></tt></h3><tt><a name="h3:color bar"><br>
+</a>
+
+</tt><p><tt> <tt>GGraph.coloar_bar</tt> indicates a color bar about
+just before tone drawing (It's possible not to use a just before one
+and to designate the level and the pattern positively, it wouldn't be
+used so much.) A drawing example of a color bar is indicated in the
+bottom. I'd find out that it can be designated colorfully.</tt></p><tt><br>
+
+<a name="color_bar.rb">
+</a></tt><p><tt><a name="color_bar.rb"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/color_bar.rb">color_bar.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 2: include NumRu 
+ 3: gphys = GPhys::IO.open('T.jan.nc', 'T') 
+ 4: 
+ 5: #&lt; Opening of DCL and setting&gt; 
+ 6: DCL.gropn(1) 
+ 7: DCL.sldiv('y',2,2) # In 2x2, screen split and the 'y'=yoko: upper left-&gt; upper right-&gt; lower left. 
+8: DCL.sgpset ('isub', 96)# issue--&gt; The control character change : '_' which indicates '`' 
+ 9: DCL.sgpset('lfull',true) # full display 
+10: DCL.uzfact(0.75) # The character string size of the coordinate axis, 0.75 times 
+11: DCL.sgpset('lfprop',true) # uses a proportional font. 
+12: 
+13: # Drawing by &lt; GGraph&gt; 
+14: GGraph.set_fig('viewport'=&gt; [0.150.70.20.6])  # set_*:, much effective setting 
+15: # The 1st of 
+16: GGraph.tone(gphys.cut(true,true,850)) 
+17: GGraph.contour(gphys.cut(true,true,850), false) 
+18: GGraph.color_bar # color bar (The default is lengthwise.) 
+19: 
+The 2nd of 20: # 
+21: GGraph.next_fig ('viewport'=&gt; [0.20.750.20.6]) 
+22: GGraph.tone (gphys.cut (true,true,850)) 
+23: GGraph.contour (gphys.cut (true,true,850) and false) 
+24: GGraph.color_bar ('left'=&gt;true,'labelintv'=&gt;1)  On the# left side, indication
+and any labels (every 1 of* ) 
+25: 
+The 3rd of 26: # 
+27: GGraph.next_fig ('itr'=&gt;2) 
+28: GGraph.tone (gphys.mean (0) and true, 'int'=&gt;4) 
+29: GGraph.color_bar ('vlength'=&gt;0.5,"landscape"=&gt;true,'tickintv'=&gt;0) 
+In 30: # length designation and the width, without indication and tick mark, (special case
+in 0 in case of) 
+31: 
+The 4th of 32: # 
+33: GGraph.next_fig ('itr'=&gt;2) 
+34: rmiss = DCL.glpget ('rmiss') 
+35: GGraph.tone( gphys.mean (0) and true, 'levels'=&gt; 
+36: [rmiss,-70,-60,-50,-40,-30,-20,-10,0,10,20,rmiss]) 
+37: GGraph.color_bar ("voff"=&gt;0.04) # is separated in the side slightly extra. 
+38: # +- infinity will be the triangle in GrADS a look. 
+39: 
+40: #&lt; end&gt; 
+41: DCL.grcls
+</pre></td></tr></tbody></table>
+
+</p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/color_bar.png">color_bar.rb execution result<br>
+   <img src="color_bar_s.png"></a><br>
+</tt></p><tt><br>
+
+<a name="h3:map projection">
+</a></tt><p></p><h3><tt><a name="h3:map projection"> Map projection</a></tt></h3><tt><a name="h3:map projection"><br>
+</a>
+
+</tt><p><tt> There is a map projection function in DCL. It's wrapped in
+the shape that that is easy to use and it's offered in GGraph. A
+projection is designated by the coordinate change number. First,<a href="http://ruby.gfd-dennou.org/products/ruby-dcl/ruby-dcl-doc/grph1/node8.html"> please read explanation</a> of a map projection in DCL before map projection practice in GGraph.</tt></p><tt><br>
+
+</tt><p><tt> The map projection DCL supports is the following.</tt></p><ul><tt> 
+</tt><li><tt> <b>Cylinder projection</b></tt><div align="center"><tt> 
+</tt>
+<table border="1" cellpadding="3">
+<tbody><tr><td align="center"> The number</td> 
+<td align="center"> Projection</td> 
+
+<td align="center"> Positive product</td> 
+<td align="center"> Shiyokaku</td> 
+<td align="center"> Positive calcarate</td> 
+</tr> 
+<tr><td align="center"> 10.</td> 
+<td align="center"> Equidistant cylindrical projection</td> 
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+<td align="center"> Meridian</td> 
+
+</tr> 
+<tr><td align="center"> 11.</td> 
+<td align="center"> Meru mosquito Tor projection</td> 
+<td align="center"> X</td> 
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+</tr> 
+<tr><td align="center"> 12.</td> 
+<td align="center"> Mollweide projection</td> 
+<td align="center"> Circle</td> 
+
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+</tr> 
+<tr><td align="center"> 13.</td> 
+<td align="center"> Hammer projection</td> 
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+</tr> 
+<tr><td align="center"> 14.</td> 
+
+<td align="center"> Eckert 6th projection</td> 
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+</tr> 
+<tr><td align="center"> 15.</td> 
+<td align="center"> Kitada elliptical projection</td> 
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+
+<td align="center"> X</td> 
+</tr> 
+</tbody></table></div><tt> 
+</tt><p><tt> 
+</tt></p></li><li><tt> <b>Conic projection</b></tt><div align="center"><tt> 
+</tt><table border="1" cellpadding="3"> 
+<tbody><tr><td align="center"> The number</td> 
+<td align="center"> Projection</td> 
+<td align="center"> Positive product</td> 
+<td align="center"> Shiyokaku</td> 
+
+<td align="center"> Positive calcarate</td> 
+</tr> 
+<tr><td align="center"> 20.</td> 
+<td align="center"> Positive calcarate conic projection</td> 
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+<td align="center"> Meridian</td> 
+</tr> 
+<tr><td align="center"> 21.</td> 
+<td align="center"> Lambert Masashi product conic projection</td> 
+
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+</tr> 
+<tr><td align="center"> 22.</td> 
+<td align="center"> Lambert Shiyokaku conic projection</td> 
+<td align="center"> X</td> 
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+
+</tr> 
+<tr><td align="center"> 23.</td> 
+<td align="center"> Bonne projection</td> 
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+</tr> 
+</tbody></table></div><tt> 
+</tt><p><tt> 
+</tt></p></li><li><tt> <b>Zenithal projection</b></tt><div align="center"><tt> 
+
+</tt><table border="1" cellpadding="3"> 
+<tbody><tr><td align="center"> The number</td> 
+<td align="center"> Projection</td> 
+<td align="center"> Positive product</td> 
+<td align="center"> Shiyokaku</td> 
+<td align="center"> Positive calcarate</td> 
+</tr> 
+<tr><td align="center"> 30.</td> 
+<td align="center"> Orthographic chart way</td> 
+<td align="center"> X</td> 
+
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+</tr> 
+<tr><td align="center"> 31.</td> 
+<td align="center"> Polar stereographic projection</td> 
+<td align="center"> X</td> 
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+</tr> 
+<tr><td align="center"> 32.</td> 
+
+<td align="center"> Zenithal projection</td> 
+<td align="center"> X</td> 
+<td align="center"> X</td> 
+<td align="center"> Azimuth line</td> 
+</tr> 
+<tr><td align="center"> 33.</td> 
+<td align="center"> Lambert's azimuthal equal-area projection</td> 
+<td align="center"> Circle</td> 
+<td align="center"> X</td> 
+
+<td align="center"> X</td> 
+</tr> 
+</tbody></table></div></li></ul><tt> 
+</tt><p></p><tt><br>
+
+</tt><p><tt> In GGraph, to each, "It's arranged to come.", a default
+setting has been prepared. It'll be an easy program first and draw it
+by several projections.</tt></p><tt><br>
+
+<a name="map_proj1.rb">
+</a></tt><p><tt><a name="map_proj1.rb"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_proj1.rb">map_proj1.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: itr = ARGV [0]? ARGV [0]. to_i : 10 
+ 2: 
+ 3: require "numru/ggraph" 
+ 4: include NumRu 
+ 5: gphys = GPhys::IO.open('T.jan.nc', 'T') 
+ 6: DCL.gropn(1) 
+ 7: DCL.sgpset('lcntl', false) 
+ 8: DCL.sgpset('lclip', true) 
+ 9: DCL.uzfact(0.7) 
+10: DCL.sgpset('lfull',true) 
+11: GGraph.set_fig 'itr'=&gt;itr, 'viewport'=&gt; [0.150.850.10.6] 
+12: GGraph.set_map 'coast_world'=&gt;true 
+13: GGraph.tone(gphys) 
+14: DCL.grcls
+</pre></td></tr></tbody></table><tt> This program gets the map
+projection number as the first argument. Cylinder projection, a conic
+projection and an azimuthal projection will be represented, and
+equidistant cylindrical projection (10), a positive calcarate conic
+projection (20) and a orthographic chart way (30) are tried.</tt><table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby map_proj1.rb 10</span> 
+% <span class="command">ruby map_proj1.rb 20</span> 
+% <span class="command">ruby map_proj1.rb 30</span>
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> The respective results are indicated.</tt>
+<table><tbody><tr><td>
+<a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_proj1_itr10.png"><br>
+<img src="map_proj1_itr10_s.png"><br> ruby map_proj1.rb 10 execution result</a></td>
+</tr><tr>
+<td>
+<a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_proj1_itr20.png"><br>
+<img src="map_proj1_itr20_s.png"><br> ruby map_proj1.rb 20 execution result</a></td>
+<td>
+<a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_proj1_itr30.png"><br>
+<img src="map_proj1_itr30_s.png"><br> ruby map_proj1.rb 30 execution result</a></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p>
+</p><h4><tt> About several special projections.</tt></h4>
+
+<p><tt> It's drawn by the whole screen by polar stereographic
+projection (number 31) in case of and default (by a definition area, to
+infinity). To put drawing in a viewport.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+DCL.sgpset('lclip', true)
+</pre></td></tr></tbody></table>
+<tt> O is designated.</tt></p><tt><br>
+
+</tt><p><tt> Equidistant cylindrical projection (number 10) is a
+so-called latitude longitudinal coordinate. It's possible to write a
+coordinate axis for linear-linear orthogonal coordinate (number 10) in
+this case. Option<tt> 'map_axes'</tt> is designated </tt>in <tt>true in method<tt> contour, tone, line</tt> </tt>in <tt>GGraph.</tt></p><tt><br>
+
+<a name="map_axes_itr10.rb">
+</a></tt><p><tt><a name="map_axes_itr10.rb"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_axes_itr10.rb">map_axes_itr10.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 2: include NumRu 
+ 3: gphys = GPhys::IO.open('T.jan.nc', 'T') 
+ 4: DCL.gropn(1) 
+ 5: DCL.sgpset('lcntl', false) 
+ 6: DCL.sgpset('lclip', true) 
+ 7: DCL.uzfact(0.7) 
+ 8: DCL.sgpset('lfull',true) 
+ 9: GGraph.set_fig 'itr'=&gt;10, 'viewport'=&gt; [0.150.850.10.6] 
+10: GGraph.set_map 'coast_japan'=&gt;true 
+11: GGraph.tone(gphys.cut('lon'=&gt;120..150,'lat'=&gt;20..50), true, 'map_axes'=&gt;true) 
+12: DCL.grcls
+</pre></td></tr></tbody></table>
+
+</p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_axes_itr10.png">map_axes_itr10.rb execution result<br>
+   <img src="map_axes_itr10_s.png"></a><br>
+</tt></p><tt><br>
+
+
+</tt><p>
+</p><h4><tt> Map projection related option</tt></h4>
+<p></p><tt><br>
+
+</tt><p><tt> There is an option on a map projection relation </tt>in <tt>GGraph::fig</tt> and<tt> GGraph::map. A map related option </tt>of <tt>GGraph::fig, the following:</tt></p><ul>
+<tt> </tt><li><tt> The <tt>m</tt>ap_radius: cone/map radius of the zenithal projection in case of (the degree)</tt></li><li><tt> The latitude slight reach of the one in the <tt><tt>w</tt></tt>indow, map_window: cylindrical coordinates system in case of (<tt>Only the former should be used in case of map_fit = true</tt>.)</tt></li><li><tt> 3 parameters of DCL::umscnt about "axis" on <tt>map_axis</tt> map</tt></li></ul>
+
+<p><tt> A main option </tt>of <tt>GGraph::map, the following:</tt></p><ul>
+<tt> </tt><li><tt> <tt><tt><tt><tt><tt><tt>coas</tt></tt></tt></tt></tt></tt>t_world,
+coast_japan, border_world, plate_world, state_usa, pref_japan : true
+writes a world map, a Japanese map, the border, a plate boundary, USA
+state line and a border between prefectures.</tt></li><li><tt> It fills in color of <tt>f</tt>ill : map.</tt></li><li><tt> <tt>g</tt>rid: latitude longitudinal grid is written.</tt></li><li><tt> <tt><tt>d</tt></tt>gridmj, dgridmn : latitude longitudinal grid interval (heavy line and the thin line)</tt></li></ul>
+
+<p><tt> For more information, it's indicated </tt>in option<tt> help like the bottom.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+&gt;&gt;<span class="command">require "numru/ggraph"</span> 
+=&gt; true
+&gt;&gt;<span class="command">NumRu::GGraph.fig nil, nil, 'help'=&gt;true</span> 
+&lt;&lt; Description of options&gt;&gt;
+  option name default value # description:
+  "new_frame" true # whether to define a new frame by DCL.grfrm
+                  # (otherwise, DCL.grfig is called)
+  "itr" 1 # coordinate transformation number
+  "viewport" [0.2 or 0.8 or 0.2 or 0.8] # [vxmin, vxmax, vymin, vymax]
+  "window" nil # (for itr.&lt;10,&gt; 50) [uxmin, uxmax, uymin, uymax]. 
+                        # each element allowd nil (only for itr&lt;5,&gt; 50) 
+  "xreverse" "positive:down,units:hPa" # (for itr&lt;10,&gt; 50) Assign. 
+                        # (max value to UXMIN and min value to UXMAX if
+                        # condition is satisfied nil:never, true:always,
+                        # String: when an attibute has the value specified # ("key:value,key:value,..")
+  "yreverse" "positive:down,units:hPa"
+                        # (for itr&lt;10,&gt; 50) Assign. 
+                        #.  max.  value.  to.  UYMIN.  and.  Min  value.  to.  UYMAX.  if.
+                         #.  condition.  is.  satisfied.  (nil:never.  true:always.
+                         #.  String:  when.  an.  attibute.  has.  the.  value.  specified.
+                         #.  ("key:value,key:value,..")
+  "similar"      nil.      #.  3-element  float.  array.  for.  similar.
+                         #.  transformation.  in.  a rectangular curvilinear 
+                        #.  coordinate.  which.  is.  fed.  in.
+                         #.  DCL:grssim: [simfac,vxoff,vyoff].   where.  simfac.
+                         #.  and.  [vxoff,vyoff]  represent.  scaling.  factor.  and.
+                         #.  origin.  shift.  respectively.
+  "map_axis"     nil.      #.  (for  all.  map.  projections)  3-element  float.
+                         #.  array.  to.  be.  fed.  in.  DCL::umscnt:  [uxc.  uxy.  rot].
+                         #.  where.  [uxc.  uyc]  represents.  the.  tangential.  point.
+                         #.  (Or.  the.  pole.  at.  top.  side.  for.  cylindrical.
+                         #.  projections).  and.  rot.  represents.  the.  rotation.
+                         #.  angle.  If.  nil.  internally.  determined.  (units:
+                         #.  degrees)
+  "map_radius"   nil.      #.  (for  itr&gt;=20:  conical/azimuhal  map.
+                         # projections) raidus around the tangential point. 
+                                              # (units: degrees)   "map_fit"
+                            nil     # (Only for itr=10(cylindrical) and 11 
+                                              # (Mercator)) true: fit the plot
+                        to the data window                        # (overrides
+                        map_window and map_axis); false: do                
+                               # not fit (then map_window and map_axis are used);
+                               # nil: true if itr==10, false if itr==11
+  "map_window"  [-180, 180, -75, 75]    # (for itr&lt;20: cylindrical
+                        # map projections) lon-lat window [lon_min,
+                        # lon_max, lat_min, lat_max ] to draw the map
+                        # (units: degres)
+  "help"        false   # show help message if true
+ Current values={"map_window"=&gt;[-180, 180, -75, 75], "help"=&gt;true, "similar"=&gt;nil, "map_axis"=&gt;nil, "window"=&gt;nil, "new_frame"=&gt;true, "itr"=&gt;1, "map_fit"=&gt;nil, "yreverse"=&gt;"positive:down,units:hPa", "viewport"=&gt;[0.2, 0.8, 0.2, 0.8], "xreverse"=&gt;"positive:down,units:hPa", "map_radius"=&gt;nil}
+NumRu::Misc::HelpMessagingException: ** help messaging done **
+        from /usr/local/lib/ruby/site_ruby/1.8/numru/misc/keywordopt.rb:386:in `interpret'
+        from /usr/local/lib/ruby/site_ruby/1.8/numru/ggraph.rb:2261:in `fig'
+        from (irb):5
+&gt; &gt;<span class="command">NumRu::GGraph.map 'help'=&gt;true</span> 
+&lt;&lt; Description of options&gt;&gt;
+   option.  name.    default.  value.    #.  description:
+   "lim"  true.     #.  draw.  map.  lim.  (t or f) 
+   "grid"         true.     #.  draw.  map.  grid.  (t or f) 
+   "vpt_boundary"         false.    #.  draw.  viewport.  boundaries.  (f.  t or. 
+                        #.  1,2,3..,  representing.  the.  line.  width)
+   "wwd_boundary"         false.    #.  draw.  worksation.  window.  boundaries.  (f.  t.
+                         #.  or.  1,2,3..,  representing.  the.  line.  width)
+   "fill"         false.    #.  fill.  the.  map.  if.  coast_world  or.  coast_japan  is.
+                         #.  true.  (t or f) 
+  "coast_world"  false.    #.  draw.  world.  coast.  lines.  (t or f) 
+  "border_world"         false.    #.  draw.  nation.  borders.  (t or f) 
+  "plate_world"  false.    #.  draw.  plate.  boundaries.  (t or f) 
+  "state_usa"    false.    #.  draw.  state.  boundaries.  of.  US.  (t or f) 
+  "coast_japan"  false.    #.  draw.  japanese.  coast.  lines.  (t or f) 
+  "pref_japan"   false.    #.  draw.  japanese.  prefecture.  boundaries.  (t or. 
+                        #.  f) 
+  "dgridmj"      nil.      #.  the.  interval.  between.  the.  major.  lines.  of.
+                         #.  latitudes.  and.  longitudes.  If.  nil.  internally.
+                         #.  determined.  (units:  degrees)  (this  is.  a UMPACK 
+                        #.  parameter.  which.  is.  nullified.  when.  uminit.  or.
+                         #.  grfrm.  is.  called)
+  "dgridmn"      nil.      #.  the.  interval.  between.  the.  minor.  lines.  of.
+                         #.  latitudes.  and.  longitudes.  If.  nil.  internally.
+                         #.  determined.  (units:  degrees)  (this  is.  a UMPACK 
+                        #.  parameter.  which.  is.  nullified.  when.  uminit.  or.
+                         #.  grfrm.  is.  called)
+  "help"         false.    #.  show.  help.  message.  if.  true.
+  Current.  values={"dgridmn"=&gt;nil.  "help"=&gt;true, "border_world"=&gt;false, "lim"=&gt;true, "wwd_boundary"=&gt;false, "fill"=&gt;false, "coast_japan"=&gt;false, "dgridmj"=&gt;nil, "vpt_boundary"=&gt;false, "coast_world"=&gt;false, "plate_world"=&gt;false, "grid"=&gt;true, "state_usa"=&gt;false, "pref_japan"=&gt;false}
+ NumRu::Misc::HelpMessagingException: ** help messaging done **        from /usr/local/lib/ruby/site_ruby/1.8/numru/misc/keywordopt.rb:386:in
+ `interpret'
+        from /usr/local/lib/ruby/site_ruby/1.8/numru/ggraph.rb:2546:in `map'        from (irb):6
+</pre></td></tr></tbody></table>
+
+
+</p><h4><tt> Further sample</tt></h4>
+
+<p><tt> When I make <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_projection.rb">this sample program</a><a> run, 5 lower figures are obtained. When there is a part they seem to use the function I want where, please consult.</a></tt>
+<table>
+ <tbody><tr>
+   <td> 
+    <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_projection_p1.png"><img src="map_projection_p1_s.png"><br> The 1st</a></td><td>
+    <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_projection_p2.png"><img src="map_projection_p2_s.png"><br> The 2nd</a></td><td>
+    <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_projection_p3.png"><img src="map_projection_p3_s.png"><br> The 3rd</a></td></tr><tr><td>
+    <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_projection_p4.png"><img src="map_projection_p4_s.png"><br> The 4th</a></td><td>
+    <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/map_projection_p5.png"><img src="map_projection_p5_s.png"><br> The 5th</a></td><td>
+ </td></tr>
+</tbody></table>
+</p><tt><a><br>
+
+</a><a name="h3:pressure why">
+</a></tt><p></p><h3><tt><a name="h3:pressure why"> That the one with the big price comes to the left/bottom only for pressure axis?</a></tt></h3><tt><a name="h3:pressure why"><br>
+</a>
+
+</tt><p><tt> The height is so low that the pressure is big for certain,
+so then it's convenient, to designate nothing, well something for is it
+because it's operated opaquely some? Well, I have written on an
+original NetCDF file that I should do that, so it's until that's
+interpreted. When indication by ncdump in <a href="#ncdump%20T.jan.nc">T.jan.nc is seen, there is a <tt>positive</tt> attribute only </a></tt><a href="#ncdump%20T.jan.nc">in variable<tt> level, and the price is <tt>"down"</tt>. There is no this on a NetCDF user guide, but it's the average attribute by many conventions (</tt></a><tt><a href="http://www.gfd-dennou.org/arch/gtool4/conventions/" target="_top">Refer to gtool4NetCDF agreement</a>.)</tt></p><tt><br>
+
+</tt><p><tt> Then, how should data without the <tt>positive</tt> attributes be done? I also consider that and am made, so GGraph is OK. Specifically, the default value of the parameter </tt>of method<tt> fig should be changed.</tt></p><tt><br>
+
+</tt><p><tt> I'll execute a program in the following only 2 lines first. (Even if it isn't made a file intentionally, irb is enough.)</tt></p><tt><br>
+
+<a name="fig_help">
+</a></tt><p><tt><a name="fig_help"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/fig_help.rb">fig_help.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+require "numru/ggraph"
+NumRu::GGraph.fig(nil, true, 'help'=&gt;true)
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> Then the menu of the option is indicated as follows.</tt></p><tt><br>
+
+</tt><table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby fig_help.rb</span> 
+&lt;&lt; Description of options&gt;&gt;
+  option name default value # description:
+  "new_frame" true # whether to define a new frame by DCL.grfrm
+                   # (otherwise, DCL.grfig is called)
+  "itr" 1 # coordinate transformation number
+  "viewport" [0.2 or 0.8 or 0.2 or 0.8] # [vxmin, vxmax, vymin, vymax]
+  "window" nil # (for itr.&lt;10,&gt; 50) [uxmin, uxmax, uymin, uymax]. 
+                        # each element allowd nil (only for itr&lt;5,&gt; 50) 
+  "  xreverse" "positive:down,units:hPa" # (for itr&lt;10,&gt; 50) Assign. 
+                        # (max value to UXMIN and min value to UXMAX if 
+                        # conditionis satisfied nil:never, true:always, 
+                        # String: when an attibute has the value specified # ("key:value,key:value,..")
+  "yreverse" "positive:down,units:hPa"
+                        # (for itr&lt;10,&gt; 50) Assign. 
+                        #.  max.  value.  to.  UYMIN.  and.  Min  value.  to.  UYMAX.  if.
+                         #.  condition.  is.  satisfied.  (nil:never.  true:always.
+                         #.  String:  when.  an.  attibute.  has.  the.  value.  specified.
+                         #.  ("key:value,key:value,..")
+   " similar"      nil.      #.  3-element  float.  array.  for.  similar.
+                         #.  transformation.  in.  a rectangular curvilinear 
+                        #.  coordinate.  which.  is.  fed.  in.
+                         #.  DCL:grssim: [simfac,vxoff,vyoff].   where.  simfac.
+                         #.  and.  [vxoff,vyoff]  represent.  scaling.  factor.  and.
+                         #.  origin.  shift.  respectively.
+   " map_axis"     nil.      #.  (for  all.  map.  projections)  3-element  float.
+                         #.  array.  to.  be.  fed.  in.  DCL::umscnt:  [uxc.  uxy.  rot].
+                         #.  where.  [uxc, uyc] represents the tangential point
+                         # (or the pole at top side for cylindrical
+                         # projections) and and rot represents the rotation # angle. If nil, internally determined. (units: # degrees)
+  "map_radius" nil # (for itr&gt;=20: conical/azimuhal map # projections)  raidus around  the tangential point. # (units: degrees) 
+  "map_lat_range" nil # (for itr&lt;20: cylindrical map projections)
+                        # latitudinal range to draw the map. By default
+                        # (nil), the map is drawn between 75E and 75S.
+                        # (units: degres)
+  "help"        false   # show help message if true
+ Current values={"help"=&gt;true, "similar"=&gt;nil, "map_axis"=&gt;nil, "window"=&gt;nil, "new_frame"=&gt;true, "itr"=&gt;1, "map_lat_range"=&gt;nil, "yreverse"=&gt;"positive:down,units:hPa", "viewport"=&gt;[0.2, 0.8, 0.2, 0.8], "xreverse"=&gt;"positive:down,units:hPa", "map_radius"=&gt;nil}
+/usr/local/lib/ruby/site_ruby/1.8/numru/misc/keywordopt.rb:343:in `interpret': ** help messaging done ** (NumRu::Misc::HelpMessagingException)
+        from /usr/local/lib/ruby/site_ruby/1.8/numru/ggraph.rb:2083:in `fig'
+        from fig_help.rb:2
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt><p><tt> The coordinate value of the end at the top and the bottom of the left and
+right on a figure  (<tt>uxmin.  uxmax.  uymin.  u</tt>ymax) is an option.  <tt>window.</tt>  Because
+ it's so and decided.  When I'd like to replace left and right of a coordinate
+ axis/the top and the bottom.  It's Kazunori to establish this positively. 
+But.  Then when I'd like to write various figures, it's inconvenient. 
+So.  <tt>window.</tt>  Without setting O.  I'll change a regulation of an automatic
+ judgement. </tt>It's option<tt> <tt>xreverse</tt>, yreverse to do that.
+ Upper output shows that the default value becomes "positive:down,units:hPa"
+ together. When or attribute units exists in attribute positive exists, and
+ whether its price is "down", and its price is "hPa",
+ this means that the left and right or the top and the bottom is made reverse.
+ The pressure was being given special treatment as expected actually by caring,
+ but the unit </tt>of <tt>level is milibar, not hPa by the data used this
+ time, so I don't have that because of that.
+</tt></p><tt><br>
+
+</tt><p><tt> 
+The default value, for example, when changing it to "units:mb,units:hPa,units:milibar",
+attribute units will be the setting which turns one of "mb",
+"hPa" and "milibar" over in in case of:.
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+GGraph.set_fig("xrev"=&gt;"units:mb,units:hPa,units:milibar", 
+               "yrev"=&gt;"units:mb,units:hPa,units:milibar")
+</pre></td></tr></tbody></table>
+
+</p><p><tt> On the other hand, when I'd like not to regard the pressure
+as special and to fight only by postive purely, it should be made
+"positive:down". When setting <tt>nil</tt> </tt>in <tt><tt>xreverse</tt>, yreverse, further turning isn't always performed, and when making it <tt>true</tt>, it's always turned over. When <tt>window</tt> is designated positively of course even if I go, I follow that.</tt></p><tt><br>
+
+<a name="h3:tone levels">
+</a></tt><p></p><h3><tt><a name="h3:tone levels"> The user designation of the tone level</a></tt></h3><tt><a name="h3:tone levels"><br>
+</a>
+
+</tt><p><tt> It's possible to designate the level of contour and the tone (painting) positively by arrangement in GGraph.</tt></p><tt><br>
+
+</tt><p><tt> The tone is designated by the level and the pattern
+number. The pattern number designates the color and the tone pattern at
+the same time. Refer to a manual of
+&lt;ahref="http://ruby.gfd-dennou.org/products/ruby-dcl/ruby-dcl-doc/"
+target=_top&gt;RubyDCL (the "outline" of GRPH1) for its specification.
+When (establishing the tone </tt>by <tt>GGraph.set_tone_levels or using in after continuing way) in GGraph, it's designated by option<tt> 'levels'</tt> </tt>of <tt>GGraph.tone and<tt> 'patterns'</tt> (its place limit). (When the latter is used in the still present mounting, <tt>GGraph.set_tone_levels</tt> before that becomes invalid, if I meet, it's expected to revise.)</tt></p><p><tt> <a name="tone201">Then a method is indicated by an example.</a></tt></p><p><tt><a name="tone201"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/tone201.rb">tone201.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 2: include NumRu 
+ 3: gphys = GPhys::NetCDF_IO.open('T.jan.nc', 'T') 
+ 4: 
+ 5: #&lt; Opening of DCL and setting&gt; 
+ 6: DCL.gropn(1) 
+ 7: DCL.sldiv 'y',2,2) # In 2x2, screen split and the 'y'=yoko: upper left-&gt; upper right-&gt; lower left. 
+ 8: DCL.sgpset('lcntl', false) # doesn't interpret a control character. 
+ 9: DCL.sgpset('lfull',true) # full display 
+10: DCL.sgpset('lfprop',true) uses a# proportional font. 
+11: 
+12: #&lt; Drawing by GGraph&gt; 
+13: GGraph.set_fig('viewport'=&gt; [0.150.820.150.6]) 
+14: # The 1st of 
+15: GGraph.set_tone_levels( 'levels'=&gt; [-20,-15,-10,-5,0], 
+16:                       'patterns'=&gt; [10,999,209,993,099,940,999]) 
+17: GGraph.tone(gphys) 
+18: # The 2nd of
+19: GGraph.tone( gphys, true, 'lev'=&gt; [-20,0,20], # the level and the pattern are designated positively. 
+20:             'pat'=&gt; [20,999,409,997,099,980,999] # The way where ) is bang, 1 of many-&gt; is to a+-infinite. 
+21: GGraph.contour(gphys, false, 'lev'=&gt; [-20,0,20], 'index'=&gt;3)  # Until reference. 
+22: # The 3rd of
+23: GGraph.tone( gphys, true, 'lev'=&gt; [-20,0,20]. 
+24:             'pat'=&gt; [409,997,099,980,999] ) # Even a+ infinite expands the level and the same number-&gt;. 
+25: # The 4th of 
+26: GGraph.tone( gphys, true, 'lev'=&gt; [-20,0,20]. 
+27:            'pat'=&gt; [4,099,970,999] ) # The way where is bang applies during few-&gt;. 
+28: #&lt; end&gt; 
+29: DCL.grcls
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> 15 lines are explained more than an eye. By 15-16 line The level of the tone and the pattern number are established. <tt>GGraph.set_tone_levels</tt> Then. ' levels' TO ' Both parameters of patterns' are designated by arrangement. To mix with in case of <tt>GGraph.tone</tt>
+and after-mentioned contour and the form, I'm taking the form of an
+option. Both of them can't be omitted (It isn't an option it means that
+actually.) If the level is established, I also have to designate the
+color at the same time. 17 line? The 1st figure is drawn with just
+before setting. By 19-20 line The level and the pattern. <tt>GGraph.tone</tt>
+It's designated positively as the option which is so. The 2nd is being
+drawn. There are 1 elements a lot more than the level for the
+designated pattern. In that case. -An infinite levels [0], levels [1]
+and .., levels [-1] , + infinite Time, it's applied. As I stated that
+the back with an option name can be omitted already. contour was piled up
+and written and made sure that the tone level was still easy to
+understand. It's mentioned later about level setting of contour. 23-24
+line draws the 3rd. It's equivalent in the number of elements of
+the level and the pattern, but levels [0], levels [1], .., levels [-1]
+and between the+ infinite are applied in this case. The one which is
+the pattern by 4th of 26-27 line, there are few 1 elements, so one
+between levels applies. A relation of the number of elements of the
+level and the pattern, an exception generates in case of besides these.</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/tone201.png">tone201.rb execution result<br>
+   <img src="tone201s.png"></a><br>
+</tt></p><tt><br>
+
+<tt></tt>
+
+<a name="h3:contour levels">
+</a></tt><p></p><h3><tt><a name="h3:contour levels"> The user designation of contour level</a></tt></h3><tt><a name="h3:contour levels"><br>
+</a>
+
+</tt><p><tt> The way to designate contour level positively by arrangement
+is explained. One in case of contour? The thicknesses which are a line in
+1 and 1 There are various parameters. I also have to decide those.
+GGraph. Then. As far as the user's flight is considered, and it's
+possible, you can omit or simplify it. When designating setting of the
+level as the in case of established </tt>in <tt>GGraph.set_contour_levels (When it's used in after continuing way.) by an option </tt>of <tt>GGraph.contour like tone in case of, there are 2 ways of (its place limit). A designated parameter </tt>is always <tt><tt><tt><tt>'</tt></tt></tt>index', 'line_type','label', 'label_height' by an option </tt>as well as necessary <tt>'levels'. (These are a parameter </tt>of <tt>DCL.udsclv. GGraph conforms to a regulation as follows, and decides about omitted one, and calls <tt>DCL.udsclv</tt>.)</tt></p><tt><br>
+
+</tt><p><tt> <a name="contour201">Then I'll execute the following program.</a></tt></p><p><tt><a name="contour201"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour201.rb">contour201.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "numru/ggraph" 
+ 2: include NumRu 
+ 3: gphys = GPhys::NetCDF_IO.open('T.jan.nc', 'T') 
+ 4: 
+ 5: #&lt; Opening of DCL and setting&gt; 
+ 6: DCL.gropn(1) 
+ 7: DCL.sldiv('y',2,2) # In 2x2, screen split and the 'y'=yoko: upper left-&gt; upper right-&gt; lower left. 
+ 8: DCL.sgpset('lcntl', false) # doesn't interpret a control character. 
+ 9: DCL.sgpset('lfull',true) # full display 
+10: DCL.sgpset('lfprop',true) # uses a proportional font. 
+11: 
+12: #&lt; Drawing by GGraph&gt; 
+13: GGraph.set_fig('viewport'=&gt; [0.150.820.150.6]) 
+14: levels = 5* (NArray.float(7).indgen!)  # NArray: [0,5,10...] 
+15: mj = DCL.udpget('indxmj') 
+16: mn = DCL.udpget('indxmn') 
+17: # The 1st of 
+18: GGraph.set_contour_levels('levels'=&gt;levels, 'index'=&gt;mj) # Contour setting 
+19: GGraph.contour(gphys) 
+20: # The 2nd of 
+21: GGraph.contour( gphys, true, 'lev'=&gt;levels,
+22:              'index'=&gt; [mj,mn], 'line_type'=&gt; [1222]) 
+23: # The 3rd of 
+24: GGraph.contour( gphys, true, 'lev'=&gt;levels,
+25:       'index'=&gt;mn, 'label'=&gt;true ) 
+26: # The 4th of 
+27: GGraph.contour( gphys, true, 'lev'=&gt;levels, 
+28:          'index'=&gt;mn, 'label'=&gt; ['A','B','C','D'], 
+29:          'label_height'=&gt; [0.0150.020.0250.03]) 
+30: #&lt; end&gt; 
+31: DCL.grcls
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> By 14 line The contents. [0510...] One-dimensional arrangement of NArray where it's so is being generated. <tt>indgen!</tt>, the contents <tt>[012..]</tt>
+Please, it's often used in NArray by the changed method. It's whether
+the thickness of the line (index) is equal to parameter 'indxmj' of
+UDPACK by default, and it's judged whether a label is written in contour
+(for defaults, 3). 18 lines of that's designated as option 'index' by
+an eye, so there is 19 lines of label which indicates contour level value
+in contour written by an eye. When scalar is designated by an option of
+'index', its price is applied to all contours.</tt></p><p><tt> The 2nd of
+figure after a while? contour. The levels are designated positively by
+the option which is so, and it's being drawn. By the 2nd index. HA. <tt>[mj. mn]</tt>
+It's granted by arrangement. In that case. [mj. mn. mj. mn,...] It's
+interpreted as the repeat which says so. About other options, like. You
+understand that line_type </tt>is <tt>[1222], so <tt>[1,2,2,2, 1,2,2,2..]</tt>
+label is designated with true by the 3rd figure, so a label is written
+in all contours. A character string of a label is designated positively by
+the 4th (label generates and writes the character string in which <tt>true</tt>
+expresses contour level inside, when a character string was given, that's
+used.) The size of the character string is established each by
+label_height by the 4th. But I'd want to change ordinariness uniformly.
+I recommend not to use label_height and to change parameter RSIZEL in
+UDPACK in that case.</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/contour201.png">contour201.rb execution result<br>
+   <img src="contour201s.png"></a><br>
+</tt></p><tt><br>
+
+<a name="h3:layout">
+</a></tt><p></p><h3><tt><a name="h3:layout"> I'm absorbed in a layout.</a></tt></h3><tt><a name="h3:layout"><br>
+</a>
+
+</tt><p><tt> I'd want to be absorbed in a layout by a figure for making
+a fair copy taken out in a contribution thesis. GGraph tends to utilize
+a strong layout function of DCL.</tt></p><tt><br>
+
+</tt><p><tt> <a name="layout1">I remove unnecessary coordinate axis
+title and label from more than one panel and make them refreshed also
+save space by the next example. Space saving does by not using
+DCL.sldiv and arranging more than one figure in 1 frame. A viewport on
+each figure is established positively for it and more way to fill out
+the title is being also adjusted small, so a source becomes long. Refer
+to a manual of RubyDCL about each command.</a></tt></p><p><tt><a name="layout1"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/layout1.rb">layout1.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+require "numru/ggraph"
+include NumRu
+gphys = GPhys::NetCDF_IO.open('T.jan.nc','T') 
+
+DCL.uzfact
+DCL.gropn(1)
+DCL.sgpset('lcntl', false) # doesn't interpret a control character
+DCL.sgpset('lfull',true)# full display
+DCL.sgpset('lcorner',false) # doesn't write coner mark
+DCL.uzfact(0.35) # The character string size of the coordinate axis, fixed number double
+DCL.sgpset('lfprop',true) # proportional font 
+DCL.udpset ('lmsg',false)# contour interval nondisplay
+
+vpt = NArray [0.05, 0.45, 0.05, 0.25] # viewport size (2:1)
+vpt00 = (vpt + ([0.050 ]* 2 + [0.32]* 2)).to_a # It's shifted in x and the y-direction, and becomes Array
+vpt01 = (vpt + ([0.474 ]* 2 + [0.32]* 2)).to_a # It's shifted in x and the y-direction, and becomes Array
+vpt10 = (vpt + ([0.050 ]* 2 + [0.10]* 2)).to_a # It's shifted in x and the y-direction, and becomes Array
+vpt11 = (vpt + ([0.474 ]* 2 + [0.10]* 2)).to_a # I shift in x and the y-direction and become Array. 
+
+GGraph.set_fig('viewport'=&gt;vpt00)
+GGraph.set_axes('xunits'=&gt;'','yunits'=&gt;'','xtitle'=&gt;'')
+DCL.uzpset('labelxb',false)
+GGraph.contour(gphys.cut (true,true,1000), true, 'annot'=&gt;false, 'titl'=&gt;'')
+DCL.uzpset('pad1',0.2); DCL.uxsttl('t','1000hPa',-1); DCL.uzpset('pad1',0.7) 
+
+GGraph.set_fig('viewport'=&gt;vpt01, 'new_frame'=&gt;false)
+GGraph.set_axes('ytitle'=&gt;'')
+DCL.uzpset('labelyl',false)
+GGraph.contour(gphys.cut(true,true,250), true, 'annot'=&gt;false, 'titl'=&gt;'')
+DCL.uzpset('pad1',0.2); DCL.uxsttl('t','250hPa',-1); DCL.uzpset('pad1',0.7) 
+
+GGraph.set_fig('viewport'=&gt;vpt10, 'new_frame'=&gt;false)
+GGraph.set_axes('ytitle'=&gt;nil,'xtitle'=&gt;nil)
+DCL.uzpset('labelyl',true); DCL.uzpset('labelxb',true)
+GGraph.contour(gphys.cut(true,true,70). true, 'annot'=&gt;false, 'titl'=&gt;'')
+DCL.uzpset('pad1',0.2);
+DCL.uxsttl('t','70 hPa',-1); DCL.uzpset('pad1',0.7) 
+
+GGraph.set_fig('viewport'=&gt;vpt11, 'new_frame'=&gt;false)
+GGraph.set_axes('ytitle'=&gt;'')
+DCL.uzpset('labelyl',false)
+GGraph.contour(gphys.cut(true,true,10), true, 'annot'=&gt;false, 'titl'=&gt;'')
+DCL.uzpset('pad1',0.2); DCL.uxsttl('t','10hPa',-1); DCL.uzpset('pad1',0.7) 
+
+DCL::sgtxzv(0.5, vpt00[3]+ 0.028, 'January Monthly Mean Temperature', 1.15*DCL.uzpget('rsizec2'), 003) 
+
+DCL.grcls 
+
+print "\n** PRESSURE LEVELS ** " ; p gphys.coord(2).val.
+</pre></td></tr></tbody></table>
+<tt><br>
+
+</tt></p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/layout1.png">layout1.rb execution result<br>
+   <img src="layout1s.jpg"></a><br>
+</tt></p><tt><br>
+
+
+<a name="h3:zahyou jiku">
+</a></tt><p></p><h3><tt><a name="h3:zahyou jiku"> I'm absorbed in a coordinate axis.</a></tt></h3><tt><a name="h3:zahyou jiku"><br>
+</a>
+
+</tt><p><tt> GGraph trusts coordinate axis drawing to USPACK in DCL (<tt><tt>DCL.us</tt>xaxs,DCL.usyaxs</tt> is called.) How should it be done then to put a date axis and control a coordinate axis smaller using U [XY] PACK? <a name="axes1">I
+don't make GGraph write the response for the moment, it's written by
+itself. Method axes which writes a spindle in GGraph can control a
+drawn axis </a></tt><a name="axes1">by option<tt> <tt>'</tt>xside', 'yside' as follows. If only the bottom draws an X axis, for example </tt>it's <tt>'xside'=&gt;'b'. An original value of default, <tt><tt>'</tt>xside'=&gt;'tb','yside'=&gt;'lr'</tt>.</tt></a></p><p><a name="axes1"><tt> </tt></a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/axes1.rb"><tt>axes1.rb</tt></a>
+<table width="80%"><tbody><tr><td><pre class="source">
+require "numru/ggraph"
+include NumRu
+gphys = GPhys::IO.open('T.jan.nc','T')
+DCL.gropn(1)
+DCL.sgpset('lfull',true); DCL.uzfact(0.6)
+GGraph.set_fig('itr'=&gt; 2, 'viewport'=&gt; [0.250.70.150.6])
+GGraph.set_axes('xside'=&gt;'b','yside'=&gt;'l')
+GGraph.line(gphys.mean(0,1), true, 'exchange'=&gt;true, 'annot'=&gt;false)
+DCL.grcls
+</pre></td></tr></tbody></table>
+
+</p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/axes1.png">axes1.rb execution result<br>
+   <img src="axes1s.png"></a><br>
+</tt></p><tt><br>
+
+</tt><p><tt> A coordinate axis should be written on the place which wasn't written using GGraph from later for UCPACK.</tt></p><tt><br>
+
+
+
+<hr>
+<a name="h2:dRuby">
+</a><p></p><h2><a name="h2:dRuby"> I make them access remote data.</a></h2><a name="h2:dRuby"><br>
+</a>
+
+<p> GPhys is made so that it may be useful for structure making to
+access the data put in the remote server as well as the file on the
+local disk. A remote object offer by cgi as OPeNDAP/DODS and the
+example for which a dispersion object library in Ruby as dRuby is used
+are indicated at below.</p><br>
+
+<p> The <a href="#h3:dRuby-1">making volume of "client using dRuby and James Grover Thurber", the 1</a> and <a href="#h3:dRuby-2">making volume  It's remote </a>in
+its 2, mechanism is explained using the easy example on which an
+offered GPhys object was fixed. When I'd like to use mechanism at any
+rate, I skip, and I hope that you advance towards the leaving volume
+using <a href="#h3:druby_gdir_services">GDir. It's remote in a directory tree using GDir, it's explained about GPhys built-in library gphys to access- remote.</a></p><a href="#h3:druby_gdir_services"><br>
+
+</a><p><a href="#h3:druby_gdir_services"> It'll be expected also to write it about use of a CGI and a relational database and web service from now on.</a></p><a href="#h3:druby_gdir_services"><br>
+
+</a><a name="h3:opendap">
+</a><p></p><h3><a name="h3:opendap"> Remote data access using OPeNDAP/DODS</a></h3><a name="h3:opendap"><br>
+</a>
+
+<p> <a href="http://www.opendap.org/">OPeNDAP/DODS</a>
+is remote data offer service by a CGI. It's a numerical data of the
+physical quantity which fitted into the file by which the data with
+which I deal is NetCDF and is used by various servers. An oceanographer
+has begun to develop it at first, and I have the station data which are
+buoys by (DODS=Distributed Ocean Data Sytem) and grid point data in
+mind, and it has been developed. The file format of the plural is being
+supported with to abstract a data structure by the meaning like GPhys
+in penetrating way.</p><br>
+
+<p> OPeNDAP/DODS is object-ized like GPhys which consists of the
+coordinate value and grid point value by the data structure called
+"Grid" (class). When it's the NetCDF file which got on OPeNDAP/DODS
+server, a coordinate variable is interpreted and a Grid object is
+formed automatically.</p><br>
+
+<p> A NetCDF client library corresponding to OPeNDAP/DODS is offered,
+and when this is used, it's to give Uniform Resource Locator of
+OPeNDAP/DODS instead of the file name of NetCDF, and it's possible to
+read directly without downloading remote data. The file on the server
+side doesn't have to be NetCDF in the case, but it's necessary to have
+NetCDF-like data structure. Much of station data and HDF data isn't
+based on this.</p><br>
+
+<p> When a NetCDF client corresponding to OPeNDAP/DODS is installed,
+when compiling, Ruby where I'm a subcontractor of GPhys/NetCDF is the
+setting with which that's linked. Even a binary package for Vine and
+Debian is so. You can just give OPeNDAP/DODS URL as the file name and
+read and write like a NetCDF file locally in this case.</p><br>
+
+<p> Then I'll access data. The Meteorological Agency forecast data on the <a href="http://davis.rish.kyoto-u.ac.jp/" target="_top">computer
+club data server is used here. It's possible to browse a directory
+(holder) like a usual html server in OPeNDAP/DODS: Data</a> of
+&lt;ahref="http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/"
+target=_top&gt; these days for 1 week. I'll access information on a <a href="http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc.html" target="_top">data
+file of air pressure face data of the latest forecast data of Asia area
+model RSM. The one which html-ized header information on the NetCDF
+file put in should be indicated. I find out that a variable name has
+temp.</a></p><a href="http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc.html" target="_top"><br>
+
+</a><p><a href="http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc.html" target="_top"> Then, it'll visualize this. It'll be carried out interactively using irbrc introduced </a>by <a href="#h3:irb_startup_gdir">"use of a startup file (2)  Use of-- GDir"_ggraph.</a></p><a href="#h3:irb_startup_gdir"><br>
+
+</a>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb_ggraph --simple-prompt</span> 
+Start interactive GGraph session *** MESSAGE (SWDOPN)  *** GRPH1 : STARTED / IWS = 1. 
+&gt;&gt;<span class="command">GPhys::IO.var_names('http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc')</span> 
+=&gt; ["lon", "lat", "p", "time", "ref_time", "z", "u", "v", "temp", "rh", "omega"]
+&gt;&gt;<span class="command">temp = GPhys::IO.open('http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc', 'temp')</span> 
+=&gt;  &lt;GPhys  grid=&lt;4D  grid.  &lt;axis  pos=&lt;'lon'  in.  ' http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc'   sfloat [60],
+  &gt;&gt;
+         &lt;axis  pos=&lt;'lat'  in.  ' http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc'   sfloat[75]&gt;&gt;
+        &lt;axis pos=&lt;'p'  in 'http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc'  sfloat[16]&gt;&gt;
+        &lt;axis pos=&lt;'time' in 'http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc'   sfloat[18]&gt;&gt;&gt;
+   data=&lt;'temp' in 'http://davis-dods.rish.kyoto-u.ac.jp/cgi-bin/nph-dods/jmadata/gpv/latest/gpv/latest/RSM_P_latest.nc'  sfloat[60, 75, 16, 18]&gt;&gt;
+&gt;&gt;<span class="command">set_fig 'itr'=&gt;10</span> 
+=&gt; {"itr"=&gt;1},
+&gt;&gt;<span class="command">set_map 'coast_japan'=&gt;true</span> 
+=&gt; {"coast_japan"=&gt;false},
+&gt;&gt;<span class="command">tone temp</span> 
+=&gt; nil
+&gt;&gt;<span class="command">contour temp, false</span> 
+=&gt; nil
+</pre></td></tr></tbody></table>
+
+<p><a href="#h3:irb_startup_gdir"> Above, a figure like the bottom breaks off.</a></p><a href="#h3:irb_startup_gdir"><br>
+
+</a><p><a href="#h3:irb_startup_gdir"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/opendap1.png">Execution result<br>
+<img src="opendap1_s.png"></a><br>
+
+<a name="h3:dRuby-1">
+</a></p><p></p><h3><a name="h3:dRuby-1"> Client using dRuby and Thurber (the making volume, its 1)</a></h3><a name="h3:dRuby-1"><br>
+</a>
+
+<p> <b>Attention: Here is transferred, and<a href="#h3:druby_gdir_services"> I hope that you advance towards the leaving volume</a> using GDir to use it quickly.</b> </p><br>
+
+<p> <a href="http://www2a.biglobe.ne.jp/%7Eseki/ruby/druby.html" target="_top">dRuby.</a>
+The library where I made sure that you can expand a method calling of
+HA , Ruby and do a method calling over a network. Standards are
+attached to Ruby 1.8. It should be even downloaded and installed to
+Ruby 1.6. When dRuby is used, you can access an object on the process
+like access to a local object remotely. Even if a communication partner
+is different in moving mechanical OS, it's no problem. Even if it's
+called ..., it's how useful or I may not come tightly, so it's
+indicated by an example.</p><br>
+
+<p> <a name="druby_serv1">Below is an all easy server program. <tt>T.jan.nc</tt>
+used up to now, temperature data is offered to a remote process. If a
+practical server is made, I'd make them choose more than one data is
+offered and which to use first, but it's made an easy example of a data
+decision strike with the main focus on indicating a possibility of
+dRuby here.</a></p><p><a name="druby_serv1"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/druby_serv1.rb">druby_serv1.rb</a>
+<table width="80%"><tbody><tr><td><pre class="source">
+1: require "drb/drb" 
+2: require "numru/gphys" 
+3: include NumRu 
+4: gp = GPhys::IO.open("T.jan.nc","T") 
+5: DRb.start_service(nil, gp) 
+6: puts 'URI: '+DRb.uri 
+7: puts ' [return] to exit' 
+8: gets
+</pre></td></tr></tbody></table>
+
+</p><p> 1 line? dRuby. The load which is so. 2-4 line is familiar. Here File <tt>T.jan.nc</tt>
+Medium variable I compose a GPhys object from T. Variable gp. NI is
+assigned. From the next. Increasingly. dRuby. The appearance which is
+so. 5 lines were made an eye destination. GPhys. An object, as
+"front-end", dRuby. Service has been started. Then when having
+accessed, a different process will be a reference to this GPhys object
+to return it at first. The 1st argument of <tt>DRb.start_service is
+made nil, so the port used for communication is decided automatically
+(It's possible to designate a port.) 6 lines of URI for access
+including the portnumber (Uniform Resource Locator) is indicated by an
+eye. I enter 8 lines in input waiting in gets of an eye so as not to
+make a process end. When pressing a new paragraph key, it ends, so it
+indicates' [return] to exit' by , 7 line. Then, first, this server,
+dispatch it would like.</tt>
+<table width="80%"><tbody><tr><td><pre class="source"> 
+% <span class="command">ruby druby_serv1.rb</span> 
+URI: druby://horihost:45461
+[return]  to exit
+</pre></td></tr></tbody></table>
+
+</p><p><tt> A protocol is druby in indicated URI, and the host name
+means that horihost and assigned portnumber are 45461. The host name is
+a machine dependent of course and, (It was generated automatically,
+so.) portnumber is execution, a degree, it can change.</tt></p><p><tt> <a name="druby_cli1">Next the client's easy example connected to this server is indicated.</a></tt></p><p><tt><a name="druby_cli1"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/druby_cli1.rb">druby_cli1.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+1: require "drb/drb" 
+2: DRb.start_service 
+3: uri = ARGV.shift || raise ("Usage: % # {$0} uri") 
+4: gp = DRbObject.new(nil, uri) 
+5: p gp.class 
+6: p gp.name 
+7: p gp.rank 
+8: p gp.shape 
+9: print gp.coord(2).name,"\n"
+</pre></td></tr></tbody></table>
+
+</p><p><tt> Before explaining a program, it'll indicate the result when carrying this out. URI of a server went out </tt>with <tt>druby://horihost:45461 a short while ago, so to access that, as follows, dispatch.</tt>
+<table width="80%"><tbody><tr><td><pre class="source"> 
+% <span class="command">ruby druby_cli1.rb druby://horihost:45461</span> 
+DRb::DRbObject
+"T"
+3
+[36, 19, 9]
+level
+</pre></td></tr></tbody></table>
+
+</p><p><tt> Now. A source and an execution result are explained. 1 line of a source is same as a server. By 2 line <tt>DRb.start_service</tt> is being called. In case of without arguments? Without front-end objects. <b>From other processes. This is fine as the client who doesn't receive the connection which </b>is so. By 3 line When carrying out, the argument to which it was given is being read. <tt>||</tt> Below? When there were no arguments, an exception is given and execution is stopped. By an upper example, an argument? <tt>druby://horihost:45461</tt> So. This, as a character string, variable uri. NI is substituted. By 4 line <tt>DRbObject.new(nil. By uri)</tt>.
+This. uri. NI vs., it's done and a connection is established. As a
+result. An object for references to a front-end object in a server is
+made. Variable <tt>gp.</tt> NI is substituted. Therefore. Here <tt>gp</tt>?
+Temperature data (GPhys where a server opened An object) will be
+represented. In 5 line after a while To this front-end. Various
+messages are sent. The result is output in standard output. I'll
+compare output with a source. By 5 line I inquire of <tt>gp</tt> a class. The method <tt>class.</tt> HA is disposed of locally. I show that it's a remote object of dRuby. (class where <tt>DRb::DRbObject</tt> is indicated An object of all HA lasts, so there are no methods by which ). 6 line after a while <tt>DRb::DRbObject</tt> also has of course is name </tt>in <tt>DRb::DRbObject,
+so the result is sent to the server and carried out, and corresponds
+with a client. It becomes clear that the name is three-dimensional data
+of "T" in this way. Be still careful about not loading a GPhys library
+by a client program. When the one a client needs is only a reference to
+a GPhys object, it isn't necessary.</tt></p><p><tt> <a name="druby_self-contained1">When
+dRuby is used more than the above, I'd find out that you can access an
+object in the remote process like an object in the self-process.
+Further that I make upper Thurber and client set the same thing to one
+together (Dispersion isn't processed it means that.), it'll be as
+follows. I'd find out that a client just connected the first half and
+the second half with a server respectively.</a></tt></p><p><tt><a name="druby_self-contained1"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/druby_self-contained1.rb">druby_self-contained1.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+1: require "numru/gphys" 
+2: include NumRu 
+3: gp = GPhys::IO.open("T.jan.nc","T") 
+4: p gp.class 
+5: p gp.name 
+6: p gp.rank 
+7: p gp.shape 
+8: print gp.coord(2).name,"\n"
+</pre></td></tr></tbody></table>
+
+</p><p><tt> The execution result is as follows. It's just similar but output class name was GPhys.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby druby_self-contained1.rb</span> 
+NumRu::GPhys
+"T"
+3
+[36, 19, 9]
+level
+</pre></td></tr></tbody></table>
+<tt><br>
+
+<a name="h3:dRuby-2">
+</a></tt></p><p></p><h3><tt><a name="h3:dRuby-2"> Client using dRuby and Thurber (the making volume, its 2)</a></tt></h3><tt><a name="h3:dRuby-2"><br>
+</a>
+
+</tt><p><tt> After I make an upper example develop. <a name="druby_serv2">I'll
+write a figure of the data. It's a server to have data, and it's a
+client to write a figure. Then a server program is indicated first.
+It's necessary to hand the array data to draw (NArray) to DCL in a
+client, well, NArray, just as it is, then it can't be sent in dRuby.
+Therefore NArray is expanded, and it's necessary to make sure that it
+can be sent, and the line increases for a short while. 5-8 line is
+that by the following source. By the way, this is the expansion to make
+NArray correspond to built-in module Marshal. All except for this
+addition is same as druby_serv1.rb. Therefore, an execution method, the
+same, I have that.</a></tt></p><p><tt><a name="druby_serv2"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/druby_serv2.rb">druby_serv2.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "drb/drb" 
+ 2: require "numru/ggraph" 
+ 3: include NumRu 
+ 4: 
+ 5: class NArray 
+ 6: def self._load(o); to_na(*Marshal::load(o).ntoh; end 
+ 7: def _dump(limit); Marshal::dump( [hton.to_s, typecode, *shape]); end
+ 8: end 
+ 9: 
+10: gp = GPhys::IO.open("T.jan.nc","T") 
+11: DRb.start_service(nil, gp) 
+12: puts 'URI: '+DRb.uri 
+13: puts ' [return] to exit' 
+14: gets
+</pre></td></tr></tbody></table>
+
+</p><p><tt> <a name="druby_cli2">Now, I'm a client. Here, like, NArray is expanded.</a></tt></p><p><tt><a name="druby_cli2"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/druby_cli2.rb">druby_cli2.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+ 1: require "drb/drb" 
+ 2: require "numru/ggraph" 
+ 3: include NumRu 
+ 4: 
+ 5: class NArray 
+ 6: def self._load(o); to_na(*Marshal::load(o)).ntoh; end 
+ 7: end 
+ 8: 
+ 9: DRb.start_service 
+10: uri = ARGV.shift || raise ("Usage: % # {$0}  uri") 
+11: gp = DRbObject.new(nil, uri) 
+12: DCL.gropn(1) 
+13: DCL.sldiv('y',2,1) 
+14: DCL.sgpset('lcntl',false) 
+15: DCL.uzfact(0.7) 
+16: GGraph.set_fig('viewport'=&gt; [0.150.750.20.8]) 
+17: GGraph.contour(gp.cut('level'=&gt;100)) 
+18: GGraph.next_fig('itr'=&gt;2) 
+19: GGraph.contour(gp.mean(0)) 
+20: DCL.grcls
+</pre></td></tr></tbody></table>
+
+</p><p><tt> The server side:</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby druby_serv2.rb</span>
+URI: druby://horihost:45469
+[return]  to exit
+</pre></td></tr></tbody></table>
+
+</p><p><tt> The client side:</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">ruby druby_cli2.rb druby://horihost:45469</span> 
+ *** MESSAGE (SWDOPN)  *** GRPH1 : STARTED / IWS = 1. 
+ *** WARNING (STSWTR)  *** WORKSTATION VIEWPORT WAS MODIFIED. 
+ *** MESSAGE (SWPCLS)  *** GRPH1 : PAGE = 1 COMPLETED. 
+ *** MESSAGE (SWDCLS)  *** GRPH1 : TERMINATED.
+</pre></td></tr></tbody></table>
+
+</p><p><tt> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/druby_cli2.png">druby_cli2.rb execution result<br>
+   <img src="druby_cli2s.png"></a><br>
+</tt></p><tt><br>
+
+</tt><p><tt> After acquiring a front object of a server once by a
+client like the example a short while ago, as there is data locally,
+it's being handled.</tt></p><tt><br>
+
+</tt><p><tt> <a name="druby_self-contained2">That it's sometimes
+necessary to classify reproduction as a reference this, when I reprint,
+RIEAZU and something to hand to a drawing order should remember. I'd
+find out that visualization of remote data can be very than an upper
+example all easily. A source of non-dispersion edition which made a
+client unite with an upper server is indicated by reference. <tt>copy</tt> was no longer necessary, but it was left just as it is. As well as the figure which can be carried out and done, just similar.</a></tt></p><p><tt><a name="druby_self-contained2"> </a><a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/druby_self-contained2.rb">druby_self-contained2.rb</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+require "numru/ggraph"
+include NumRu
+gp = GPhys::IO.open ("T.jan.nc","T")
+DCL.gropn(1)
+DCL.sldiv('y',2,1)
+DCL.sgpset('lcntl',false)
+DCL.uzfact(0.7)
+GGraph.set_fig('viewport'=&gt;[0.150.750.20.8])
+GGraph.contour(gp.cut('level'=&gt;100))
+GGraph.next_fig('itr'=&gt;2)
+GGraph.contour(gp.mean(0).copy)
+DCL.grcls
+</pre></td></tr></tbody></table>
+
+<tt><a name="h3:druby_gdir_services">
+</a></tt></p><p></p><h3><tt><a name="h3:druby_gdir_services"> Client using dRuby and Thurber (the leaving volume using GDir)</a></tt></h3><tt><a name="h3:druby_gdir_services"><br>
+</a>
+
+</tt><p><tt> The library where dRuby developed as another package is
+used and a package of the command as
+&lt;ahref="http://ruby.gfd-dennou.org/products/gphys-remote/"&gt;gphys-remote
+were taken in GPhys more than GPhys-0.5.0. The whole directory tree
+below the starting point which is the case that a front-end object of
+dRuby makes <a href="#h2:gdir">GDir</a>
+a server of gphys - remote and is suitable, remote, I make it
+accessible (It's read - only.) On the other hand, a dRuby client
+edition of a startup file for irb to use <a href="#h3:irb_startup_gdir">GDir
+introduced at the top is prepared, so you can access remote data
+putting it in the local file system, and like using GDir to use this.
+Therefore a remote file system can be browsed like a ftp and an
+analysis of data and visualization can be performed. Further,</a><a href="http://ruby.gfd-dennou.org/products/gave/"> it's possible to connect gave</a> to gphys-remote server.</tt></p><tt><br>
+
+</tt><p><tt> When GPhys - remote is installed, command gdir_server and
+gdir_client are installed. The former is a server program for a GDir
+remote offer, and the latter is the client program to access the
+former. The contents of command gdir_client are just.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+irb -r numru/gdir_connect_ftp-like
+</pre></td></tr></tbody></table>
+
+</p><p><tt> It is. In other words," numru/gdir_connect_ftp-like"
+require, at the top, irb, dispatch as something it's substance. When
+I'd like to read a different startup file for visualization, it's by a
+command line.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb -r ~/.irbrc_ggraph -r numru/gdir_connect_ftp-like</span>
+</pre></td></tr></tbody></table>
+
+</p><p><tt> I hope that you make it NADO.</tt></p><tt><br>
+
+</tt><p><tt> Then first I'll start a server. The data included in a
+GPhys distribution package will be used, so in the top directory which
+developed that, cd, there is made a starting point of service as a root
+directory of a server:.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">cd gphys-0.5.0</span> 
+% <span class="command">gdir_server . -a all</span> 
+URI: druby://horihost:45954
+[return]  to exit
+</pre></td></tr></tbody></table>
+
+</p><p><tt> The first argument of gdir_server (Here".") is designation
+of a root directory. The one designated in-a is the host who permits a
+connection. Access from all hosts is permitted by an upper example only
+by a local host, so the default isn't desirable. Because-a option can
+be designated repeatedly.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">gdir_server . -a '192.168.1.*'-a localhost</span>
+</pre></td></tr></tbody></table><tt> I'd hope that you enumerate NADO and the host who would like to connect.</tt></p><tt><br>
+
+</tt><p><tt> Indication of gdir_server execution result above-mentioned
+shows that Uniform Resource Locator of a server was
+druby://horihost:45954. Portnumber 45954 is the space port assigned
+automatically. It's done as follows to designate a port and the host
+name positively.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">gdir_server . 12345</span> 
+% <span class="command">gdir_server . localhost:12345</span>
+</pre></td></tr></tbody></table>
+</p><tt><br>
+
+</tt><p><tt> Next I'll connect to this server using ,gdir_client (or,
+irb -r numru/gphys_connect_ftp-like). Uniform Resource Locator of a
+server can be visited first, so it's input. When making the back help,
+you'd be able to use it.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">gdir_client</span> 
+** A GPhys service client. To conetct, type in server's URI (return) 
+   (format: druby://host:port) . Type in help to see usage.
+URI&gt;&gt;<span class="command">druby://horihost:45954</span> 
+*************************************************************** 
+* WELCOME! 
+* 
+* You logged in druby://tsudalx3:45954 
+* with /usr/local/lib/ruby/site_ruby/1.8/numru/gdir_connect_ftp-like.rb: 
+* an irb-based ftp-like client of a gphys service (such as gdir_server.rb). 
+* 
+* This client is to be started as 
+* 
+* % irb --noinspect -r "numru/gphys_connect_ftp-like" 
+* 
+* if you're running on a interactive ruby shell such as irb. 
+* quit and start again like this. 
+*************************************************************** 
+
+Type in helpfor available methods 
+
+irb(main):001:0&gt; <span class="command">help.</span> 
+
+= irb start-up program numru/gdir_connect_ftp-like 
+
+(A ftp-like client of GPhys directory services e.g., gdir_server.rb). 
+Connection is based on dRuby. 
+
+== Usage
+   At command line, % irb --noinspect -r numru/gphys_connect_ftp-like
+then type in the URI of the server. 
+
+== Available
+   Methods Native methods: help help_more ls dir pwd cd (path) open
+(name)  readtext (name) start_dcl (iws=1, iwidth=500, iheight=500, uzfact=1.0) 
+
+    All GGraph methods: contour (gphys) line (gphys)  etc.etc. 
+
+
+Type in help_moreFor more info.
+=&gt; nil
+irb(main):002:0&gt; <span class="command">help_more</span> 
+
+==  Methods---help
+     Show.  a help message 
+---help_more 
+    Show.  a further help message 
+---ls 
+    List.  the.  directory.---dir---ls_l
+     Like.  ls.  but.  with.  a long descriptive format 
+---pwd 
+    Prints the path of the current directory.---open (name)  (opens a GPhys,
+    where name is a variable name in the current directory shown by ls without
+    trailing "/").---readtext (name)  (prints the contents of the
+    text file in the current directory shown by ls with remarks as such).---start_dcl
+    (iws=1, iwidth=500, iheight=500, uzfact=1.0)  To start RubyDCL (Calls
+    DCL.gropn (iws)). Call this before using GGraph module functions such
+    as contour.---contour---line GGraph methods 
+
+=&gt; nil
+irb(main):003:0&gt; <span class="command">ls</span> 
+Directories:
+ 'bin/'
+ 'doc/'
+ 'lib/'
+ 'sample/'
+ 'test/'
+ 'testdata/'
+Text files?:
+ 'ChangeLog'
+ 'README'
+ 'TODO_ep_flux'
+=&gt; nil
+irb(main):004:0&gt ;<span class="command">cd 'testdata'</span> 
+/testdata/
+=&gt; nil
+irb(main):005:0&gt; <span class="command">ls</span> 
+Directories:
+ 'T.jan.ctl/'
+ 'T.jan.grib/'
+ 'T.jan.nc/'
+ 'T.jan.packed.withmiss.nc/'
+=&gt; nil
+irb(main):006:0&gt; <span class="command">cd 'T.jan.ctl/'</span> 
+/testdata/T.jan.ctl/
+=&gt; nil
+irb(main):007:0&gt; <span class="command">ls.</span> 
+Data:
+ 'T'
+=&gt; nil
+irb(main):008:0&gt; <span class="command">gphys = open 'T'</span> 
+=&gt; #&lt;drb::drbobject:0x40a092ac @uri="druby://horihost:45954" ,="" @ref="541737212"&gt;
+irb(main):009:0&gt; <span class="command">start_dcl(1, 700, 700)</span> 
+ *** MESSAGE (SWDOPN)  *** GRPH1 : STARTED / IWS = 1. 
+=&gt; nil
+irb(main):010:0&gt; <span class="command">contour gphys</span> 
+ *** WARNING (STSWTR)  *** WORKSTATION VIEWPORT WAS MODIFIED. 
+=&gt; nil
+irb(main):011:0&gt; contour gphys.mean(0)
+  *** MESSAGE (SWPCLS)  *** GRPH1 : PAGE = 1 COMPLETED. 
+=&gt; nil
+</pre></td></tr></tbody></table>
+
+</p><p><tt> A figure like the bottom is indicated with this. I'd find
+out that it can be used like using GDir to local data. But, since it's
+data only for the drawn two-dimensional aspect to put it in the first
+drawing and communicate also putting it in the next drawing, average
+operation about the longitude is performed on the server side.
+Therefore the communication amount is small both.</tt>
+<table><tbody><tr><td>
+<p> Execution result of the <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/gphys-remote_sample1.png">upper irb session (1)<br>
+   <img src="gphys-remote_sample1s.png"></a>
+</p><br>
+</td><td>
+<p> Execution result of the <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/tutorial/gphys-remote_sample1.png">upper irb session (2)<br>
+   <img src="gphys-remote_sample2s.png"></a>
+</p><br>
+</td></tr></tbody></table><tt> Further, after more-r options are added
+to irb -r numru/gdir_connect_ftp-like which are its contents, not
+command gdir_client when I'd like to read a different startup file for
+graphic setting.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% <span class="command">irb -r ~/.irbrc_ggraph -r numru/gdir_connect_ftp-like</span>
+</pre></td></tr></tbody></table>
+
+</p><p><tt> I hope that you make it NADO.</tt></p><tt><br>
+
+
+<a name="h3:druby_ssh_tunneling">
+</a></tt><p></p><h3><tt><a name="h3:druby_ssh_tunneling"> dRuby (ssh Tunneling) across the fire wall when using it</a></tt></h3><tt><a name="h3:druby_ssh_tunneling"><br>
+</a>
+
+</tt><p><tt> You can communicate with dRuby at a port of the optional
+number. But the place where communication with outside is permitted at
+more than 1000th port Japan and the general user can use today will be
+rare. I hope that you use port forwarding by ssh (Tunneling) in that
+case. It's only to a machine with an account that ssh can be used. But
+it can't be recommended from a security face generally to free and use
+dRuby widely just as it is, so anyway, it would be better to limit
+access to the user with an account.</tt></p><tt><br>
+
+</tt><p><tt> Port forwarding of ssh is performed as follows.</tt></p><ul>
+
+<li><tt> Access to number 12300 of port of a local host is forwarded to number 12300 of port of a remote host:.</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% ssh -L 12300:localhost:12300 remotehost
+</pre></td></tr></tbody></table>
+
+</li><li><tt>  Access to number 12300 of port of a remote
+ host is forwarded to number 12300 of port of
+ a local host:.
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+% ssh -R 12300:localhost:12300 remotehost
+</pre></td></tr></tbody></table>
+
+</li></ul>
+
+<p></p><tt><br>
+
+</tt><p><tt> 
+Actual server start-up and access are performed as
+follows.
+
+</tt></p><ul>
+<tt>  </tt><li><tt>  Window of localhost (kterm)  1:
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+localhost% <span class="command">ssh -L 12300:localhost:12300 user@remotehost</span> 
+Password: ******** 
+
+Login message. 
+
+remotehost% <span class="command">cd ....</span>     # Where it is,
+remotehost% <span class="command">gdir_server . localhost:12300</span>     # Server start-up
+</pre></td></tr></tbody></table>
+</li></ul>
+
+<p><tt> 
+I start a GDir server remotely and access from
+a local host this:.
+
+</tt></p><ul>
+<li><tt>  Window of localhost (kterm)  2:
+
+</tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+localhost% <span class="command">gdir_client</span> 
+** A GPhys service client. To conetct, type in server's URI (return) 
+   (format: druby://host:port) . Type in help to see usage.
+URI&gt;&gt;<span class="command">druby://localhost:12300</span> 
+*************************************************************** 
+* WELCOME! 
+* 
+* You logged in druby://localhost:12300 
+..snip.
+</pre></td></tr></tbody></table>
+</li></ul>
+
+<p><tt> 
+Port forwarding to a remote host has been established from a local host in window
+1 first, so local communication to number 12300 is forwarded to a remote host. 
+gdir_server is waiting at the 12300th port of a remote host, so to communicate
+it can be connected with this.
+</tt></p><tt><br>
+
+
+<a name="h3:druby_ssh_dual_tunneling">
+</a></tt><p></p><h4><tt><a name="h3:druby_ssh_dual_tunneling"> The opposite direction Tunneling/3rd host pass Tunneling</a></tt></h4><tt><a name="h3:druby_ssh_dual_tunneling"><br>
+
+</a></tt><p><tt><a name="h3:druby_ssh_dual_tunneling"> 
+A remote host can't sometimes permit port forwarding from outside. A tunnel
+should be dug in the remote host side in that case:.
+
+</a></tt></p><p><tt><a name="h3:druby_ssh_dual_tunneling">  Window 1:
+</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+remotehost% <span class="command">ssh -R 12300:localhost:12300 user@localhost</span> 
+Password: ******** login
+message.
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a name="h3:druby_ssh_dual_tunneling">  Window 2:
+</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+remotehost% <span class="command">gdir_server . localhost:12300</span>     # Server start-up
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a name="h3:druby_ssh_dual_tunneling">  Window 3:
+</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+localhost% <span class="command">gdir_client</span> 
+** A GPhys service client. To conetct, type in server's URI (return) 
+   (format: druby://host:port) . Type in help to see usage.
+URI&gt;&gt;<span class="command">druby://localhost:12300</span> 
+*************************************************************** 
+* WELCOME! 
+* 
+* You logged in druby://localhost:12300 
+. Abbreviation.
+</pre></td></tr></tbody></table>
+</p><tt><a name="h3:druby_ssh_dual_tunneling"><br>
+
+</a></tt><p><tt><a name="h3:druby_ssh_dual_tunneling"> 
+When a local host doesn't have a global IP address in the fire wall, ssh
+-R 12300:localhost:12300 user@localhost above-mentioned can't do. There is
+an account in that case and there is a hand which goes through the 3rd host
+with the global address.
+
+</a></tt></p><p><tt><a name="h3:druby_ssh_dual_tunneling">  Window 1:
+</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+remotehost% <span class="command">ssh -R 12300:localhost:12300 user@thirdhost</span> 
+Password: ******** login
+message.
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a name="h3:druby_ssh_dual_tunneling">  Window 2:
+</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+localhost% <span class="command">ssh -L 12300:localhost:12300 user@thirdhost</span> 
+Password: ******** login
+message.
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a name="h3:druby_ssh_dual_tunneling">  Window 3:
+</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+remotehost% <span class="command">gdir_server . localhost:12300</span>     # Server start-up
+</pre></td></tr></tbody></table>
+
+</p><p><tt><a name="h3:druby_ssh_dual_tunneling">  Window 4:
+</a></tt>
+<table width="80%"><tbody><tr><td><pre class="source">
+localhost% <span class="command">gdir_client</span> 
+** A GPhys service client. To conetct, type in server's URI (return) 
+   (format: druby://host:port) . Type in help to see usage.
+URI&gt;&gt;<span class="command">druby://localhost:12300</span> 
+*************************************************************** 
+* WELCOME! 
+* 
+* You logged in druby://localhost:12300 
+. Abbreviation.
+</pre></td></tr></tbody></table>
+
+<tt><a name="h3:dRuby-chuui">
+</a></tt></p><p></p><h3><tt><a name="h3:dRuby-chuui"> Attention about dRuby use</a></tt></h3><tt><a name="h3:dRuby-chuui"><br>
+</a>
+
+</tt><p><tt>  A measure is needed so that an object necessary to a remote process may
+ be collected in trash gathering of Ruby (GC) in dRuby. 20 minutes are set
+using TimerIdConv of a dRuby accessory and something to say in gdir_server
+so as not to be collected. When saying conversely, the object from which
+20 minutes have passed is collected as trash on the server side, and there
+is a possibility that you can't access. This time will be an option in the
+future, and I'd like to make sure that it can be designated.
+</tt></p><tt><br>
+
+</tt><p><tt> 
+The security of a dRuby server is difficult to guarantee.
+A server shouldn't be exhibited to the public widely. 
+I'll make the server keeping starting it and end it suitably.
+</tt></p><tt><br>
+
+</tt><p><tt> 
+When forwarding data, dRuby changes an object to a part-time work line by
+a built-in library in Ruby as Marshal. Ruby 1.6-&gt; was Ruby 1.8, and the
+format of Marshal was changed, so unfortunately, communication is limited
+to 1.6 comrades or 1.8 comrades.
+</tt></p><tt><br>
+
+</tt><p><tt>  All NArray-ized data is read from a file at present in gdir_server, and
+ is made the target of network transmission. On the other hand when a circuit
+is thin, it's effective to make it the setting which doesn't go out of
+the server side until some degrees will be small size. When a part of a
+method definition of NArray in gdir_server is rewritten like the bottom,
+the data length doesn't forward 40000 (not part-time work, but the number)
+to the above mentioned data any more, so I come to stay at the server
+side.
+
+</tt></p><p>
+<table width="80%"><tbody><tr><td><pre class="source">
+class NArray
+  DUMP_SIZE_LIMIT = 40000
+  def self._load(o); to_na(*Marshal::load(o)).ntoh; end
+  def _dump(limit)
+    if size&lt;= DUMP_SIZE_LIMIT
+      Marshal::dump([hton.to_s, typecode, *shape]) 
+    else
+      raise "size of the NArray (#{size}) is too large to dump "+
+            "(limit: #{DUMP_SIZE_LIMIT})"
+    end
+  end
+end
+</pre></td></tr></tbody></table>
+
+
+<tt><a name="h3:cgi-rdbms">
+</a></tt></p><p></p><h3><tt><a name="h3:cgi-rdbms"> CGI and relational database</a></tt></h3><tt><a name="h3:cgi-rdbms"><br>
+</a>
+
+</tt><p><tt>  <b>Please wait a moment, this--section will plan to make
+ it from now on.</b> 
+
+</tt></p><p><tt>  When <a href="http://www.rubyonrails.com/">Ruby on Rails</a> is used, the
+ search in which I cooperated with a data base can make a possible data offer
+ server. 
+An example can't be taken out yet, so a hurrying person, excuse me, without
+help, please. 
+It's possible very often, and Ruby on Rails tends to use it.
+</tt></p><tt><br>
+
+
+</tt><hr>
+
+<p><tt> Copyright (C)  2003 GFD Dennou Club. All Rights Reserved.</tt></p><p>
+
+
+</body>
+</html>

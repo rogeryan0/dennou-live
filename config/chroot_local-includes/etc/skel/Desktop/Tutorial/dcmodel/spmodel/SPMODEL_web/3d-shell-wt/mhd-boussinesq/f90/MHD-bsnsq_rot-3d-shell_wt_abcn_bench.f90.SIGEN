@@ -1,0 +1,11 @@
+Subject: 回転球殻ブシネスク磁気流体モデル : ベンチマーク用プログラム
+Maintainer: 竹広真一
+Update: 2009/01/16
+Description: Christensen et al. (1999) の Case1. 
+	     Adams-Bashforth & Crank Nicholson スキーム.
+             (鉛直格子空間での Crank Nicholson 行列).
+             鉛直格子点空間での選点法による境界条件適用.
+
+履歴
+	2002/08/29 竹広真一
+

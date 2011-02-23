@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>Link &amp; Developer's archive</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="link.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> ] </small>
+<h1><a name="label-0" id="label-0">Link &amp; Developer's archive</a></h1><!-- RDLabel: "Link & Developer's archive" -->
+<h2><a name="label-1" id="label-1">Link</a></h2><!-- RDLabel: "Link" -->
+<dl>
+<dt><a name="label-2" id="label-2"><a href="/library/dcmodel/">dcmodel project</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-3" id="label-3"><a href="/library/numexp/">Collections of numerical experiments in geophysical fluid dynamcs</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-4" id="label-4"><a href="http://www.gfd-dennou.org/">GFD Dennou Club</a></a></dt><!-- RDLabel: "" -->
+</dl>
+<h2><a name="label-5" id="label-5">Developer's archive</a></h2><!-- RDLabel: "Developer's archive" -->
+<dl>
+<dt><a name="label-6" id="label-6"><a href="./memo/SIGEN.htm">Developer's memo</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-7" id="label-7"><a href="./member.htm.en">Development group</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-8" id="label-8"><a href="../old/SIGEN.htm">Old resources (obsolete)</a></a></dt><!-- RDLabel: "" -->
+<dt><a name="label-9" id="label-9"><a href="../SIGEN.htm">Index of directory</a></a></dt><!-- RDLabel: "" -->
+</dl>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2009/01/22, Since: 2002/02/15 </small>
+
+</body>
+</html>

@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: w_spectrum_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">w_spectrum_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/w_spectrum_module_f90.html">
+
+                src/w_spectrum_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="w_spectrum_module.html">w_spectrum_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a
+href="../files/src/w_spectrum_module_f90.html">w_spectrum_module.f90</a>,v
+1.7 2009-02-28 21:33:47 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/w_spectrum_module モジュールは球面上での 2 次元流体運動を
+球面調和函数を用いたスペクトル法によって数値計算するための モジュール <a
+href="w_module.html">w_module</a> の下部モジュールであり,
+スペクトル解析計算のための Fortran90 関数を提供する.
+</p>
+<p>
+内部で ISPACK の SPPACK と SNPACK の Fortran77 サブルーチンを呼んでいる.
+スペクトルデータおよび格子点データの格納方法や変換の詳しい計算法に ついては
+ISPACK/SNPACK,SPPACK のマニュアルを参照されたい.
+</p>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000201">n_EnergyFromStreamfunc_w</a>&nbsp;&nbsp;
+
+        <a href="#M000203">n_EnstrophyFromStreamfunc_w</a>&nbsp;&nbsp;
+
+        <a href="#M000200">nm_EnergyFromStreamfunc_w</a>&nbsp;&nbsp;
+
+        <a href="#M000202">nm_EnstrophyFromStreamfunc_w</a>&nbsp;&nbsp;
+
+        <a href="#M000199">w_spectrum_VMiss</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name"><a href="w_base_module.html">w_base_module</a></span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000201" class="method-detail">
+        <a name="M000201"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000201" class="method-signature">
+
+
+
+          <span class="method-name">n_EnergyFromStreamfunc_w</span><span class="method-args">( w_Strfunc ) result(n_EnergyFromStreamfunc_w)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_spectrum_module.html#M000201">n_EnergyFromStreamfunc_w</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) エネルギースペクトル (水平全波数 n 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_Strfunc(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータから各全波数のエネルギー成分(スペクトル)を
+計算する(1 層用).
+</p>
+<pre>
+ * 全波数 n の流線関数のスペクトル成分ψ(n,m) から
+   エネルギースペクトルはΣ[m=-nm]^nm(1/2)n(n+1)ψ(n,m)^2
+   と計算される.
+
+ * 全てのエネルギースペクトル成分の和に 4πをかけたものが
+   球面上での全エネルギーに等しい.
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000201-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000201-source">
+<pre>
+    function n_EnergyFromStreamfunc_w(w_Strfunc)
+      !
+      ! 流線関数のスペクトルデータから各全波数のエネルギー成分(スペクトル)を
+      ! 計算する(1 層用).
+      !
+      !  * 全波数 n の流線関数のスペクトル成分ψ(n,m) から
+      !    エネルギースペクトルはΣ[m=-nm]^nm(1/2)n(n+1)ψ(n,m)^2 
+      !    と計算される.
+      !
+      !  * 全てのエネルギースペクトル成分の和に 4πをかけたものが
+      !    球面上での全エネルギーに等しい.
+      !
+
+      real(8), intent(in)      :: w_Strfunc(:)
+      !(in) 流線関数(スペクトルデータ)
+
+      real(8), dimension(0:nm) :: n_EnergyFromStreamfunc_w
+      !(out) エネルギースペクトル (水平全波数 n 空間) 
+
+      do n=0,nm
+         n_EnergyFromStreamfunc_w(n) = 0.5 * n*(n+1) * sum(w_StrFunc(l_nm(n,(/(m,m=-n,n)/)))**2,1)
+      enddo
+
+    end function n_EnergyFromStreamfunc_w
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000203" class="method-detail">
+        <a name="M000203"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000203" class="method-signature">
+
+
+
+          <span class="method-name">n_EnstrophyFromStreamfunc_w</span><span class="method-args">( w_Strfunc ) result(n_EnstrophyFromStreamfunc_w)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_spectrum_module.html#M000203">n_EnstrophyFromStreamfunc_w</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) エンストロフィースペクトル(水平全波数 n 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_Strfunc(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータから各全波数のエネルギー成分(スペクトル)を
+計算する(1 層用)
+</p>
+<ul>
+<li>全波数 n の流線関数のスペクトル成分ψ(n,m) からエンストロフィー
+スペクトルはΣ[m=-nm]^nm(1/2)n^2(n+1)^2ψ(n,m)^2 と計算される.
+
+</li>
+<li>全てのエネルギースペクトル成分の和に 4π/R^2 をかけたものが
+球面上での全エンストフィーに等しい.
+
+</li>
+</ul>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000203-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000203-source">
+<pre>
+    function n_EnstrophyFromStreamfunc_w(w_Strfunc)
+      !
+      ! 流線関数のスペクトルデータから各全波数のエネルギー成分(スペクトル)を
+      ! 計算する(1 層用)
+      !
+      ! * 全波数 n の流線関数のスペクトル成分ψ(n,m) からエンストロフィー
+      !   スペクトルはΣ[m=-nm]^nm(1/2)n^2(n+1)^2ψ(n,m)^2 と計算される.
+      !    
+      ! * 全てのエネルギースペクトル成分の和に 4π/R^2 をかけたものが
+      !   球面上での全エンストフィーに等しい.
+      !
+      real(8), intent(in)      :: w_Strfunc(:)
+      !(in) 流線関数(スペクトルデータ)
+
+      real(8), dimension(0:nm) :: n_EnstrophyFromStreamfunc_w  
+      !(out) エンストロフィースペクトル(水平全波数 n 空間)
+
+      do n=0,nm
+         n_EnstrophyFromStreamfunc_w(n) = 0.5 * n**2 * (n+1)**2 * sum(w_StrFunc(l_nm(n,(/(m,m=-n,n)/)))**2,1)
+      enddo
+    end function n_EnstrophyFromStreamfunc_w
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000200" class="method-detail">
+        <a name="M000200"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000200" class="method-signature">
+
+
+
+          <span class="method-name">nm_EnergyFromStreamfunc_w</span><span class="method-args">( w_Strfunc ) result(nm_EnergyFromStreamfunc_w)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_spectrum_module.html#M000200">nm_EnergyFromStreamfunc_w</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm,-nm:nm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) エネルギースペクトル(水平全波数 n, 帯状波数 m 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_Strfunc(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータからエネルギーの球面調和函数成分
+(スペクトル)を計算する(1 層用).
+</p>
+<pre>
+ * 全波数 n, 帯状波数 m の流線関数のスペクトル成分ψ(n,m) から
+   エネルギースペクトルは (1/2)n(n+1)ψ(n,m)^2 と計算される.
+
+ * 全てのエネルギースペクトル成分の和に4πをかけたものが球面上での
+   全エネルギーに等しい.
+
+ * データの存在しない全波数 n, 帯状波数 m の配列には欠損値が格納される.
+   欠損値の値はモジュール変数 w_spectrum_VMiss によって設定できる
+   (初期値は -999.0)
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000200-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000200-source">
+<pre>
+    function nm_EnergyFromStreamfunc_w(w_Strfunc)
+      ! 
+      ! 流線関数のスペクトルデータからエネルギーの球面調和函数成分
+      ! (スペクトル)を計算する(1 層用).
+      !
+      !  * 全波数 n, 帯状波数 m の流線関数のスペクトル成分ψ(n,m) から
+      !    エネルギースペクトルは (1/2)n(n+1)ψ(n,m)^2 と計算される.
+      !
+      !  * 全てのエネルギースペクトル成分の和に4πをかけたものが球面上での
+      !    全エネルギーに等しい.
+      !
+      !  * データの存在しない全波数 n, 帯状波数 m の配列には欠損値が格納される.
+      !    欠損値の値はモジュール変数 w_spectrum_VMiss によって設定できる
+      !    (初期値は -999.0)
+      !
+      real(8), intent(in)   :: w_Strfunc(:)
+      !(in) 流線関数(スペクトルデータ)
+
+      real(8), dimension(0:nm,-nm:nm) :: nm_EnergyFromStreamfunc_w
+      !(out) エネルギースペクトル(水平全波数 n, 帯状波数 m 空間)
+
+      nm_EnergyFromStreamfunc_w = w_spectrum_VMiss
+
+      do n=0,nm
+         do m=-n,n
+            nm_EnergyFromStreamfunc_w(n,m) = 0.5 * n*(n+1) * w_Strfunc(l_nm(n,m))**2
+         enddo
+      enddo
+    end function nm_EnergyFromStreamfunc_w
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000202" class="method-detail">
+        <a name="M000202"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000202" class="method-signature">
+
+
+
+          <span class="method-name">nm_EnstrophyFromStreamfunc_w</span><span class="method-args">( w_Strfunc ) result(nm_EnstrophyFromStreamfunc_w)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_spectrum_module.html#M000202">nm_EnstrophyFromStreamfunc_w</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm,-nm:nm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> エンストロフィースペクトル (水平全波数 n, 帯状波数 m 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_Strfunc(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータからエンストロフィーの球面調和函数成分
+(スペクトル)を計算する(1 層用).
+</p>
+<ul>
+<li>全波数 n, 帯状波数 m の流線関数のスペクトル成分ψ(n,m) から
+
+<pre>
+ エンストロフィースペクトルは (1/2)n^2(n+1)^2ψ(n,m)^2 と計算される.
+</pre>
+</li>
+<li>全てのエンストロフィースペクトル成分の和に4π/R^2をかけたものが
+球面上での全エンストロフィーに等しい. ここで R は球面の半径である.
+
+</li>
+<li>データの存在しない全波数 n, 帯状波数 m の配列には欠損値が格納される.
+欠損値の値はモジュール変数 <a
+href="w_spectrum_module.html#M000199">w_spectrum_VMiss</a>
+によって設定できる (初期値は -999.0)
+
+</li>
+</ul>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000202-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000202-source">
+<pre>
+    function nm_EnstrophyFromStreamfunc_w(w_Strfunc)
+      !
+      ! 流線関数のスペクトルデータからエンストロフィーの球面調和函数成分
+      ! (スペクトル)を計算する(1 層用). 
+      !
+      ! * 全波数 n, 帯状波数 m の流線関数のスペクトル成分ψ(n,m) から
+      !    エンストロフィースペクトルは (1/2)n^2(n+1)^2ψ(n,m)^2 と計算される.
+      !
+      ! * 全てのエンストロフィースペクトル成分の和に4π/R^2をかけたものが
+      !   球面上での全エンストロフィーに等しい. ここで R は球面の半径である.
+      !
+      ! * データの存在しない全波数 n, 帯状波数 m の配列には欠損値が格納される.
+      !   欠損値の値はモジュール変数 w_spectrum_VMiss によって設定できる
+      !   (初期値は -999.0)
+      !
+      real(8), intent(in)   :: w_Strfunc(:)
+      !(in) 流線関数(スペクトルデータ)
+
+      real(8), dimension(0:nm,-nm:nm) :: nm_EnstrophyFromStreamfunc_w
+      ! エンストロフィースペクトル (水平全波数 n, 帯状波数 m 空間)
+
+      nm_EnstrophyFromStreamfunc_w = w_spectrum_VMiss
+
+      do n=0,nm
+         do m=-n,n
+            nm_EnstrophyFromStreamfunc_w(n,m) = 0.5 * n**2 * (n+1)**2 * w_Strfunc(l_nm(n,m))**2
+         enddo
+      enddo
+    end function nm_EnstrophyFromStreamfunc_w
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000199" class="method-detail">
+        <a name="M000199"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_spectrum_VMiss</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="w_spectrum_module.html#M000199">w_spectrum_VMiss</a>  </tt></b>  <tt> = -999.000    </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 欠損値初期値
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

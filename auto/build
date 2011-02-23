@@ -1,17 +1,22 @@
 #!/bin/sh
 
-BUILDDATE=`date +%Y%m%d%H%M%S`
+BUILDDATE=`date +%Y%m%d-%H%M%S`
 # sudo MKSQUASHFS_OPTIONS="-b 1024k" lb build 2>&1 | tee debian_live-binary-${BUILDDATE}.buildlog
 lb build noauto 2>&1 | tee dennou_live-binary-${BUILDDATE}.buildlog
 # rename files
+rm -f current.*
 if [ -f binary.iso ]; then
     mv binary.iso dennou_live-binary-${BUILDDATE}.iso
+    ln -s dennou_live-binary-${BUILDDATE}.iso current.iso
 elif [ -f binary-hybrid.iso ]; then
     mv binary-hybrid.iso dennou_live-binary-${BUILDDATE}-hybrid.iso
+    ln -s dennou_live-binary-${BUILDDATE}-hybrid.iso denno_live-current-hybrid.iso
 elif [ -f binary-net.tar.gz ]; then
     mv binary-net.tar.gz dennou_live-binary-${BUILDDATE}-net.tar.gz
+    ln -s dennou_live-binary-${BUILDDATE}-net.tar.gz current.tar.gz
 elif [ -f binary.img ]; then
     mv binary.img dennou_live-binary-${BUILDDATE}.img
+    ln -s dennou_live-binary-${BUILDDATE}.img current.img
 fi
 [ -f binary.list ] && mv binary.list dennou_live-binary-${BUILDDATE}.list
 [ -f binary.packages ] && mv binary.packages dennou_live-binary-${BUILDDATE}.packages

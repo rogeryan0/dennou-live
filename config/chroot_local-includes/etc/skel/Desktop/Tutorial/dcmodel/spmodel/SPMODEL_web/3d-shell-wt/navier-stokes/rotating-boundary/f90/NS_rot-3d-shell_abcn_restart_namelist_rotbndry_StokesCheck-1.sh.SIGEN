@@ -1,0 +1,7 @@
+Subject:  3 次元回転球殻内での粘性流体(非圧縮ナビエーストークス方程式) : 球殻回転粘着境界問題プログラム用実行シェルスクリプト
+  * NS_-rot-3d-shell_abcn_restart_namelist_rotbndry_StokesCheck.f90 用
+Maintainer: 竹広真一
+Update: 2005/02/24
+
+履歴
+	2005/02/24 竹広真一

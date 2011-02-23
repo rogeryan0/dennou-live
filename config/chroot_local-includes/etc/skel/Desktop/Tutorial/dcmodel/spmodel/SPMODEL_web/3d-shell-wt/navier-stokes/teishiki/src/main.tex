@@ -1,0 +1,1872 @@
+% 表題  3 次元回転球殻内での粘性流体(非圧縮ナビエーストークス方程式)の定式化
+%
+% 注意  画像に TeX のフォントを埋め込むために psfrag を用いる. 
+%       2002/06 現在, psfrag に対応している dviware は dvips のみ
+%       なので, 印刷には dvips を用いること.
+%
+% 履歴  2005/01/30 竹広真一 mhd-boussinesq の定式化より複製
+%       2005/02/06 竹広真一 慣性系の式からやりなおし. 
+%       2005/06/14 竹広真一 長さスケーリングが外側球殻半径の場合を追加
+%
+\documentclass[12pt,a4j,notitlepage]{jarticle}
+\usepackage{Dennou6}
+\usepackage{psfrag}
+\usepackage{ascmac}
+\usepackage{times}
+\Dtitle[3 次元回転球殻内での粘性流体]
+       {3 次元回転球殻内での粘性流体\\
+        (非圧縮ナビエーストークス方程式)\\
+        の定式化}
+\Dauthor{竹広 真一}
+\Ddate{平成 17 年 6 月 14 日} 
+\pagestyle{Dheadings}
+\begin{document}
+% psfrag 用の設定
+\psfrag{F}{$\varphi$}
+\psfrag{L}{$\lambda$}
+\psfrag{R}{$r$}
+\psfrag{ri}{$r_{i}$}
+\psfrag{ro}{$r_{o}$}
+\psfrag{O}{$\Omega$}
+\psfrag{x}{$x$}
+\psfrag{y}{$y$}
+\psfrag{z}{$z$}
+% 数式
+\maketitle
+%
+% 目次
+\def\thepage{\roman{page}}
+\setcounter{page}{1}
+\tableofcontents
+\thispagestyle{Dheadings}
+%--------------------------------------------------------------------------
+\newpage
+%--------------------------------------------------------------------------
+% 本文スタート
+\def\thepage{\arabic{page}}
+\setcounter{page}{1}
+\Dparskip
+%--------------------------------------------------------------------------
+\newpage
+%--------------------------------------------------------------------------
+\section{はじめに}
+
+ここでは中心が同じで回転している 2 つの球面の間にはさまれた
+球殻領域の非圧縮粘性流体の基礎方程式の定式化について記述する.
+速度場をトロイダル--ポロイダルポテンシャルへ分解し,
+その時間発展方程式と境界条件を定式化する
+(Zhang and Busse,1987, Chandrasekhar, 1961).
+
+%--------------------------------------------------------------------------
+\section{慣性系での定式化}
+
+  \subsection{支配方程式}
+
+    中心を共有する半径 $r_{i}, r_{o}$ の球面に挟まれた
+    球殻内にある非圧縮粘性流体について考える.
+    内外の球面の回転角速度をそれぞれ 
+    $\Dvect{\Omega}_i$, $\Dvect{\Omega}_o$ とする. 
+    座標系を球殻の中心を原点し, 
+    緯度経度座標系 $(\lambda, \varphi, r)$ を張る. 
+  %  これを \Dfigref{慣性系の図} に示す.
+
+    支配方程式は非圧縮粘性流体のナビエーストークス方程式である. 
+    %
+    \begin{eqnarray} 
+     &&\Deqlab{慣性系連続の式}
+      \Ddiv{\Dvect{u}}=0, \\
+     &&\Deqlab{慣性系運動方程式}
+      \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+      = -\frac{1}{\rho}\Dgrad p +\nu \Dlapla \Dvect{u} + \Dvect{\mathcal{F}}
+    \end{eqnarray}
+    %
+    各々の記号は次の通りである:
+    \begin{quote}
+     \begin{tabular}{ll}
+      $\Dvect{u}$  
+                     & 流速ベクトル. 
+                       成分毎に書く場合には,
+                       $\Dvect{u}=(u_\lambda,u_\varphi,u_r)$ \\
+      $\rho$         & 流体の密度. 非圧縮を仮定しているので一定である. \\
+      $p$       
+                     & 流体の全圧力. \\
+      $\nu$          & 動粘性率. 一様一定であるとする. \\
+      $\mathcal{F}$  & 外力. 
+     \end{tabular}
+    \end{quote}  
+    %
+    緯度経度座標での成分で表示すれば(c.f. Landau and Lifshitz, 1987)
+    \footnote{
+      ランダウの教科書での極座標表現で
+      $\theta=\pi-\varphi, \phi=\lambda$, 
+      $v_\theta=u_\varphi, u_\phi=u_\lambda, v_r=u_r$, 
+      $\partial_\theta = -\partial_\varphi$, 
+      $\sigma_{\lambda\lambda}=\sigma_{\lambda\lambda}$,
+      $\sigma_{\theta\theta}=\sigma_{\varphi\varphi}$,
+      $\sigma_{r\phi}=\sigma_{r\lambda}$,
+      $\sigma_{r\theta}=-\sigma_{r\varphi}$,
+      $\sigma_{\theta\phi}=-\sigma_{\lambda\varphi}$
+      と変換すれば良い. 
+      }
+    %
+    \begin{eqnarray}
+      \Deqlab{慣性系連続の式成分表示}
+       &&  \frac{1}{r\cos\varphi}\DP{u_\lambda}{\lambda}
+         + \frac{1}{r\cos\varphi}\DP{(u_\varphi\cos\varphi)}{\varphi}
+         + \frac{1}{r^2}\DP{u_r}{r}=0, \\
+      \Deqlab{慣性系運動方程式経度成分}
+       &&
+         \DP{u_\lambda}{t} + (\Dvect{u}\cdot\Dgrad)u_\lambda 
+           +\frac{u_r u_\lambda}{r}-\frac{u_\varphi u_\lambda \tan\varphi}{r}
+           \nonumber\\
+       &&  = -\frac{1}{\rho r\cos\varphi}\DP{p}{\lambda}
+           + \nu \left[ \Dlapla u_\lambda 
+                       +\frac{2}{r^2\cos\varphi}\DP{u_r}{\lambda}
+                       -\frac{2\sin\varphi}{r^2\cos^2\varphi}\DP{u_\varphi}{\lambda}
+                       -\frac{u_\lambda}{r^2\cos^2\varphi}\right]
+           + \mathcal{F}_\lambda,\\
+      \Deqlab{慣性系運動方程式緯度成分}
+       &&
+         \DP{u_\varphi}{t} + (\Dvect{u}\cdot\Dgrad)u_\varphi
+           +\frac{u_r u_\varphi}{r}+\frac{u_\lambda^2 \tan\varphi}{r}
+           \nonumber\\
+       && =-\frac{1}{\rho r}\DP{p}{\varphi}
+           + \nu \left[ \Dlapla u_\varphi
+                       +\frac{2\sin\varphi}{r^2\cos^2\varphi}
+                            \DP{u_\lambda}{\lambda}
+                       +\frac{2}{r^2}\DP{u_r}{\varphi}
+                       -\frac{u_\varphi}{r^2\cos^2\varphi}\right]
+           + \mathcal{F}_\varphi,\\
+      \Deqlab{慣性系運動方程式動径成分}
+       &&
+         \DP{u_r}{t} + (\Dvect{u}\cdot\Dgrad)u_r
+           -\frac{u_\varphi^2+ u_\lambda^2}{r}
+           \nonumber\\
+       && =-\frac{1}{\rho}\DP{p}{r}
+           + \nu \left[ \Dlapla u_r
+                       -\frac{2}{r^2\cos\varphi}
+                            \DP{(u_\varphi\cos\varphi)}{\varphi}
+                       -\frac{2}{r^2\cos\varphi}\DP{u_\lambda}{\lambda}
+                       -\frac{2u_r}{r^2}\right]
+           + \mathcal{F}_r,\\
+    \end{eqnarray}
+    %
+    ここで
+    \begin{eqnarray}
+      \Dvect{u}\cdot\Dgrad &=&
+           \frac{u_\lambda}{r\cos\varphi}\DP{}{\lambda}
+         + \frac{u_\varphi}{r}\DP{}{\varphi}
+         + u_r\DP{}{r}, \\
+      \Dlapla &=&   \frac{1}{r^2\cos^2\varphi}\DP[2]{}{\lambda}
+                  + \frac{1}{r^2\cos\varphi}\DP[]{}{\varphi}
+                        \left(\cos\varphi\DP{}{\varphi}\right)
+                  + \frac{1}{r^2}\DP{}{r}\left(r^2\DP{}{r}\right),
+    \end{eqnarray}
+    %
+    である. また, 各応力成分は
+    \begin{eqnarray}
+      \sigma_{\lambda\lambda} 
+          &=& -p + 2\eta 
+                    \left( \frac{1}{r\cos\varphi}\DP{u_\lambda}{\lambda}
+                           +\frac{u_r}{r}
+                           -\frac{u_\varphi\tan\varphi}{r}  \right),\\
+      \sigma_{\varphi\varphi} 
+          &=& -p + 2\eta\left( \frac{1}{r}\DP{u_\varphi}{\varphi}
+                                +\frac{u_r}{r}  \right) \\
+      \sigma_{rr}
+          &=& -p + 2 \eta \DP{u_r}{r}, \\
+      \sigma_{\lambda\varphi}
+          &=& \eta\left(  \frac{1}{r\cos\varphi}\DP{u_\varphi}{\lambda}
+                         +\frac{1}{r}\DP{u_\lambda}{\varphi}
+                         +\frac{u_\lambda\tan\varphi}{r} \right),\\
+      \sigma_{\varphi r}
+          &=& \eta\left(  \frac{1}{r}\DP{u_r}{\varphi}
+                         +\DP{u_\varphi}{r}-\frac{u_\varphi}{r} \right),\\
+      \sigma_{r \lambda}
+          &=& \eta\left(  \DP{u_\lambda}{r}
+                         +\frac{1}{r\cos\varphi}\DP{u_r}{\lambda}
+                         - \frac{u_\lambda}{r} \right).
+    \end{eqnarray}
+
+    運動学的境界条件は, 境界を横切る流れが存在しない, である.
+    すなわち, 
+    \begin{equation}
+      \Deqlab{慣性系運動境界条件}
+      u_r = 0, \qquad \mbox{at} \quad r=r_i,\ r_o. 
+    \end{equation}
+    %
+    力学的境界条件としては,
+    応力なし(stress-free), もしくは粘着条件(rigid)を考える.
+
+    応力なし条件の場合には $\sigma_{r \lambda}=\sigma_{\varphi r}=0$ と
+    $u_r=0$ より,
+    \begin{equation}
+      \Deqlab{慣性系応力なし条件}
+       \DP{}{r}\left(\frac{u_\lambda}{r}\right) 
+       = \DP{}{r}\left(\frac{u_\varphi}{r}\right) 
+        = 0, 
+        \quad \mbox{at} \quad r=r_i,\ r_o. 
+    \end{equation}
+
+    粘着条件の場合には, 運動学的条件と合わせて, 
+    \begin{equation}
+     \Dvect{u} = \Dvect{\Omega}_i\times\Dvect{r} 
+      \quad \mbox{at} \quad r=r_i, 
+     \qquad
+     \Dvect{u} = \Dvect{\Omega}_o\times\Dvect{r}
+      \quad \mbox{at} \quad r=r_o. 
+    \end{equation}
+    %
+    これらを成分で書き下すと\footnotemark[2]
+    %
+    \begin{eqnarray}
+      \Deqlab{慣性系粘着条件}
+       & & u_\lambda =\Omega_i r_i 
+                   [ -\cos\varphi_i\sin\varphi\cos(\lambda_i-\lambda)
+                  + \sin\varphi_i\cos\varphi ], \\
+       & & u_\varphi = \Omega_i r_i 
+               [ \cos\varphi_i\sin(\lambda-\lambda_i)],
+            \qquad \mbox{at}~~ r=r_i, \\
+       & & u_\lambda = \Omega_o r_o 
+                   [ -\cos\varphi_o\sin\varphi\cos(\lambda_o-\lambda)
+                  + \sin\varphi_o\cos\varphi ], \\
+       & & u_\varphi = \Omega_o r_o 
+               [ \cos\varphi_o\sin(\lambda-\lambda_o)],
+           \qquad \mbox{at}~~ r=r_o. 
+    \end{eqnarray}
+    %
+    ここで $\Omega_i=|\Dvect{\Omega_i}|$,  $\Omega_o=|\Dvect{\Omega_o}|$ 
+    は内外球面の回転角速度の大きさ, 
+    $(\lambda_i,\varphi_i)$, $(\lambda_o,\varphi_o)$ は
+    回転軸の方向を表す経度緯度である. 
+
+    \footnotetext[2]{
+      経度 $\lambda$, 緯度 $\varphi$, 動径 $r$ での緯度経度座標系の
+      単位ベクトルを直線直交座標$(x,y,z)$ で成分表示すると, 
+      $\Dvect{e}_\lambda(\lambda,\varphi,r)
+          =(-\sin\lambda,\cos\lambda,0)$, 
+      $\Dvect{e}_\varphi(\lambda,\varphi,r)
+          =(-\cos\lambda\sin\varphi,-\sin\lambda\sin\varphi,\cos\varphi)$, 
+      $\Dvect{e}_r(\lambda,\varphi,r)
+          =(\cos\lambda\cos\varphi,\sin\lambda\cos\varphi,\sin\varphi)$
+      であり, $\Dvect{r}=r\Dvect{e}_r$ である. 
+      一方 $\lambda_i,\varphi_i$ を内球面の回転軸方向を表す経度緯度とすると
+      $\Dvect{k}_i = \Dvect{e}_r(\lambda_i,\varphi_i,r_i)$ である. 
+      したがって, 
+      \begin{displaymath}
+        \Dvect{\Omega}_i\times\Dvect{r}=
+          \Omega_i\Dvect{e}_r(\lambda_i,\varphi_i,r_i)
+          \times r_i\Dvect{e}_r(\lambda,\varphi,r_i)
+      \end{displaymath}
+      この各成分を計算すると
+      \begin{eqnarray*}
+        u_\lambda &=& \Dvect{e}_\lambda
+                       \cdot(\Dvect{\Omega}_i\times\Dvect{r})\\
+           &=& \Omega_i r_i \Dvect{e}_\lambda
+                \cdot(\Dvect{e}_r(\lambda_i,\varphi_i,r_i)\times\Dvect{e}_r) \\
+           &=& \Omega_i r_i \Dvect{e}_r(\lambda_i,\varphi_i,r_i)
+                \cdot(\Dvect{e}_r\times\Dvect{e}_\lambda)  \\
+           &=& \Omega_i r_i \Dvect{e}_r(\lambda_i,\varphi_i,r_i)
+                \cdot\Dvect{e}_\varphi \\
+           &=& \Omega_i r_i 
+               [   \cos\lambda_i\cos\varphi_i (-\cos\lambda\sin\varphi)
+                  + \sin\lambda_i\cos\varphi_i (-\sin\lambda\sin\varphi)
+                  + \sin\varphi_i\cos\varphi ]\\
+           &=& \Omega_i r_i 
+               [ -\cos\varphi_i\sin\varphi
+                   (\cos\lambda_i\cos\lambda+\sin\lambda_i\sin\lambda)
+                  + \sin\varphi_i\cos\varphi ]\\
+           &=& \Omega_i r_i 
+               [ -\cos\varphi_i\sin\varphi\cos(\lambda_i-\lambda)
+                  + \sin\varphi_i\cos\varphi ], \\
+         u_\varphi &=& \Dvect{e}_\varphi
+                \cdot(\Dvect{\Omega}_i\times\Dvect{r}) \\
+           &=& \Omega_i r_i \Dvect{e}_\varphi
+                \cdot(\Dvect{e}_r(\lambda_i,\varphi_i,r_i)\times\Dvect{e}_r)\\
+           &=& \Omega_i r_i \Dvect{e}_r(\lambda_i,\varphi_i,r_i)
+                \cdot(\Dvect{e}_r\times\Dvect{e}_\varphi) \\
+           &=& \Omega_i r_i \Dvect{e}_r(\lambda_i,\varphi_i,r_i)
+                \cdot(-\Dvect{e}_\lambda)  \\
+           &=& -\Omega_i r_i \Dvect{e}_r(\lambda_i,\varphi_i,r_i)
+                \cdot\Dvect{e}_\lambda \\
+           &=& -\Omega_i r_i 
+               [  \cos\lambda_i\cos\varphi_i (-\sin\lambda)
+                 + \sin\lambda_i\cos\varphi_i (\cos\lambda)
+                 + \sin\varphi_i (0)] \\
+           &=& -\Omega_i r_i 
+               [ \cos\varphi_i
+                 (-\cos\lambda_i\sin\lambda+\sin\lambda_i\cos\lambda)]\\
+           &=& -\Omega_i r_i 
+               [ \cos\varphi_i\sin(\lambda_i-\lambda)],\\
+           &=& \Omega_i r_i 
+               [ \cos\varphi_i\sin(\lambda-\lambda_i)],\\
+        u_r &=& \Dvect{e}_r
+                \cdot(\Dvect{\Omega}_i\times\Dvect{r})\\
+           &=& \Omega_i r_i \Dvect{e}_r
+                \cdot(\Dvect{e}_r(\lambda_i,\varphi_i,r_i)\times\Dvect{e}_r)\\
+           &=& \Omega_i r_i \Dvect{e}_r(\lambda_i,\varphi_i,r_i)
+                \cdot(\Dvect{e}_r\times\Dvect{e}_r)=0.
+       \end{eqnarray*}
+    }
+
+  \subsection{スケーリング}
+
+    \subsubsection{球殻の厚さでスケーリングする場合}
+
+      熱対流問題との比較・対応を考察する場合には, 
+      長さスケールを球殻の厚さでスケーリングするのがよい. 
+      その場合には各スケールは,
+      %
+      \begin{quote}
+      \begin{tabular}{ll}
+         長さスケール & 球殻の厚さ $D = r_{o} - r_{i}$      \\
+         速度スケール & 初期値の典型的な速度 $U$, あるいは外力 $\sqrt{D\mathcal{F}}$ \\
+         時間スケール & $D/U$ あるいは $\sqrt{D/\mathcal{F}}$\\
+         圧力のスケール & $\rho U^2$ あるいは $\rho D\mathcal{F}$ 
+      \end{tabular}
+      \end{quote}
+       %
+      その結果, 方程式系は
+      %
+      \begin{eqnarray}
+       && \Deqlab{慣性系無次元連続の式}
+        \Ddiv\Dvect{u} = 0, \\
+       &&\Deqlab{慣性系無次元運動方程式}
+        \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+        = - \Dgrad \pi  + \frac{1}{R_e}\Dlapla \Dvect{u} + \Dvect{\mathcal{F}}
+      \end{eqnarray}
+      %
+      となる.
+      ここで $\Dvect{u},\pi,\Dvect{\mathcal{F}}$ は
+      各々無次元化された速度, 圧力, 外力としてあらためて
+      定義しなおしたものである.
+
+      スケーリングによって現れた無次元数はレイノルズ数, 
+      \begin{equation}
+         R_e \equiv \frac{\nu}{UD} \quad \mbox{or} \quad \frac{\nu}{\mathcal{F}},
+      \end{equation}
+      である. 
+      これに加えて系に現れる重要なパラメータとして
+      内径外径比 $\zeta \equiv r_{i}/r_{o}$ が暗に存在する.
+
+      無次元化された境界条件は, 
+      運動学的境界条件が
+      %
+      \begin{equation}
+        \Deqlab{慣性系無次元運動境界条件}
+        u_r = 0, 
+        \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}.
+      \end{equation}
+      %
+      応力なし条件は
+      %
+      \begin{equation}
+        \Deqlab{慣性系無次元応力なし条件}
+         \DP{}{r}\left(\frac{u_\lambda}{r}\right) 
+         = \DP{}{r}\left(\frac{u_\varphi}{r}\right) = 0, 
+           \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}.
+      \end{equation}
+
+      粘着条件の場合は
+      %
+      \begin{equation}
+       \Deqlab{慣性系無次元粘着条件}
+       \Dvect{u} = \Dvect{\Omega_i}\times\Dvect{r} 
+         \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \\
+       \qquad
+       \Dvect{u} = \Dvect{\Omega_o}\times\Dvect{r}
+         \quad \mbox{at} \quad r=\frac{1}{1-\zeta}. 
+      \end{equation}
+      %
+      成分で書けば
+      \begin{eqnarray}
+       \Deqlab{慣性系無次元粘着条件成分}
+         & & u_\lambda =\Omega_i \left(\frac{\zeta}{1-\zeta}\right)
+                     [ -\cos\varphi_i\sin\varphi\cos(\lambda_i-\lambda)
+                    + \sin\varphi_i\cos\varphi ], \\
+         & & u_\varphi = \Omega_i \left(\frac{\zeta}{1-\zeta}\right)
+                 [ \cos\varphi_i\sin(\lambda-\lambda_i)],
+              \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \\
+         & & u_\lambda = \Omega_o \left(\frac{1}{1-\zeta}\right)
+                     [ -\cos\varphi_o\sin\varphi\cos(\lambda_o-\lambda)
+                    + \sin\varphi_o\cos\varphi ], \\
+         & & u_\varphi = \Omega_o \left(\frac{1}{1-\zeta}\right)
+                 [ \cos\varphi_o\sin(\lambda-\lambda_o)],
+              \quad \mbox{at} \quad r=\frac{1}{1-\zeta}, \\
+      \end{eqnarray}
+      %
+      ここで $\Dvect{\Omega_i},\Dvect{\Omega_o}$ および $\Omega_i,\Omega_o$ は
+      時間スケール分の 1 $U/D$ 
+      あるいは $\sqrt{\mathcal{F}/D}$ で無次元化されたものであることに
+      注意されたい. 
+      もしも流れが境界面の回転で励起される状況を考える場合には
+      $\Omega_i,\Omega_o$ のどちらかが 1 となるように
+      速度スケールを(例えば $\Omega_i D$ に)選べば良い. 
+
+    \subsubsection{外側球殻半径でスケーリングする場合}
+
+      一方で, 球面 2 次元系との対応を考察する場合には, 
+      長さスケールとして外側球殻半径を選ぶのが分かりやすい. 
+      その場合には各スケールは,
+      %
+      \begin{quote}
+      \begin{tabular}{ll}
+         長さスケール & 外側球殻の半径 $r_{o}$      \\
+         速度スケール & 初期値の典型的な速度 $U$, あるいは外力 $\sqrt{D\mathcal{F}}$ \\
+         時間スケール & $r_{o}/U$ あるいは $\sqrt{r_{o}/\mathcal{F}}$\\
+         圧力のスケール & $\rho U^2$ あるいは $\rho r_{o}\mathcal{F}$ 
+      \end{tabular}
+      \end{quote}
+       %
+      その結果, 方程式系は
+      %
+      \begin{eqnarray}
+       && 
+        \Ddiv\Dvect{u} = 0, \\
+       &&
+        \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+        = - \Dgrad \pi  + \frac{1}{R_e^*}\Dlapla \Dvect{u} 
+          + \Dvect{\mathcal{F}}
+      \end{eqnarray}
+      %
+      となる.
+      $\Dvect{u},\pi,\Dvect{\mathcal{F}}$ は先と同様, 
+      各々無次元化された速度, 圧力, 外力としてあらためて
+      定義しなおしたものである.
+      スケーリングによって現れた無次元数は
+      長さスケールの異なるレイノルズ数, 
+      \begin{equation}
+         R_e^* \equiv \frac{\nu}{U r_o} 
+             \quad \mbox{or} \quad \frac{\nu}{\mathcal{F}},
+      \end{equation}
+      である. 
+      これに加えて系に現れるパラメータとして
+      内径外径比 $\zeta \equiv r_{i}/r_{o}$ がやはり存在する.
+
+      無次元化された境界条件は, 
+      運動学的境界条件が
+      %
+      \begin{equation}
+        \Deqlab{慣性系無次元運動境界条件}
+        u_r = 0, 
+        \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}.
+      \end{equation}
+      %
+      応力なし条件は
+      %
+      \begin{equation}
+        \Deqlab{慣性系無次元応力なし条件}
+         \DP{}{r}\left(\frac{u_\lambda}{r}\right) 
+         = \DP{}{r}\left(\frac{u_\varphi}{r}\right) = 0, 
+           \quad \mbox{at} \quad r=\zeta, 1.
+      \end{equation}
+
+      粘着条件の場合は
+      %
+      \begin{equation}
+       \Deqlab{慣性系無次元粘着条件}
+       \Dvect{u} = \Dvect{\Omega_i}\times\Dvect{r} 
+         \quad \mbox{at} \quad r=\zeta, \\
+       \qquad
+       \Dvect{u} = \Dvect{\Omega_o}\times\Dvect{r}
+         \quad \mbox{at} \quad r=1. 
+      \end{equation}
+      %
+      成分で書けば
+      \begin{eqnarray}
+       \Deqlab{慣性系無次元粘着条件成分}
+         & & u_\lambda =\Omega_i \left(\frac{\zeta}{1-\zeta}\right)
+                     [ -\cos\varphi_i\sin\varphi\cos(\lambda_i-\lambda)
+                    + \sin\varphi_i\cos\varphi ], \\
+         & & u_\varphi = \Omega_i \left(\frac{\zeta}{1-\zeta}\right)
+                 [ \cos\varphi_i\sin(\lambda-\lambda_i)],
+              \quad \mbox{at} \quad r=\zeta, \\
+         & & u_\lambda = \Omega_o \left(\frac{1}{1-\zeta}\right)
+                     [ -\cos\varphi_o\sin\varphi\cos(\lambda_o-\lambda)
+                    + \sin\varphi_o\cos\varphi ], \\
+         & & u_\varphi = \Omega_o \left(\frac{1}{1-\zeta}\right)
+                 [ \cos\varphi_o\sin(\lambda-\lambda_o)],
+              \quad \mbox{at} \quad r=1. \\
+      \end{eqnarray}
+      %
+      ここで $\Dvect{\Omega_i},\Dvect{\Omega_o}$ および $\Omega_i,\Omega_o$ は
+      時間スケール分の 1 $U/r_o$ 
+      あるいは $\sqrt{\mathcal{F}/r_o}$ で無次元化されたものであることに
+      注意されたい. 
+      もしも流れが境界面の回転で励起される状況を考える場合には
+      $\Omega_i,\Omega_o$ のどちらかが 1 となるように
+      速度スケールを(例えば $\Omega_i r_o$ に)選べば良い. 
+
+    \subsection{各スケーリング方程式系の対応関係}
+
+      球殻の厚さを長さスケールとして選んだ場合との方程式系と比較すると, 
+      無次元レイノルズ数の定義と, 境界での動径座標が異なるだけである. 
+      そこで以下では球殻の厚さを長さスケールとして選んだ場合の
+      定式化のみ記す. 
+      外側境界の半径を長さスケールとした場合の結果は, 以下で登場する
+      レイノルズ数 $R_e$ を $R_e^*$ に, 境界での動径座標
+      $r=\zeta/1-\zeta,1/1-\zeta$ を $r=\zeta,1$ に読みかえれば良い. 
+
+      各物理量の値を変換したい場合には
+      上付き * 印を外側境界の半径を長さスケールとした場合の変数として
+      %
+      \begin{eqnarray*}
+        t^*      &=& (D/r_o)t = (1-\zeta)t, \\
+        \Omega^* &=& (r_o/D)\Omega = (1/1-\zeta)\Omega, \\
+        R_e^*    &=& (D/r_o)R_e = (1-\zeta)R_e.
+      \end{eqnarray*}
+      %
+      と計算すれば良い. 
+
+
+  \subsection{ポテンシャルによる方程式系の表現} 
+
+    \subsubsection{支配方程式}
+
+       連続の式のソレノイダル条件\Deqref{慣性系無次元連続の式}より, 
+       速度場をトロイダル・ポロイダルポテンシャルを用いて
+       表すことができる:
+       %
+       \begin{eqnarray}
+        \Deqlab{速度分解}
+        \Dvect{u} &=& \Drot(\psi \Dvect{r}) + \Drot\Drot(\phi\Dvect{r}), \\
+       \end{eqnarray}
+       %
+       これらのポテンシャル $\psi, \phi $ を用いて方程式系を表す. 
+       運動方程式 \Deqref{慣性系無次元運動方程式}に
+       $\Dvect{r}\cdot\Drot$, $\Dvect{r}\cdot\Drot\Drot$ を作用することで,
+       \footnotemark[3]
+       \begin{eqnarray}
+        \Deqlab{慣性系トロイダル運動}
+            \DP{}{t} (L_2 \psi)
+         &=& \frac{1}{R_e} L_2\Dlapla \psi 
+             - \Dvect{r}\cdot\Drot [(\Dvect{u}\cdot\Dgrad)\Dvect{u}]
+             + \Dvect{r}\cdot\Drot\Dvect{\mathcal{F}}, \\
+        \Deqlab{慣性系ポロイダル運動}
+           \DP{}{t} (L_2 \Dlapla \phi)
+         &=& \frac{1}{R_e} L_2\Dlapla\Dlapla \phi 
+           + \Dvect{r}\cdot\Drot\Drot [(\Dvect{u}\cdot\Dgrad)\Dvect{u}]
+           - \Dvect{r}\cdot\Drot\Drot\Dvect{\mathcal{F}}, 
+       \end{eqnarray}
+       %
+       が得られる. あるいは\Deqref{慣性系トロイダル運動}, 
+       \Deqref{慣性系ポロイダル運動}の右辺非線形項を恒等式
+       \begin{displaymath}
+        \Dvect{u}\cdot\Dgrad\Dvect{u} 
+        = \frac{1}{2}\Dgrad |\Dvect{u}|^2 - \Dvect{u}\times(\Drot\Dvect{u})
+        = \frac{1}{2}\Dgrad |\Dvect{u}|^2 + (\Drot\Dvect{u})\times\Dvect{u}
+       \end{displaymath}
+       を用いて変形した式,
+       % 
+       \begin{eqnarray}
+        \Deqlab{慣性系トロイダル運動ZxV}
+            \DP{}{t} (L_2 \psi)
+         &=& \frac{1}{R_e} L_2\Dlapla \psi 
+             - \Dvect{r}\cdot\Drot [(\Drot\Dvect{u})\times\Dvect{u}]
+             + \Dvect{r}\cdot\Drot\Dvect{\mathcal{F}}, \\
+        \Deqlab{慣性系ポロイダル運動ZxV}
+           \DP{}{t} (L_2 \Dlapla \phi)
+         &=& \frac{1}{R_e} L_2\Dlapla\Dlapla \phi 
+           + \Dvect{r}\cdot\Drot\Drot [(\Drot\Dvect{u})\times\Dvect{u}]
+           - \Dvect{r}\cdot\Drot\Drot\Dvect{\mathcal{F}}, 
+       \end{eqnarray}
+       %
+       が得られる. 
+       ここで式中の演算子 $L_2$ は
+       半径 1 の球面上の 2 次元ラプラシアンの逆符号のものであり, 
+       %
+       \begin{eqnarray}
+         L_{2} &\equiv&  -r^{2}\Dlapla +\DP{}{r}r^{2}\DP{}{r}  \nonumber\\
+               &=& -\left[
+                     \frac{1}{\cos^{2}\varphi}\DP[2]{}{\lambda} 
+                   +
+                     \frac{1}{\cos\varphi}\DP{}{\varphi}
+                     \left(\cos\varphi\right)\DP{}{\varphi} \right].
+       \end{eqnarray}
+       %
+       \footnotetext[3]{
+         トロイダル・ポロイダルポテンシャルの計算での
+         便利な公式を導出しておく. 
+         緯度経度座標系での回転は
+         \begin{displaymath}
+           \Drot\Dvect{A}
+           =\left(\frac{1}{r}\DP{A_r}{\varphi}
+                     -\frac{1}{r}\DP{}{r}(rA_\varphi),
+                  \frac{1}{r}\DP{}{r}(rA_\lambda)
+                     -\frac{1}{r\cos\varphi}\DP{A_r}{\lambda},
+                  \frac{1}{r\cos\varphi}\DP{A_\varphi}{\lambda}
+                     - \frac{1}{r\cos\varphi}
+                         \DP{(A_\lambda\cos\varphi)}{\varphi}
+            \right),
+         \end{displaymath}
+         %
+         である. したがって
+         %
+         \begin{eqnarray*}
+           \psi\Dvect{r} &=& (0,0, r\psi), \\
+           \Drot(\psi\Dvect{r}) &=&
+              \left(  \DP{\psi}{\varphi},
+                     -\frac{1}{\cos\varphi}\DP{\psi}{\lambda},
+                     0
+              \right) \\
+           \Drot\Drot(\psi\Dvect{r}) &=& 
+              \left( \frac{1}{r\cos\varphi}
+                         \DP{}{r}\left(r\DP{\psi}{\lambda}\right),
+                     \frac{1}{r}\DP{}{r}\left(r\DP{\psi}{\varphi}\right),
+                     \frac{L_2\psi}{r}
+              \right), \\
+           \Drot\Drot\Drot(\psi\Dvect{r}) &=& 
+              \left( -\DP{(\Dlapla\psi)}{\varphi},
+                      \frac{1}{\cos\varphi}\DP{(\Dlapla\psi)}{\lambda},
+                     0
+              \right), \\
+           \Drot\Drot\Drot\Drot(\psi\Dvect{r}) &=& 
+              \left( -\frac{1}{r\cos\varphi}
+                         \DP{}{r}\left(r\DP{(\Dlapla\psi)}{\lambda}\right),
+                     -\frac{1}{r}\DP{}{r}
+                         \left(r\DP{(\Dlapla\psi)}{\varphi}\right),
+                     -\frac{L_2\Dlapla\psi}{r}
+              \right), \\
+           \Drot\Drot\Drot\Drot\Drot(\psi\Dvect{r}) &=& 
+              \left( \DP{(\Dlapla\Dlapla\psi)}{\varphi},
+                    -\frac{1}{\cos\varphi}\DP{(\Dlapla\Dlapla\psi)}{\lambda},
+                     0
+              \right), \\
+           \Drot\Drot\Drot\Drot\Drot\Drot(\psi\Dvect{r}) &=& 
+              \left( \frac{1}{r\cos\varphi}\DP{}{r}
+                          \left(r\DP{(\Dlapla\Dlapla\psi)}{\lambda}\right),
+                     \frac{1}{r}\DP{}{r}
+                         \left(r\DP{(\Dlapla\Dlapla\psi)}{\varphi}\right),
+                     \frac{L_2\Dlapla\Dlapla\psi}{r}
+              \right), 
+         \end{eqnarray*}
+         %
+         これらと $\Dvect{r}$ の内積をとることにより, 
+         以下の公式が得られる. 
+         %
+         \begin{eqnarray*}
+           && \Dvect{r}\cdot(\psi\Dvect{r}) = r^2\psi \\
+           && \Dvect{r}\cdot\Drot\Drot(\psi\Dvect{r}) = L_2\psi \\
+           && \Dvect{r}\cdot\Drot\Drot\Drot\Drot(\psi\Dvect{r}) = 
+                     -L_2\Dlapla\psi,\\
+           && \Dvect{r}\cdot\Drot\Drot\Drot\Drot\Drot\Drot(\psi\Dvect{r}) =
+                     L_2\Dlapla\Dlapla\psi,\\
+           && \Dvect{r}\cdot\Drot(\psi\Dvect{r}) 
+                 = \Dvect{r}\cdot\Drot\Drot\Drot(\psi\Dvect{r})
+                 =  \Dvect{r}\cdot\Drot\Drot\Drot\Drot\Drot(\psi\Dvect{r})
+                 = 0, 
+         \end{eqnarray*}
+         }
+
+      $\Dvect{r}\cdot\Drot, \Dvect{r}\cdot\Drot\Drot$ の座標表現は
+      \begin{eqnarray*}
+        \Dvect{r}\cdot\Drot\Dvect{\mathcal{F}}
+          &=& \frac{1}{\cos\varphi}\DP{\mathcal{F}_\varphi}{\lambda}
+            - \frac{1}{\cos\varphi}\DP{}{\varphi}(\mathcal{F}_\lambda\cos\varphi),\\
+        \Dvect{r}\cdot\Drot\Drot\Dvect{\mathcal{F}}
+          &=& \frac{1}{\cos\varphi}\DP{(\Drot\Dvect{\mathcal{F}})_\varphi}{\lambda}
+            - \frac{1}{\cos\varphi}\DP{}{\varphi}
+                 [(\Drot\Dvect{\mathcal{F}})_\lambda\cos\varphi]\\
+          &=& \frac{1}{\cos\varphi}\DP{}{\lambda}
+                    \left(  \frac{1}{r}\DP{}{r}(r\mathcal{F}_\lambda)
+                           -\frac{1}{r\cos\varphi}\DP{\mathcal{F}_r}{\lambda} \right)\\
+          & &  - \frac{1}{\cos\varphi}\DP{}{\varphi}
+                 \left[\cos\varphi 
+                        \left( \frac{1}{r}\DP{\mathcal{F}_r}{\varphi} 
+                              - \frac{1}{r}\DP{}{r}(r\mathcal{F}_\varphi)\right)\right]\\
+          &=& \frac{1}{\cos\varphi}\DP{}{\lambda}
+                     \frac{1}{r}\DP{}{r}(r \mathcal{F}_\lambda)
+               + \frac{1}{\cos\varphi}\DP{}{\varphi}
+                     \frac{\cos\varphi}{r}\DP{}{r}(r\mathcal{F}_\varphi)\\
+          & &  - \frac{1}{r\cos^2\varphi}\DP[2]{\mathcal{F}_r}{\lambda}
+               - \frac{1}{r\cos\varphi}\DP{}{\varphi}
+                     \left(\cos\varphi\DP{\mathcal{F}_r}{\varphi}\right)\\
+          &=& \frac{1}{r}\DP{}{r}\left[r \left(
+                   \frac{1}{\cos\varphi}\DP{\mathcal{F}_\lambda}{\lambda}
+                  + \frac{1}{\cos\varphi}\DP{}{\varphi}(\mathcal{F}_\varphi\cos\varphi)
+                  \right)\right]
+                + \frac{L_2 \mathcal{F}_r}{r}.
+      \end{eqnarray*}
+
+
+    \subsubsection{速度場とポテンシャルとの関係式}
+
+      トロイダル, ポロイダルポテンシャルから
+      速度場を求める式は次の通りである:
+      \begin{eqnarray}
+         u_\lambda  & = & \DP[]{\psi}{\varphi} 
+               + \Dinv{r\cos\varphi}
+                    \DP[]{}{r}\left(r\DP[]{\phi}{\lambda}\right),\\
+         u_\varphi & = &  - \Dinv{\cos\varphi}\DP[]{\psi}{\lambda}
+               + \Dinv{r}
+                    \DP[]{}{r}\left(r\DP[]{\phi}{\varphi} \right),\\
+         u_r  & = & \frac{L_2 ~\phi}{r}. 
+      \end{eqnarray}
+      %
+      逆に, 速度場の各成分からポテンシャルを求めるには, 
+      \Deqref{速度分解}に
+      $\Dvect{r}\cdot$, $\Dvect{r}\cdot\Drot$ を作用させればよい. 
+      %
+      \begin{eqnarray*}
+        & & \Dvect{r}\cdot\Dvect{u} 
+            = \Dvect{r}\cdot[\Drot(\psi\Dvect{r}) + \Drot\Drot(\phi\Dvect{r}) ]
+            = \Dvect{r}\cdot\Drot\Drot(\phi\Dvect{r}) 
+            = L_2\phi,\\
+        & & \Dvect{r}\cdot\Drot\Dvect{u} 
+            = \Dvect{r}\cdot\Drot[\Drot(\psi\Dvect{r}) + \Drot\Drot(\phi\Dvect{r}) ]
+            = \Dvect{r}\cdot\Drot\Drot(\psi\Dvect{r}) = L_2\psi,
+      \end{eqnarray*}
+      %
+      したがって, 
+      \begin{equation}
+        \Deqlab{速度場からポテンシャル}
+            \phi = L_2^{-1}(ru_r), \quad
+            \psi = L_2^{-1}[\Dvect{r}\cdot(\Drot\Dvect{u})]. 
+      \end{equation}
+
+    \subsubsection{境界条件}
+
+       運動学的境界条件\Deqref{慣性系無次元運動境界条件}を
+       ポテンシャルで表現すれば,
+       \begin{equation}
+         \phi = 0, 
+           \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}. 
+       \end{equation}
+
+       力学的境界条件が応力なしの場合は\Deqref{慣性系無次元応力なし条件}を
+       ポテンシャルで表現して
+       \begin{equation}
+         \Deqlab{慣性系ポテンシャル無次元応力なし条件}
+         \DP[2]{\phi}{r} = \DP{}{r}\left(\frac{\psi}{r}\right) = 0, 
+         \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \frac{1}{1-\zeta}. 
+       \end{equation}
+
+       粘着条件の場合には, 
+       \Deqref{速度場からポテンシャル}を用いて
+       \Deqref{慣性系無次元粘着条件}をポテンシャルで表現して
+       \footnotemark[4]
+       \begin{eqnarray*}
+         \Deqlab{慣性系ポテンシャル無次元粘着条件}
+            \DP{\phi}{r} = 0, \quad
+            \psi = (\Dvect{r}\cdot\Dvect{\Omega_i}),
+            \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \\
+            \DP{\phi}{r} = 0, \quad
+            \psi = (\Dvect{r}\cdot\Dvect{\Omega_o}),
+            \quad \mbox{at} \quad r=\frac{1}{1-\zeta}, \\
+       \end{eqnarray*}
+
+       \footnotetext[4]{
+         ポロイダルポテンシャルの条件は, 
+         境界球面上での水平発散が 0 であることから導かれる. 
+         %
+         \begin{displaymath}
+           \frac{1}{r}\DP{(r u_r)}{r}=0, 
+            \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta},
+         \end{displaymath}
+         %
+         ここで $u_r = L_2\phi/r$ より, 
+         \begin{displaymath}
+           \frac{1}{r}\DP{(L_2 \phi)}{r}=0, 
+            \quad \mbox{\it i.e.} \quad \DP{\phi}{r}=0, 
+            \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}.
+         \end{displaymath}
+         %
+         一方トロイダルポテンシャルは
+         \begin{eqnarray*}
+            \psi &=& L_2^{-1}
+                 [\Dvect{r}\cdot\Drot(\Dvect{\Omega_i}\times\Dvect{r})]\\
+              &=& L_2^{-1}\Dvect{r}\cdot
+                  [  (\Ddiv\Dvect{r})\Dvect{\Omega_i}
+                   - (\Ddiv\Dvect{\Omega_i})\Dvect{r}
+                   + (\Dvect{r}\cdot\Dgrad)\Dvect{\Omega_i}
+                   -(\Dvect{\Omega_i}\cdot\Ddiv)\Dvect{r}  ]\\
+              &=& L_2^{-1}\Dvect{r}\cdot [3\Dvect{\Omega_i} -\Dvect{\Omega_i} ]
+               =  L_2^{-1}2(\Dvect{r}\cdot\Dvect{\Omega_i})
+               =  (\Dvect{r}\cdot\Dvect{\Omega_i}).
+            \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}.
+         \end{eqnarray*}
+         上の $L_2^{-1}2(\Dvect{r}\cdot\Dvect{\Omega_i})$ の計算は, 
+         $(\Dvect{r}\cdot\Dvect{\Omega})$ を直交直線座標成分で書けばよく, 
+         \begin{displaymath}
+           (\Dvect{r}\cdot\Dvect{\Omega})
+           = \Omega_x r\cos\varphi\cos\lambda
+            +\Omega_y r\cos\varphi\sin\lambda
+            +\Omega_z r\sin\varphi.
+         \end{displaymath}
+         %
+         ここで $\cos\varphi\cos\lambda, \cos\varphi\sin\lambda,
+         \sin\varphi$ はそれぞれ球面調和函数 $Y_1^1, Y_1^0$ の
+         成分であるから $L_2$ の固有関数であり, 
+         その固有値は $1\times(1+1)=2$ である
+         ($L_2$ の固有関数は $Y_n^m$ で固有値は $n(n+1)$). 
+         逆に $L_2^{^-1}$ に対しては
+         $(\Dvect{r}\cdot\Dvect{\Omega})$ がやはり固有関数であり, 
+         その固有値は $1/2$ である. 
+         すなわち
+         \begin{displaymath}
+           L_2(\Dvect{r}\cdot{\Omega}) = 2(\Dvect{r}\cdot{\Omega}), 
+           \quad
+           L_2^{-1}(\Dvect{r}\cdot{\Omega}) 
+             = \frac{1}{2}(\Dvect{r}\cdot{\Omega}) 
+         \end{displaymath}
+         となる. 
+         }
+
+       成分で表せば\footnotemark[6]
+       %
+       \begin{eqnarray}
+         \Deqlab{慣性系ポテンシャル無次元粘着条件成分}
+         & & \DP{\phi}{r} = 0, \\
+         & & \psi = \Omega_i \left(\frac{\zeta}{1-\zeta}\right)
+                     [ \cos\varphi_i\cos\varphi\cos(\lambda_i-\lambda)
+                      + \sin\varphi_i\sin\varphi ]
+             \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \\
+         & & \DP{\phi}{r} = 0, \\
+         & & \psi = \Omega_o \left(\frac{1}{1-\zeta}\right)
+                     [ \cos\varphi_o\cos\varphi\cos(\lambda_o-\lambda)
+                      + \sin\varphi_o\sin\varphi ]
+             \quad \mbox{at} \quad \frac{1}{1-\zeta}. 
+       \end{eqnarray}
+       %
+
+       \footnotetext[6]{
+         $\Dvect{\Omega_i},\Dvect{r}$ を直交直線座標成分で表し
+         内積を計算すれば
+         \begin{eqnarray*}
+           \Dvect{r}
+             &=&r(\cos\varphi\cos\lambda,\cos\varphi\sin\lambda,\sin\varphi),
+           \quad
+           \Dvect{\Omega_i}
+              =\Omega_i(\cos\varphi_i\cos\lambda_i,
+                 \cos\varphi_i\sin\lambda_i,
+                 \sin\varphi_i),\\
+           (\Dvect{r}\cdot\Dvect{\Omega_i})
+             &=& \Omega_i r
+                 ( \cos\varphi\cos\lambda
+                    \cos\varphi_i\cos\lambda_i
+                 +\cos\varphi\sin\lambda
+                    \cos\varphi_i\sin\lambda_i
+                 +\sin\varphi\sin\varphi_i)\\
+             &=& \Omega_i r
+                 ( \cos\varphi\cos\varphi_i
+                   (\cos\lambda\cos\lambda_i
+                    + \sin\lambda\sin\lambda_i)
+                  +\sin\varphi\sin\varphi_i)\\
+             &=& \Omega_i r
+                 ( \cos\varphi\cos\varphi_i
+                     \cos(\lambda-\lambda_i)
+                  +\sin\varphi\sin\varphi_i).
+         \end{eqnarray*}
+         ただし $r\equiv|\Dvect{r}|,\Omega_i \equiv |\Dvect{\Omega_i}|$ である.
+         %
+         トロイダルポテンシャルの境界条件は変形を途中で止めた式, 
+         \begin{displaymath}
+           \psi = \Omega_i \left(\frac{\zeta}{1-\zeta}\right)
+                   [ \cos\varphi_i\cos\lambda_i\cos\varphi\cos\lambda
+                    +\cos\varphi_i\sin\lambda_i\cos\varphi\sin\lambda
+                    + \sin\varphi_i\sin\varphi ]
+         \end{displaymath}
+         %
+         から, 球面調和函数 
+         $Y_n^m(\lambda,\varphi)=P_n^m(\sin\varphi)\exp(im\lambda)$ 
+         の $n=1$ 成分で表されることがわかる. 
+         そこで
+         $\psi(r=\zeta/(1-\zeta))$ を
+         \begin{displaymath}
+           \psi(\lambda,\varphi,r=\zeta/(1-\zeta))=
+            \sum_{n=1}^\infty\left[
+                 a_n^0P_n^0(\sin\varphi) + 
+                 \sum_{m=1}^n
+                   P_n^m(\sin\varphi)[a_n^m\sqrt{2}\cos(m\lambda)
+                                      -b_n^m\sqrt{2}\sin(m\lambda)]
+              \right]
+         \end{displaymath}
+         %
+         と展開すると, $P_1^0(\sin\varphi)=\sin\varphi$,
+         $P_1^1(\sin\varphi)=\cos\varphi$ であるから
+         %
+         \begin{eqnarray*}
+           a_1^0 &=& \Omega_i\left(\frac{\zeta}{1-\zeta}\right)
+                     \sin\varphi_i,\\
+           a_1^1 &=& \Omega_i\left(\frac{\zeta}{1-\zeta}\right)
+                       \frac{1}{\sqrt{2}}\cos\varphi_i\cos\lambda_i,\\
+           b_1^1 &=& -\Omega_i\left(\frac{\zeta}{1-\zeta}\right)
+                       \frac{1}{\sqrt{2}}\cos\varphi_i\sin\lambda_i
+         \end{eqnarray*}
+         %
+         と展開係数が与えられる. 
+         }
+
+  \subsection{解析的な解の例}
+
+    \subsubsection{応力なし条件下での剛体回転解}
+
+       外力がない($\mathcal{F}=0$)応力なしの条件下では
+       剛体回転する解が存在できる:
+       %
+       \begin{equation}
+         \Dvect{u} = \Dvect{\Omega}\times\Dvect{r}, 
+       \end{equation}
+       %
+       ここで $\Dvect{\Omega}=\Omega\Dvect{e_\Omega}$ は
+       剛体回転を表す回転ベクトルであり, 
+       $\Omega$ は回転の大きさ, 
+       $\Dvect{e_\Omega}$ は回転軸方向の単位ベクトルである. 
+       具体的な速度成分は
+       \begin{eqnarray*}
+         u_\lambda(\lambda,\varphi,r) &=&\Omega r
+                   [ -\cos\varphi_\Omega\sin\varphi\cos(\lambda_\Omega-\lambda)
+                  + \sin\varphi_\Omega\cos\varphi ], \\
+         u_\varphi(\lambda,\varphi,r) &=& \Omega r
+               [ \cos\varphi_\Omega\sin(\lambda-\lambda_\Omega)],\\
+         u_r(\lambda,\varphi,r) &=& 0. 
+       \end{eqnarray*}
+       ただし, $(\lambda_\Omega,\varphi_\Omega)$ は
+       剛体回転の軸の方向を表す経度・緯度である. 
+       この流れを与えるトロイダル・ポロイダルポテンシャルは
+       \Deqref{速度場からポテンシャル}より
+       \footnotemark[7]
+       \footnotetext[7]{このあたりの式変形は
+         粘着境界条件をポテンシャルで表現するところの導出と
+         全く同じである. }
+      \begin{eqnarray*}
+            \phi &=& L_2^{-1}(ru_r) = 0, \\
+            \psi &=& L_2^{-1}
+                 [\Dvect{r}\cdot\Drot(\Dvect{\Omega}\times\Dvect{r})]\\
+              &=& L_2^{-1}\Dvect{r}\cdot
+                  [  (\Ddiv\Dvect{r})\Dvect{\Omega}
+                   - (\Ddiv\Dvect{\Omega})\Dvect{r}
+                   + (\Dvect{r}\cdot\Dgrad)\Dvect{\Omega}
+                   -(\Dvect{\Omega}\cdot\Ddiv)\Dvect{r}  ]\\
+              &=& L_2^{-1}\Dvect{r}\cdot [3\Dvect{\Omega} -\Dvect{\Omega} ]
+               =  L_2^{-1}2(\Dvect{r}\cdot\Dvect{\Omega})
+               =  (\Dvect{r}\cdot\Dvect{\Omega}).
+      \end{eqnarray*}
+      %
+       成分表示すれば
+       %
+       \begin{displaymath}
+         \phi=0, \quad 
+         \psi(\lambda,\varphi,r) = \Omega r
+                   [ \cos\varphi_\Omega\cos\varphi\cos(\lambda_\Omega-\lambda)
+                    + \sin\varphi_\Omega\sin\varphi ]. 
+       \end{displaymath}
+       %
+       したがって, 応力なし条件
+       \Deqref{慣性系ポテンシャル無次元応力なし条件}を
+       満たしている. 
+
+       上の速度場が支配方程式満たしていることを確かめる. 
+       連続の式は
+       \begin{eqnarray*}
+         \Ddiv\Dvect{u}=\Ddiv(\Dvect{\Omega}\times\Dvect{r})
+         = (\Drot\Dvect{\Omega})\cdot\Dvect{r}
+           -(\Drot\Dvect{r})\cdot\Dvect{\Omega} = 0.
+       \end{eqnarray*}
+       %
+       運動方程式の粘性項はベクトル公式と連続の式を用いて
+       \begin{eqnarray*}
+         \Dlapla\Dvect{u}=\Dgrad(\Ddiv\Dvect{u})-\Drot\Drot\Dvect{u}
+         =\Drot\Drot(\Dvect{\Omega\times\Dvect{r}})
+         =\Drot(2\Dvect{\Omega})=0. 
+       \end{eqnarray*}
+       %
+       慣性項はベクトルの公式を用いて変形すると
+       \begin{eqnarray*}
+         \Dvect{u}\cdot\Dgrad\Dvect{u} 
+         &=&\frac{1}{2}\Dgrad|\Dvect{u}|^2-\Dvect{u}\times\Drot\Dvect{u}\\
+         &=&\frac{1}{2}\Dgrad|\Dvect{\Omega}\times\Dvect{r}|^2
+            -(\Dvect{\Omega}\times\Dvect{r})
+              \times\Drot(\Dvect{\Omega}\times\Dvect{r})
+       \end{eqnarray*}
+       ここで
+       \begin{displaymath}
+         \Drot\Dvect{\Omega}\times\Dvect{r}
+          = (\Ddiv\Dvect{r})\Dvect{\Omega}
+           -(\Ddiv\Dvect{\Omega})\Dvect{r} 
+           +(\Dvect{r}\cdot\Dgrad)\Dvect{\Omega}
+           -(\Dvect{\Omega}\cdot\Dgrad)\Dvect{r}
+         = 3\Dvect{\Omega}-\Dvect{\Omega}=2\Dvect{\Omega}
+       \end{displaymath}
+       %
+       であるから, 
+       \begin{eqnarray*}
+         \Dvect{u}\cdot\Dgrad\Dvect{u} 
+         &=&\frac{1}{2}\Dgrad|\Dvect{\Omega}\times\Dvect{r}|^2
+            -(\Dvect{\Omega}\times\Dvect{r})\times 2\Dvect{\Omega}
+         =\frac{1}{2}\Dgrad|\Dvect{\Omega}\times\Dvect{r}|^2
+            -(2\Dvect{\Omega}\cdot\Dvect{\Omega})\Dvect{r}
+            +(2\Dvect{\Omega}\cdot\Dvect{r})\Dvect{\Omega}\\
+         &=&\frac{1}{2}\Dgrad|\Dvect{\Omega}\times\Dvect{r}|^2
+            -2|\Dvect{\Omega}|^2\Dvect{r}
+            +\Dgrad(\Dvect{\Omega}\cdot\Dvect{r})^2
+          = \frac{1}{2}\Dgrad|\Dvect{\Omega}\times\Dvect{r}|^2
+            -\Dgrad|\Dvect{\Omega}|^2|\Dvect{r}|^2
+            +\Dgrad(\Dvect{\Omega}\cdot\Dvect{r})^2\\
+         &=& \Dgrad\left[\frac{1}{2}|\Dvect{\Omega}\times\Dvect{r}|^2
+            -|\Dvect{\Omega}|^2|\Dvect{r}|^2
+            +(\Dvect{\Omega}\cdot\Dvect{r})^2\right].
+       \end{eqnarray*}
+       %
+       したがってこれにバランスする圧力が
+       \begin{displaymath}
+         p= -\rho\left[\frac{1}{2}|\Dvect{\Omega}\times\Dvect{r}|^2
+            -|\Dvect{\Omega}|^2|\Dvect{r}|^2
+            +(\Dvect{\Omega}\cdot\Dvect{r})^2
+            \right]
+       \end{displaymath}
+       %
+       と定められる. したがって連続の式を満たすことができる. 
+
+
+%        速度の各成分を運動方程式の非線形項に代入すると, 
+%        %
+%        \begin{eqnarray*}
+%          & & (\Dvect{u}\cdot\Dgrad\Dvect{u})_\lambda \\
+%          &=& \Dvect{u}\cdot\Dgrad u_\lambda 
+%                +\frac{u_r u_\lambda}{r}
+%                -\frac{u_\varphi u_\lambda \tan\varphi}{r} \\
+%          &=& \frac{u_\lambda}{r\cos\varphi}\DP{u_\lambda}{\lambda}
+%                + \frac{u_\varphi}{r}\DP{u_\lambda}{\varphi}
+%                -\frac{u_\varphi u_\lambda \tan\varphi}{r}\\
+%          &=& \frac{\Omega r
+%                        [ -\cos\varphi_\Omega\sin\varphi
+%                             \cos(\lambda_\Omega-\lambda)
+%                         + \sin\varphi_\Omega\cos\varphi ]}
+%                     {r\cos\varphi}
+%                 \DP{}{\lambda}
+%                    (\Omega r[ -\cos\varphi_\Omega\sin\varphi
+%                                  \cos(\lambda_\Omega-\lambda)
+%                          + \sin\varphi_\Omega\cos\varphi ])\\
+%            & & + \frac{\Omega r[ \cos\varphi_\Omega
+%                                    \sin(\lambda-\lambda_\Omega)]}
+%                       {r}
+%                    \DP{}{\varphi}
+%                     (\Omega r [ -\cos\varphi_\Omega
+%                                    \sin\varphi\cos(\lambda_\Omega-\lambda)
+%                                + \sin\varphi_\Omega\cos\varphi ])\\
+%            & &  -\frac{\Omega r
+%                         [ -\cos\varphi_\Omega\sin\varphi
+%                                 \cos(\lambda_\Omega-\lambda)
+%                           + \sin\varphi_\Omega\cos\varphi ]
+%                   \Omega r [ \cos\varphi_\Omega\sin(\lambda-\lambda_\Omega)]
+%                   \tan\varphi}{r}\\
+%          &=&  \frac{\Omega^2 r^2
+%                        [ -\cos\varphi_\Omega\sin\varphi
+%                             \cos(\lambda_\Omega-\lambda)
+%                         + \sin\varphi_\Omega\cos\varphi ]
+%                        [ -\cos\varphi_\Omega\sin\varphi
+%                                  \sin(\lambda_\Omega-\lambda)]}
+%                      {r\cos\varphi}\\
+%             & & + \frac{\Omega^2 r^2
+%                           [ \cos\varphi_\Omega
+%                                    \sin(\lambda-\lambda_\Omega)]
+%                           [ -\cos\varphi_\Omega
+%                                    \cos\varphi\cos(\lambda_\Omega-\lambda)
+%                                - \sin\varphi_\Omega\sin\varphi ]}
+%                      {r}\\
+%             & & - \frac{\Omega^2 r^2
+%                         [ -\cos\varphi_\Omega\sin\varphi
+%                                 \cos(\lambda_\Omega-\lambda)
+%                           + \sin\varphi_\Omega\cos\varphi ]
+%                         [ \cos\varphi_\Omega\sin(\lambda-\lambda_\Omega)]
+%                   \sin\varphi}{r\cos\varphi}\\
+%          &=&  \frac{\Omega^2 r}{\cos\varphi}
+%                  \{
+%                    [ -\cos\varphi_\Omega\sin\varphi
+%                          \cos(\lambda_\Omega-\lambda)
+%                      + \sin\varphi_\Omega\cos\varphi ]
+%                    [ -\cos\varphi_\Omega\sin\varphi
+%                            \sin(\lambda_\Omega-\lambda)]\\
+%             & & +  [ \cos\varphi_\Omega\cos\varphi
+%                          \sin(\lambda-\lambda_\Omega)]
+%                    [ -\cos\varphi_\Omega
+%                           \cos\varphi\cos(\lambda_\Omega-\lambda)
+%                             - \sin\varphi_\Omega\sin\varphi ]\\
+%             & & +  [ -\cos\varphi_\Omega\sin\varphi
+%                            \cos(\lambda_\Omega-\lambda)
+%                      + \sin\varphi_\Omega\cos\varphi ]
+%                    [ \cos\varphi_\Omega\sin\varphi\sin(\lambda-\lambda_\Omega)]
+%                 \}\\
+%          &=&  \frac{\Omega^2 r}{\cos\varphi}
+%                  \{
+%                    [ -\cos\varphi_\Omega\sin\varphi
+%                          \cos(\lambda_\Omega-\lambda)
+%                      + \sin\varphi_\Omega\cos\varphi ]
+%                    [ -\cos\varphi_\Omega\sin\varphi
+%                            \sin(\lambda_\Omega-\lambda)]\\
+%             & & +  [ \cos\varphi_\Omega\cos\varphi
+%                          \sin(\lambda-\lambda_\Omega)]
+%                    [ -\cos\varphi_\Omega
+%                           \cos\varphi\cos(\lambda_\Omega-\lambda)
+%                             - \sin\varphi_\Omega\sin\varphi ]\\
+%             & & +  [ -\cos\varphi_\Omega\sin\varphi
+%                            \cos(\lambda_\Omega-\lambda)
+%                      + \sin\varphi_\Omega\cos\varphi ]
+%                    [ \cos\varphi_\Omega\sin\varphi\sin(\lambda-\lambda_\Omega)]
+%                 \}\\
+%          &=&  \frac{\Omega^2 r}{\cos\varphi}
+%                  \{
+%                      \cos^2\varphi_\Omega\sin^2\varphi
+%                         \sin(\lambda_\Omega-\lambda)
+%                         \cos(\lambda_\Omega-\lambda)
+%                     -\sin\varphi_\Omega\cos\varphi_\Omega\sin\varphi\cos\varphi
+%                            \sin(\lambda_\Omega-\lambda)\\
+%             & &     -\cos^2\varphi_\Omega\cos\varphi^2
+%                          \sin(\lambda-\lambda_\Omega)
+%                          \cos(\lambda_\Omega-\lambda)
+%                     - \sin\varphi_\Omega\cos\varphi_\Omega
+%                           \sin\varphi\cos\varphi
+%                           \sin(\lambda-\lambda_\Omega)\\
+%             & &     -\cos^2\varphi_\Omega\sin^2\varphi
+%                        \sin(\lambda-\lambda_\Omega)\cos(\lambda_\Omega-\lambda)
+%                      + \sin\varphi_\Omega\cos\varphi_\Omega
+%                            \sin\varphi\cos\varphi 
+%                            \sin(\lambda-\lambda_\Omega)
+%                 \}\\
+%          &=&  \frac{\Omega^2 r}{\cos\varphi}
+%                  \{ -\sin\varphi_\Omega\cos\varphi_\Omega\sin\varphi\cos\varphi
+%                            \sin(\lambda_\Omega-\lambda)
+%                    -\cos^2\varphi_\Omega\cos\varphi^2
+%                          \sin(\lambda-\lambda_\Omega)
+%                          \cos(\lambda_\Omega-\lambda)
+%                  \}\\
+%          &=&  \Omega^2 r
+%                  \{ -\sin\varphi_\Omega\cos\varphi_\Omega\sin\varphi
+%                            \sin(\lambda_\Omega-\lambda)
+%                    -\cos^2\varphi_\Omega\cos\varphi
+%                          \sin(\lambda-\lambda_\Omega)
+%                          \cos(\lambda_\Omega-\lambda)
+%                  \},\\
+% %
+%          & & (\Dvect{u}\cdot\Dgrad\Dvect{u})_\varphi \\
+%          &=& \Dvect{u}\cdot\Dgrad u_\varphi
+%            +\frac{u_r u_\varphi}{r}+\frac{u_\lambda^2 \tan\varphi}{r}\\
+%          &=& \frac{u_\lambda}{r\cos\varphi}\DP{u_\varphi}{\lambda}
+%             + \frac{u_\varphi}{r}\DP{u_\varphi}{\varphi}
+%             +\frac{u_\lambda^2 \tan\varphi}{r}\\
+%          &=& \frac{\Omega r
+%                    [ -\cos\varphi_\Omega\sin\varphi\cos(\lambda_\Omega-\lambda)
+%                   + \sin\varphi_\Omega\cos\varphi ]}{r\cos\varphi}
+%                 \DP{}{\lambda}
+%                  (\Omega r
+%                    [ \cos\varphi_\Omega\sin(\lambda-\lambda_\Omega)])\\
+%          & &  + \frac{\Omega r
+%                         [ \cos\varphi_\Omega\sin(\lambda-\lambda_\Omega)]}{r}
+%                \DP{}{\varphi}
+%                  (\Omega r
+%                      [ \cos\varphi_\Omega\sin(\lambda-\lambda_\Omega)])\\
+%          & &  +\frac{\Omega^2 r^2
+%                    [ -\cos\varphi_\Omega\sin\varphi\cos(\lambda_\Omega-\lambda)
+%                   + \sin\varphi_\Omega\cos\varphi ]^2
+%                   \tan\varphi}{r}\\
+%          &=& \frac{\Omega^2 r
+%                      [ -\cos\varphi_\Omega\sin\varphi
+%                             \cos(\lambda_\Omega-\lambda)
+%                        + \sin\varphi_\Omega\cos\varphi ]
+%                      [ \cos\varphi_\Omega\cos(\lambda-\lambda_\Omega)]}
+%                   {\cos\varphi}\\
+%          & &  +\frac{\Omega^2 r
+%                    [ -\cos\varphi_\Omega\sin\varphi\cos(\lambda_\Omega-\lambda)
+%                   + \sin\varphi_\Omega\cos\varphi ]^2
+%                   \sin\varphi}{\cos\varphi}\\
+%          &=& \frac{\Omega^2 r}{\cos\varphi}
+%               \{  -\cos\varphi_\Omega^2\sin\varphi
+%                           \cos^2(\lambda_\Omega-\lambda)
+%                       + \sin\varphi_\Omega\cos\varphi_\Omega\cos\varphi 
+%                         \cos(\lambda-\lambda_\Omega)
+%                   \\
+%          & &  + \cos^2\varphi_\Omega\sin^3\varphi\cos^2(\lambda_\Omega-\lambda)
+%                -2\cos\varphi_\Omega\sin\varphi_\Omega\sin^2\varphi\cos\varphi
+%                    \cos(\lambda_\Omega-\lambda)
+%                    + \sin^2\varphi_\Omega\sin\varphi\cos^2\varphi
+%                 \}
+%        \end{eqnarray*}
+
+
+    \subsubsection{粘着条件下での差分回転解(流れが十分に遅い場合)}
+
+       内外球殻の回転により引き起こされる球殻中の流れについて, 
+       回転角速度が十分に小さく粘性項に比べて慣性項が無視できる
+       状況での解を見出す\footnotemark[6]
+       ($Re=\Omega_i D^2/\nu, \Omega_o D^2/\nu \ll 1)$. 
+
+       \footnotetext[6]
+          {Landau and Lifsiz, Vol.6, Fluid Mechanics, Section 20, 
+           Problem 1. を参照のこと. }
+
+       内外球殻がそれぞれ一定の角速度 $\Dvect{\Omega_i},\Dvect{\Omega_o}$
+       で回転しているとする. 
+       満たすべき方程式は, 外力がなく慣性項を無視した式, 
+       %
+       \begin{displaymath}
+          L_2\Dlapla \psi = 0,   L_2\Dlapla\Dlapla \phi =0, 
+       \end{displaymath}
+       %
+       境界での条件は粘着条件である. 
+       %
+       \begin{eqnarray*}
+         & & \phi = \DP{\phi}{r} = 0, \quad
+             \psi = (\Dvect{r}\cdot\Dvect{\Omega_i})
+             \quad \mbox{at} \quad r=r_i=\frac{\zeta}{1-\zeta}, \\
+         & & \phi = \DP{\phi}{r} = 0, \quad
+             \psi = (\Dvect{r}\cdot\Dvect{\Omega_o})
+             \quad \mbox{at} \quad r=r_o=\frac{1}{1-\zeta}. 
+       \end{eqnarray*}
+       %
+       そこで
+       \begin{displaymath}
+         \phi=0, \quad
+         \psi= A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})
+               +B(r)(\Dvect{r}\cdot\Dvect{\Omega_o})
+       \end{displaymath}
+       %
+       の形で解を求める. ここで $A(r),B(r)$ は境界条件
+       %
+       \begin{displaymath}
+          A(r=r_i) = 1, \quad  A(r=r_o) = 0, \quad
+         B(r=r_i) = 0, \quad   B(r=r_o) = 1,
+       \end{displaymath}
+       %
+       を満たす関数である. 
+       %
+       仮定した解の形を支配方程式に代入すると, $A(r), B(r)$ の
+       満たすべき方程式が\footnotemark[9]
+       \footnotetext[9]{
+         第 1 項目だけ代入すると
+         \begin{eqnarray*}
+           & & L_2\Dlapla A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})
+             = L_2\left(\frac{1}{r^2}\DP{}{r}r^2\DP{}{r}- \frac{L_2}{r^2}\right)
+                 A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})\\
+           &=& L_2\frac{1}{r^2}\DP{}{r}
+                 \left(r^2\DP{}{r}[A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})]\right)
+              - \frac{L_2 L_2 A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+           &=& \frac{1}{r^2}\DP{}{r}
+               \left(r^2\DP{}{r}[A(r)L_2(\Dvect{r}\cdot\Dvect{\Omega_i})]\right)
+              - \frac{A(r)}{r^2}L_2 L_2(\Dvect{r}\cdot\Dvect{\Omega_i})\\
+           &=& \frac{1}{r^2}\DP{}{r}
+               \left(r^2\DP{}{r}[A(r)2(\Dvect{r}\cdot\Dvect{\Omega_i})]\right)
+              - \frac{A(r)}{r^2}4(\Dvect{r}\cdot\Dvect{\Omega_i})\\
+           &=& \frac{2}{r^2}\DP{}{r}
+               \left(r^2\DP{}{r}[A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})]\right)
+              - \frac{4A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+           &=& \frac{2}{r^2}\DP{}{r}
+               \left(r^2(\Dvect{r}\cdot\Dvect{\Omega_i})\DP{A(r)}{r}
+               + r^2A(r)\frac{(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}\right)
+              - \frac{4A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+           &=& \frac{2}{r^2}\DP{}{r}
+                 \left(r^2(\Dvect{r}\cdot\Dvect{\Omega_i})\DP{A(r)}{r}\right)
+              +\frac{2}{r^2}\DP{}{r}
+                 [rA(r)(\Dvect{r}\cdot\Dvect{\Omega_i})]
+              - \frac{4A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+           &=& \frac{2(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\DP{}{r}
+                 \left(r^2\DP{A(r)}{r}\right)
+               +2\DP{A(r)}{r}
+                  \frac{(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}
+               +\frac{2(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}
+                 \DP{}{r}[rA(r)]
+               +2\frac{A(r)}{r}\frac{(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}\\
+             &&- \frac{4A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+           &=& 2(\Dvect{r}\cdot\Dvect{\Omega_i})\DP[2]{A(r)}{r}
+              + \frac{4(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}\DP{A(r)}{r}
+              +2\DP{A(r)}{r}\frac{(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}
+              +\frac{2(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}
+                 \DP{A(r)}{r}
+              +\frac{2(\Dvect{r}\cdot\Dvect{\Omega_i})A(r)}{r^2}\\
+             &&- \frac{2A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+           &=& 2(\Dvect{r}\cdot\Dvect{\Omega_i})\DP[2]{A(r)}{r}
+              + \frac{8(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}\DP{A(r)}{r}\\
+           &=& 2(\Dvect{r}\cdot\Dvect{\Omega_i})
+                 \left(\DP[2]{A(r)}{r}+\frac{4}{r}\DP{A(r)}{r}\right)
+         \end{eqnarray*}
+         第 2 項目についても同様に計算できる. 
+         $\Dvect{\Omega_i}$ と $\Dvect{\Omega_o}$ が異なる場合に限り
+         $(\Dvect{r}\cdot\Dvect{\Omega_i})$ と
+         $(\Dvect{r}\cdot\Dvect{\Omega_o})$ が恒等的に 0 とならないので
+         それらの係数から $A, B$ の微分方程式が求められる. 
+       }
+
+       \begin{displaymath}
+          \DD[2]{A(r)}{r}+\frac{4}{r}\DD{A(r)}{r}=0, \quad
+          \DD[2]{B(r)}{r}+\frac{4}{r}\DD{B(r)}{r}=0. 
+       \end{displaymath}
+       %
+       $A(r),B(r)=r^n$ の形を仮定すると, 
+       \begin{displaymath}
+         n(n-1)r^{n-2} + 4n r^{n-2} =0, \quad n(n+3)=0, 
+         \quad \mbox{i.e.} \quad n=0,-3
+       \end{displaymath}
+       %
+       したがって, 
+       \begin{displaymath}
+         A(r) = C_1 + \frac{C_2}{r^3}, \quad
+         B(r) = C_3 + \frac{C_4}{r^3}
+       \end{displaymath}
+       となる. ここで $C_1,C_2,C_3,C_4$ は定数である. 
+       %
+       境界条件より
+       \begin{displaymath}
+           C_1 + \frac{C_2}{r_i^3}=1, \quad
+           C_1 + \frac{C_2}{r_o^3}=0, \quad
+           C_3 + \frac{C_4}{r_i^3}=0, \quad
+           C_3 + \frac{C_4}{r_o^3}=1,
+       \end{displaymath}
+       %
+       \begin{eqnarray*}
+         & & C_1 = \frac{1}{1-r_o^3/r_i^3}= -\frac{r_i^3}{r_o^3-r_i^3}, \quad
+             C_2 = \frac{r_i^3r_o^3}{r_o^3-r_i^3}, \\
+         & & C_3 = \frac{1}{(1-r_i^3/r_o^3)}= \frac{r_o^3}{r_o^3-r_i^3}, \quad
+             C_4 = -\frac{r_i^3r_o^3}{r_o^3-r_i^3}.
+       \end{eqnarray*}
+       %
+       よって
+       \begin{eqnarray*}
+         \phi&=&0, \\
+         \psi&=& \left( -\frac{r_i^3}{r_o^3-r_i^3}
+                        +\frac{r_i^3r_o^3}{r_o^3-r_i^3}\frac{1}{r^3}\right)
+                    (\Dvect{r}\cdot\Dvect{\Omega_i})
+               +\left( \frac{r_o^3}{r_o^3-r_i^3}
+                      -\frac{r_i^3r_o^3}{r_o^3-r_i^3}\frac{1}{r^3}\right)
+                    (\Dvect{r}\cdot\Dvect{\Omega_o})\\
+            &=& -\frac{r_i^3}{r_o^3-r_i^3}\left(1-\frac{r_o^3}{r^3}\right)
+                   (\Dvect{r}\cdot\Dvect{\Omega_i})
+               +\frac{r_o^3}{r_o^3-r_i^3}\left(1-\frac{r_i^3}{r^3}\right)
+                    (\Dvect{r}\cdot\Dvect{\Omega_o}).
+       \end{eqnarray*}
+       %
+       無次元量で $r_i,r_o$ を書けば
+       \begin{eqnarray*}
+         \phi&=&0, \\
+         \psi&=& -\frac{\zeta^3}{1-\zeta^3}
+                \left(1-\frac{1}{(1-\zeta)^3 r^3}\right)
+                    (\Dvect{r}\cdot\Dvect{\Omega_i})
+               +\frac{1}{1-\zeta^3}
+                  \left(1-\frac{\zeta^3}{(1-\zeta)^3 r^3}\right)
+                    (\Dvect{r}\cdot\Dvect{\Omega_o})
+       \end{eqnarray*}
+       %
+       特に内球が存在しない場合には $r_i\longrightarrow 0$ として, 
+       %
+       \begin{displaymath}
+         \phi=0, \quad  \psi=(\Dvect{r}\cdot\Dvect{\Omega_o}).
+       \end{displaymath}
+       %
+       球内全体が剛体回転の解となる. 
+       %
+       逆に外側の球が存在しない極限では 
+       $\Dvect{\Omega_o}=0, r_o\longrightarrow\infty$ として
+       %
+       \begin{displaymath}
+         \phi = 0, \quad
+         \psi = \frac{1}{r^3}(\Dvect{r}\cdot\Dvect{\Omega_i}).
+       \end{displaymath}
+
+       速度場はトロイダルポテンシャルの定義\Deqref{速度分解}より
+       %
+       \begin{displaymath}
+         \Dvect{u}=\Drot(\psi\Dvect{r})
+                  =\Dgrad\psi\times\Dvect{r} +\psi\Drot\Dvect{r}
+                  =\Dgrad\psi\times\Dvect{r}.
+       \end{displaymath}
+       %
+       ここで 
+       \begin{eqnarray*}
+         \Dgrad [A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})]\times\Dvect{r}
+         &=& (\Dvect{r}\cdot\Dvect{\Omega_i})[\Dgrad A(r)] \times\Dvect{r}
+              A(r)[\Dgrad (\Dvect{r}\cdot\Dvect{\Omega_i})]\times\Dvect{r}\\
+         &=& A(r)\Dvect{\Omega_i}\times\Dvect{r}
+       \end{eqnarray*}
+       %
+       $A(r)$ は $r$ だけの関数なので $\Dgrad A(r)$ は $\Dvect{r}$ と
+       並行であり, $[\Dgrad A(r)] \times\Dvect{r}=0 $ であることに
+       注意されたい. 
+       したがって, 
+       \begin{displaymath}
+         \Dvect{u}
+             = -\frac{r_i^3}{r_o^3-r_i^3}\left(1-\frac{r_o^3}{r^3}\right)
+                   (\Dvect{\Omega_i}\times\Dvect{r})
+               +\frac{r_o^3}{r_o^3-r_i^3}\left(1-\frac{r_i^3}{r^3}\right)
+                    (\Dvect{\Omega_o}\times\Dvect{r}).
+       \end{displaymath}
+
+%--------------------------------------------------------------------------
+
+\section{回転系での定式化}
+
+  \subsection{支配方程式}
+
+    中心を共有する半径 $r_{i}, r_{o}$ の球面に挟まれた
+    球殻内にある非圧縮粘性流体について考える.
+    座標系を球殻の中心を原点し, 外側球面の回転角速度の向きを北極方向とする
+    緯度経度座標系 $(\lambda, \varphi, r)$ とする. 
+%    これを \Dfigref{系の図} に示す.
+    外側の球面の回転角速度を $\Dvect{\Omega_o}=\Omega\Dvect{k}$, 
+    それに相対的な内側球面の回転角速度ベクトルを
+    $\Dvect{\tilde{\Omega}}_i = \Dvect{\Omega_i}-\Dvect{\Omega_o}
+      \equiv \tilde{\Omega}_i\Dvect{k}_i$ とする. 
+    ここで $\Dvect{k}_i$, $\Dvect{k}$  はそれぞれ内外球面の
+    回転軸方向の単位ベクトルを表している. 
+    以下ではチルダ記号を省略し, あらためて
+    $\Dvect{\tilde{\Omega}_i} \rightarrow \Dvect{\Omega_i}$
+    $\tilde{\Omega}_i \rightarrow \Omega_i$ と定義しなおすことにする. 
+
+%     \begin{figure}[htbp!]
+%      \begin{center}
+%       \Depsf[13cm]{./img/cordinate.eps}
+%       \caption{考えている系の模式図} \Dfiglab{系の図}
+%      \end{center}
+%     \end{figure}
+
+    支配方程式は外側の球面とともにまわっている回転系での非圧縮粘性流体の
+    ナビエーストークス方程式である. 
+    \begin{eqnarray} 
+     &&\Deqlab{回転系連続の式}
+      \Ddiv{\Dvect{u}}=0, \\
+     &&\Deqlab{回転系運動方程式}
+      \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+        + 2\Omega \Dvect{k}\times\Dvect{u}
+      = -\frac{1}{\rho}\Dgrad \tilde{p} +\nu \Dlapla \Dvect{u}. 
+    \end{eqnarray}
+
+    各々の記号は次の通りである:
+    \begin{quote}
+     \begin{tabular}{ll}
+      $\Dvect{u}$  
+                     & 回転系での流速ベクトル. \\
+                     & 成分毎に書く場合には,
+                     $\Dvect{u}=(u_\lambda,u_\varphi,u_r)$ \\
+      $\rho$         & 流体の密度. 非圧縮を仮定しているので一定である. \\
+      $\tilde{p}$       
+                     & 流体の圧力と遠心力. \\
+                     & 遠心力は 
+                     $\Dgrad\frac{1}{2}|\Dvect{\Omega}\times\Dvect{r}|^2$
+                     の形でかけるのでこの圧力項に含めることができる. \\
+      $\Dvect{k}$  
+                     & 外側球面の回転軸方向の単位ベクトル
+%                       ( \Dfigref{系の図}での$z$ 軸方向). \\
+     \end{tabular}
+    \end{quote}  
+    また, 動粘性率 $\nu$ は一定であるとする.
+
+    運動学的境界条件は, 境界を横切る流れが存在しない, である.
+    すなわち, 
+    \begin{equation}
+     u_r = 0, ~~~\mbox{at}~~~ r=r_i, \quad r_o. 
+    \end{equation}
+
+    力学的境界条件としては,
+    応力なし(stress-free), もしくは粘着条件(rigid)を考える.
+
+    応力なし条件の場合には
+    \begin{equation}
+     \DP{}{r}\biggl(\frac{u_\lambda}{r}\biggr) 
+     = \DP{}{r}\biggl(\frac{u_\varphi}{r}\biggr) 
+      = 0, ~~~\mbox{at}~~~ r=r_i, \quad r_o. 
+    \end{equation}
+
+    粘着条件の場合には,
+    \begin{equation}
+     u_\lambda = u_\varphi = 0,~~~\mbox{at}~~~ r=r_o, \quad, 
+     \Dvect{u} = \Dvect{\Omega_i}\times\Dvect{r} ~~~\mbox{at}~~~ r_i.
+    \end{equation}
+    $\Dvect{r}$ は中心を原点とする位置ベクトルである. 
+    成分で書き下すと
+    %
+    \begin{eqnarray}
+     & &u_\lambda = u_\varphi = 0,~~\mbox{at}~~ r=r_o, \\
+     & & u_\lambda =\Omega_i r_i 
+                 [ -\cos\varphi_i\sin\varphi\cos(\lambda_i-\lambda)
+                + \sin\varphi_i\cos\varphi ], \\
+     & & u_\varphi = \Omega_i r_i 
+             [ \cos\varphi_i\sin(\lambda-\lambda_i)],
+         ~~\mbox{at}~~ r=r_i. 
+    \end{eqnarray}
+    %
+    ここで $\lambda_i,\varphi_i$ は内球面の回転軸方向を表す経度緯度である. 
+
+  \subsection{スケーリング}
+
+    慣性系の場合と同様に, 長さスケールとして 2 通りの場合を扱う. 
+
+    \subsubsection{球殻の厚さでスケーリングする場合}
+
+      熱対流問題との比較・対応を考察する場合には, 
+      長さスケールを球殻の厚さでスケーリングするのがよい. 
+      その場合には各スケールは,
+      %
+      \begin{quote}
+      \begin{tabular}{ll}
+         長さスケール & 球殻の厚さ $D = r_{o} - r_{i}$      \\
+         速度スケール & 初期値の典型的な速度 $U$, あるいは外力 $\sqrt{D\mathcal{F}}$ \\
+         時間スケール & $D/U$ あるいは $\sqrt{D/\mathcal{F}}$\\
+         圧力のスケール & $\rho U^2$ あるいは $\rho D\mathcal{F}$ 
+      \end{tabular}
+      \end{quote}
+       %
+      その結果, 方程式系は
+      %
+      \begin{eqnarray}
+       && \Deqlab{回転系無次元連続の式}
+        \Ddiv\Dvect{u} = 0, \\
+       &&\Deqlab{回転系無次元運動方程式}
+        \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+          + \frac{1}{R_o}\Dvect{k}\times\Dvect{u}
+        = - \Dgrad \pi  + \frac{1}{R_e}\Dlapla \Dvect{u} + \Dvect{\mathcal{F}}
+      \end{eqnarray}
+      %
+      となる.
+      ここで $\Dvect{u},\pi,\Dvect{\mathcal{F}}$ は
+      各々無次元化された速度, 圧力, 外力としてあらためて
+      定義しなおしたものである.
+
+      スケーリングによって現れた無次元数はレイノルズ数とロスビー数, 
+      \begin{eqnarray}
+         R_e &\equiv& \frac{\nu}{UD} \quad \mbox{or} \quad \frac{\nu}{\mathcal{F}},\\
+         R_o &\equiv& \frac{U}{2\Omega D}\quad \mbox{or} \quad \frac{\mathcal{F}}{2\Omega},
+      \end{eqnarray}
+      である. 
+      これに加えて系に現れる重要なパラメータとして
+      内径外径比 $\zeta \equiv r_{i}/r_{o}$ が暗に存在する.
+
+      無次元化された境界条件は, 
+      運動学的境界条件が
+      %
+      \begin{equation}
+        \Deqlab{回転系無次元運動境界条件}
+        u_r = 0, 
+        \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}.
+      \end{equation}
+      %
+      応力なし条件は
+      %
+      \begin{equation}
+        \Deqlab{回転系無次元応力なし条件}
+         \DP{}{r}\left(\frac{u_\lambda}{r}\right) 
+         = \DP{}{r}\left(\frac{u_\varphi}{r}\right) = 0, 
+           \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}.
+      \end{equation}
+
+      粘着条件の場合は
+      %
+      \begin{eqnarray}
+        \Deqlab{回転系無次元粘着条件}
+         & & u_\lambda =0, \quad u_\varphi =0, 
+              \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \\
+         & & u_\lambda = \Omega_i \left(\frac{1}{1-\zeta}\right)
+                     [ -\cos\varphi_o\sin\varphi\cos(\lambda_o-\lambda)
+                    + \sin\varphi_o\cos\varphi ], \\
+         & & u_\varphi = \Omega_i \left(\frac{1}{1-\zeta}\right)
+                 [ \cos\varphi_o\sin(\lambda-\lambda_o)],
+              \quad \mbox{at} \quad r=\frac{1}{1-\zeta}, \\
+      \end{eqnarray}
+      %
+      ここで $\Omega_i$ は時間スケール分の 1 $U/D$ 
+      あるいは $\mathcal{F}/D$ で無次元化されたものであることに
+      注意されたい. 
+
+    \subsubsection{外側球殻半径でスケーリングする場合}
+
+      一方で, 球面 2 次元系との対応を考察する場合には, 
+      長さスケールとして外側球殻半径を選ぶのが分かりやすい. 
+      その場合には各スケールは,
+      %
+      \begin{quote}
+      \begin{tabular}{ll}
+         長さスケール & 外側球殻の半径 $r_{o}$      \\
+         速度スケール & 初期値の典型的な速度 $U$, あるいは外力 $\sqrt{D\mathcal{F}}$ \\
+         時間スケール & $r_{o}/U$ あるいは $\sqrt{r_{o}/\mathcal{F}}$\\
+         圧力のスケール & $\rho U^2$ あるいは $\rho r_{o}\mathcal{F}$ 
+      \end{tabular}
+      \end{quote}
+       %
+      その結果, 方程式系は
+      %
+      \begin{eqnarray}
+       && 
+        \Ddiv\Dvect{u} = 0, \\
+       &&
+        \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+          + \frac{1}{R_o^*}\Dvect{k}\times\Dvect{u}
+        = - \Dgrad \pi  + \frac{1}{R_e^*}\Dlapla \Dvect{u} + \Dvect{\mathcal{F}}
+      \end{eqnarray}
+      %
+      となる.
+      ここで $\Dvect{u},\pi,\Dvect{\mathcal{F}}$ は先と同様, 
+      各々無次元化された速度, 圧力, 外力としてあらためて
+      定義しなおしたものである.
+
+      スケーリングによって現れた無次元数は
+      長さスケールの異なるレイノルズ数とロスビー数, 
+      \begin{eqnarray}
+         R_e^* &\equiv& \frac{\nu}{Ur_o} \quad 
+                \mbox{or} \quad \frac{\nu}{\mathcal{F}},\\
+         R_o^* &\equiv& \frac{U}{2\Omega r_o}\quad 
+                \mbox{or} \quad \frac{\mathcal{F}}{2\Omega},
+      \end{eqnarray}
+      である. 
+      これに加えて系に現れるパラメータとして
+      内径外径比 $\zeta \equiv r_i/r_o$ がやはり存在する.
+
+      無次元化された境界条件は, 
+      運動学的境界条件が
+      %
+      \begin{equation}
+        \Deqlab{回転系無次元運動境界条件}
+        u_r = 0, 
+        \quad \mbox{at} \quad r=\zeta,1.
+      \end{equation}
+      %
+      応力なし条件は
+      %
+      \begin{equation}
+        \Deqlab{回転系無次元応力なし条件}
+         \DP{}{r}\left(\frac{u_\lambda}{r}\right) 
+         = \DP{}{r}\left(\frac{u_\varphi}{r}\right) = 0, 
+           \quad \mbox{at} \quad r=\zeta,1.
+      \end{equation}
+
+      粘着条件の場合は
+      %
+      \begin{eqnarray}
+        \Deqlab{回転系無次元粘着条件}
+         & & u_\lambda =0, \quad u_\varphi =0, 
+              \quad \mbox{at} \quad r=\zeta, \\
+         & & u_\lambda = \Omega_i \left(1\right)
+                     [ -\cos\varphi_o\sin\varphi\cos(\lambda_o-\lambda)
+                    + \sin\varphi_o\cos\varphi ], \\
+         & & u_\varphi = \Omega_i \left(1\right)
+                 [ \cos\varphi_o\sin(\lambda-\lambda_o)],
+              \quad \mbox{at} \quad r=1, \\
+      \end{eqnarray}
+      %
+      ここで $\Omega_i$ は時間スケール分の 1: $U/r_o$ 
+      あるいは $\mathcal{F}/r_o$ で無次元化されたものであることに
+      注意されたい. 
+
+    \subsection{各スケーリング方程式系の対応関係}
+
+      球殻の厚さを長さスケールとして選んだ場合との方程式系と比較すると, 
+      無次元レイノルズ数の定義と, 境界での動径座標が異なるだけである. 
+      そこで以下では球殻の厚さを長さスケールとして選んだ場合の
+      定式化のみ記す. 
+      外側境界の半径を長さスケールとした場合の結果は, 以下で登場する
+      レイノルズ数 $R_e$ を $R_e^*$ に, 
+      ロスビー数 $R_o$ を $R_o^*$ に, 
+      境界での動径座標
+      $r=\zeta/1-\zeta,1/1-\zeta$ を $r=\zeta,1$ に読みかえれば良い. 
+
+      各物理量の値を変換したい場合には
+      上付き * 印を外側境界の半径を長さスケールとした場合の変数として
+      %
+      \begin{eqnarray*}
+        t^*      &=& (D/r_o)t = (1-\zeta)t, \\
+        \Omega^* &=& (r_o/D)\Omega = (1/1-\zeta)\Omega, \\
+        R_e^*    &=& (D/r_o)R_e = (1-\zeta)R_e, \\
+        R_o^*    &=& (D/r_o)R_o = (1-\zeta)R_o.
+      \end{eqnarray*}
+      %
+      と計算すれば良い. 
+
+  \subsection{ポテンシャルによる方程式系の表現} 
+
+    慣性系の場合と同様, 速度場をトロイダル・ポロイダルポテンシャルを
+    用いて表現し, 支配方程式と境界条件を構成する. 
+
+    \subsubsection{支配方程式}
+
+       連続の式のソレノイダル条件\Deqref{回転系無次元連続の式}より, 
+       速度場をトロイダル・ポロイダルポテンシャルを用いて
+       表すことができる:
+       %
+       \begin{eqnarray}
+        \Dvect{u} &=& \Drot(\psi \Dvect{r}) + \Drot\Drot(\phi\Dvect{r}).
+       \end{eqnarray}
+       %
+       これらのポテンシャル $\psi, \phi $ を用いて方程式系を表す. 
+       運動方程式 \Deqref{回転系無次元運動方程式}に
+       $\Dvect{r}\cdot\Drot$, $\Dvect{r}\cdot\Drot\Drot$ を作用することで,
+       \footnotemark[2]
+       \begin{eqnarray}
+        \Deqlab{回転系トロイダル運動}
+            \DP{}{t} (L_2 \psi)
+         &=&   \frac{1}{R_o} \DP{\psi}{\lambda}
+             - \frac{1}{R_o} Q \phi  
+             + \frac{1}{R_e} L_2\Dlapla \psi \nonumber\\
+         & & - \Dvect{r}\cdot\Drot [(\Dvect{u}\cdot\Dgrad)\Dvect{u}]
+             + \Dvect{r}\cdot\Drot\Dvect{\mathcal{F}}, \\
+        \Deqlab{回転系ポロイダル運動}
+           \DP{}{t} (L_2 \Dlapla \phi)
+         &=&  \frac{1}{R_o}\DP{}{\lambda}(\Dlapla\phi)
+             + \frac{1}{R_o} Q \psi  
+             + \frac{1}{R_e} L_2\Dlapla\Dlapla\phi \nonumber\\
+         & & + \Dvect{r}\cdot\Drot\Drot [(\Dvect{u}\cdot\Dgrad)\Dvect{u}]
+             - \Dvect{r}\cdot\Drot\Drot\Dvect{\mathcal{F}}, 
+       \end{eqnarray}
+       %
+       が得られる. あるいは, 恒等式
+       $ \Dvect{u}\cdot\Dgrad\Dvect{u} 
+        = \frac{1}{2}\Dgrad |\Dvect{u}|^2 + (\Drot\Dvect{u})\times\Dvect{u}
+       $ を用いて変形した式, 
+       %
+       \begin{eqnarray}
+        \Deqlab{回転系トロイダル運動ZxV}
+            \DP{}{t} (L_2 \psi)
+         &=&   \frac{1}{R_o} \DP{\psi}{\lambda}
+             - \frac{1}{R_o} Q \phi  
+             + \frac{1}{R_e} L_2\Dlapla \psi \nonumber\\
+         & & - \Dvect{r}\cdot\Drot [(\Drot\Dvect{u})\times\Dvect{u}]
+             + \Dvect{r}\cdot\Drot\Dvect{\mathcal{F}}, \\
+        \Deqlab{回転系ポロイダル運動ZxV}
+           \DP{}{t} (L_2 \Dlapla \phi)
+         &=&  \frac{1}{R_o}\DP{}{\lambda}(\Dlapla\phi)
+             + \frac{1}{R_o} Q \psi  
+             + \frac{1}{R_e} L_2\Dlapla\Dlapla\phi \nonumber\\
+         & & + \Dvect{r}\cdot\Drot\Drot [(\Drot\Dvect{u})\times\Dvect{u}]
+             - \Dvect{r}\cdot\Drot\Drot\Dvect{\mathcal{F}}, 
+       \end{eqnarray}
+       %
+       が得られる. 
+       ここで式中の演算子 $L_2$ は
+       半径 1 の球面上の 2 次元ラプラシアンの逆符号のものであり, 
+       慣性系で定義したものと同じである. 
+       演算子 $Q$ は 
+       \begin{equation}
+         Q  \equiv \Dvect{k}\cdot\Dgrad 
+          - \Dinv{2}(    L_2 \Dvect{k}\cdot\Dgrad 
+          + \Dvect{k}\cdot\Dgrad L_2   )
+       \end{equation}
+       で定義される演算子であり, 具体的には, 
+       %
+       \begin{eqnarray}
+         \Dvect{k}\cdot\Dgrad
+             &=& \sin\varphi\DP{}{r}+\frac{\cos\varphi}{r}\DP{}{\varphi},\\
+         Q   &=& \sin\varphi\DP{}{r}+\frac{\cos\varphi}{r}\DP{}{\varphi}\\
+             & & - \Dinv{2}
+                     \left[ 
+                         L_2 \left(  \sin\varphi\DP{}{r}
+                                    +\frac{\cos\varphi}{r}\DP{}{\varphi}\right)
+                       + \left(  \sin\varphi\DP{}{r}
+                                +\frac{\cos\varphi}{r}\DP{}{\varphi}\right)L_2
+                   \right].
+       \end{eqnarray}
+
+    \subsubsection{速度場とポテンシャルとの関係式}
+
+      トロイダル, ポロイダルポテンシャルから
+      速度場を求める式, およびその逆の式は慣性系のものと同じである:
+      \begin{eqnarray}
+         u_\lambda  & = & \DP[]{\psi}{\varphi} 
+               + \Dinv{r\cos\varphi}
+                    \DP[]{}{r}\left(r\DP[]{\phi}{\lambda}\right),\\
+         u_\varphi & = &  - \Dinv{\cos\varphi}\DP[]{\psi}{\lambda}
+               + \Dinv{r}
+                    \DP[]{}{r}\left(r\DP[]{\phi}{\varphi} \right),\\
+         u_r  & = & \frac{L_2 ~\phi}{r}. 
+      \end{eqnarray}
+      %
+      \begin{equation}
+            \phi = L_2^{-1}(ru_r), \quad
+            \psi = L_2^{-1}[\Dvect{r}\cdot(\Drot\Dvect{u})]. 
+      \end{equation}
+
+    \subsubsection{境界条件}
+
+       運動学的境界条件\Deqref{回転系無次元運動境界条件}を
+       ポテンシャルで表現すれば,
+       \begin{equation}
+         \phi = 0, 
+           \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}. 
+       \end{equation}
+
+       力学的境界条件が応力なしの場合は\Deqref{回転系無次元応力なし条件}を
+       ポテンシャルで表現して
+       \begin{equation}
+         \DP[2]{\phi}{r} = \DP{}{r}\left(\frac{\psi}{r}\right) = 0, 
+         \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \frac{1}{1-\zeta}. 
+       \end{equation}
+
+       粘着条件の場合には, 
+       \Deqref{回転系無次元粘着条件}をポテンシャルで表現して
+       %
+       \begin{eqnarray*}
+         \Deqlab{回転系ポテンシャル無次元粘着条件}
+            & &\DP{\phi}{r} = 0, \quad
+               \psi = (\Dvect{r}\cdot\Dvect{\Omega_i})
+               \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \\
+            & & \DP{\phi}{r} = 0, \quad
+               \psi = 0
+               \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},
+       \end{eqnarray*}
+       %
+       成分で表せば
+       %
+       \begin{eqnarray}
+         & & \DP{\phi}{r} = 0, \\
+         & & \psi = \Omega_i \left(\frac{\zeta}{1-\zeta}\right)
+                     [ \cos\varphi_i\cos\varphi\cos(\lambda_i-\lambda)
+                      + \sin\varphi_i\sin\varphi ]
+             \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \\
+         & & \DP{\phi}{r} = 0, \\
+         & & \psi = 0
+             \quad \mbox{at} \quad \frac{1}{1-\zeta}. 
+       \end{eqnarray}
+       %
+       \footnotetext[4]{
+         慣性系の場合と同様, 
+         $\psi(r=\zeta/(1-\zeta)$ を球面調和函数の和で
+         \begin{displaymath}
+           \psi(\lambda,\varphi,r=\zeta/(1-\zeta))=
+            \sum_{n=1}^\infty\left[
+                 a_n^0P_n^0(\sin\varphi) + 
+                 \sum_{m=1}^n
+                   P_n^m(\sin\varphi)[a_n^m\sqrt{2}\cos(m\lambda)
+                                      -b_n^m\sqrt{2}\sin(m\lambda)]
+              \right]
+         \end{displaymath}
+         %
+         と展開すると, $P_1^0(\sin\varphi)=\sin\varphi$,
+         $P_1^1(\sin\varphi)=\cos\varphi$ であるから
+         %
+         \begin{eqnarray*}
+           a_1^0 &=& \Omega_i\left(\frac{\zeta}{1-\zeta}\right)
+                     \sin\varphi_i,\\
+           a_1^1 &=& \Omega_i\left(\frac{\zeta}{1-\zeta}\right)
+                       \frac{1}{\sqrt{2}}\cos\varphi_i\cos\lambda_i,\\
+           b_1^1 &=& -\Omega_i\left(\frac{\zeta}{1-\zeta}\right)
+                       \frac{1}{\sqrt{2}}\cos\varphi_i\sin\lambda_i
+         \end{eqnarray*}
+         %
+         と展開係数が与えられる. 
+         }
+
+  \subsection{解析的な解の例}
+
+    \subsubsection{応力なし条件下での剛体回転解}
+
+
+
+%\include{horizon}
+%\include{vertical}
+%--------------------------------------------------------------------------
+% 参考文献
+\markright{参考文献}
+\thispagestyle{Dheadings}
+
+\section*{参考文献}
+\addcontentsline{toc}{section}{参考文献}
+\begin{description}
+%
+\item Chandrasekhar,S.,1961: 
+            {\em Hydrodynamic and Hydromagnetic Stability}. 
+            Oxford University Press.
+%
+\item Zhang,K. and Busse,F.H.,1987: 
+            On the onset of convection in rotating spherical shells. 
+            {\em Geophys. Astrophys. Fluid Dyn.},  {\bf 39}, 119--147.
+\item Landau, L. D., Lifshitz, E. M., 1987 : 
+         Fluid Mechanics (Volume 6 of Course of theoretical physics), 
+         2nd edition. Pergamon press, 539pp.
+
+\end{description}
+\end{document}
+

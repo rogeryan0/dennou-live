@@ -1,0 +1,141 @@
+#= Template File for "Config.mk", build configuration of spml (autoconf)
+#
+# Authors::   Shin-ichi TAKEHIRO, Masatsugu ODAKA, Yasuhiro MORIKAWA
+# Version::   $Id: Config.mk.in,v 1.11 2008-10-10 08:24:48 morikawa Exp $
+# Tag Name::  $Name:  $
+# Copyright:: Copyright (C) GFD Dennou Club, 2000-2006. All rights reserved.
+# License::   See COPYRIGHT[link:COPYRIGHT]
+#
+#== Overview
+#
+# This file is template file to create "configure" script by
+# autoconf 2.59. Some functions are defined in "aclocal.m4"
+# (for example, DC_ARG_WITH).
+#
+# [JAPANESE]
+# このファイルは Makefile 群から呼び出される設定ファイル "Config.mk"
+# の雛形ファイルです. configure スクリプトによってこのファイル内の
+# 一部 (@ で囲まれた変数) が置き換えられ, "Config.mk" が生成されます.
+# configure は configure.in と aclocal.m4 に autoconf コマンドを
+# 用いることで生成されます.
+
+# for Debian install
+DESTDIR = 
+
+# Fortran Compiler
+# [JAPANESE] Fortran コンパイラ
+FC=@FC@
+
+# Flags needed when compiled and linked
+# コンパイル時・リンク時に必要なフラグ
+SYSFFLAGS=@SYSFFLAGS@
+
+# Flags needed when linked
+# リンク時に必要なフラグ
+SYSLDFLAGS=@SYSLDFLAGS@
+
+# Libraries needed when linked
+# リンク時に必要なライブラリ
+SYSLDLIBS=@SYSLDLIBS@ 
+
+# Linker which includes flags
+# [JAPANESE] リンカコマンド
+LINKF=@LINKF@
+
+# モジュール情報の渡し方 (std.mod, HP.mod, fqs.mod, intel.d, hitachi.f90)
+F90MODTYPE=@F90MODTYPE@
+
+# Flag for module files search path
+# [JAPANESE] モジュール情報ファイルへのパスを指定するためのフラグ
+MODPATHFLAG=@MODPATHFLAG@
+
+# Extensions of Module Files (".mod" or ".d" or ".f90")
+# モジュール情報ファイルの拡張子 (.mod .d .f90 のどれかになる)
+MODEXT=@MOD@
+#
+# Extensions of Module Files used when "make clean"
+# * if "F90MODTYPE = hitachi.f90", clean nothing.
+#
+# [JAPANESE]
+# make clean 時に使用するモジュール情報ファイル指定
+# (F90MODTYPE = hitachi.f90 のときは何も消してはならない)
+#
+MODS=@CLEAN_MODS@
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+# モジュール情報エディタ (F90MODTYPE=intel.d の時に利用される)
+IFCCEM=@IFCCEM@
+
+# DEST_LIB  : set directory to which the library libspml.a is installed
+#             (spmodel ライブラリインストールディレクトリの指定)
+DEST_LIB=$(DESTDIR)@libdir@
+
+# DEST_INC  : directory to which the module files are installed
+#             (spmodel モジュールインストールディレクトリの指定)
+DEST_INC=$(DESTDIR)@includedir@
+
+# DEST_BIN  : directory to which the executable files are installed
+#             (spmodel 実行ファイルインストールディレクトリの指定)
+DEST_BIN=$(DESTDIR)@bindir@
+
+# DEST_DOC  : directory to which the spmodel documantation files are installed
+#             (spmodel ドキュメントァイルインストールディレクトリの指定)
+DEST_DOC=$(DESTDIR)@docdir@
+
+# LIBNAME   : spmodel ライブラリ名 lib$(LIBNAME).a
+#
+LIBNAME=@spmllibname@
+
+# MATRIXLIB : 行列計算(固有値)ライブラリ名(SSL2/SSL2TP/LAPACK or "")
+#
+MATRIXLIB=@matrixlib@
+
+# SYSDEPARG, SYSDEPABORT: sysdem dependent routine (usually "dcl" works)
+SYSDEPABORT=@SYSDEPABORT@
+
+# MPI Fortran Compiler
+# [JAPANESE] MPI Fortran コンパイラ
+MPIFC=@MPIFC@
+
+############################################################
+#== Set Commands for compile and install source code
+#
+# Please edit according to your system.
+#
+# [JAPANESE] コンパイルやインストールに必要なコマンド群
+#
+# システムに合わせて変更してください.
+#
+
+MV         = mv
+CP         = cp -p
+INSTALL    = @INSTALL@
+INSTALLBIN = @INSTALLBIN@
+INSTALLDIR = @INSTALLDIR@
+MKDIR      = mkdir
+RM         = rm
+RMDIR      = rmdir
+TAGS       = etags
+MAKE       = @MAKE@        # GNU Make
+AR         = @AR@          # AR : Library builder specification
+ARFLAGS    = @ARFLAGS@     # flags of AR
+RANLIB     = @RANLIB@      # generate index to archivea
+
+# CPP       : C PreProsessor
+#
+CPP=cpp
+
+############################################################
+#== Suffixes rules
+#
+# [JAPANESE] サフィックスルール
+#
+%.o: %.f90
+	$(FC) -c $(FFLAGS) $(SYSFFLAGS) $(INCLUDES) $<
+
+%.o: %.f
+	$(FC) -c $(FFLAGS) $(SYSFFLAGS) $(INCLUDES) $<
+
+%: %.o
+	$(LINKF) -o $@ $+ $(LIBGT4) $(SYSLDFLAGS) $(SYSLDLIBS)

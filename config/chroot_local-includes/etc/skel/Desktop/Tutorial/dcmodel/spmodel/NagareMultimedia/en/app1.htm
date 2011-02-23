@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>Appendix 1. Evaluation of non-linear terms: the transform method</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+       <a href=../index.htm>Index</a>
+</td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h2><a name="label-0" id="label-0">Appendix 1. Evaluation of non-linear terms: the transform method</a></h2><!-- RDLabel: "Appendix 1. Evaluation of non-linear terms: the transform method" -->
+<p>When nonlinear terms or linear terms with spatially varied coefficients are
+included in the governing equations, it is convenient, in programming with
+SPMODEL library, to apply the transform method to evaluate these terms. The
+transform method is an evaluation method by converting spectral data of the
+variables back to grid data in real space, performing multiplication of
+nonlinear terms or terms with non-uniform coefficients on these grid points,
+and then converting the results back again into spectral data.</p>
+<p>The procedure of transform method can be easily realized with a nesting of the
+functions of the SPMODEL library. For example, the following advection term
+and linear term with a non-uniform coefficient,</p>
+<center><img src=app1_1.png align=bottom></center>
+<p>are evaluated with only one statement, respectively:</p>
+<pre>　　e_g(g_Zeta*g_e(e_Dx_e(e_Zeta))),   e_g(g_Kappa*g_e(e_Dx_e(e_Zeta)))</pre>
+<p>where g_Kappa is an array data storing the value of 
+&kappa; at each grid point.</p>
+<p>When the transformed method is used, the problem of aliasing error should be
+kept in mind. Insufficient number of grid points in real space where
+multiplication is performed results in the undesirable intrusion of unwanted
+high wavenumber components into the required lower wavenumber components,
+which then gives rise to aliasing errors. To avoid this problem, a larger
+number of grid points than the degree of the spectral space (or truncation
+wavenumber) are often prepared according to the order of the nonlinear terms.
+For example, in the case of a spectral calculation of the second-order
+nonlinear terms with the Fourier series in a cyclic boundary domain, it is
+necessary to satisfy an inequality J &gt; 3N, where J and N are the number of
+grid points in real space and the truncation wavenumber, respectively. Refer
+to <a href="ref.htm">[5]</a> for further detailed explanation.</p>
+<p>You should bear in mind that, in exchange for the convenience in programming,
+the computing efficiency is sacrificed in the resulting program because of
+large computation time required for the transformation.</p>
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+       <a href=../index.htm>Index</a>
+</td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

@@ -1,0 +1,1319 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: at_af_galerkin_MM</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">at_af_galerkin_MM</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/at_af_galerkin_MM_f90.html">
+
+                src/at_af_galerkin_MM.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="at_af_galerkin_MM.html">at_af_galerkin_MM</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a
+href="../files/src/at_af_galerkin_MM_f90.html">at_af_galerkin_MM.f90</a>,v
+1.3 2009-02-28 21:33:46 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/at_af_galerkin_MM モジュールはチェビシェフ−ガラーキン法,
+ディリクレ・ノイマン混合境界条件
+</p>
+<pre>
+     cfdx1_xmax f'(:,i=0)  + cfdx0_xmax f(:,i=0)  = 0,
+     cfdx1_xmin f'(:,i=im) + cfdx0_xmin f(:,i=im) = 0,
+</pre>
+<p>
+を k 次のガラーキン基底が
+</p>
+<pre>
+   \phi_k(x)=T_k(x) + C_1 T_1(x) + C_0 T_0(x)
+</pre>
+<p>
+の型式(Type2)を用いて計算するためのモジュールである.
+</p>
+<p>
+定式化については解説文書「チェビシェフ関数展開を利用したガラーキン法」 (<a
+href=".././link:cheb_gal.pdf">cheb_gal.pdf</a>)を参照のこと.
+</p>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000235">FT</a>&nbsp;&nbsp;
+
+        <a href="#M000234">TF</a>&nbsp;&nbsp;
+
+        <a href="#M000247">af_Dx_af</a>&nbsp;&nbsp;
+
+        <a href="#M000243">af_ag</a>&nbsp;&nbsp;
+
+        <a href="#M000239">af_at</a>&nbsp;&nbsp;
+
+        <a href="#M000245">ag_af</a>&nbsp;&nbsp;
+
+        <a href="#M000236">alpha</a>&nbsp;&nbsp;
+
+        <a href="#M000241">at_af</a>&nbsp;&nbsp;
+
+        <a href="#M000238">at_af_galerkin_MM_Initial</a>&nbsp;&nbsp;
+
+        <a href="#M000237">beta</a>&nbsp;&nbsp;
+
+        <a href="#M000248">f_Dx_f</a>&nbsp;&nbsp;
+
+        <a href="#M000244">f_g</a>&nbsp;&nbsp;
+
+        <a href="#M000240">f_t</a>&nbsp;&nbsp;
+
+        <a href="#M000246">g_f</a>&nbsp;&nbsp;
+
+        <a href="#M000242">t_f</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name"><a href="lumatrix.html">lumatrix</a></span>
+
+        <span class="include-name"><a href="at_module.html">at_module</a></span>
+
+        <span class="include-name">dc_message</span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000235" class="method-detail">
+        <a name="M000235"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">FT</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000235">FT</a>(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> チェビシェフ-&gt;ガラーキン変換行列
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000234" class="method-detail">
+        <a name="M000234"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">TF</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000234">TF</a>(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ガラーキン-&gt;チェビシェフ変換行列
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000247" class="method-detail">
+        <a name="M000247"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000247" class="method-signature">
+
+
+
+          <span class="method-name">af_Dx_af</span><span class="method-args">( af_data ) result(af_Dx_af)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000247">af_Dx_af</a>(size(af_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>af_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+X 微分計算(2 次元)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000247-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000247-source">
+<pre>
+  function af_Dx_af(af_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! X 微分計算(2 次元)
+    !
+    real(8), intent(IN) :: af_data(:,ks:)                  !(in) ガラーキン係数
+    real(8)             :: af_Dx_af(size(af_data,1),ks:km) !(out) 微分ガラーキン
+    af_Dx_af = af_at(at_Dx_at(at_af(af_data)))
+  end function af_Dx_af
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000243" class="method-detail">
+        <a name="M000243"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000243" class="method-signature">
+
+
+
+          <span class="method-name">af_ag</span><span class="method-args">( ag_data ) result(af_ag)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000243">af_ag</a>(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000243-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000243-source">
+<pre>
+  function af_ag(ag_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! 格子点データ -&gt; ガラーキン係数変換(2次元データ)
+    !
+    real(8), intent(IN)  :: ag_data(:,0:)                !(in)  格子点データ
+    real(8)              :: af_ag(size(ag_data,1),ks:km) !(out) ガラーキン係数
+
+    af_ag = af_at(at_ag(ag_data))
+  end function af_ag
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000239" class="method-detail">
+        <a name="M000239"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000239" class="method-signature">
+
+
+
+          <span class="method-name">af_at</span><span class="method-args">( at_data ) result(af_at)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000239">af_at</a>(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000239-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000239-source">
+<pre>
+  function af_at(at_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+    !
+    real(8), intent(IN) :: at_data(:,0:)                !(in)  チェビシェフ係数
+    real(8)             :: af_at(size(at_data,1),ks:km) !(out) ガラーキン係数  
+
+    real(8)             :: af_work(size(at_data,1),ks:km)  ! 作業用配列
+
+    integer :: k,m
+
+    if ( .not. MM_Initialized ) call MessageNotify('E','af_at', 'at_af_galerkin_MM_module not initialized')
+
+    af_work =0.0
+    do m=ks,km
+       do k=0,km
+          af_work(:,m) = af_work(:,m) + alpha(k) * beta(k) * at_data(:,k) * TF(k,m)
+       enddo
+    enddo
+
+    af_at = LUSolve(FT,kp,af_work)
+  end function af_at
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000245" class="method-detail">
+        <a name="M000245"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000245" class="method-signature">
+
+
+
+          <span class="method-name">ag_af</span><span class="method-args">( af_data ) result(ag_af)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000245">ag_af</a>(size(af_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>af_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000245-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000245-source">
+<pre>
+  function ag_af(af_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+    !
+    real(8), intent(IN) :: af_data(:,ks:)              !(in)  ガラーキン係数  
+    real(8)             :: ag_af(size(af_data,1),0:im) !(out) 格子点データ  
+    
+    ag_af = ag_at(at_af(af_data))
+  end function ag_af
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000236" class="method-detail">
+        <a name="M000236"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">alpha</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000236">alpha</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> チェビシェフ&lt;-&gt;ガラーキン行列積係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000241" class="method-detail">
+        <a name="M000241"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000241" class="method-signature">
+
+
+
+          <span class="method-name">at_af</span><span class="method-args">( af_data ) result(at_af)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000241">at_af</a>(size(af_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>af_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000241-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000241-source">
+<pre>
+  function at_af(af_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+    !
+    real(8), intent(IN)  :: af_data(:,ks:)              !(in)  ガラーキン係数
+    real(8)              :: at_af(size(af_data,1),0:km) !(out) チェビシェフ係数
+    integer :: m, n
+
+    if ( .not. MM_Initialized ) call MessageNotify('E','at_af', 'at_af_galerkin_MM_module not initialized')
+
+    at_af = 0.0D0
+    do m=0,km
+       do n=ks,km
+          at_af(:,m) = at_af(:,m) + TF(m,n)*af_data(:,n)/beta(m)
+       enddo
+    enddo
+
+  end function at_af
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000238" class="method-detail">
+        <a name="M000238"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000238" class="method-signature">
+
+
+
+          <span class="method-name">at_af_galerkin_MM_Initial</span><span class="method-args">( i_in, k_in, [cfdx0_xmax], [cfdx1_xmax], [cfdx0_xmin], [cfdx1_xmin] ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>i_in  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in)格子点数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>k_in  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in)チェビシェフ切断波数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>cfdx0_xmax  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界条件係数(0階微分@x=xmax)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>cfdx1_xmax  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界条件係数(1階微分@x=xmax)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>cfdx0_xmin  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界条件係数(0階微分@x=xmin)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>cfdx1_xmin  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界条件係数(1階微分@x=xmin)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件用モジュール
+</p>
+<p>
+初期化サブルーチン
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000238-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000238-source">
+<pre>
+  subroutine at_af_galerkin_MM_Initial(i_in,k_in, cfdx0_xmax,cfdx1_xmax, cfdx0_xmin,cfdx1_xmin    )
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件用モジュール
+    !
+    ! 初期化サブルーチン
+    !
+
+    integer, intent(IN) :: i_in      ! (in)格子点数
+    integer, intent(IN) :: k_in      ! (in)チェビシェフ切断波数  
+
+    real(8), intent(IN),optional :: cfdx0_xmin ! 境界条件係数(0階微分@x=xmin)
+    real(8), intent(IN),optional :: cfdx1_xmin ! 境界条件係数(1階微分@x=xmin)
+    real(8), intent(IN),optional :: cfdx0_xmax ! 境界条件係数(0階微分@x=xmax)
+    real(8), intent(IN),optional :: cfdx1_xmax ! 境界条件係数(1階微分@x=xmax)
+
+    real(8) :: Dfac                  ! 微分変換係数
+    real(8) :: Delta                 ! 係数行列の行列式
+
+    real(8) :: a, b, c, d, e, f
+    integer :: k, l, m, n
+
+    !---------- 格子点数・切断波数設定 ----------
+    im=i_in 
+     km=k_in
+
+    !---------- 境界条件係数設定 ----------
+    Dfac = (g_X(0)-g_X(im))/2.0D0
+
+    if( present(cfdx0_xmin) ) then
+       cfd0_xmin = cfdx0_xmin
+    else
+       call MessageNotify('M','at_af_galerkin_MM_Initial', 'cfdx0_xmin set to zero internally.')
+       cfd0_xmin = 0.0D0
+    endif
+
+    if( present(cfdx0_xmax) ) then
+       cfd0_xmax = cfdx0_xmax
+    else
+       call MessageNotify('M','at_af_galerkin_MM_Initial', 'cfdx0_xmax set to zero internally.')
+       cfd0_xmax = 0.0D0
+    endif
+
+    if( present(cfdx1_xmin) ) then
+       cfd1_xmin = cfdx1_xmin/Dfac
+    else
+       call MessageNotify('M','at_af_galerkin_MM_Initial', 'cfdx1_xmin set to zero internally.')
+       cfd1_xmin = 0.0D0
+    endif
+
+    if( present(cfdx1_xmax) ) then
+       cfd1_xmax = cfdx1_xmax/Dfac
+    else
+       call MessageNotify('M','at_af_galerkin_MM_Initial', 'cfdx1_xmax set to zero internally.')
+       cfd1_xmax = 0.0D0
+    endif
+
+    !---------- 境界条件係数チェック ----------
+
+    Delta = cfd1_xmin*cfd0_xmax-cfd1_xmax*cfd0_xmin -2 * cfd0_xmin*cfd0_xmax
+
+    if ( abs(Delta) /max(abs(cfd1_xmin),abs(cfd0_xmin),abs(cfd1_xmax),abs(cfd0_xmax)) .LT. EPS ) then
+       MM_Delta0 = .true.
+       call MessageNotify('W','at_af_galerkin_MM_Initial', 'Determinant of coefficent matrix equals zero.' )
+       call MessageNotify('M','at_af_galerkin_MM_Initial', 'T2 and T1 are used for Galerkin base functions' )
+    else
+       MM_Delta0 = .false.
+    endif
+
+    !---------- ディリクレ・ノイマン混合条件用変換行列設定 ----------
+    if ( allocated(TF) ) deallocate(TF)
+    if ( allocated(FT) ) deallocate(FT)
+    if ( allocated(kp) ) deallocate(kp)
+    if ( allocated(alpha) ) deallocate(alpha)
+    if ( allocated(beta) ) deallocate(beta)
+    allocate(TF(0:km,ks:km),FT(ks:km,ks:km),kp(ks:km))
+    allocate(alpha(0:km),beta(0:km))
+
+    TF = 0.0D0
+    if ( MM_Delta0 ) then
+       a = 4 * cfd1_xmax + cfd0_xmax  
+        b = cfd1_xmax + cfd0_xmax
+       c = -4 * cfd1_xmin + cfd0_xmin 
+         d = cfd1_xmin - cfd0_xmin
+       Delta = a*d - b*c
+
+       TF(0,2) = cfd1_xmax + cfd0_xmax
+       TF(1,2) = -cfd0_xmax
+       do k=ks+1,km
+          e = cfd1_xmax * k**2 + cfd0_xmax
+          f = cfd1_xmin * (-1)**(k+1) * k**2 + cfd0_xmin*(-1)**k
+          TF(1,k) = -1.0D0/Delta*(-c*e+a*f)
+          TF(2,k) = -1.0D0/Delta*(d*e-b*f)
+          TF(k,k) = 1.0D0
+       enddo
+    else
+       do k=ks,km
+          TF(0,k) = 1.0D0/Delta * ( (-cfd1_xmin+cfd0_xmin)*(cfd1_xmax*k**2+cfd0_xmax) +  (cfd1_xmax+cfd0_xmax) *(    cfd1_xmin*(-1)**(k+1)*k**2 + (-1)**k*cfd0_xmin         ) )
+          TF(1,k) = 1.0D0/Delta * (   cfd0_xmin*(cfd1_xmax*k**2+cfd0_xmax) - cfd0_xmax*(   cfd1_xmin*(-1)**(k+1)*k**2 + (-1)**k*cfd0_xmin         ) )
+          TF(k,k) = 1.0D0
+       enddo
+    endif
+
+    beta=1.0 
+     beta(0)=0.5D0
+    if (im .eq. km ) beta(km)=0.5D0
+
+    ! ディリクレ・ノイマン混合条件用変換逆行列
+    alpha=1.0 
+     alpha(0)=2.0D0
+
+    FT = 0.0D0
+    do m=ks,km
+       do n=ks,km
+          do l=0,km
+             FT(m,n) = FT(m,n) + alpha(l)*TF(l,m)*TF(l,n)
+          enddo
+       enddo
+    enddo
+
+    call LUDecomp(FT,kp)
+
+    call MessageNotify('M','at_af_galerkin_MM_Initial', 'Conversion matrices initialized')
+
+    MM_Initialized=.true.
+
+  end subroutine at_af_galerkin_MM_Initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000237" class="method-detail">
+        <a name="M000237"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">beta</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000237">beta</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> チェビシェフ&lt;-&gt;ガラーキン行列和係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000248" class="method-detail">
+        <a name="M000248"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000248" class="method-signature">
+
+
+
+          <span class="method-name">f_Dx_f</span><span class="method-args">( f_data ) result(f_Dx_f)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000248">f_Dx_f</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>f_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+X 微分計算(1 次元)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000248-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000248-source">
+<pre>
+  function f_Dx_f(f_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! X 微分計算(1 次元)
+    !
+    real(8), intent(IN) :: f_data(ks:km)
+    real(8)             :: f_Dx_f(ks:km)
+
+    f_Dx_f = f_t(t_Dx_t(t_f(f_data)))
+
+  end function f_Dx_f
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000244" class="method-detail">
+        <a name="M000244"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000244" class="method-signature">
+
+
+
+          <span class="method-name">f_g</span><span class="method-args">( g_data ) result(f_g)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000244">f_g</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(1次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000244-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000244-source">
+<pre>
+  function f_g(g_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! 格子点データ -&gt; ガラーキン係数変換(1次元データ)
+    !
+    real(8), intent(IN)  :: g_data(0:im)        !(in)  格子点データ
+    real(8)              :: f_g(ks:km)          !(out) ガラーキン係数
+
+    f_g = f_t(t_g(g_data))
+  end function f_g
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000240" class="method-detail">
+        <a name="M000240"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000240" class="method-signature">
+
+
+
+          <span class="method-name">f_t</span><span class="method-args">( t_data ) result(f_t)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000240">f_t</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000240-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000240-source">
+<pre>
+  function f_t(t_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+    !
+    real(8), intent(IN) :: t_data(0:km)        !(in)  チェビシェフ係数
+    real(8)             :: f_t(ks:km)          !(out) ガラーキン係数  
+
+    real(8)             :: f_work(ks:km)       ! 作業用配列
+
+    integer :: k,m
+
+    if ( .not. MM_Initialized ) call MessageNotify('E','f_t', 'at_af_galerkin_MM_module not initialized')
+
+    f_work =0.0
+    do m=ks,km
+       do k=0,km
+          f_work(m) = f_work(m) + alpha(k) * beta(k) * t_data(k) * TF(k,m)
+       enddo
+    enddo
+
+    f_t = LUSolve(FT,kp,f_work)
+  end function f_t
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000246" class="method-detail">
+        <a name="M000246"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000246" class="method-signature">
+
+
+
+          <span class="method-name">g_f</span><span class="method-args">( f_data ) result(g_f)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000246">g_f</a>(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>f_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000246-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000246-source">
+<pre>
+  function g_f(f_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+    !
+    real(8), intent(IN) :: f_data(ks:km)        !(in)  ガラーキン係数  
+    real(8)             :: g_f(0:im)            !(out) 格子点データ  
+    
+    g_f = g_t(t_f(f_data))
+  end function g_f
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000242" class="method-detail">
+        <a name="M000242"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000242" class="method-signature">
+
+
+
+          <span class="method-name">t_f</span><span class="method-args">( f_data ) result(t_f)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="at_af_galerkin_MM.html#M000242">t_f</a>(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>f_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000242-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000242-source">
+<pre>
+  function t_f(f_data)
+    !
+    ! チェビシェフ−ガラーキン法
+    ! ディリクレ・ノイマン混合境界条件
+    !
+    ! ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+    !
+    real(8), intent(IN)  :: f_data(ks:km)       !(in)  ガラーキン係数  
+    real(8)              :: t_f(0:km)           !(out) チェビシェフ係数
+
+    integer :: m, n
+
+    if ( .not. MM_Initialized ) call MessageNotify('E','t_f', 'at_af_galerkin_MM_module not initialized')
+
+    t_f = 0.0D0
+    do m=0,km
+       do n=ks,km
+          t_f(m) = t_f(m) + TF(m,n)*f_data(n)/beta(m)
+       enddo
+    enddo
+
+  end function t_f
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

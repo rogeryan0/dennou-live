@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>補遺 2. データの入出力：gtool4 規約と gt4f90io ライブラリ</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>階層的地球流体スペクトルモデル集 SPMODEL</b>
+</td><td align=right>
+       <a href=../index_ja.htm>Index</a>
+    </td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h2><a name="label-0" id="label-0">補遺 2. データの入出力：gtool4 規約と gt4f90io ライブラリ</a></h2><!-- RDLabel: "補遺 2. データの入出力：gtool4 規約と gt4f90io ライブラリ" -->
+<p>本文で述べたように, 数値モデルを用いた研究においては
+数値計算結果の解析に必要となる後処理にも少なからぬ労力が必要となる. 
+特にモデルの規模が大きくなると出力されるデータが膨大となり, 
+後処理にかかる作業比率が高くなってしまう. 
+われわれはこの問題に対処するために, 
+出力するデータ形式とそのデータを扱うツールの開発・検討を
+行なってきている(<a href="ref.htm">[15]</a>). </p>
+<p>その成果として, われわれは gtool4 データ形式と呼ばれる
+多次元の大量データの可視化や解析を効率よく行うための
+自己記述的なデータ形式を定めた. 
+解析・可視化を行うためには, データそのものの値だけでなく
+格子点の座標値・表題・パラメター設定などの付帯情報が必要となる. 
+それらを出力データとともに保持できる仕組みを提供するものが
+netCDF データ形式であり, gtool4 データ形式は netCDF 形式の上に
+付帯情報の必須項目と名前のルールを独自に定めた
+規約(<a href="ref.htm">[14]</a>)である. </p>
+<p>netCDF 形式は大気大循環モデルや衛星観測結果などの
+大規模なデータを意識して開発されたものであるが, 
+PC でも動く比較的小さな数値モデルに対しても有用であることが, 
+SPMODEL のプログラムに実装することで確かめられた. </p>
+<p>実際にプログラムから gtool4 形式のデータを出力するには, 
+gt4f90io ライブラリ(<a href="ref.htm">[16]</a>)の
+gt4_history モジュールを用いることで
+簡単に実現できる. 
+gtool4 データ形式を出力するために必要となる最低限の操作は </p>
+<ul>
+<li>モジュール使用の宣言 <em>(use gt4_history)</em></li>
+<li>gtool4 データの定義・作成 <em>(call History_Create)</em></li>
+<li>変数定義 <em>(call History_AddVariable)</em></li>
+<li>変数出力 <em>(call History_Put)</em></li>
+<li>終了処理 <em>(call History_Close)</em></li>
+</ul>
+<p>である. 括弧で示したものが対応する gt4_hisory モジュールのサブルーチンである. 
+これらに対応する処理を示す数行をプログラムに
+追加するだけで netCDF gtool4 データ形式で出力できるようになる. </p>
+<p>チュートリアルが gtool4 のホームページ
+(<a href="ref.htm">[14]</a>), (<a href="ref.htm">[16]</a>)
+から閲覧できるので, 
+参考にしながら SPMODEL のサンプルプログラムを眺めてみて頂きたい. </p>
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>階層的地球流体スペクトルモデル集 SPMODEL</b>
+</td><td align=right>
+       <a href=../index_ja.htm>Index</a>
+    </td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

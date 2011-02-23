@@ -1,0 +1,592 @@
+<HTML>
+<HEAD><TITLE>ftp/arch/spmodel/2d-channel-esc/boussinesq</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffeecc"><P>地球流体電脳倶楽部
+<P>
+<A HREF="../../../../../SIGEN.htm">/GFD_Dennou_Club</A>/
+<A HREF="../../../../SIGEN.htm">ftp</A>/
+<A HREF="../../../SIGEN.htm">arch</A>/
+<A HREF="../../SIGEN.htm">spmodel</A>/
+<A HREF="../SIGEN.htm">2d-channel-esc</A>/
+<H1>boussinesq</H1>
+<P>
+ブシネスク流体モデル(2 次元水路領域, 鉛直sincos展開)<BR>
+竹広真一 (2002/08/29)<BR>
+<HR>
+<P>
+<DL>
+<H2>要約</H2>
+<DT><A HREF="CVS">
+CVS</A>/
+<DD>
+<DT><A HREF="gravcurrent/SIGEN.htm">
+<B>gravcurrent</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 重力流<BR>
+竹広真一 (2002/09/26)<BR>
+<DL>
+</DL>
+<DT><A HREF="igwave/SIGEN.htm">
+<B>igwave</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 内部重力波問題<BR>
+竹広真一 (2002/09/25)<BR>
+<DL>
+</DL>
+<DT><A HREF="infinite-pr/SIGEN.htm">
+<B>infinite-pr</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : プランドル数無限大近似での熱対流問題 <BR>
+竹広真一 (2002/09/18)<BR>
+<DL>
+</DL>
+<DT><A HREF="kh-instability/SIGEN.htm">
+<B>kh-instability</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : K-H 不安定問題<BR>
+竹広真一 (2002/09/25)<BR>
+<DL>
+</DL>
+<DT><A HREF="sample-ff/SIGEN.htm">
+<B>sample-ff</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1994) の Case FF に相当. <BR>
+<DL>
+</DL>
+<DT><A HREF="sample-fq/SIGEN.htm">
+<B>sample-fq</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定 + 一様熱源下の対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1994) の Case FQ に相当. <BR>
+<DL>
+</DL>
+<DT><A HREF="sample-tt/SIGEN.htm">
+<B>sample-tt</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 温度固定条件下の対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1994) の Case TT に相当. <BR>
+<DL>
+</DL>
+<DT><A HREF="teishiki/SIGEN.htm">
+<B>teishiki</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 定式化<BR>
+竹広真一 (2002/08/29)<BR>
+<DL>
+</DL>
+</DL>
+<HR>
+<H2>詳細</H2>
+<DL>
+<DT><A HREF="CVS">
+CVS</A>/
+<DD>
+<DT><A HREF="gravcurrent/SIGEN.htm">
+<B>gravcurrent</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 重力流<BR>
+竹広真一 (2002/09/26)<BR>
+<DL>
+<DT><A HREF="gravcurrent/f90/SIGEN.htm">
+<B>gravcurrent/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 重力流 Fortran90 サンプルプログラム置場<BR>
+竹広真一 (2002/09/26)<BR>
+<DL>
+<DT><A HREF="gravcurrent/f90/gravcurrent1.f90">
+<B>gravcurrent/f90/gravcurrent1.f90</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 重力流サンプルプログラムその1<BR>
+竹広真一 (2002/09/26)<BR>
+</DL>
+<DT><A HREF="gravcurrent/pub/SIGEN.htm">
+<B>gravcurrent/pub</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 重力流 Fortran90 サンプルプログラム説明文書 公開資源<BR>
+小高正嗣 (2004/04/29)<BR>
+[目次は <A HREF="gravcurrent/pub/./index.htm">./index.htm</A>]<BR>
+<DL>
+</DL>
+<DT><A HREF="gravcurrent/src/SIGEN.htm">
+<B>gravcurrent/src</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 重力流 Fortran90 サンプルプログラム説明文書ソース<BR>
+小高正嗣 (2004/04/29)<BR>
+<DL>
+<DT><A HREF="gravcurrent/src/figs/SIGEN.htm">
+<B>gravcurrent/src/figs</B></A>/
+<DD>
+付録図置場<BR>
+小高正嗣 (2004/04/29)<BR>
+<DL>
+</DL>
+<DT><A HREF="gravcurrent/src/gravcurrent.tex">
+<B>gravcurrent/src/gravcurrent.tex</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 重力流 Fortran90 サンプルプログラム説明文書<BR>
+小高正嗣 (2004/04/29)<BR>
+<DT><A HREF="gravcurrent/src/tools/SIGEN.htm">
+<B>gravcurrent/src/tools</B></A>/
+<DD>
+小道具置場<BR>
+小高正嗣 (2004/04/29)<BR>
+<A HREF="gravcurrent/src/./figs//SIGEN.htm">./figs/</A> 以下の図を作成するためのスクリプトを格納<BR>
+<DL>
+<DT><A HREF="gravcurrent/src/tools/colorbar.rb">
+<B>gravcurrent/src/tools/colorbar.rb</B></A>
+<DD>
+colorbar.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+カラーバー作成用 Ruby モジュール<BR>
+<DT><A HREF="gravcurrent/src/tools/gravcurrent.rb">
+<B>gravcurrent/src/tools/gravcurrent.rb</B></A>
+<DD>
+gravcurrent.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="gravcurrent/src/tools/../figs//SIGEN.htm">../figs/</A> 以下の図を作成するためのスクリプト<BR>
+</DL>
+</DL>
+</DL>
+<DT><A HREF="igwave/SIGEN.htm">
+<B>igwave</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 内部重力波問題<BR>
+竹広真一 (2002/09/25)<BR>
+<DL>
+<DT><A HREF="igwave/f90/SIGEN.htm">
+<B>igwave/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 内部重力波 Fortran90 プログラム置場<BR>
+竹広真一 (2002/09/25)<BR>
+<DL>
+<DT><A HREF="igwave/f90/igwave1.f90">
+<B>igwave/f90/igwave1.f90</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 内部重力波 サンプルプログラムその 1<BR>
+竹広真一 (2002/09/25)<BR>
+振動数一定の強制を局所的に与える場合(×の字パターン実験)<BR>
+</DL>
+<DT><A HREF="igwave/pub/SIGEN.htm">
+<B>igwave/pub</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 内部重力波 Fortran90 サンプルプログラム説明文書 公開資源<BR>
+小高正嗣 (2004/05/17)<BR>
+[目次は <A HREF="igwave/pub/./index.htm">./index.htm</A>]<BR>
+<DL>
+</DL>
+<DT><A HREF="igwave/src/SIGEN.htm">
+<B>igwave/src</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 内部重力波 Fortran90 サンプルプログラム説明文書ソース<BR>
+小高正嗣 (2004/04/29)<BR>
+<DL>
+<DT><A HREF="igwave/src/figs/SIGEN.htm">
+<B>igwave/src/figs</B></A>/
+<DD>
+付録図置場<BR>
+小高正嗣 (2004/05/27)<BR>
+<DL>
+</DL>
+<DT><A HREF="igwave/src/igwave.tex">
+<B>igwave/src/igwave.tex</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 重力流 Fortran90 サンプルプログラム説明文書<BR>
+小高正嗣 (2004/04/29)<BR>
+<DT><A HREF="igwave/src/tools/SIGEN.htm">
+<B>igwave/src/tools</B></A>/
+<DD>
+小道具置場<BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="igwave/src/./figs//SIGEN.htm">./figs/</A> 以下の図を作成するためのスクリプトを格納<BR>
+<DL>
+<DT><A HREF="igwave/src/tools/colorbar.rb">
+<B>igwave/src/tools/colorbar.rb</B></A>
+<DD>
+colorbar.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+カラーバー作成用 Ruby モジュール<BR>
+<DT><A HREF="igwave/src/tools/igwave.rb">
+<B>igwave/src/tools/igwave.rb</B></A>
+<DD>
+igwave1.rb <BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="igwave/src/tools/../figs//SIGEN.htm">../figs/</A> 以下の図を作成するためのスクリプト<BR>
+</DL>
+</DL>
+</DL>
+<DT><A HREF="infinite-pr/SIGEN.htm">
+<B>infinite-pr</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : プランドル数無限大近似での熱対流問題 <BR>
+竹広真一 (2002/09/18)<BR>
+<DL>
+<DT><A HREF="infinite-pr/f90/SIGEN.htm">
+<B>infinite-pr/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : プランドル数無限大近似での熱対流問題 Fortran90 プログラム置場<BR>
+竹広真一 (2002/09/18)<BR>
+<DL>
+<DT><A HREF="infinite-pr/f90/infprcnv1.f90">
+<B>infinite-pr/f90/infprcnv1.f90</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : プランドル数無限大近似での熱対流問題 サンプルプログラムその 1<BR>
+竹広真一 (2002/09/18)<BR>
+free-slip, 温度固定条件, 内部熱源なし. <BR>
+</DL>
+<DT><A HREF="infinite-pr/pub/SIGEN.htm">
+<B>infinite-pr/pub</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : プランドル数無限大近似での熱対流問題 Fortran90 サンプルプログラム説明文書 公開資源<BR>
+小高正嗣 (2004/06/01)<BR>
+[目次は <A HREF="infinite-pr/pub/./index.htm">./index.htm</A>]<BR>
+<DL>
+</DL>
+<DT><A HREF="infinite-pr/src/SIGEN.htm">
+<B>infinite-pr/src</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : プランドル数無限大近似での熱対流問題 説明文書<BR>
+竹広真一 (2002/09/18)<BR>
+<DL>
+<DT><A HREF="infinite-pr/src/figs/SIGEN.htm">
+<B>infinite-pr/src/figs</B></A>/
+<DD>
+付録図置場<BR>
+小高正嗣 (2004/06/01)<BR>
+<DL>
+</DL>
+<DT><A HREF="infinite-pr/src/infinite-pr.tex">
+<B>infinite-pr/src/infinite-pr.tex</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : プランドル数無限大近似での熱対流問題 Fortran90 サンプルプログラム説明文書<BR>
+小高正嗣 (2004/06/01)<BR>
+<DT><A HREF="infinite-pr/src/tools/SIGEN.htm">
+<B>infinite-pr/src/tools</B></A>/
+<DD>
+小道具置場<BR>
+小高正嗣 (2004/06/01)<BR>
+<A HREF="infinite-pr/src/./figs//SIGEN.htm">./figs/</A> 以下の図を作成するためのスクリプトを格納<BR>
+<DL>
+<DT><A HREF="infinite-pr/src/tools/colorbar.rb">
+<B>infinite-pr/src/tools/colorbar.rb</B></A>
+<DD>
+colorbar.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+カラーバー作成用 Ruby モジュール<BR>
+<DT><A HREF="infinite-pr/src/tools/infprcnv1.rb">
+<B>infinite-pr/src/tools/infprcnv1.rb</B></A>
+<DD>
+infprconv1.rb<BR>
+小高正嗣 (2004/06/01)<BR>
+<A HREF="infinite-pr/src/tools/../figs//SIGEN.htm">../figs/</A> 以下の図を作成するためのスクリプト<BR>
+</DL>
+</DL>
+</DL>
+<DT><A HREF="kh-instability/SIGEN.htm">
+<B>kh-instability</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : K-H 不安定問題<BR>
+竹広真一 (2002/09/25)<BR>
+<DL>
+<DT><A HREF="kh-instability/f90/SIGEN.htm">
+<B>kh-instability/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : K-H 不安定 Fortran90 プログラム置場b<BR>
+竹広真一 (2002/09/25)<BR>
+<DL>
+<DT><A HREF="kh-instability/f90/kh1.f90">
+<B>kh-instability/f90/kh1.f90</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : K-H 不安定サンプルプログラムその 1<BR>
+竹広真一 (2002/09/25)<BR>
+</DL>
+<DT><A HREF="kh-instability/pub/SIGEN.htm">
+<B>kh-instability/pub</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : KH 不安定 Fortran90 サンプルプログラム説明文書 公開資源<BR>
+小高正嗣 (2004/05/27)<BR>
+[目次は <A HREF="kh-instability/pub/./index.htm">./index.htm</A>]<BR>
+<DL>
+</DL>
+<DT><A HREF="kh-instability/src/SIGEN.htm">
+<B>kh-instability/src</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : KH 不安定 Fortran90 サンプルプログラム説明文書ソース<BR>
+小高正嗣 (2004/05/17)<BR>
+<DL>
+<DT><A HREF="kh-instability/src/figs/SIGEN.htm">
+<B>kh-instability/src/figs</B></A>/
+<DD>
+付録図置場<BR>
+小高正嗣 (2004/05/27)<BR>
+<DL>
+</DL>
+<DT><A HREF="kh-instability/src/kh.tex">
+<B>kh-instability/src/kh.tex</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : KH 不安定 Fortran90 サンプルプログラム説明文書<BR>
+小高正嗣 (2004/05/27)<BR>
+<DT><A HREF="kh-instability/src/tools/SIGEN.htm">
+<B>kh-instability/src/tools</B></A>/
+<DD>
+小道具置場<BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="kh-instability/src/./figs//SIGEN.htm">./figs/</A> 以下の図を作成するためのスクリプトを格納<BR>
+<DL>
+<DT><A HREF="kh-instability/src/tools/colorbar.rb">
+<B>kh-instability/src/tools/colorbar.rb</B></A>
+<DD>
+colorbar.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+カラーバー作成用 Ruby モジュール<BR>
+<DT><A HREF="kh-instability/src/tools/kh.rb">
+<B>kh-instability/src/tools/kh.rb</B></A>
+<DD>
+kh.rb <BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="kh-instability/src/tools/../figs//SIGEN.htm">../figs/</A> 以下の図を作成するためのスクリプト<BR>
+</DL>
+</DL>
+</DL>
+<DT><A HREF="sample-ff/SIGEN.htm">
+<B>sample-ff</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1994) の Case FF に相当. <BR>
+<DL>
+<DT><A HREF="sample-ff/f90/SIGEN.htm">
+<B>sample-ff/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定対流 Fortran90  プログラムソース置場<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case FF に相当. <BR>
+<DL>
+<DT><A HREF="sample-ff/f90/bsncnv-ff-1.f90">
+<B>sample-ff/f90/bsncnv-ff-1.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : 熱フラックス固定対流<BR>
+竹広真一 (2002/05/31)<BR>
+内部熱源なし. Ishiwatari et al. (1994)での FF 問題に相当. 高さ方向 sin/cos 展開. <BR>
+</DL>
+<DT><A HREF="sample-ff/pub/SIGEN.htm">
+<B>sample-ff/pub</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定対流問題 Fortran90 サンプルプログラム説明文書 公開資源<BR>
+小高正嗣 (2004/06/01)<BR>
+[目次は <A HREF="sample-ff/pub/./index.htm">./index.htm</A>]<BR>
+<DL>
+</DL>
+<DT><A HREF="sample-ff/src/SIGEN.htm">
+<B>sample-ff/src</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定対流問題 Fortran90 サンプルプログラム説明文書ソース<BR>
+小高正嗣 (2004/06/01)<BR>
+Ishiwatari et al. (1994) の Case FF に相当. <BR>
+<DL>
+<DT><A HREF="sample-ff/src/bsncnv-ff.tex">
+<B>sample-ff/src/bsncnv-ff.tex</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定対流問題 Fortran90 サンプルプログラム説明文書<BR>
+小高正嗣 (2004/06/01)<BR>
+Ishiwatari et al. (1994) の Case FF に相当. <BR>
+<DT><A HREF="sample-ff/src/figs/SIGEN.htm">
+<B>sample-ff/src/figs</B></A>/
+<DD>
+付録図置場<BR>
+小高正嗣 (2004/06/01)<BR>
+<DL>
+</DL>
+<DT><A HREF="sample-ff/src/tools/SIGEN.htm">
+<B>sample-ff/src/tools</B></A>/
+<DD>
+小道具置場<BR>
+小高正嗣 (2004/06/01)<BR>
+<A HREF="sample-ff/src/./figs//SIGEN.htm">./figs/</A> 以下の図を作成するためのスクリプトを格納<BR>
+<DL>
+<DT><A HREF="sample-ff/src/tools/bsncnv-ff-1.rb">
+<B>sample-ff/src/tools/bsncnv-ff-1.rb</B></A>
+<DD>
+bsncnv-ff-1.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="sample-ff/src/tools/../figs//SIGEN.htm">../figs/</A> 以下の図を作成するためのスクリプト<BR>
+<DT><A HREF="sample-ff/src/tools/colorbar.rb">
+<B>sample-ff/src/tools/colorbar.rb</B></A>
+<DD>
+colorbar.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+カラーバー作成用 Ruby モジュール<BR>
+</DL>
+</DL>
+</DL>
+<DT><A HREF="sample-fq/SIGEN.htm">
+<B>sample-fq</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定 + 一様熱源下の対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1994) の Case FQ に相当. <BR>
+<DL>
+<DT><A HREF="sample-fq/f90/SIGEN.htm">
+<B>sample-fq/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定 + 一様熱源下の対流 Fortran90 プログラム置場<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case FQ に相当. <BR>
+<DL>
+<DT><A HREF="sample-fq/f90/bsncnv-fq-1.f90">
+<B>sample-fq/f90/bsncnv-fq-1.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : 熱フラックス固定対流<BR>
+竹広真一 (2002/05/31)<BR>
+一様内部熱源. Ishiwatari et al. (1994)での FQ 問題に相当. 高さ方向 sin/cos 展開. <BR>
+</DL>
+<DT><A HREF="sample-fq/pub/SIGEN.htm">
+<B>sample-fq/pub</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定 + 一様熱源下の対流 Fortran90 サンプルプログラム説明文書 公開資源<BR>
+小高正嗣 (2004/06/01)<BR>
+Ishiwatari et al. (1994) の Case FQ に相当. <BR>
+[目次は <A HREF="sample-fq/pub/./index.htm">./index.htm</A>]<BR>
+<DL>
+</DL>
+<DT><A HREF="sample-fq/src/SIGEN.htm">
+<B>sample-fq/src</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定 + 一様熱源下の対流 Fortran90 サンプルプログラム説明文書ソース<BR>
+小高正嗣 (2004/06/01)<BR>
+Ishiwatari et al. (1994) の Case FQ に相当. <BR>
+<DL>
+<DT><A HREF="sample-fq/src/bsncnv-fq.tex">
+<B>sample-fq/src/bsncnv-fq.tex</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 熱フラックス固定条件下の対流問題 Fortran90 サンプルプログラム説明文書<BR>
+小高正嗣 (2004/06/01)<BR>
+<DT><A HREF="sample-fq/src/figs/SIGEN.htm">
+<B>sample-fq/src/figs</B></A>/
+<DD>
+付録図置場<BR>
+小高正嗣 (2004/06/01)<BR>
+<DL>
+</DL>
+<DT><A HREF="sample-fq/src/tools/SIGEN.htm">
+<B>sample-fq/src/tools</B></A>/
+<DD>
+小道具置場<BR>
+小高正嗣 (2004/06/01)<BR>
+<A HREF="sample-fq/src/./figs//SIGEN.htm">./figs/</A> 以下の図を作成するためのスクリプトを格納<BR>
+<DL>
+<DT><A HREF="sample-fq/src/tools/bsncnv-fq-1.rb">
+<B>sample-fq/src/tools/bsncnv-fq-1.rb</B></A>
+<DD>
+bsncnv-fq-1.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="sample-fq/src/tools/../figs//SIGEN.htm">../figs/</A> 以下の図を作成するためのスクリプト<BR>
+<DT><A HREF="sample-fq/src/tools/colorbar.rb">
+<B>sample-fq/src/tools/colorbar.rb</B></A>
+<DD>
+colorbar.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+カラーバー作成用 Ruby モジュール<BR>
+</DL>
+</DL>
+</DL>
+<DT><A HREF="sample-tt/SIGEN.htm">
+<B>sample-tt</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 温度固定条件下の対流問題<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1994) の Case TT に相当. <BR>
+<DL>
+<DT><A HREF="sample-tt/f90/SIGEN.htm">
+<B>sample-tt/f90</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 温度固定条件下の対流 Fortran90 プログラム置場<BR>
+竹広真一 (2002/08/29)<BR>
+Ishiwatari et al. (1995) の Case TT に相当. <BR>
+<DL>
+<DT><A HREF="sample-tt/f90/bsncnv-tt-1.f90">
+<B>sample-tt/f90/bsncnv-tt-1.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : ベナール対流<BR>
+竹広真一 (2002/05/31)<BR>
+温度固定条件, 内部熱源なし. 領域縦横比 1:2. 高さ方向 sin/cos 展開. <BR>
+<DT><A HREF="sample-tt/f90/bsncnv-tt-2.f90">
+<B>sample-tt/f90/bsncnv-tt-2.f90</B></A>
+<DD>
+SPMODEL サンプルプログラム : ベナール対流<BR>
+竹広真一 (2002/05/31)<BR>
+温度固定条件, 内部熱源なし. 領域縦横比 1:8. 高さ方向 sin/cos 展開. <BR>
+</DL>
+<DT><A HREF="sample-tt/pub/SIGEN.htm">
+<B>sample-tt/pub</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 温度固定条件化の対流問題 Fortran90 サンプルプログラム説明文書 公開資源<BR>
+小高正嗣 (2004/05/28)<BR>
+[目次は <A HREF="sample-tt/pub/./index.htm">./index.htm</A>]<BR>
+<DL>
+</DL>
+<DT><A HREF="sample-tt/src/SIGEN.htm">
+<B>sample-tt/src</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 温度固定条件化の対流問題 Fortran90 サンプルプログラム説明文書ソース<BR>
+小高正嗣 (2004/05/27)<BR>
+Ishiwatari et al. (1994) の Case TT に相当. <BR>
+<DL>
+<DT><A HREF="sample-tt/src/bsncnv-tt.tex">
+<B>sample-tt/src/bsncnv-tt.tex</B></A>
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 温度固定条件下の対流問題 Fortran90 サンプルプログラム説明文書<BR>
+小高正嗣 (2004/05/27)<BR>
+Ishiwatari et al. (1994) の Case TT に相当. <BR>
+<DT><A HREF="sample-tt/src/figs/SIGEN.htm">
+<B>sample-tt/src/figs</B></A>/
+<DD>
+付録図置場<BR>
+小高正嗣 (2004/05/27)<BR>
+<DL>
+</DL>
+<DT><A HREF="sample-tt/src/tools/SIGEN.htm">
+<B>sample-tt/src/tools</B></A>/
+<DD>
+小道具置場<BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="sample-tt/src/./figs//SIGEN.htm">./figs/</A> 以下の図を作成するためのスクリプトを格納<BR>
+<DL>
+<DT><A HREF="sample-tt/src/tools/bsncnv-tt-1.rb">
+<B>sample-tt/src/tools/bsncnv-tt-1.rb</B></A>
+<DD>
+bsncnv-tt-1.rb<BR>
+小高正嗣 (2004/05/28)<BR>
+<A HREF="sample-tt/src/tools/../figs//SIGEN.htm">../figs/</A> 以下の図を作成するためのスクリプト<BR>
+<DT><A HREF="sample-tt/src/tools/bsncnv-tt-2.rb">
+<B>sample-tt/src/tools/bsncnv-tt-2.rb</B></A>
+<DD>
+bsncnv-tt-2.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+<A HREF="sample-tt/src/tools/../figs//SIGEN.htm">../figs/</A> 以下の図を作成するためのスクリプト<BR>
+<DT><A HREF="sample-tt/src/tools/colorbar.rb">
+<B>sample-tt/src/tools/colorbar.rb</B></A>
+<DD>
+colorbar.rb<BR>
+小高正嗣 (2004/05/27)<BR>
+カラーバー作成用 Ruby モジュール<BR>
+</DL>
+</DL>
+</DL>
+<DT><A HREF="teishiki/SIGEN.htm">
+<B>teishiki</B></A>/
+<DD>
+ブシネスク流体モデル(2 次元水路領域) : 定式化<BR>
+竹広真一 (2002/08/29)<BR>
+<DL>
+</DL>
+</DL>
+<HR>
+<P ALIGN=RIGHT>
+last update: 2010/03/04 10:29:22
+<BR>this page is generated with <B><A HREF="http://www.gfd-dennou.org/arch/cc-env/mksigen/desc.htm">mksigen</A></B>
+</BODY>
+</HTML>

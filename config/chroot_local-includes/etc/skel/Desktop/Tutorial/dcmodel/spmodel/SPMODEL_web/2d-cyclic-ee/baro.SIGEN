@@ -1,0 +1,11 @@
+Subject: 順圧モデル(2 次元 2 重周期境界)
+Maintainer: 竹広真一
+Update: 2009/01/22
+Description: 定式化文書は relative:pub/index.htm , 
+	     サンプルプログラムは relative:f90/SIGEN.htm .
+	     関連プロジェクトは地球流体数値実験集
+	      <URL:/library/numexp/index.htm>
+
+履歴
+	2005/10/08 竹広真一
+	2009/01/22 竹広真一

@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: lumatrix</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">lumatrix</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/lumatrix_f90.html">
+
+                src/lumatrix.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="lumatrix.html">lumatrix</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a href="../files/src/lumatrix_f90.html">lumatrix.f90</a>,v 1.8
+2009-02-28 21:33:47 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/lumatrix モジュールは, LU 分解法により連立 1 次方程式を解くための
+Fortran90 関数を提供する.
+</p>
+<p>
+他のスペクトル計算用モジュールの中で登場する境界値問題を解くために
+用いられている.
+</p>
+<p>
+ベクトル計算機を意識して, 同じ次数の複数個の連立1 次方程式
+</p>
+<pre>
+    A[ij]^(n) X [j]^(n) = B[i]^(n)
+</pre>
+<p>
+の解を同時に複数個の右辺ベクトル B[i]^(n)b に対して求めることが
+できるようになっている.
+</p>
+<h2>変数・手続き群の要約</h2>
+<table>
+<tr><td valign="top"><a href="lumatrix.html#M002150">LUDecomp</a>    :</td><td>行列の LU 分解を行う
+
+</td></tr>
+<tr><td valign="top"><a href="lumatrix.html#M002152">LUSolve</a>     :</td><td>連立 1 次方程式の解を求める
+
+</td></tr>
+</table>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M002150">LUDecomp</a>&nbsp;&nbsp;
+
+        <a href="#M002151">LUDecomp</a>&nbsp;&nbsp;
+
+        <a href="#M002152">LUSolve</a>&nbsp;&nbsp;
+
+        <a href="#M002153">LUSolve</a>&nbsp;&nbsp;
+
+        <a href="#M002154">LUSolve</a>&nbsp;&nbsp;
+
+        <a href="#M002155">LUSolve</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M002150" class="method-detail">
+        <a name="M002150"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">LUDecomp</span><span class="method-args">( alu, kp ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,: )  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(size(alu,1))  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(out)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(NDIM,NDIM), KP(NDIM) NDIM x NDIM の行列を LU 分解. ＬＵ行列は
+入力行列に上書きされる.
+</p>
+<p>
+Original external subprogram is <a
+href="../files/src/lumatrix_f90.html#M000004">src/lumatrix.f90#ludecomp21</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002151" class="method-detail">
+        <a name="M002151"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">LUDecomp</span><span class="method-args">( alu, kp ) </span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(size(alu,1),size(alu,2))  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(out)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM) NDIM x NDIM の行列 JDIM 個を一度に LU
+分解. ＬＵ行列は 入力行列に上書きされる.
+</p>
+<p>
+Original external subprogram is <a
+href="../files/src/lumatrix_f90.html#M000005">src/lumatrix.f90#ludecomp32</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002152" class="method-detail">
+        <a name="M002152"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">LUSolve</span><span class="method-args">( alu, kp, b ) result(lusolve211)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>lusolve211(size(b))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 右辺ベクトル
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(NDIM,NDIM), KP(NDIM), B(NDIM) NDIM x NDIM 型行列の連立方程式 A X = B を
+1 個の B に対して計算する.
+</p>
+<p>
+Original external subprogram is <a
+href="../files/src/lumatrix_f90.html#M000006">src/lumatrix.f90#lusolve211</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002153" class="method-detail">
+        <a name="M002153"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">LUSolve</span><span class="method-args">( alu, kp, b ) result(lusolve212)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>lusolve212(size(b,1),size(b,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 右辺ベクトル
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(NDIM,NDIM), KP(NDIM), B(JDIM,NDIM) NDIM x NDIM 型行列の連立方程式 A X =
+B を JDIM 個の B に対して計算する.
+</p>
+<p>
+Original external subprogram is <a
+href="../files/src/lumatrix_f90.html#M000007">src/lumatrix.f90#lusolve212</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002154" class="method-detail">
+        <a name="M002154"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">LUSolve</span><span class="method-args">( alu, kp, b ) result(lusolve322)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>lusolve322(size(b,1),size(b,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 右辺ベクトル
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM), B(JDIM,NDIM) NDIM x NDIM 型行列を JDIM
+個並べた連立方程式 A X = B をひとつの B の並びに対して計算する.
+</p>
+<p>
+Original external subprogram is <a
+href="../files/src/lumatrix_f90.html#M000008">src/lumatrix.f90#lusolve322</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M002155" class="method-detail">
+        <a name="M002155"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">LUSolve</span><span class="method-args">( alu, kp, b ) result(lusolve323)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>lusolve323(size(b,1),size(b,2),size(b,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 右辺ベクトル
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM), B(IDIM,JDIM,NDIM) NDIM x NDIM 型行列を
+JDIM 個並べた連立方程式 A X = B を IDIM 個の B に対して計算する.
+</p>
+<p>
+Original external subprogram is <a
+href="../files/src/lumatrix_f90.html#M000009">src/lumatrix.f90#lusolve323</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

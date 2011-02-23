@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>5.3. A thermal convection model of the Boussinesq fluid in a two-dimensional channel domain</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec5.2.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=sec5.4.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h3><a name="label-0" id="label-0">5.3. A thermal convection model of the Boussinesq fluid in a two-dimensional channel domain</a></h3><!-- RDLabel: "5.3. A thermal convection model of the Boussinesq fluid in a two-dimensional channel domain" -->
+<h4><a name="label-1" id="label-1">The case with fixed temperature boundaries</a></h4><!-- RDLabel: "The case with fixed temperature boundaries" -->
+<p>This is a Boussinesq fluid model of thermal convection that occurs in a fluid
+layer between parallel horizontal planes uniformly heated from below and
+cooled from above. The governing equations are the vorticity equation and the
+equation of temperature disturbance in a two-dimensional channel domain of a
+Boussinesq fluid.</p>
+<center><img src=sec5.3_1.png align=bottom></center>
+<p>&psi; is the stream function, 
+&zeta; is vorticity, and &theta; is temperature disturbance
+from the basic state. The first terms on the right-hand side of the first and
+the second equations 
+J(&psi;,&theta;), J(&psi;,&zeta;) are the Jacobian;
+they describe the
+advection of temperature and vorticity, respectively. The fourth equation is
+the boundary conditions on the upper and lower horizontal plane; it expresses
+the free-slip and fixed temperature boundary conditions. The detailed
+formulation and linear stability analysis of this system are explained in
+textbooks of fluid mechanics 
+(such as <a href="ref.htm">[10]</a>) or
+<a href="ref.htm">[11]</a>. </p>
+<p>The resulting program source code is given as 
+<a href="./f90/bsncnv-tt-2_f90.txt">bsncnv-tt-2.f90</a>.
+As eigen 
+function series satisfying the boundary conditions, the usual Fourier series
+in <i>x</i> 
+direction and Fourier sine series in <i>y</i> direction are employed,
+respectively. The main part of the time integration is as follows:</p>
+<pre>do it=1,nt
+    es_TempA = es_TempB + &amp;
+              dt*( -es_Jacobian_es_es(es_PsiB,es_TempB) &amp;
+                    + es_Dx_es(es_PsiB) &amp;
+                    + es_Lapla_es(es_TempB) )
+
+    es_ZetaA = es_ZetaB + &amp;
+              dt*( - es_Jacobian_es_es(es_PsiB,es_ZetaB) &amp;
+                    + Pr*Ra*es_Dx_es(es_TempB) + Pr*es_Lapla_es(es_ZetaB)    )
+
+    es_PsiA = es_LaplaInv_es(es_ZetaA)
+
+    es_TempB = es_TempA
+    es_PsiB  = es_PsiA
+    es_ZetaB = es_ZetaA
+    ...
+enddo</pre>
+<p>The prefix "es_" and the suffix "_es" denote the spectral data whose first
+dimension is the usual Fourier series component and second dimension is the
+Fourier sine series component. Time integration is performed by the Euler
+scheme. The last character "B" in the variable names means that the variables
+are for the present time step (abbreviation of "Before"), and "A" means the
+variables for the next time step (abbreviation of "After").</p>
+<p>Numerical results starting from a pointwise temperature disturbance placed
+initially near the center of the domain are shown below. The Rayleigh number 
+<i>R<sub>a</sub></i>, 
+and the Prandtl number <i>P<sub>r</sub></i> 
+are 10000 and 1, respectively. Development of
+convection cells with aspect ratio nearly equal to unity can be observed.</p>
+<center><table>
+<tr><td align=center>
+  <a href=../fig/bsncnv-tt-temp_anim.gif>
+  <img src=../fig/bsncnv-tt-temp_021.gif></a>
+</td><td align=center>
+  <a href=../fig/bsncnv-tt-psi_anim.gif>
+  <img src=../fig/bsncnv-tt-psi_021.gif></a>
+</td></tr>
+<td align=center><a href=../fig/bsncnv-tt-temp_anim.gif>[animation]</a></td>
+<td align=center><a href=../fig/bsncnv-tt-psi_anim.gif>[animation]</a></td>
+</tr>
+</table></center>
+
+<h4><a name="label-2" id="label-2">The case with fixed heatflux boundaries</a></h4><!-- RDLabel: "The case with fixed heatflux boundaries" -->
+<p>It is known that the thermal condition at the boundaries affects the structure
+of convection (<a href="ref.htm">[11]</a>). 
+When the fixed heat flux condition is adopted instead of
+the fixed temperature condition used above, we obtain the following equation
+as the boundary conditions:</p>
+<center>
+
+<center><img src=sec5.3_2.png align=bottom></center>
+</center>
+
+<p>The whole program source code is given as 
+<a href="./f90/bsncnv-ff-1_f90.txt">bsncnv-ff-1.f90</a>. 
+In order to satisfy
+the thermal condition, the temperature disturbance field is now expanded by
+the Fourier cosine series in the <i>y</i> direction. 
+The stream function and
+vorticity fields are expanded by the Fourier sine series, as in the previous
+example. The main part of the time integration is as follows:</p>
+<pre>do it=1,nt
+    ec_TempA = ec_TempB + &amp;
+            dt*( - ec_Jacobian_es_ec(es_PsiB,ec_TempB) &amp;
+                 + ec_yx(yx_es(es_dx_es(es_PsiB)))  &amp;
+                 + ec_Lapla_ec(ec_TempB) )
+
+    es_ZetaA = es_ZetaB + &amp;
+            dt*( - es_Jacobian_es_es(es_PsiB,es_ZetaB) &amp;
+                 + Pr * Ra * es_yx(yx_ec(ec_Dx_ec(ec_TempB))) &amp;
+                 + Pr * es_Lapla_es(es_ZetaB)    )
+
+    es_PsiA = es_LaplaInv_es(es_ZetaA)
+
+    ec_TempB = ec_TempA
+    es_PsiB  = es_PsiA
+    es_ZetaB = es_ZetaA
+    ...
+enddo</pre>
+<p>The prefix "ec_" and the suffix "_ec" denote the spectral data whose second
+dimension is the Fourier cosine series component. The prefix "yx_" and the
+suffix "_yx" represent two-dimensional grid data whose first and second
+dimensions are components of 
+<i>y</i> and <i>x</i> coordinates, respectively. Since the
+spectral basis functions of temperature and flow fields are different,
+conversion of the spectral basis functions is performed by transforming back
+to the grid data of the real space once.</p>
+<p>Numerical results starting from the same initial condition as that of the
+fixed-temperature case are shown in the figures below. 
+As described in <a href="ref.htm">[11]</a>, 
+convection cells with aspect ratio of about unity become unstable and develop
+in the early stage of integration, while horizontally elongated convection
+cells emerge and eventually become dominant.</p>
+<center><table>
+<tr><td align=center>
+    <a href=../fig/bsncnv-ff-temp_anim.gif>
+    <img src=../fig/bsncnv-ff-temp_041.gif></a>
+    </td><td align=center>
+    <a href=../fig/bsncnv-ff-psi_anim.gif>
+    <img src=../fig/bsncnv-ff-psi_041.gif></a>
+</td></tr><tr>
+<td align=center><a href=../fig/bsncnv-ff-temp_anim.gif>[animation]</a></td>
+<td align=center><a href=../fig/bsncnv-ff-psi_anim.gif>[animation]</a></td>
+</tr></table></center>
+
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec5.2.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=sec5.4.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+Subject: 2 次元円盤領域  拡散方程式モデル Fortran ソース置場
+Maintainer: 竹広真一
+Update: 2008/05/02
+Note: 解析解との比較チェックプログラム集. 
+      解析解の解説に関しては relative:../pub/index.htm を参照のこと.
+
+履歴
+	2008/05/02 竹広真一

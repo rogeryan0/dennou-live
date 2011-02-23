@@ -1,0 +1,180 @@
+<HTML>
+<HEAD><TITLE>ftp/arch/ruby/tutorial/devel</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffeecc"><P>地球流体電脳倶楽部
+<P>
+<A HREF="../../../../../SIGEN.htm">/GFD_Dennou_Club</A>/
+<A HREF="../../../../SIGEN.htm">ftp</A>/
+<A HREF="../../../SIGEN.htm">arch</A>/
+<A HREF="../../SIGEN.htm">ruby</A>/
+<A HREF="../SIGEN.htm">tutorial</A>/
+<H1>devel</H1>
+<P>
+気象解析ライブラリ開発チュートリアル<BR>
+塚原 大輔 (2005/03/17)<BR>
+[RubyWS(2005) にて発表]<BR>
+<HR>
+<P>
+<DL>
+<H2>要約</H2>
+<DT><A HREF="ChangeLog">
+ChangeLog</A>
+<DD>
+<DT><A HREF="Makefile">
+Makefile</A>
+<DD>
+<DT><A HREF="Mkinclude">
+Mkinclude</A>
+<DD>
+<DT><A HREF="T.jan.nc">
+T.jan.nc</A>
+<DD>
+<DT><A HREF="dennou-ruby.css">
+dennou-ruby.css</A>
+<DD>
+<DT><A HREF="derivative_ver0.rb">
+derivative_ver0.rb</A>
+<DD>
+<DT><A HREF="derivative_ver1.rb">
+derivative_ver1.rb</A>
+<DD>
+<DT><A HREF="derivative_ver1.txt">
+derivative_ver1.txt</A>
+<DD>
+<DT><A HREF="document.pdf">
+document.pdf</A>
+<DD>
+<DT><A HREF="document.tex">
+document.tex</A>
+<DD>
+<DT><A HREF="dtdx.jan.nc">
+dtdx.jan.nc</A>
+<DD>
+<DT><A HREF="dtdx.jan.png">
+dtdx.jan.png</A>
+<DD>
+<DT><A HREF="dtdx.jan.ps">
+dtdx.jan.ps</A>
+<DD>
+<DT><A HREF="ep_flux.html">
+ep_flux.html</A>
+<DD>
+<DT><A HREF="epflx.png">
+epflx.png</A>
+<DD>
+<DT><A HREF="gphys_derivative.rb">
+gphys_derivative.rb</A>
+<DD>
+<DT><A HREF="gphys_derivative_ver0.rb">
+gphys_derivative_ver0.rb</A>
+<DD>
+<DT><A HREF="gphys_derivative_ver1.rb">
+gphys_derivative_ver1.rb</A>
+<DD>
+<DT><A HREF="index.html">
+index.html</A>
+<DD>
+<DT><A HREF="index.rd">
+index.rd</A>
+<DD>
+<DT><A HREF="residual.png">
+residual.png</A>
+<DD>
+<DT><A HREF="test_derivative_ver0.rb">
+test_derivative_ver0.rb</A>
+<DD>
+<DT><A HREF="test_gphys_derivative_ver0.rb">
+test_gphys_derivative_ver0.rb</A>
+<DD>
+<DT><A HREF="test_gphys_derivative_ver1.rb">
+test_gphys_derivative_ver1.rb</A>
+<DD>
+<DT><A HREF="theta.png">
+theta.png</A>
+<DD>
+</DL>
+<HR>
+<H2>詳細</H2>
+<DL>
+<DT><A HREF="ChangeLog">
+ChangeLog</A>
+<DD>
+<DT><A HREF="Makefile">
+Makefile</A>
+<DD>
+<DT><A HREF="Mkinclude">
+Mkinclude</A>
+<DD>
+<DT><A HREF="T.jan.nc">
+T.jan.nc</A>
+<DD>
+<DT><A HREF="dennou-ruby.css">
+dennou-ruby.css</A>
+<DD>
+<DT><A HREF="derivative_ver0.rb">
+derivative_ver0.rb</A>
+<DD>
+<DT><A HREF="derivative_ver1.rb">
+derivative_ver1.rb</A>
+<DD>
+<DT><A HREF="derivative_ver1.txt">
+derivative_ver1.txt</A>
+<DD>
+<DT><A HREF="document.pdf">
+document.pdf</A>
+<DD>
+<DT><A HREF="document.tex">
+document.tex</A>
+<DD>
+<DT><A HREF="dtdx.jan.nc">
+dtdx.jan.nc</A>
+<DD>
+<DT><A HREF="dtdx.jan.png">
+dtdx.jan.png</A>
+<DD>
+<DT><A HREF="dtdx.jan.ps">
+dtdx.jan.ps</A>
+<DD>
+<DT><A HREF="ep_flux.html">
+ep_flux.html</A>
+<DD>
+<DT><A HREF="epflx.png">
+epflx.png</A>
+<DD>
+<DT><A HREF="gphys_derivative.rb">
+gphys_derivative.rb</A>
+<DD>
+<DT><A HREF="gphys_derivative_ver0.rb">
+gphys_derivative_ver0.rb</A>
+<DD>
+<DT><A HREF="gphys_derivative_ver1.rb">
+gphys_derivative_ver1.rb</A>
+<DD>
+<DT><A HREF="index.html">
+index.html</A>
+<DD>
+<DT><A HREF="index.rd">
+index.rd</A>
+<DD>
+<DT><A HREF="residual.png">
+residual.png</A>
+<DD>
+<DT><A HREF="test_derivative_ver0.rb">
+test_derivative_ver0.rb</A>
+<DD>
+<DT><A HREF="test_gphys_derivative_ver0.rb">
+test_gphys_derivative_ver0.rb</A>
+<DD>
+<DT><A HREF="test_gphys_derivative_ver1.rb">
+test_gphys_derivative_ver1.rb</A>
+<DD>
+<DT><A HREF="theta.png">
+theta.png</A>
+<DD>
+</DL>
+<HR>
+<P ALIGN=RIGHT>
+last update: 2010/03/04 10:27:50
+<BR>this page is generated with <B><A HREF="http://www.gfd-dennou.org/arch/cc-env/mksigen/desc.htm">mksigen</A></B>
+</BODY>
+</HTML>

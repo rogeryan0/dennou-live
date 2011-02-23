@@ -1,0 +1,10 @@
+Subject:       ブシネスク磁気流体モデル(3 次元球殻領域) Fortran ソース置場
+Maintainer:    竹広 真一
+Update:        2009/01/16
+Description:   プログラムの解説は別プロジェクト
+	       「回転球および球殻ダイナモプロジェクト -- ダイナモベンチマーク」
+	       <URL:/library/dynamo/benchmark/index.htm> も参照のこと.
+
+履歴 
+        2009/01/16 竹広 真一
+

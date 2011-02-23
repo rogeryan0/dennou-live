@@ -1,0 +1,12 @@
+Subject: 順圧モデル(2 次元球面)
+Maintainer: 竹広真一
+Update: 2002/05/20
+Note:	定式化は relative:pub/index.htm 
+	関連プロジェクトは数値実験集の
+	<URL:/library/numexp/spbaro_freedecay>, 
+	<URL:/library/numexp/spbaro_zonalflow>.
+
+履歴
+	2002/05/20 竹広真一
+	2007/11/25 竹広真一 定式化文書追加
+	2009/01/18 竹広真一 数値実験集へ資源一部移動

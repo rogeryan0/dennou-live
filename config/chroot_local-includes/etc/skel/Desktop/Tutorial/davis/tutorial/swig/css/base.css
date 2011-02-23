@@ -1,0 +1,45 @@
+/* This css defines a basic style.
+   Copyright (C) 2001 Kozuka Masahiro. All Rights Reserved
+*/
+
+BODY {
+    color : #446;
+}
+
+STRONG {
+    color : black;
+    background-color : #faa;
+    font-weight : bolder;
+}
+
+A:link {
+    color : gray;
+}
+A:visited {
+    color : gray;
+}
+A:hover {
+    text-decoration : underline;
+}
+A:active {
+}
+BLOCKQUOTE {
+    margin : 1.5em;
+    background-color: #d0d0d0;
+    padding : 0.5em 0.5em;
+}
+
+PRE {
+  border: none;
+  white-space: pre;
+  font-family: monospace;
+  padding: 0.5em 0em 0.5em 1.5em;
+}
+
+SPAN.erase {
+  text-decoration : line-through;
+}
+
+P {
+    margin : 0em 0em 0em 3em;
+}

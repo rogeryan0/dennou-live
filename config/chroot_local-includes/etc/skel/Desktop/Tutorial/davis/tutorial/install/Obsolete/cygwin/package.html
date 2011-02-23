@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>install package to cygwin</title>
+</head>
+<body>
+<h1>cygwinにパッケージでインストールする</h1>
+<p>
+ここではcygwinにruby dcl関係のインストールを簡単に行う方法をのせます。
+ここに載っている方法でインストールすると
+<ul>
+<li>gnome2関係</li>
+<li>ruby-gnome2関係</li>
+<li>netcdf</li>
+<li>ruby-netcdf</li>
+<li>dcl(C)+gtk2パッチ</li>
+<li>ruby-dcl+gtk2パッチ</li>
+<li>narray</li>
+<li>narray_miss</li>
+<li>misc</li>
+<li>gphys</li>
+<li>gave</li>
+</ul>
+がインストールされます。
+また個別にインストールすることもできますが、その場合は依存関係に注意して下さい。
+</p>
+<p>
+<h3>インストール</h3>
+<ul>
+ <li>cygwinのsetup.exeを実行します</li>
+    お手元の環境に合わせてサーバーの選択まで進んでください
+ <li>サーバーの選択</li>
+      適当なサーバーを選択<br>
+      http://web.sfc.keio.ac.jp/~s01397ms/cygwin/ を入力し、Add を押す<br>
+      ftp://www.gfd-dennou.org/arch/ruby/products/cygwin/ を入力し、Add を押す<br>
+      次へ をクリック
+
+ <li>パッケージの選択</li>
+      GNOME2, Dennou のカテゴリーの Default を数回クリックし、Install に変える<br>
+      以下を追加(括弧内はカテゴリー名)<br>
+      <ul>
+       <li>XFree86-bin (XFree86)</li>
+       <li>ruby (Interpreters or Develop)</li>
+       <li>gtk2-win32 (Libs)</li>
+      </ul>
+      <br>
+      <table border=1>
+	<tr><th>カテゴリー</th><th>パッケージ</th></tr>
+        <tr><td>GNOME2</td><td>ALL</td></tr>
+        <tr><td>Dennou</td><td>ALL</td></tr>
+        <tr><td>XFree86</td><td>XFree86-bin</td></tr>
+        <tr><td>Interpreters or Develop</td><td>ruby</td></tr>
+        <tr><td>Libs</td><td>gtk2-win32</td></tr>
+      </table>
+</ul>	    
+
+<h3>rubyのための準備</h3>
+rubyのサイトパスは /usr/lib/ruby/site_ruby ですが、
+上記のパッケージでは /usr/local/lib/ruby/site_ruby にインストールされるので<br>
+リンクを張ります<br>
+%cd /usr/lib/ruby<br>
+%mv site_ruby site_ruby.bak<br>
+%ln -s /usr/local/lib/ruby/site_ruby .<br>
+<br>
+これでインストールが終わりました。<br>
+</p>
+<p>
+以下のページも参考にしてください<br>
+<ul>
+<li>
+<a href="http://ruby.gfd-dennou.org/tutorial/install/cygwin/index-j.html">
+電脳Ruby謹製品を使うためのCygwin環境構築</a>
+<li><a href="http://web.sfc.keio.ac.jp/~s01397ms/cygwin/">
+gtk2 on cygwin</a>
+</ul>
+</p>
+
+<h3>注意事項</h3>
+<p>
+cygwin のバージョンによってはうまく動作しないことがあります。
+動作確認したバージョンは 1.5.6 です。
+</p>
+
+<hr>
+Seiya Nishizawa
+</body>
+</html>

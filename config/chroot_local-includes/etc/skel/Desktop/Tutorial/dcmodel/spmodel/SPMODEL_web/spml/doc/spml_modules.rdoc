@@ -1,0 +1,149 @@
+= spml reference manual
+
+Authors:: Shin-ichi Takehiro, Youhei SASAKI, SPMODEL Development Group.
+Version:: $Id: spml_modules.rdoc,v 1.1 2009-02-27 05:21:50 uwabami Exp $
+Copyright&License:: See COPYRIGHT[link:../../COPYRIGHT]
+
+== 概要
+
+spml -- SPmodel (SPectral MODEL) Library は流体運動をスペクトル法により
+数値計算するためのFortran90 関数を提供するモジュール群である.
+
+フーリエ変換, 球面調和函数変換, チェビシェフ変換などのスペクトル計算に
+は石岡圭一氏による {ISPACK}[http://www.gfd-dennou.org/library/ispack/]
+FORTRAN77 ライブラリを用いている. spml では ISPACK の変換サブルーチンを
+Fortran90 の関数でくるみ, さらにいくつかの便利な微分・積分・境界値問題
+などのための関数やサブルーチンを追加している.
+
+モデルからのデータ入出力と後処理のために, 
+{地球流体電脳倶楽部 gtool プロジェクト}[http://www.gfd-dennou.org/library/gtool/]において開発されている
+{gtool5 Fortran90/95 library}[http://www.gfd-dennou.org/library/gtool/gtool5.htm]を使うことを前提としている.
+ 
+本ライブラリの使用にあたっては, 
+地球流体スペクトルモデルプロジェクトの Web ページである
+{階層的地球流体スペクトルモデル集(SPMODEL)}[http://www.gfd-dennou.org/library/spmodel/] を一度は訪ねられたい.
+
+== 主なモジュール一覧
+
+=== 汎用関数
+
+[lumatrix]     
+        LU 分解により連立一次方程式を解く.
+[eigmatrix]    
+        実正方行列の固有値問題を解く. 
+        実体は{LAPACK}[http://www.netlib.org/lapack/] 
+        もしくは SSL2 の対応するサブルーチン用のインターフェースである.
+        このモジュールを使用する場合は, configure 時に,
+        --with-lapack, --with-ssl2, --with-ssl2tp によって,
+        該当ライブラリを指定する必要がある.
+        [lapack_eigen] 
+                LAPACK を用いて固有値問題を解く.
+        [ssl2_eigen, ssl2tp_eigen] 
+                SSL2 を用いて固有値問題を解く.
+[gamma]        
+        ガンマ関数, およびその対数を与える関数を提供する.
+[indexx]       
+        与えられた配列を sort する関数を提供する.
+
+=== 一次元問題
+
+[ae_module]
+        一次元周期境界条件での問題をフーリエ変換により解く(多層対応).
+[at_module]
+        一次元有限領域での問題をチェビシェフ変換法により解く(多層対応).
+[au_module]    
+        円盤および球領域の
+        動径 一次元有限領域での問題を
+        チェビシェフ変換法により解く(多層対応)
+[aq_module]
+        一次元有限領域での問題をヤコビ多項式を用いたスペクトル法
+        (Matsushima and Marcus, 1994)により解く.
+[at_ad_galerkin モジュール群] 
+        一次元有限領域での問題をチェビシェフ-ガラーキン法に
+        より解く(多層対応). 
+        [at_ad_galerkin_DD]
+                両端ディリクレ条件の基底による展開. 	     
+        [at_av_galerkin_NN]
+                両端ノイマン条件の基底による展開. 
+        [at_ab_galerkin_ND]   
+                片側ディリクレ他方ノイマン条件の基底による展開.
+        [at_ap_galerkin_DN]   
+                片側ノイマン他方ディリクレ条件の基底による展開. 
+        [at_af_galerkin_MM]   
+                ディレクレ/ノイマン混合条件の基底による展開(一次元).
+        [at_ah_galerkin_MMex] 
+                ディレクレ/ノイマン混合条件の基底による展開(多次元).
+        [at_aq_galerkin_RRSS] 
+                非圧縮流体の流線関数, ポロイダルポテンシャル用の基底による展開
+[l_module]
+        経度方向に一様な帯状的 1 次元流体運動を
+        ルジャンドル多項式を用いたスペクトル法により解く.
+[w_zonal_module]
+        球面上での経度方向に一様な帯状的 1 次元流体運動を
+        ルジャンドル多項式を用いたスペクトル法によって解く.
+
+=== 二次元問題
+
+[ee_module]
+        周期境界条件下の二次元矩形領域の問題を二重フーリエ変換法により解く.
+[esc_module]
+        二次元水路領域での問題をフーリエ変換と sin, cos 変換法により解く.
+[et_module]
+        二次元水路領域での問題をフーリエ変換と
+        チェビシェフ変換法により解く.
+[et_galerkin_module]
+        二次元水路領域での問題をフーリエ変換と
+        チェビシェフガラーキン法により解く.
+[eq_module]
+        二次元円盤領域での問題をフーリエ変換とヤコビ多項式変換法により解く.
+[la_module]
+        経度方向に一様な帯状的子午面二次元流体運動を
+        ルジャンドル多項式を用いたスペクトル法によって解く.
+        l_module の多層対応版.
+[wa_zonal_module]
+        球面上での経度方向に一様な帯状的
+        1 次元流体運動をルジャンドル多項式を用いたスペクトル法によって解く.
+        w_zonal_module の多層対応版.
+[wt_zonal_module]
+        球面上および球殻内での経度方向に一様な
+        帯状的軸対称 2 次元流体運動をスペクトル法によって解く.
+        wa_zonal_module と at_module を使用.
+[w_module]
+        二次元球面上の問題を球面調和関数変換法により解く.
+[w_mpi_module]
+        二次元球面上の問題を球面調和関数変換法により解く.
+        w_module の MPI 並列版
+
+=== 三次元問題
+
+[eee_module]
+        周期境界条件下の三次元箱型領域を三重フーリエ変換法により解く.
+[eee_mpi_module]
+        周期境界条件下の三次元箱型領域を三重フーリエ変換法により解く.
+        eee_module の MPI 並列版
+[wa_module]
+        球面上の問題を球面調和関数により解く.
+        w_module の多層対応版.
+[wa_mpi_module]
+        球面上の問題を球面調和関数により解く.
+        w_mpi_module の多層対応版.
+[wt_module]
+        三次元球殻内の問題を球面調和関数変換と
+        チェビシェフ変換法により解く.        
+[wt_mpi_module]
+        三次元球殻内の問題を球面調和関数変換と
+        チェビシェフ変換法により解く.
+        水平方向の変換に wa_mpi_module を用いる
+[wt_galerkin_module]
+        三次元球殻内の問題を球面調和関数変換と
+        チェビシェフガラーキン法により解く.        
+[wu_module]
+        三次元球内の問題を球面調和関数変換と
+        チェビシェフ変換法により解く.
+[wtu_module]
+        三次元球とそれを覆う球殻内の問題を
+        球面調和関数変換とチェビシェフ変換法により解く.
+[wq_module]
+        三次元球内の問題を球面調和関数変換と
+        ヤコビ多項式変換法により解く.
+

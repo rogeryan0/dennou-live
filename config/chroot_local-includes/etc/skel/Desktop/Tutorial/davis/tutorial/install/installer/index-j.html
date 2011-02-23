@@ -1,0 +1,263 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>電脳Ruby謹製品 一括インストーラ</title>
+<link href="http://ruby.gfd-dennou.org/tutorial/install/dennou-ruby-install.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h1><a name="label-0" id="label-0">電脳Ruby謹製品 一括インストーラ</a></h1><!-- RDLabel: "電脳Ruby謹製品 一括インストーラ" -->
+<p>Last modified: &lt;2007-04-27 06:05:31 koshiro&gt;</p>
+<p>電脳Ruby謹製品を自動でインストールするRubyスクリプトです．
+GAVE関連のすべての電脳Ruby謹製品に対応しています(Ruby-SSL2, Ruby/Msise90 には現在のところ非対応です)．</p>
+<font color="red">※このソフトウェアは現在メンテナンスされていません!</font>
+
+<h2><a name="label-1" id="label-1">ダウンロード</a></h2><!-- RDLabel: "ダウンロード" -->
+<p><a href="http://ruby.gfd-dennou.org/products/installer/numru-install.rb">numru-install.rb</a>
+(Ver. 3.4.7)</p>
+<h2><a name="label-2" id="label-2">動作環境</a></h2><!-- RDLabel: "動作環境" -->
+<p>URIモジュールが標準添付されている Ruby 1.6.7 以上が必要です．</p>
+<p>UNIX系OS(Linux, FreeBSD, Solaris, Windows上のCygwin, などなど)であればどのプラットフォームでも動作すると思いますが，GNU gzip と GNU patch が必要になります．</p>
+<p>こちらでは以下の環境で動作を確認しています：</p>
+<ul>
+<li>Vine Linux 2.6 + Ruby 1.6.7</li>
+<li>Vine Linux 3.1 + Ruby 1.8.2</li>
+<li>Debian GNU/Linux 3.1 + Ruby 1.8.2</li>
+<li>Cygwin(on Windows XP Professional) + Ruby 1.8.4</li>
+</ul>
+<p>※ numru-install.rb では，GTK+関連ライブラリの有無を以下のようにして
+チェックしていますので注意してください：</p>
+<dl>
+<dt><a name="label-3" id="label-3">GTK+1</a></dt><!-- RDLabel: "GTK+1" -->
+<dd>
+gtk-config, imlib-config の各コマンドの結果で判定しています(C版DCL
+の configure も同様のチェックをしています)．また，Ruby-GNOME をイン
+ストールする際には gdk-pixbuf-config によるチェックも行われます．
+whichコマンド等で，これらのコマンドがあるかどうか確認してください．
+たとえGTK+1のライブラリがあっても，これらのコマンドがないと正しくイ
+ンストールされません．バイナリパッケージ配布のLinuxディストリビュー
+ションをお使いの場合は注意が必要です．例えば Red Hat Linux 9 では，
+これらのコマンドは開発ツールパッケージ
+({gtk+|gdk-pixbuf|imlib}-devel-x.x.x.i386.rpm)のほうに含まれており，
+デフォルトではインストールされていない場合があります．インストール
+CD-ROMやFTPサイト等からこれらパッケージを取得しインストールしてくだ
+さい．GTK+1ライブラリをソースコードからコンパイルしてインストールし
+ている場合は問題ないと思われます．
+</dd>
+<dt><a name="label-4" id="label-4">GTK+2</a></dt><!-- RDLabel: "GTK+2" -->
+<dd>
+pkg-config コマンドの結果で判定しています(C版DCL の configure も同様
+のチェックをしています)．whichコマンド等で，これらのコマンドがあるか
+どうか確認してください．バイナリパッケージ配布のLinuxディストリビュー
+ションをお使いの場合，たとえGTK+2のライブラリがあっても，pkg-config
+用のライブラリ情報ファイルがない場合がありますので注意してください．
+例えば Vine Linux 3.1 では，gtk2-devel-x.x.x.i386.rpm をインストール
+する必要があります．インストールCD-ROMやFTPサイト等からパッケージを
+取得しインストールしてください．GTK+2ライブラリをソースコードからコ
+ンパイルしてインストールしている場合は問題ないと思われます．また，
+pkg-config がライブラリ情報を参照するディレクトリは，環境変数
+PKG_CONFIG_PATH で決まっています．通常は心配ないと思いますが，Cygwin
+の場合などは注意してください．
+</dd>
+</dl>
+<h2><a name="label-5" id="label-5">使い方</a></h2><!-- RDLabel: "使い方" -->
+<p><kbd>$ ruby numru-install.rb</kbd></p>
+<p>として実行します．あとは質問に答えていくだけです．</p>
+<p>現在インストールされているRubyライブラリのバージョン情報を保持するリストファイルを指定する(はじめて使うときに作ります)と，最新のパッケージのバージョンを探しにいきます．
+そうすると，インストールできるパッケージのリストが表示されますので，パッケージを選択して，ダウンロードする資源の置き場所とインストール先を指定すればOKです．</p>
+<p>なお，Firewallがある等プロキシ経由でインターネットに接続している環境の方は，一括インストーラを実行する前に，</p>
+<p>(sh系) <kbd>$ export http_proxy=http://your.proxy.server:8080/</kbd></p>
+<p>(csh系) <kbd>% setenv http_proxy http://your.proxy.server:8080/</kbd></p>
+<p>などとして環境変数 http_proxy にプロキシサーバとポート番号を設定してください．</p>
+<p>また，Firewallがあると，passive mode でないと外部のFTPサーバに接続できない場合があります(ADSL回線をお使いの場合など)．そのときは，一括インストーラを実行する前に，</p>
+<p>(sh系) <kbd>$ export FTP_PASSIVE_MODE=YES</kbd></p>
+<p>(csh系) <kbd>% setenv FTP_PASSIVE_MODE YES</kbd></p>
+<p>として環境変数 FTP_PASSIVE_MODE を設定してください．</p>
+<p>インストールし終わったら，環境変数 PATH と RUBYLIB を確認することも忘れずに．</p>
+<h2><a name="label-6" id="label-6">関連情報</a></h2><!-- RDLabel: "関連情報" -->
+<h3><a name="label-7" id="label-7">Cygwin向けパッチ</a></h3><!-- RDLabel: "Cygwin向けパッチ" -->
+<p>一部のプロダクトでは，Cygwin環境でインストールに不具合が生じます．
+numru-install.rb では，これを解決するために以下のパッチをあてています．</p>
+<ul>
+<li>C版DCL(5.3.x) -- <a href="http://ruby.gfd-dennou.org/products/installer/patches/dcl53c_cygwin.patch.gz">dcl53c_cygwin.patch.gz</a> (Thanks to 遠藤さん)
+<ul>
+<li>dclcc (cshスクリプト)の先頭行を <kbd>#!/bin/csh -f</kbd> から <kbd>#!/bin/tcsh -f</kbd> に変更 (Cygwinには csh がないため)</li>
+</ul></li>
+<li>NetCDF(3.6.1) -- <a href="http://ruby.gfd-dennou.org/products/installer/patches/netcdf361_cygwin.patch.gz">netcdf361_cygwin.patch.gz</a>
+<ul>
+<li>Makefile の whatis 生成に関する部分をコメントアウト (makewhatis が終了ステータス 255 を返すので make が異常終了してしまうため)</li>
+</ul></li>
+</ul>
+<h2><a name="label-8" id="label-8">変更履歴</a></h2><!-- RDLabel: "変更履歴" -->
+<dl>
+<dt><a name="label-9" id="label-9">Feb 13, 2006 (3.4.7)</a></dt><!-- RDLabel: "Feb 13, 2006 (3.4.7)" -->
+<dd>
+<ul>
+<li>必要ならば netcdf361_cygwin.patch.gz を適用するようにした</li>
+</ul>
+</dd>
+<dt><a name="label-10" id="label-10">Feb 8, 2006 (3.4.6)</a></dt><!-- RDLabel: "Feb 8, 2006 (3.4.6)" -->
+<dd>
+<ul>
+<li>NArray のサイトが移転したのに伴い，URLを変更</li>
+<li>インストールチェック用のメソッド installed? を変更 (主に Ruby-FFTW3 対策)</li>
+</ul>
+</dd>
+<dt><a name="label-11" id="label-11">Jun 27, 2005 (3.4.5)</a></dt><!-- RDLabel: "Jun 27, 2005 (3.4.5)" -->
+<dd>
+<ul>
+<li>メソッド install の最後に メソッド installed? でインストールチェックを行うようにした(主に Ruby-GNOME2 対策)</li>
+<li>モジュール NumRu::Fetch::http_get_list の改良</li>
+<li>getopts を使わないようにした</li>
+<li>Rubyライブラリのインストールチェックの際の require を外部プロセスで行うようにした</li>
+</ul>
+</dd>
+<dt><a name="label-12" id="label-12">May 24, 2005 (3.4.4)</a></dt><!-- RDLabel: "May 24, 2005 (3.4.4)" -->
+<dd>
+<ul>
+<li>rubydcl-1.5.0 用の Cygwinパッチを削除</li>
+</ul>
+</dd>
+<dt><a name="label-13" id="label-13">Mar 17, 2005 (3.4.3)</a></dt><!-- RDLabel: "Mar 17, 2005 (3.4.3)" -->
+<dd>
+<ul>
+<li>ruby-gnome, ruby-gnome2 のダウンロードサイトを変更：voxel.net -&gt; JAIST</li>
+</ul>
+</dd>
+<dt><a name="label-14" id="label-14">Mar 3, 2005 (3.4.2)</a></dt><!-- RDLabel: "Mar 3, 2005 (3.4.2)" -->
+<dd>
+<ul>
+<li>Cygwin + Ruby 1.8.2 の環境で narray インポートライブラリのインストールが失敗することに対応</li>
+</ul>
+</dd>
+<dt><a name="label-15" id="label-15">Mar 3, 2005 (3.4.1)</a></dt><!-- RDLabel: "Mar 3, 2005 (3.4.1)" -->
+<dd>
+<ul>
+<li>netcdf の最新バージョンが 3.6.0-p? の場合，Cygwin では 3.6.1 beta release を使うようにした</li>
+</ul>
+</dd>
+<dt><a name="label-16" id="label-16">Mar 3, 2005 (3.4.0)</a></dt><!-- RDLabel: "Mar 3, 2005 (3.4.0)" -->
+<dd>
+<ul>
+<li>電脳Ruby謹製品のバージョンチェックの際 FTP サーバへの接続が1回ですむように変更</li>
+<li>fftw の URL を オリジナルサイトに再変更(日本のミラーサイトに最新版がなかったため)</li>
+</ul>
+</dd>
+<dt><a name="label-17" id="label-17">Mar 1, 2005 (3.3.3)</a></dt><!-- RDLabel: "Mar 1, 2005 (3.3.3)" -->
+<dd>
+<ul>
+<li>narray_miss のインストールスクリプトが変更されたことに対応</li>
+<li>パッケージの最新バージョンを取得するための正規表現を変更</li>
+<li>fftw の URL を 日本のミラーサイトに変更</li>
+</ul>
+</dd>
+<dt><a name="label-18" id="label-18">Jan 15, 2005 (3.3.2)</a></dt><!-- RDLabel: "Jan 15, 2005 (3.3.2)" -->
+<dd>
+<ul>
+<li>gphys のインストールスクリプトが変更されたことに対応</li>
+</ul>
+</dd>
+<dt><a name="label-19" id="label-19">Jan 6, 2005 (3.3.1)</a></dt><!-- RDLabel: "Jan 6, 2005 (3.3.1)" -->
+<dd>
+<ul>
+<li>必要ならば rubydcl150_cygwin.patch.gz を適用するようにした</li>
+<li>netcdfについて，Linuxでのconfigure option, Cygwinでの pacth file を変更した</li>
+<li>netcdf の最新バージョンが 3.6.0 の場合，Cygwin では 3.6.1 beta release を使うようにした</li>
+</ul>
+</dd>
+<dt><a name="label-20" id="label-20">Dec 22, 2004 (3.3.0)</a></dt><!-- RDLabel: "Dec 22, 2004 (3.3.0)" -->
+<dd>
+<ul>
+<li>C版DCLのtarball名とURLが変更されたことに対応</li>
+<li>gave のインストールスクリプトが変更されたことに対応</li>
+</ul>
+</dd>
+<dt><a name="label-21" id="label-21">Aug 12, 2004 (3.2.1)</a></dt><!-- RDLabel: "Aug 12, 2004 (3.2.1)" -->
+<dd>
+<ul>
+<li>バグフィックス．</li>
+</ul>
+</dd>
+<dt><a name="label-22" id="label-22">Aug 12, 2004 (3.2.0)</a></dt><!-- RDLabel: "Aug 12, 2004 (3.2.0)" -->
+<dd>
+<ul>
+<li>class RbLibの変更：narray_miss のインストールスクリプトが変更されたことに対応</li>
+</ul>
+</dd>
+<dt><a name="label-23" id="label-23">Aug 11, 2004 (3.1.0)</a></dt><!-- RDLabel: "Aug 11, 2004 (3.1.0)" -->
+<dd>
+<ul>
+<li>class RubySoftの変更：gave のインストールスクリプトが変更されたことに対応</li>
+<li>パッケージ名の変更に対応：misc -&gt; numru-misc</li>
+<li>細かなバグフィックス．</li>
+</ul>
+</dd>
+<dt><a name="label-24" id="label-24">Jul 15, 2004 (3.0.0)</a></dt><!-- RDLabel: "Jul 15, 2004 (3.0.0)" -->
+<dd>
+<ul>
+<li>インストールできるパッケージの追加：fftw, ruby-fftw3, multibitnums, gpv, numru-units, ruby-{gnome|gnome2}-all, gave</li>
+<li>module NumRu::Fetch::ftp_fetch, NumRu::Fetch::ftp_get_list の変更：環境変数 'FTP_PASSIVE_MODE' のチェックを追加</li>
+<li>module NumRu::Install を改訂
+<ul>
+<li>GTK のバージョンチェックを追加</li>
+<li>class Installer の追加：インストーラ自身のバージョンチェックおよびダウンロード機能をもたせた</li>
+<li>class RubySoft に method 'install' を追加</li>
+<li>RbExtLib and RbLib の superclass を RubyLib に変更</li>
+<li>class Software, RubySoft の method 'current_ver' の返り値を「version + GTK version」に変更</li>
+<li>class Software に method 'current_ver_disp' を追加</li>
+<li>パッケージの依存関係チェックの仕組みを改訂：method 'get_dep_check_pkgs' の追加，method 'check_depend' の改訂</li>
+<li>module function 'upgrade' の追加</li>
+</ul></li>
+<li>パッケージの依存関係を一部変更
+<ul>
+<li>rubydcl requires ruby-{gnome|gnome2}-all</li>
+<li>gphys requires ruby-fftw3 and numru-units</li>
+</ul></li>
+<li>'gpatch' コマンドがあれば，'patch'の代わりにそちらを使うようにした</li>
+<li>バグフィックス.</li>
+</ul>
+</dd>
+<dt><a name="label-25" id="label-25">Dec 18, 2003 (2.0.1)</a></dt><!-- RDLabel: "Dec 18, 2003 (2.0.1)" -->
+<dd>
+<ul>
+<li>バグフィックス(Thanks to 西澤さん)
+<ul>
+<li>圧縮ファイルの解凍コマンドを変更：'zcat' -&gt; 'gzip -dc'</li>
+<li>Net::HTTP#get 中での例外を拾うようにした(Ruby 1.6.7の場合のみ)</li>
+</ul></li>
+<li>必要な場合に netcdf350_cxx_gcc3.patch が適用されるようにした</li>
+</ul>
+</dd>
+<dt><a name="label-26" id="label-26">Dec 10, 2003 (2.0.0)</a></dt><!-- RDLabel: "Dec 10, 2003 (2.0.0)" -->
+<dd>
+<ul>
+<li>インストールできるパッケージの追加：misc, met, gphys</li>
+<li>module NumRu::Install を大幅に改訂
+<ul>
+<li>ダウンロードした資源を置くディレクトリを選択できるようにした</li>
+<li>インストールする場所を選択できるようにした</li>
+<li>バージョンも含めた依存関係の考慮</li>
+<li>パッチの自動適用</li>
+<li>Cygwin対応</li>
+</ul></li>
+</ul>
+</dd>
+<dt><a name="label-27" id="label-27">Jun 27, 2003 (1.0.0)</a></dt><!-- RDLabel: "Jun 27, 2003 (1.0.0)" -->
+<dd>
+<ul>
+<li>最初のリリース</li>
+<li>Thanks to ごとけんさん：module NumRu::Fetch の作成</li>
+</ul>
+</dd>
+</dl>
+<br>
+<hr>
+<address>
+Copyright (C) 2003-2006 GFD Dennou Club. All rights reserved.
+</address>
+
+
+</body>
+</html>

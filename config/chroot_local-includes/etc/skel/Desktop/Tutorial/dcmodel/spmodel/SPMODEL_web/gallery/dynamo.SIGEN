@@ -1,0 +1,8 @@
+Subject: 回転球殻磁気流体ダイナモ
+Maintainer: 竹広真一
+Update: 2009/01/16
+Description: ダイナモベンチマークの計算結果
+Note:	サンプルプログラムは relative:../3d-shell-wt/mhd-boussinesq/SIGEN.htm 以下を参照.
+
+履歴
+	2009/01/16 竹広真一

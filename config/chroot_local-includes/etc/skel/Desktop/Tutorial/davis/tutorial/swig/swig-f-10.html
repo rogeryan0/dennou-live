@@ -1,0 +1,543 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"> 
+<HTML lang="ja">
+ <HEAD>
+  <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <META name="author" content="KOZUKA Masahiro">
+  <LINK REV=MADE HREF="mailto:kozuka@unyo.marushin.media.kyoto-u.ac.jp">
+  <LINK REL="CONTENTS" href="./index.html">
+  <LINK rel="stylesheet" href="./css/base.css" type="text/css">
+  <LINK rel="stylesheet" href="./css/top.css" type="text/css">
+  <TITLE>SWIG:Ruby Programing for FORTRAN</TITLE>
+ </HEAD>
+ <BODY>
+  <DIV class="title">
+   <SPAN class="main">Ruby Programing for FORTRAN</SPAN>
+   ～構造体をクラスでラッピングする～
+  </DIV>
+  <H2>
+	  はじめに
+  </H2>
+  <P>
+  SWIG1.3.10でtypemapに大幅な変更が加えられました。(入力を$inputで指定するとか、複数の引数を関連付けるなど)今後こちらが主流になっていくことを考え今回からSWIG1.3.10を使うことにします。ここにあるサンプルを試す場合、SWIG1.3.10を使うようにしてください。
+  </P>
+  <H2>
+   内容
+  </H2>
+  <P>
+  GNU Scientific Library(以下GSL)をラップしてみます。
+  GSLについて数学に疎い私は実は全然わかっていないのですが
+  ライブラリとしては
+  </P>
+  <UL>
+	  <LI>さまざまな計算などを行う関数を集めたもので</LI>
+	  <LI>計算に用いるデータごとに最適化された構造体が用意されている</LI>
+  </UL>
+  <P>
+  いることが特徴としてあげられるでしょう。
+  </P>
+  <P>
+  このようなライブラリをラップする場合方針としては
+  </P>
+  <UL>
+	  <LI>内部のデータ構造は表に出さず、Rubyのデータを変換するルーチンを埋め込む</LI>
+	  <LI>内部データの構造ごとにRuby側からも目に見える形(要はクラス)にしてしまう</LI>
+  </UL>
+  <P>
+  の２つの方針がありえるでしょう。
+  </P>
+  <P>
+  前者は扱わないといけないクラスの数が減ってわかりやすい反面、変換のオーバーヘッドが馬鹿にならない可能性があります。
+  </P>
+  <P>
+  後者はクラスがいっぱいあってわかりにくくなってしまうかもしれませんが、効率はよさそうです。
+  </P>
+  <P>
+  どちらも一長一短で悩みどころですが今回は後者を採用します。GSLだとその科学計算用という性格からして比較的データが大規模になるのではと考えたからです。
+  </P>
+  <P>
+  ただ、前者についても場合によってはこちらの方が好ましいことがあり得るのでこれもそのうちSWIGでラップする例を示したいとは思っています。
+  </P>
+  <H2>.</H2>
+  <P>
+  今回は練習というのはなしです。いきなり本番に入るとします。ではインターフェースを見てみましょう。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%cat test_gsl.i
+%module test_gsl
+
+%{
+#include "rubyio.h"
+#include &ltgsl/gsl_vector.h&gt
+
+typedef int BOOLEAN;
+
+VALUE cgsl_vector;
+
+%}
+
+%typemap(out) BOOLEAN {
+  if ($1)
+    $result = Qtrue;
+  else
+    $result = Qfalse;
+}
+
+%typemap(in) FILE *read(OpenFile *fptr) {
+  GetOpenFile($input, fptr);
+  rb_io_check_readable(fptr);
+  $1 = fptr->f;
+}
+
+%typemap(in) FILE *write(OpenFile *fptr) {
+  GetOpenFile($input, fptr);
+  rb_io_check_writable(fptr);
+  $1 = fptr->f;
+}
+
+%typemap(arginit) gsl_vector *self,
+		  gsl_vector *self_return {
+  Data_Get_Struct(self, $1_basetype, $1);
+}
+
+%typemap(ignore) gsl_vector *self,
+		 gsl_vector *self_return {
+}
+
+%typemap(ignore) gsl_vector *self_return_alloc {
+  $1_basetype *self_vector;
+
+  Data_Get_Struct(self, $1_basetype, self_vector);
+  $1 = $1_basetype_alloc(self_vector->size);
+  }
+
+%typemap(ignore) gsl_vector *self_return_cp {
+  $1_basetype *self_vector;
+
+  Data_Get_Struct(self, $1_basetype, self_vector);
+  $1 = $1_basetype_alloc(self_vector->size);
+}
+
+%typemap(argout) gsl_vector *self_return {
+
+  $result = self;
+}
+
+%typemap(argout) gsl_vector *self_return_alloc,
+                 gsl_vector *self_return_cp {
+  $result = Data_Wrap_Struct(c$1_basetype, 0, $1_basetype_free, $1);
+}
+
+%typemap(in) gsl_vector *input {
+  Data_Get_Struct($input, $1_basetype, $1);
+}
+
+%typemap(out) gsl_vector * {
+  $result = Data_Wrap_Struct(c$1_basetype, 0, $1_basetype_free, $1);
+}
+
+%typemap(out) gsl_vector_view {
+
+  gsl_vector *vector;
+
+  vector = gsl_vector_alloc($1.vector.size);
+  *vector = $1.vector;
+  $result = Data_Wrap_Struct(cgsl_vector, 0, gsl_vector_free, vector);
+}
+
+//ラッピングする関数を列挙していく
+
+gsl_vector *gsl_vector_alloc(int n);
+int gsl_vector_fwrite(FILE *write ,gsl_vector *self);
+int gsl_vector_fread(FILE * read, gsl_vector *self);
+int gsl_vector_fprintf(FILE *write, gsl_vector *self, char *input);
+int gsl_vector_fscanf(FILE *read, gsl_vector *self);
+double gsl_vector_get(gsl_vector *self, int i);
+void gsl_vector_set(gsl_vector *self_return, int i, double x);
+void gsl_vector_set_all(gsl_vector *self_return, double x);
+void gsl_vector_set_zero(gsl_vector *self_return);
+void gsl_vector_set_basis(gsl_vector *self_return, int i);
+gsl_vector_view gsl_vector_subvector(gsl_vector *self, int offset, int n);
+gsl_vector_view gsl_vector_subvector_with_stride(gsl_vector *self, int offset, int stride, int n);
+int gsl_vector_memcpy(gsl_vector *self_return_alloc, gsl_vector *self);
+int gsl_vector_swap(gsl_vector *input, gsl_vector *self_return);
+int gsl_vector_swap_elements(gsl_vector *self_return_cp, int i, int j);
+int gsl_vector_reverse(gsl_vector *self_return_cp);
+int gsl_vector_add (gsl_vector *self_return_cp, gsl_vector *input);
+int gsl_vector_sub(gsl_vector *self_return_cp, gsl_vector *input);
+int gsl_vector_mul(gsl_vector *self_return_cp, gsl_vector *input);
+int gsl_vector_div(gsl_vector *self_return_cp, gsl_vector *input);
+int gsl_vector_scale(gsl_vector *self_return_cp, double x);
+int gsl_vector_add_constant(gsl_vector *self_return_cp, double x);
+double gsl_vector_max(gsl_vector *self);
+double gsl_vector_min(gsl_vector *self);
+int gsl_vector_max_index(gsl_vector *self);
+int gsl_vector_min_index(gsl_vector *self);
+BOOLEAN gsl_vector_isnull(gsl_vector *self);
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+  ここではVectorというデータ構造をRuby側で見えるようにします。
+  GSLにおけるCの構造体は
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+gsl_vector
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  です。インターフェースの後半で関数の列挙を行っていますが返り値ないし引数にこの構造体をとっていることがわかります。
+  </P>
+  <P>
+  SWIGは構造体をクラスにラップする部分を自動生成する機能があり、一見これでうまく行きそうに見えます。が、実はこの場合においては全く役に立ちません。
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+void gsl_vector_set(gsl_vector *self_return, int i, double x);
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  gsl_vector_setという関数を例にあげますが、これは名前のとおりgsl_vector型のデータの特定の位置に値を代入するものです。
+  これをSWIGの機能に任せるとどうなるか
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+v = Test_gsl::Vector.new(3)
+Test_gsl::gsl_vector_set(v, 0, 1.0)
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  上のようにして使用するラッパーが出来てしまいます。あるべき形は
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+v = Test_gsl::Vector::new(3)
+v.set(0, 1.0)
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  のはずです。何故こうなってしまうのでしょうか？
+  </P>
+  <P>
+  それはSWIGが今回想定する用途用に作られていないからです。SWIGはCの関数についてRubyではモジュール関数にラップしようとします。そう、SWIGにはこの関数が値をセットするというインスタンスメソッド的なものであるかを把握する手段がないのです。SWIGにしてみれば単なる値を返し、それを得ることが目的である関数としか捉えられないのです。
+  </P>
+  <P>
+  これはSWIGがSimplified Wrapper and Interface Generatorであることを考えると仕方ないと思います。それを判断する手段を埋め込んでしまうとメリットである簡便さが失われてしまうでしょう。
+  </P>
+  <P>
+  もっともSWIGが活用できないわけではありません。(じゃなきゃこんなもの書いていません;p)SWIGには強力なtypemap機能があります。引数から返り値を得る関数をラップする際、
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+int add(int *OUT, int a, int b);
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  のようなインターフェースを書くことが出来ますが、同じように
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+double gsl_vector_get(gsl_vector *self, int i);
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  第一引数はインスタンスから得るのだと指示できるようにすればよいのです。
+  selfによってそれを指示するようにしています。実現するコードが以下となっています。
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+%typemap(arginit) gsl_vector *self,
+		  gsl_vector *self_return {
+  Data_Get_Struct(self, $1_basetype, $1);
+}
+
+%typemap(ignore) gsl_vector *self,
+		 gsl_vector *self_return {
+}
+
+%typemap(ignore) gsl_vector *self_return_alloc {
+  $1_basetype *self_vector;
+
+  Data_Get_Struct(self, $1_basetype, self_vector);
+  $1 = $1_basetype_alloc(self_vector->size);
+}
+
+%typemap(ignore) gsl_vector *self_return_cp {
+  $1_basetype *self_vector;
+
+  Data_Get_Struct(self, $1_basetype, self_vector);
+  $1 = $1_basetype_alloc(self_vector->size);
+}
+
+%typemap(argout) gsl_vector *self_return {
+
+  $result = self;
+}
+
+%typemap(argout) gsl_vector *self_return_cp {
+  $result = Data_Wrap_Struct(c$1_basetype, 0, $1_basetype_free, $1);
+}
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  今回定義しているものは4種類あって
+  </P>
+  <UL>
+	  <LI>self gsl_vector構造体を自分自身から受け取る</LI>
+	  <LI>self_return selfの機能に加え、自分自身を返すようにする</LI>
+	  <LI>self_return_alloc 自身のgsl_vector構造体と同じサイズのものを生成し、それを与える。そしてそれを返す。</LI>
+	  <LI>self_return_cp 自身の持つgsl_vectorをそっくりコピーして関数に渡す。それを返す</LI>
+  </UL>
+  <P>
+  のようになっています。
+  </P>
+  <P>
+  実装については言及すべき点はあまりないでしょう。$1_basetypeというキーワードが見慣れないかもしれませんがこれはtypemapする型、ポインタであればその実体(すなわち、ここだとgsl_vector)に変換されます。直接書かずにこんなものを利用した理由は後述します。
+  </P>
+  <P>
+  typemapには他にも
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+%typemap(out) BOOLEAN {
+  if ($1)
+    $result = Qtrue;
+  else
+    $result = Qfalse;
+}
+          </PRE>
+  </BLOCKQUOTE>
+  <P>
+  や
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+%typemap(in) FILE *read(OpenFile *fptr) {
+  GetOpenFile($input, fptr);
+  rb_io_check_readable(fptr);
+  $1 = fptr->f;
+}
+
+%typemap(in) FILE *write(OpenFile *fptr) {
+  GetOpenFile($input, fptr);
+  rb_io_check_writable(fptr);
+  $1 = fptr->f;
+}
+          </PRE>
+  </BLOCKQUOTE>
+  <P>
+  があります。
+  </P>
+  <P>
+  前者はCにおける真偽をRubyのものに変換するためのもの(上の方でBOOLEANとはintであると定義している)、後者はファイルポインタをIOから受け取るようにします。まあ大したことをしているわけではないので問題ないでしょう。
+  </P>
+  <P>
+  typemapの定義については一区切りつきました。後はラップする関数を列挙していくだけです。関数の性質にあわせてself、self_returnなどどれが好ましいか選んでいきます。
+  </P>
+  <P>
+  で、列挙し終えたらCのコードを生成しましょう。いつも通り(?)
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+% swig -ruby test_gsl.i
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  でいけます。しかし、そのコードをのぞいてみると....
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+void Init_test_gsl(void) {
+    int i;
+    
+    mTest_gsl = rb_define_module("Test_gsl");
+    _mSWIG = rb_define_module_under(mTest_gsl, "SWIG");
+    
+    for (i = 0; swig_types_initial[i]; i++) {
+        swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);
+        SWIG_define_class(swig_types[i]);
+    }
+    
+    rb_define_module_function(mTest_gsl, "gsl_vector_alloc", _wrap_gsl_vector_alloc, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_fwrite", _wrap_gsl_vector_fwrite, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_fread", _wrap_gsl_vector_fread, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_fprintf", _wrap_gsl_vector_fprintf, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_fscanf", _wrap_gsl_vector_fscanf, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_get", _wrap_gsl_vector_get, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_set", _wrap_gsl_vector_set, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_set_all", _wrap_gsl_vector_set_all, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_set_zero", _wrap_gsl_vector_set_zero, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_identity", _wrap_gsl_vector_identity, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_subvector", _wrap_gsl_vector_subvector, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_row", _wrap_gsl_vector_row, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_column", _wrap_gsl_vector_column, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_diagonal", _wrap_gsl_vector_diagonal, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_memcpy", _wrap_gsl_vector_memcpy, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_swap", _wrap_gsl_vector_swap, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_set_row", _wrap_gsl_vector_set_row, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_set_col", _wrap_gsl_vector_set_col, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_swap_rows", _wrap_gsl_vector_swap_rows, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_swap_columns", _wrap_gsl_vector_swap_columns, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_swap_rowcol", _wrap_gsl_vector_swap_rowcol, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_transpose_memcpy", _wrap_gsl_vector_transpose_memcpy, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_transpose", _wrap_gsl_vector_transpose, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_isnull", _wrap_gsl_vector_isnull, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_add", _wrap_gsl_vector_add, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_sub", _wrap_gsl_vector_sub, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_mul_elements", _wrap_gsl_vector_mul_elements, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_div_elements", _wrap_gsl_vector_div_elements, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_scale", _wrap_gsl_vector_scale, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_add_constant", _wrap_gsl_vector_add_constant, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_max", _wrap_gsl_vector_max, -1);
+    rb_define_module_function(mTest_gsl, "gsl_vector_min", _wrap_gsl_vector_min, -1);
+}
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  すべてTest_gslというモジュールの関数になってしまっています。Simplifiedであるゆえしょうがないことですがこのままじゃ使えません。gsl_vector_何某というのも冗長すぎますね。当然Vectorなんてクラスの定義なども存在しません。
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+    rb_define_method(cgsl_vector, "fwrite", _wrap_gsl_vector_fwrite, -1);
+          </PRE>
+  </BLOCKQUOTE>
+  <P>
+  Vectorクラスのメソッドとなるように定義し、gsl_vector_を取り除く。これをすべての関数について行います。(あ、当然その前にVectorクラスを定義しなきゃいけませんが)
+  以下が修正後のInit_test_gsl
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+void Init_test_gsl(void) {
+
+    mTest_gsl = rb_define_module("Test_gsl");
+    cgsl_vector = rb_define_class_under(mTest_gsl, "Vector", rb_cObject);
+
+    rb_define_singleton_method(cgsl_vector, "new", _wrap_gsl_vector_alloc, -1);
+    rb_define_method(cgsl_vector, "fwrite", _wrap_gsl_vector_fwrite, -1);
+    rb_define_method(cgsl_vector, "fread", _wrap_gsl_vector_fread, -1);
+    rb_define_method(cgsl_vector, "fprintf", _wrap_gsl_vector_fprintf, -1);
+    rb_define_method(cgsl_vector, "fscanf", _wrap_gsl_vector_fscanf, -1);
+    rb_define_method(cgsl_vector, "get", _wrap_gsl_vector_get, -1);
+    rb_define_method(cgsl_vector, "set", _wrap_gsl_vector_set, -1);
+    rb_define_method(cgsl_vector, "set_all", _wrap_gsl_vector_set_all, -1);
+    rb_define_method(cgsl_vector, "set_zero", _wrap_gsl_vector_set_zero, -1);
+    rb_define_method(cgsl_vector, "set_basis", _wrap_gsl_vector_set_basis, -1);
+    rb_define_method(cgsl_vector, "subvector", _wrap_gsl_vector_subvector, -1);
+    rb_define_method(cgsl_vector, "subvector_with_stride", _wrap_gsl_vector_subvector_with_stride, -1);
+    rb_define_method(cgsl_vector, "clone", _wrap_gsl_vector_memcpy, -1);
+    rb_define_method(cgsl_vector, "swap", _wrap_gsl_vector_swap, -1);
+    rb_define_method(cgsl_vector, "swap_elements", _wrap_gsl_vector_swap_elements, -1);
+    rb_define_method(cgsl_vector, "reverse", _wrap_gsl_vector_reverse, -1);
+    rb_define_method(cgsl_vector, "add", _wrap_gsl_vector_add, -1);
+    rb_define_method(cgsl_vector, "sub", _wrap_gsl_vector_sub, -1);
+    rb_define_method(cgsl_vector, "mul", _wrap_gsl_vector_mul, -1);
+    rb_define_method(cgsl_vector, "div", _wrap_gsl_vector_div, -1);
+    rb_define_method(cgsl_vector, "scale", _wrap_gsl_vector_scale, -1);
+    rb_define_method(cgsl_vector, "add_constant", _wrap_gsl_vector_add_constant, -1);
+    rb_define_method(cgsl_vector, "max", _wrap_gsl_vector_max, -1);
+    rb_define_method(cgsl_vector, "min", _wrap_gsl_vector_min, -1);
+    rb_define_method(cgsl_vector, "max_index", _wrap_gsl_vector_max_index, -1);
+    rb_define_method(cgsl_vector, "min_index", _wrap_gsl_vector_min_index, -1);
+    rb_define_method(cgsl_vector, "null?", _wrap_gsl_vector_isnull, -1);
+}
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  これでVectorクラスの作成は終わりです。typemapを作るのに若干手間取りましたが、実際のコードを作っていく部分は非常に楽でした。
+  </P>
+  <P>
+  さて、最後にいつものようにコンパイルしてテストしてみましょう。mkmfを使ってMakefileを作り、それを修正します。
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+%cat Makefile.rb
+require 'mkmf'
+create_makefile('test_gsl')
+%ruby Makefile.rb
+%vi Makefile
+%diff -u Makefile Makefile.bak
+--- Makefile.bak        Thu Dec 27 19:16:53 2001
++++ Makefile    Thu Dec 27 19:16:53 2001
+@@ -34,7 +34,7 @@
+ #### End of system configuration section. ####
+
+ LOCAL_LIBS =
+-LIBS = -L. -l$(RUBY_INSTALL_NAME) -lc
++LIBS = -L. -l$(RUBY_INSTALL_NAME) -lc -lgsl
+ OBJS = test_gsl_wrap.o
+
+ TARGET = test_gsl
+%
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  今回はGSLがRubyと同じ/usr/local/以下にインストールされていたので-L、-Iは追加していませんが、環境によっては通してやる必要があるでしょう。後はmake
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+%make
+gcc -fPIC -g -O2 -fPIC  -I/usr/local/lib/ruby/1.7/i686-linux \
+-I/usr/local/include    -c test_gsl_wrap.c
+gcc -shared  -L/usr/local/lib  -o test_gsl.so test_gsl_wrap.o -L. -lruby\
+ -lc -lgsl
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  最後にテストしましょう。使い方がイマイチわかっていないので全部は出来ませんが....
+  </P>
+  <BLOCKQUOTE>
+	  <PRE>
+cat vector.rb
+#!/usr/local/bin/ruby
+require 'test_gsl'
+include Test_gsl
+
+v = Vector::new(3)
+v.set(0, 0.0)
+v.set(1, 1.0)
+v.set(2, 2.0)
+
+p v.get(0)
+p v.get(1)
+p v.get(2)
+
+v2 = Vector::new(3)
+v2.set(0, 3.0)
+v3 = v.add(v2)
+p v3.get(0)
+
+v4 = v.reverse
+p v4.get(0)
+p v4.get(1)
+p v4.get(2)
+
+v5 = v.add_constant(10.0)
+p v5.get(0)
+p v5.get(1)
+p v5.get(2)
+%ruby vector.rb
+0.0
+1.0
+2.0
+3.0
+2.0
+1.0
+0.0
+10.0
+11.0
+12.0
+	  </PRE>
+  </BLOCKQUOTE>
+  <P>
+  とりあえず、基本的な操作は出来ているようですね。
+  </P>
+  <P>
+   <A href="swig-f-9.html" accesskey="b">前に戻る</A>
+   <A href="swig-f.html" accesskey="in">[目次]</A>
+  <DIV class="footer">
+   <A href="http://jigsaw.w3.org/css-validator">
+    <IMG style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss.gif" alt="Valid CSS!">
+   </A>
+  </DIV>
+  </BODY>
+</HTML>

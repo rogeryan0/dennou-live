@@ -1,0 +1,2030 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: la_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">la_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/la_module_f90.html">
+
+                src/la_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="la_module.html">la_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a href="../files/src/la_module_f90.html">la_module.f90</a>,v 1.5
+2009-02-28 21:33:47 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/l_module モジュールは球面上での経度方向に一様な帯状的子午面 2 次元
+流体運動をルジャンドル多項式を用いたスペクトル法によって数値計算する ための
+Fortran90 関数を提供する.
+</p>
+<p>
+内部で ISPACK の LTPACK の Fortran77 サブルーチンを呼んでいる.
+スペクトルデータおよび格子点データの格納方法や変換の詳しい計算法に ついては
+ISPACK/LTPACK のマニュアルを参照されたい.
+</p>
+<h2>関数・変数の名前と型について</h2>
+<h3>命名法</h3>
+<ul>
+<li>関数名の先頭 (la_, ya_, l_, y_) は, 返す値の形を示している.
+
+<table>
+<tr><td valign="top">la_ :</td><td>スペクトル(ルジャンドル多項式成分)データ(鉛直多層)
+
+</td></tr>
+<tr><td valign="top">ya_ :</td><td>2 次元緯度鉛直格子点データ
+
+</td></tr>
+<tr><td valign="top">l_  :</td><td>スペクトル(ルジャンドル多項式成分)データ
+
+</td></tr>
+<tr><td valign="top">y_  :</td><td>1 次元緯度格子点データ
+
+</td></tr>
+</table>
+</li>
+<li>関数名の間の文字列(GradLat, DivLat, Lapla, LaplaInv)は,
+その関数の作用を表している.
+
+</li>
+<li>関数名の最後 (_la, _ya, _l, _y) は, 入力変数の形スペクトルデータ
+および格子点データであることを示している.
+
+<table>
+<tr><td valign="top">_la :</td><td>スペクト(ルジャンドル多項式成分)ルデータ(鉛直多層)
+
+</td></tr>
+<tr><td valign="top">_ya :</td><td>緯度鉛直 2 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">_l  :</td><td>スペクト(ルジャンドル多項式成分)ルデータ
+
+</td></tr>
+<tr><td valign="top">_y  :</td><td>緯度方向 1 次元格子点データ
+
+</td></tr>
+</table>
+</li>
+</ul>
+<h3>各データの種類の説明</h3>
+<ul>
+<li>la : スペクトルデータ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:nm,:).
+
+</li>
+<li>nm はルジャンドル多項式の最大次数であり, サブルーチン <a
+href="la_module.html#M000754">la_Initial</a> にてあらかじめ設定しておく.
+
+</li>
+</ul>
+</li>
+<li>ya : 緯度方向 1 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(1:jm,:).
+
+</li>
+</ul>
+</li>
+<li>l : スペクトルデータ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:nm).
+
+</li>
+<li>nm はルジャンドル多項式の最大次数であり, サブルーチン <a
+href="la_module.html#M000754">la_Initial</a> にて あらかじめ設定しておく.
+
+</li>
+</ul>
+</li>
+<li>y : 緯度方向 1 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(1:jm).
+
+</li>
+</ul>
+</li>
+<li>la_, l_ で始まる関数が返す値はスペクトルデータに同じ.
+
+</li>
+<li>ya_, y_ で始まる関数が返す値は 2, 1 次元格子点データに同じ.
+
+</li>
+<li>スペクトルデータに対する微分等の作用とは, 対応する格子点データに
+微分などを作用させたデータをスペクトル変換したものことである.
+
+</li>
+</ul>
+<h2>変数・手続き群の要約</h2>
+<h4>初期化</h4>
+<table>
+<tr><td valign="top"><a href="la_module.html#M000754">la_Initial</a> :</td><td>スペクトル変換の格子点数, 波数, 領域の大きさの設定
+
+</td></tr>
+</table>
+<h4>座標変数</h4>
+<table>
+<tr><td valign="top"><a href="la_module.html#M000766">y_Lat</a>        :</td><td>格子点座標(緯度, 経度座標)を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000767">y_Lat_Weight</a> :</td><td>重み座標を格納した 1 次元配列
+
+</td></tr>
+</table>
+<h4>基本変換</h4>
+<table>
+<tr><td valign="top"><a href="la_module.html#M000755">ya_la</a> :</td><td>スペクトルデータから格子データへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000756">la_ya</a> :</td><td>格子データからスペクトルデータへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000768">y_l</a>   :</td><td>スペクトルデータから格子データへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000769">l_y</a>   :</td><td>格子データからスペクトルデータへの変換
+
+</td></tr>
+</table>
+<h4>微分</h4>
+<table>
+<tr><td valign="top"><a href="la_module.html#M000757">la_Lapla_la</a>    :</td><td>スペクトルデータにラプラシアンを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000758">la_LaplaInv_la</a> :</td><td>スペクトルデータにラプラシアンの逆変換を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000759">ya_GradLat_la</a>  :</td><td>スペクトルデータに勾配型緯度微分∂/∂φを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000760">la_DivLat_ya</a>   :</td><td>格子データに 発散型緯度微分 1/cosφ・∂(g cosφ)/∂φを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000770">l_Lapla_l</a>      :</td><td>スペクトルデータにラプラシアンを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000771">l_LaplaInv_l</a>   :</td><td>スペクトルデータにラプラシアンの逆変換を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000772">y_GradLat_l</a>    :</td><td>スペクトルデータに勾配型緯度微分∂/∂φを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000773">l_DivLat_y</a>     :</td><td>格子データに 発散型緯度微分 1/cosφ・∂(g cosφ)/∂φを作用させる
+
+</td></tr>
+</table>
+<h4>微分(λ,μ=sinφ 座標)</h4>
+<table>
+<tr><td valign="top"><a href="la_module.html#M000761">ya_GradMu_la</a>   :</td><td>スペクトルデータに 勾配型緯度微分 (1-μ^2)∂/∂μを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000762">la_DivMu_ya</a>    :</td><td>格子データに発散型緯度微分∂/∂μを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000774">y_GradMu_l</a>     :</td><td>スペクトルデータに 勾配型緯度微分 (1-μ^2)∂/∂μを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000775">l_DivMu_y</a>      :</td><td>格子データに発散型緯度微分∂/∂μを作用させる
+
+</td></tr>
+</table>
+<h4>補間</h4>
+<table>
+<tr><td valign="top">Interpolate_la :</td><td>スペクトルデータから任意の点での値を求める.
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000778">Interpolate_l</a>  :</td><td>スペクトルデータから任意の点での値を求める.
+
+</td></tr>
+</table>
+<h4>積分・平均</h4>
+<table>
+<tr><td valign="top"><a href="la_module.html#M000763">a_IntLat_ya</a>, <a href="la_module.html#M000764">a_AvrLat_ya</a>   :</td><td>2 次元格子点データの緯度方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="la_module.html#M000776">IntLat_y</a>, <a href="la_module.html#M000777">AvrLat_y</a>         :</td><td>1 次元格子点データの緯度方向積分および平均
+
+</td></tr>
+</table>
+<h4>スペクトル解析</h4>
+<p>
+作成中
+</p>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000777">AvrLat_y</a>&nbsp;&nbsp;
+
+        <a href="#M000776">IntLat_y</a>&nbsp;&nbsp;
+
+        <a href="#M000778">Interpolate_l</a>&nbsp;&nbsp;
+
+        <a href="#M000764">a_AvrLat_ya</a>&nbsp;&nbsp;
+
+        <a href="#M000763">a_IntLat_ya</a>&nbsp;&nbsp;
+
+        <a href="#M000765">a_Interpolate_la</a>&nbsp;&nbsp;
+
+        <a href="#M000773">l_DivLat_y</a>&nbsp;&nbsp;
+
+        <a href="#M000775">l_DivMu_y</a>&nbsp;&nbsp;
+
+        <a href="#M000771">l_LaplaInv_l</a>&nbsp;&nbsp;
+
+        <a href="#M000770">l_Lapla_l</a>&nbsp;&nbsp;
+
+        <a href="#M000769">l_y</a>&nbsp;&nbsp;
+
+        <a href="#M000760">la_DivLat_ya</a>&nbsp;&nbsp;
+
+        <a href="#M000762">la_DivMu_ya</a>&nbsp;&nbsp;
+
+        <a href="#M000758">la_LaplaInv_la</a>&nbsp;&nbsp;
+
+        <a href="#M000757">la_Lapla_la</a>&nbsp;&nbsp;
+
+        <a href="#M000754">la_initial</a>&nbsp;&nbsp;
+
+        <a href="#M000756">la_ya</a>&nbsp;&nbsp;
+
+        <a href="#M000772">y_GradLat_l</a>&nbsp;&nbsp;
+
+        <a href="#M000774">y_GradMu_l</a>&nbsp;&nbsp;
+
+        <a href="#M000766">y_Lat</a>&nbsp;&nbsp;
+
+        <a href="#M000767">y_Lat_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M000768">y_l</a>&nbsp;&nbsp;
+
+        <a href="#M000759">ya_GradLat_la</a>&nbsp;&nbsp;
+
+        <a href="#M000761">ya_GradMu_la</a>&nbsp;&nbsp;
+
+        <a href="#M000755">ya_la</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+
+        <span class="include-name"><a href="l_module.html">l_module</a></span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000777" class="method-detail">
+        <a name="M000777"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">AvrLat_y</span><span class="method-args">( y_data ) result(AvrLat_y)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000777">AvrLat_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元緯度格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの緯度(Y)方向平均.
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000657">l_module#AvrLat_y</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000776" class="method-detail">
+        <a name="M000776"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">IntLat_y</span><span class="method-args">( y_data ) result(IntLat_y)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000776">IntLat_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元緯度(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元緯度(Y)格子点データの Y 方向積分.
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000656">l_module#IntLat_y</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000778" class="method-detail">
+        <a name="M000778"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">Interpolate_l</span><span class="method-args">( l_data, alat ) result(Interpolate_l)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000778">Interpolate_l</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間した値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l_data(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alat  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間する位置(緯度)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+緯度 alat における関数値を そのルジャンドル変換係数 l_data から補間計算する
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000658">l_module#Interpolate_l</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000764" class="method-detail">
+        <a name="M000764"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000764" class="method-signature">
+
+
+
+          <span class="method-name">a_AvrLat_ya</span><span class="method-args">( ya_data ) result(a_AvrLat_ya)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000764">a_AvrLat_ya</a>(size(ya_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ya_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 緯度鉛直格子点データ(1:jm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度鉛直格子点データの緯度(Y)方向平均.
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000764-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000764-source">
+<pre>
+    function a_AvrLat_ya(ya_data)
+      !
+      ! 2 次元緯度鉛直格子点データの緯度(Y)方向平均.
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), intent(in) :: ya_data(:,:)
+      !(in)  緯度鉛直格子点データ(1:jm,:)
+
+      real(8)             :: a_AvrLat_ya(size(ya_data,2))
+      !(out) 平均値
+
+      a_AvrLat_ya = a_IntLat_ya(ya_data)/sum(y_Lat_weight)
+
+    end function a_AvrLat_ya
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000763" class="method-detail">
+        <a name="M000763"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000763" class="method-signature">
+
+
+
+          <span class="method-name">a_IntLat_ya</span><span class="method-args">( ya_data ) result(a_IntLat_ya)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000763">a_IntLat_ya</a>(size(ya_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ya_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 緯度鉛直格子点データ(1:jm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度鉛直格子点データの緯度方向積分.
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000763-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000763-source">
+<pre>
+    function a_IntLat_ya(ya_data)
+      !
+      ! 2 次元緯度鉛直格子点データの緯度方向積分.
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), intent(in) :: ya_data(:,:)
+      !(in)  緯度鉛直格子点データ(1:jm,:)
+
+      real(8)             :: a_IntLat_ya(size(ya_data,2))
+      !(out) 積分値
+      
+      integer :: k
+
+      do k=1,size(ya_data,2)
+         a_IntLat_ya(k) = sum(ya_data(:,k) * y_Lat_weight)
+      end do
+
+    end function a_IntLat_ya
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000765" class="method-detail">
+        <a name="M000765"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000765" class="method-signature">
+
+
+
+          <span class="method-name">a_Interpolate_la</span><span class="method-args">( la_data, alat ) result(a_Interpolate_la)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000765">a_Interpolate_la</a>(size(la_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間した値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>la_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> スペクトルデータ(0:nm,:)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alat  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間する位置(緯度)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+緯度 alat における関数値を そのルジャンドル変換係数 la_data
+から補間計算する
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000765-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000765-source">
+<pre>
+    function a_Interpolate_la(la_data,alat)
+      !
+      ! 緯度 alat における関数値を
+      ! そのルジャンドル変換係数 la_data から補間計算する
+      !
+      real(8), intent(IN) :: la_data(:,:)
+      ! スペクトルデータ(0:nm,:)
+
+      real(8), intent(IN) :: alat
+      ! 補間する位置(緯度)
+
+      real(8)             :: a_Interpolate_la(size(la_data,2))
+      ! 補間した値
+      
+      integer               :: k
+
+      do k=1,size(la_data,2)
+         a_Interpolate_la(k) = Interpolate_l(la_data(:,k),alat)
+      end do
+
+    end function a_Interpolate_la
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000773" class="method-detail">
+        <a name="M000773"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_DivLat_y</span><span class="method-args">( y_data ) result(l_DivLat_y)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000773">l_DivLat_y</a>(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型緯度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型緯度微分 1/cosφ・∂(f cosφ)/∂φ を作用させて
+スペクトルデータに変換して返す.
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000653">l_module#l_DivLat_y</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000775" class="method-detail">
+        <a name="M000775"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_DivMu_y</span><span class="method-args">( y_data ) result(l_DivMu_y)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000775">l_DivMu_y</a>(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型緯度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型緯度微分 ∂/∂μ (μ=sinφ)を作用させて
+スペクトルデータに変換して返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000655">l_module#l_DivMu_y</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000771" class="method-detail">
+        <a name="M000771"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_LaplaInv_l</span><span class="method-args">( l_data ) result(l_LaplaInv_l)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000771">l_LaplaInv_l</a>(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの逆ラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l_data(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに逆ラプラシアン
+</p>
+<pre>
+   ▽^{-2}
+     =[1/cosφ・∂/∂φ(cosφ∂/∂φ)]^{-1}
+</pre>
+<p>
+を作用する.
+</p>
+<p>
+スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000651">l_module#l_LaplaInv_l</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000770" class="method-detail">
+        <a name="M000770"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_Lapla_l</span><span class="method-args">( l_data ) result(l_Lapla_l)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000770">l_Lapla_l</a>(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 入力スペクトルデータのラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l_data(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータにラプラシアン
+</p>
+<pre>
+   ▽^2 = 1/cosφ・∂/∂φ(cosφ∂/∂φ)
+</pre>
+<p>
+を作用する.
+</p>
+<p>
+スペクトルデータのラプラシアンとは, 対応する格子点データに
+ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000650">l_module#l_Lapla_l</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000769" class="method-detail">
+        <a name="M000769"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_y</span><span class="method-args">( y_data ) result(l_y)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000769">l_y</a>(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データからスペクトルデータへ変換する
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000649">l_module#l_y</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000760" class="method-detail">
+        <a name="M000760"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000760" class="method-signature">
+
+
+
+          <span class="method-name">la_DivLat_ya</span><span class="method-args">( ya_data ) result(la_DivLat_ya)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000760">la_DivLat_ya</a>(0:nm,size(ya_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型緯度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ya_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ(1:jm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型緯度微分 1/cosφ・∂(f cosφ)/∂φ を作用させて
+スペクトルデータに変換して返す(多層用)..
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000760-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000760-source">
+<pre>
+    function la_DivLat_ya(ya_data)
+      !
+      ! 格子点データに発散型緯度微分 1/cosφ・∂(f cosφ)/∂φ を作用させて
+      ! スペクトルデータに変換して返す(多層用).. 
+      !
+      real(8), intent(in)  :: ya_data(:,:)
+      !(in) 入力格子点データ(1:jm,:)
+
+      real(8)              :: la_DivLat_ya(0:nm,size(ya_data,2))
+      !(out) 格子点データを発散型緯度微分したスペクトルデータ
+
+      integer              :: k
+
+      do k=1,size(ya_data,2)
+         la_DivLat_ya(:,k) = l_DivLat_y(ya_data(:,k))
+      end do
+
+    end function la_DivLat_ya
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000762" class="method-detail">
+        <a name="M000762"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000762" class="method-signature">
+
+
+
+          <span class="method-name">la_DivMu_ya</span><span class="method-args">( ya_data ) result(la_DivMu_ya)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000762">la_DivMu_ya</a>(0:nm,size(ya_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型緯度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ya_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ(1:jm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型緯度微分 ∂/∂μ (μ=sinφ)を作用させて
+スペクトルデータに変換して返す(多層用).
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000762-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000762-source">
+<pre>
+    function la_DivMu_ya(ya_data)
+      !
+      ! 格子点データに発散型緯度微分 ∂/∂μ (μ=sinφ)を作用させて
+      ! スペクトルデータに変換して返す(多層用).
+      !
+      real(8), intent(in)  :: ya_data(:,:)
+      !(in) 入力格子点データ(1:jm,:)
+
+      real(8)              :: la_DivMu_ya(0:nm,size(ya_data,2))
+      !(out) 格子点データを発散型緯度微分したスペクトルデータ
+
+      integer              :: k
+
+      do k=1,size(ya_data,2)
+         la_DivMu_ya(:,k) = l_DivMu_y(ya_data(:,k))
+      end do
+
+    end function la_DivMu_ya
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000758" class="method-detail">
+        <a name="M000758"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000758" class="method-signature">
+
+
+
+          <span class="method-name">la_LaplaInv_la</span><span class="method-args">( la_data ) result(la_LaplaInv_la)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000758">la_LaplaInv_la</a>(0:nm,size(la_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの逆ラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>la_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ(0:nm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに逆ラプラシアン
+</p>
+<pre>
+   ▽^{-2}
+     =[1/cosφ・∂/∂φ(cosφ∂/∂φ)]^{-1}
+</pre>
+<p>
+を作用する(多層用).
+</p>
+<p>
+スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000758-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000758-source">
+<pre>
+    function la_LaplaInv_la(la_data)
+      !
+      ! 入力スペクトルデータに逆ラプラシアン
+      !
+      !    ▽^{-2}
+      !      =[1/cosφ・∂/∂φ(cosφ∂/∂φ)]^{-1}
+      !
+      ! を作用する(多層用). 
+      !
+      ! スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+      ! 逆ラプラシアンを作用させたデータのスペクトル変換のことである. 
+      !
+      real(8), intent(in)  :: la_data(:,:)
+      !(in) 入力スペクトルデータ(0:nm,:)
+
+      real(8)              :: la_LaplaInv_la(0:nm,size(la_data,2))
+      !(out) スペクトルデータの逆ラプラシアン
+
+      integer               :: k
+
+      do k=1,size(la_data,2)
+         la_LaplaInv_la(:,k) = l_LaplaInv_l(la_data(:,k))
+      end do
+    end function la_LaplaInv_la
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000757" class="method-detail">
+        <a name="M000757"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000757" class="method-signature">
+
+
+
+          <span class="method-name">la_Lapla_la</span><span class="method-args">( la_data ) result(la_Lapla_la)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000757">la_Lapla_la</a>(0:nm,size(la_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 入力スペクトルデータのラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>la_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ(0:nm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータにラプラシアン
+</p>
+<pre>
+   ▽^2 = 1/cosφ・∂/∂φ(cosφ∂/∂φ)
+</pre>
+<p>
+を作用する(多層用).
+</p>
+<p>
+スペクトルデータのラプラシアンとは, 対応する格子点データに
+ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000757-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000757-source">
+<pre>
+    function la_Lapla_la(la_data)
+      !
+      ! 入力スペクトルデータにラプラシアン
+      !
+      !    ▽^2 = 1/cosφ・∂/∂φ(cosφ∂/∂φ)
+      !
+      ! を作用する(多層用). 
+      !
+      ! スペクトルデータのラプラシアンとは, 対応する格子点データに
+      ! ラプラシアンを作用させたデータのスペクトル変換のことである. 
+      !
+      real(8), intent(in)  :: la_data(:,:)
+      !(in) 入力スペクトルデータ(0:nm,:)
+
+      real(8)              :: la_Lapla_la(0:nm,size(la_data,2))
+      !(out) 入力スペクトルデータのラプラシアン
+
+      integer               :: k
+
+      do k=1,size(la_data,2)
+         la_Lapla_la(:,k) = l_Lapla_l(la_data(:,k))
+      end do
+      
+    end function la_Lapla_la
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000754" class="method-detail">
+        <a name="M000754"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000754" class="method-signature">
+
+
+
+          <span class="method-name">la_initial</span><span class="method-args">( n_in, j_in, [l_init] ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>n_in  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 切断波数の設定
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>j_in  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点数(南北)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l_init  </tt></b>  <tt> </tt> :</td><td><tt>logical,intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) l_initial の call スイッチ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトル変換の格子点数, 波数を設定する.
+</p>
+<p>
+他の関数を呼ぶ前に, 最初にこのサブルーチンを呼んで初期設定を
+しなければならない.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000754-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000754-source">
+<pre>
+    subroutine la_initial(n_in,j_in,l_init)
+      !
+      ! スペクトル変換の格子点数, 波数を設定する.
+      !
+      ! 他の関数を呼ぶ前に, 最初にこのサブルーチンを呼んで初期設定を
+      ! しなければならない. 
+      !
+      integer,intent(in) :: j_in              !(in) 格子点数(南北)
+      integer,intent(in) :: n_in              !(in) 切断波数の設定
+      logical,intent(in),optional :: l_init   !(in) l_initial の call スイッチ
+
+      if ( .not. present(l_init) ) then
+         call l_Initial(n_in,j_in)
+      else if ( l_init ) then
+         call l_Initial(n_in,j_in)
+      endif
+
+      jm = j_in 
+       nm = n_in
+
+      call MessageNotify( 'M','la_initial','la_module (2009/01/09) is initialized')
+
+    end subroutine la_initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000756" class="method-detail">
+        <a name="M000756"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000756" class="method-signature">
+
+
+
+          <span class="method-name">la_ya</span><span class="method-args">( ya_data ) result(la_ya)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000756">la_ya</a>(0:nm,size(ya_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ya_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ(1:jm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データからスペクトルデータへ変換する(多層用).
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000756-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000756-source">
+<pre>
+    function la_ya(ya_data)
+      !
+      ! 格子データからスペクトルデータへ変換する(多層用).
+      !
+      real(8), intent(in)   :: ya_data(:,:)
+      !(in) スペクトルデータ(1:jm,:)
+
+      real(8)               :: la_ya(0:nm,size(ya_data,2))
+      !(out) 格子点データ
+
+      integer               :: k
+
+      do k=1,size(ya_data,2)
+         la_ya(:,k) = l_y(ya_data(:,k))
+      end do
+
+    end function la_ya
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000772" class="method-detail">
+        <a name="M000772"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_GradLat_l</span><span class="method-args">( l_data ) result(y_GradLat_l)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000772">y_GradLat_l</a>(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型緯度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l_data(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型緯度微分 ∂/∂φ を作用させて
+格子点データに変換して返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000652">l_module#y_GradLat_l</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000774" class="method-detail">
+        <a name="M000774"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_GradMu_l</span><span class="method-args">( l_data ) result(y_GradMu_l)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000774">y_GradMu_l</a>(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型緯度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l_data(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型緯度微分 (1-μ^2)∂/∂μ (μ=sinφ)
+を作用させて格子点データに変換して返す.
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000654">l_module#y_GradMu_l</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000766" class="method-detail">
+        <a name="M000766"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Lat</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000766">y_Lat</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 緯度経度
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000645">l_module#y_Lat</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000767" class="method-detail">
+        <a name="M000767"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Lat_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000767">y_Lat_Weight</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 座標重み
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000646">l_module#y_Lat_Weight</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000768" class="method-detail">
+        <a name="M000768"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_l</span><span class="method-args">( l_data ) result(y_l)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000768">y_l</a>(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l_data(0:nm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子データへ変換する
+</p>
+<p>
+Original external subprogram is <a
+href="l_module.html#M000648">l_module#y_l</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000759" class="method-detail">
+        <a name="M000759"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000759" class="method-signature">
+
+
+
+          <span class="method-name">ya_GradLat_la</span><span class="method-args">( la_data ) result(ya_GradLat_la)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000759">ya_GradLat_la</a>(1:jm,size(la_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型緯度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>la_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ(0:nm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型緯度微分 ∂/∂φ を作用させて
+格子点データに変換して返す(多層用).
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000759-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000759-source">
+<pre>
+    function ya_GradLat_la(la_data)
+      !
+      ! スペクトルデータに勾配型緯度微分 ∂/∂φ を作用させて
+      ! 格子点データに変換して返す(多層用).
+      !
+      real(8), intent(in)  :: la_data(:,:)
+      !(in) 入力スペクトルデータ(0:nm,:)
+
+      real(8)              :: ya_GradLat_la(1:jm,size(la_data,2))
+      !(out) スペクトルデータを勾配型緯度微分した格子点データ
+
+      integer               :: k
+
+      do k=1,size(la_data,2)
+         ya_GradLat_la(:,k) = y_GradLat_l(la_data(:,k))
+      end do
+
+    end function ya_GradLat_la
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000761" class="method-detail">
+        <a name="M000761"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000761" class="method-signature">
+
+
+
+          <span class="method-name">ya_GradMu_la</span><span class="method-args">( la_data ) result(ya_GradMu_la)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000761">ya_GradMu_la</a>(1:jm,size(la_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型緯度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>la_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ(0:nm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型緯度微分 (1-μ^2)∂/∂μ (μ=sinφ)
+を作用させて格子点データに変換して返す(多層用)..
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000761-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000761-source">
+<pre>
+    function ya_GradMu_la(la_data)
+      !
+      ! スペクトルデータに勾配型緯度微分 (1-μ^2)∂/∂μ  (μ=sinφ)
+      ! を作用させて格子点データに変換して返す(多層用).. 
+      !
+      real(8), intent(in)  :: la_data(:,:)
+      !(in) 入力スペクトルデータ(0:nm,:)
+
+      real(8)              :: ya_GradMu_la(1:jm,size(la_data,2))
+      !(out) スペクトルデータを勾配型緯度微分した格子点データ
+
+      integer              :: k
+
+      do k=1,size(la_data,2)
+         ya_GradMu_la(:,k) = y_GradMu_l(la_data(:,k))
+      end do
+
+    end function ya_GradMu_la
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000755" class="method-detail">
+        <a name="M000755"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000755" class="method-signature">
+
+
+
+          <span class="method-name">ya_la</span><span class="method-args">( la_data ) result(ya_la)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="la_module.html#M000755">ya_la</a>(1:jm,size(la_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>la_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ(0:nm,:)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子データへ変換する(多層用).
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000755-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000755-source">
+<pre>
+    function ya_la(la_data)
+      !
+      ! スペクトルデータから格子データへ変換する(多層用).
+      !
+      real(8), intent(in)   :: la_data(:,:)
+      !(in) スペクトルデータ(0:nm,:)
+
+      real(8)               :: ya_la(1:jm,size(la_data,2))
+      !(out) 格子点データ
+
+      integer               :: k
+
+      do k=1,size(la_data,2)
+         ya_la(:,k) = y_l(la_data(:,k))
+      end do
+
+    end function ya_la
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

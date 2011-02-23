@@ -1,0 +1,10 @@
+Subject:  3 次元回転球殻内での粘性流体(非圧縮ナビエーストークス方程式) : 自由減衰乱流問題ソースプログラム
+  * 2nd order Adams-Bashforth + Clank-Nicolson スキーム
+  * リスタート可能版
+  * パラメターを NAMELISTにて設定可能
+
+Maintainer: 竹広真一
+Update: 2005/02/11
+
+履歴
+	2005/02/11 竹広真一

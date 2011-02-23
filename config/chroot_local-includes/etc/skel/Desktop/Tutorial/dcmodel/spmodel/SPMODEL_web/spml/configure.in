@@ -1,0 +1,514 @@
+dnl= Template file to create configure script for spml
+dnl
+dnl  Authors::   Eizi TOYODA, Shin-ichi TAKEHIRO, Yasuhiro Morikawa, Youhei SASAKI
+dnl  Version::   $Id: configure.in,v 1.14 2009-07-06 09:04:31 uwabami Exp $
+dnl  Tag Name::  $Name:  $
+dnl  Copyright:: Copyright (C) GFD Dennou Club, 2000-2006. All rights reserved.
+dnl  License::   See COPYRIGHT[link:COPYRIGHT]
+dnl
+dnl== Overview
+dnl
+dnl This file is template file to create "configure" script by
+dnl autoconf 2.59. Some functions are defined in "aclocal.m4"
+dnl (for example, DC_ARG_WITH).
+dnl
+
+
+############################################################
+#== This puts the cvs ID tag in the output configure script.
+AC_REVISION($Id: configure.in,v 1.14 2009-07-06 09:04:31 uwabami Exp $)dnl
+
+############################################################
+#== StartUp
+#
+## Running autoconf on this file will trigger a warning if
+## autoconf is not at least version 2.59.
+AC_PREREQ(2.59)
+
+## Initialize autoconf with name of project, version, and support
+## email address.
+AC_INIT(spml, 0.5, dcstaff@gfd-dennou.org)
+
+## Autoconf will check for the existance of this file before proceeding.
+dnl AC_CONFIG_SRCDIR([src/w_deriv_module.f90])
+AC_PREFIX_DEFAULT(/usr/local/spmodel)
+
+# Find out about the host we're building on.
+AC_CANONICAL_HOST
+
+
+############################################################
+#== Check cross-compiling
+#
+CROSS_COMPILING=$cross_compiling
+AC_SUBST(CROSS_COMPILING)
+
+
+############################################################
+#== Check fortran Compiler and Module type
+#
+sh ./chkfort.sh || exit
+eval `cat chkfort.cfg`
+AC_SUBST(FC)
+AC_SUBST(MOD)
+AC_SUBST(MODPATHFLAG)
+AC_SUBST(F90MODTYPE)
+: ${IFCCEM:=:}
+AC_SUBST(IFCCEM)
+
+if test X"$MOD" = X".f90" ; then
+        CLEAN_MODS=
+else
+        CLEAN_MODS="*$MOD"
+fi
+AC_SUBST(CLEAN_MODS)
+
+#
+#== Set host type HOST_CPU
+HOST_CPU=$host_cpu
+AC_SUBST(HOST_CPU)
+
+
+############################################################
+#== Set Install Command
+#
+
+case "$build" in
+powerpc-ibm-aix*)
+        INSTALL="\$(CP)"
+        INSTALLBIN="\$(CP)"
+        INSTALLDIR="\$(MKDIR)"
+        echo "\"install\" command is not used"
+        ;;
+*)
+        INSTALL="install -m 644"
+        INSTALLBIN="install -m 755"
+        INSTALLDIR="install -d -m 755"
+        ;;
+esac
+AC_SUBST(INSTALL)
+AC_SUBST(INSTALLBIN)
+AC_SUBST(INSTALLDIR)
+
+
+
+############################################################
+#
+#== Set variables LINKF, which means link processes.
+#
+# This code is imported from the patch of netcdf 3.6.0-p1 for
+# SX and ES by T.Kagimoto, and modified.
+#
+#=== Specified by user --with-linker option
+#
+DC_ARG_WITH(linker, [Linker (If you use non-fortran compiler)], ac_cv_LINKER, [
+                AC_MSG_RESULT((no))
+])
+
+if test X"$ac_cv_LINKER" != X"" ; then
+    LINKF="$ac_cv_LINKER \$(INCLUDE_GT) \$(INCLUDES)"
+else
+    LINKF='$(FC) $(INCLUDE_GT) $(FFLAGS) $(SYSFFLAGS) $(INCLUDES)'
+    case "$host_cpu" in
+        sx5*|sx6*|sx7*|sx8*|es*)
+            if test ! "$CROSS_COMPILING" = "yes" && \
+              test ! "$CROSS_COMPILING" = "maybe" ; then
+                LINKF='c++ $(INCLUDE_GT) $(INCLUDES) -f90lib'
+            else
+                LINKF='sxc++ $(INCLUDE_GT) $(INCLUDES) -f90lib'
+            fi
+            ;;
+        *)
+            ;;
+    esac
+fi
+
+AC_SUBST(LINKF)
+
+
+dnl #
+dnl # === CHARSET ===
+dnl #
+dnl
+dnl AC_CHECK_PROG(SJISTOEUC, nkf, nkf -xe)
+dnl AC_CHECK_PROG(SJISTOEUC, iconv, iconv -f SHIFT_JIS -t EUC-JP)
+dnl AC_CHECK_PROG(EUCTOSJIS, nkf, nkf -xs)
+dnl AC_CHECK_PROG(EUCTOSJIS, iconv, iconv -f EUC-JP -t SHIFT_JIS)
+dnl
+dnl AC_ARG_WITH(charset, [charset: of source and resource (shift_jis or euc-jp)], [
+dnl     ac_cv_sys_charset=$withval
+dnl ], [
+dnl AC_CACHE_CHECK([charset for source/resource], ac_cv_sys_charset, [
+dnl     case $SYSTYPE in
+dnl     *BSD*|Linux*|SunOS-4.*)
+dnl             ac_cv_sys_charset=euc-jp
+dnl             ;;
+dnl     *)
+dnl             ac_cv_sys_charset=shift_jis
+dnl             ;;
+dnl     esac
+dnl ])
+dnl ])
+dnl CHARSET=$ac_cv_sys_charset
+dnl AC_SUBST(CHARSET)
+
+############################################################
+#== Library Check
+
+        # --- ispack ---
+        #
+
+        DC_ARG_WITH(ispack, [ispack library filename], ac_cv_lib_ispack, [
+                AC_MSG_ERROR(specify ispack library filename (like libisp.a) with --with-ispack=)
+        ])
+
+        DC_SET_LIBDIR_LIBNAME($ac_cv_lib_ispack, ispack_libdir, ispack_libname)
+
+        #
+        # --- netcdf ---
+        #
+
+        DC_ARG_WITH(netcdf, [netcdf library filename], ac_cv_lib_netcdf, [
+                AC_MSG_ERROR(specify netcdf library filename (like libnetcdf.a) with --with-netcdf=)
+        ])
+
+        DC_ARG_WITH(netcdff, [netcdf fortran library filename], ac_cv_lib_netcdff, [
+                ac_cv_lib_netcdff=""
+        ])
+
+        DC_ARG_WITH(netcdf-include, [netcdf include filename], ac_cv_netcdf_include,, [
+                ac_cv_netcdf_include=""
+        ])
+
+        DC_SET_LIBDIR_LIBNAME($ac_cv_lib_netcdf, netcdf_libdir, netcdf_libname)
+        if test -n "$ac_cv_lib_netcdff"; then
+                DC_SET_LIBDIR_LIBNAME($ac_cv_lib_netcdff, netcdff_libdir, netcdff_libname)
+        fi
+
+
+        if test -n "$ac_cv_netcdf_include" && test -f "$ac_cv_netcdf_include"; then
+            netcdf_incdir=`dirname $ac_cv_netcdf_include`
+        else
+            try2=`dirname $netcdf_libdir`/include
+            try2="$try2 `echo $netcdf_libdir | sed -e 's|/lib/|/include/|' -e 's|/lib$|/include|'`"
+            for try3 in $try2; do
+                if test -f "$try3/netcdf.inc"; then
+                    netcdf_incdir=$try3
+                    break
+                fi
+            done
+        fi
+
+        test -d "$netcdf_incdir" || AC_MSG_ERROR(netcdf include file not found. specify netcdf include filename (like /usr/lib/netcdf.inc) with --with-netcdf-include=)
+
+
+        #
+        # --- gtool5 ---
+        #
+        DC_ARG_WITH(gtool5, [gtool5 library], ac_cv_lib_gtool5,
+                AC_MSG_ERROR(specify gtool4 library filename (like libgtool5.a) with --with-gtool5= option.)
+        )
+
+        DC_SET_LIBDIR_LIBNAME($ac_cv_lib_gtool5, gtool5_libdir, gtool5_libname)
+
+        DC_SET_MODDIR($ac_cv_lib_gtool5, gtool5_moddir)
+
+        #
+        # --- ssl2 library ---
+        #
+        DC_ARG_WITH(ssl2, [ssl2 library], ac_cv_lib_ssl2, ac_cv_lib_ssl2="no")
+        if test -f $ac_cv_lib_ssl2 ; then
+                ssl2_libdir=`dirname $ac_cv_lib_ssl2`
+                ssl2_libname=`basename $ac_cv_lib_ssl2 .a | sed 's/^lib//'`
+                SSL2="yes"
+        elif test $ac_cv_lib_ssl2 = "no" ; then
+                AC_MSG_WARN(spml library is configued without SSL2 library...)
+                AC_MSG_NOTICE(specify SSL2 library filename (like /usr/lib/libssl2.a) with --with-ssl2= option if you want to use it.)
+                SSL2="no"
+        else
+                AC_MSG_ERROR(specified library file $ac_cv_lib_ssl2 not exist)
+        fi
+
+        #
+        # --- ssl2tp library ---
+        #
+        DC_ARG_WITH(ssl2tp, [ssl2tp library], ac_cv_lib_ssl2tp, ac_cv_lib_ssl2tp="no")
+        if test -f $ac_cv_lib_ssl2tp ; then
+                ssl2tp_libdir=`dirname $ac_cv_lib_ssl2tp`
+                ssl2tp_libname=`basename $ac_cv_lib_ssl2tp .a | sed 's/^lib//'`
+                SSL2TP="yes"
+        elif test $ac_cv_lib_ssl2tp = "no" ; then
+                AC_MSG_WARN(spml library is configued without SSL2TP library...)
+                AC_MSG_NOTICE(specify SSL2 library filename (like /usr/lib/libssl2tp.a) with --with-ssl2tp= option if you want to use it.)
+                SSL2TP="no"
+        else
+                AC_MSG_ERROR(specified library file $ac_cv_lib_ssl2tp not exist)
+        fi
+
+        #
+        # --- lapack library ---
+        #
+        DC_ARG_WITH(lapack, [lapack library], ac_cv_lib_lapack, ac_cv_lib_lapack="no")
+        if test -f $ac_cv_lib_lapack ; then
+                lapack_libdir=`dirname $ac_cv_lib_lapack`
+                lapack_libname=`basename $ac_cv_lib_lapack .a | sed 's/^lib//'`
+                LAPACK="yes"
+        elif test $ac_cv_lib_lapack = "no" ; then
+                AC_MSG_WARN(spml library is configued without LAPACK library...)
+                AC_MSG_NOTICE(specify LAPACK library filename (like /usr/lib/liblapack.a) with --with-lapack= option if you want to use it.)
+                LAPACK="no"
+        else
+                AC_MSG_ERROR(specified library file $ac_cv_lib_lapack not exist)
+        fi
+
+        #
+        # --- fftw library ---
+        #
+        DC_ARG_WITH(fftw, [fftw library], ac_cv_lib_fftw, ac_cv_lib_fftw="no")
+        if test -f $ac_cv_lib_fftw ; then
+                fftw_libdir=`dirname $ac_cv_lib_fftw`
+                fftw_libname=`basename $ac_cv_lib_fftw .a | sed 's/^lib//'`
+                FFTW="yes"
+        elif test $ac_cv_lib_fftw = "no" ; then
+                AC_MSG_WARN(spml library is configued without FFTW library...)
+                AC_MSG_NOTICE(specify FFTW library filename (like /usr/lib/libfftw.a) with --with-fftw= option if you want to use it.)
+                FFTW="no"
+        else
+                AC_MSG_ERROR(specified library file $ac_cv_lib_fftw not exist)
+        fi
+        DC_ARG_WITH(rfftw, [rfftw library], ac_cv_lib_rfftw, ac_cv_lib_rfftw="no")
+        if test -f $ac_cv_lib_rfftw ; then
+                rfftw_libdir=`dirname $ac_cv_lib_rfftw`
+                rfftw_libname=`basename $ac_cv_lib_rfftw .a | sed 's/^lib//'`
+                RFFTW="yes"
+        elif test $ac_cv_lib_rfftw = "no" ; then
+                AC_MSG_WARN(spml library is configued without RFFTW library...)
+                AC_MSG_NOTICE(specify RFFTW library filename (like /usr/lib/librfftw.a) with --with-rfftw= option if you want to use it.)
+                RFFTW="no"
+        else
+                AC_MSG_ERROR(specified library file $ac_cv_lib_rfftw not exist)
+        fi
+
+        #
+        # --- check extra libraries ---
+        #
+        # default settings
+        #
+        spmllibname="spml"
+                
+        if test -n "$ac_cv_lib_netcdff"; then
+           SYSLDFLAGS="-L$netcdff_libdir $SYSLDFLAGS"
+           SYSLDLIBS="-l$netcdff_libname $SYSLDLIBS"
+        fi
+        SYSLDFLAGS="-L$gtool5_libdir $SYSLDFLAGS -L$netcdf_libdir -L$ispack_libdir"
+        SYSLDLIBS="-l$gtool5_libname $SYSLDLIBS -l$netcdf_libname -l$ispack_libname"
+        #
+        # fftw2
+        #
+        if test $FFTW = "yes" && test $RFFTW = "yes" ; then
+                spmllibname="${spmllibname}-fftw2"
+                SYSLDFLAGS="$SYSLDFLAGS -L$rfftw_libdir"
+                SYSLDLIBS="$SYSLDLIBS -l$fftw_libname -l$rfftw_libname"
+        elif test $FFTW = "no" && test $RFFTW = "no" ; then
+                AC_MSG_WARN(spml library is configued without fftw2 library...)
+        else
+                AC_MSG_ERROR(fftw and rfftw libraries should be used together.)
+        fi
+        #
+        # matrix library
+        #
+        if test $SSL2 = "yes" && test $LAPACK = "yes" ; then
+                AC_MSG_ERROR(SSL2 either LAPACK libraries cannot be used together.)
+        elif test $SSL2 = "yes" && test $SSL2TP = "yes" ; then
+                AC_MSG_ERROR(SSL2 either SSL2TP libraries cannot be used together.)
+        elif test $SSL2TP = "yes" && test $LAPACK = "yes" ; then
+                AC_MSG_ERROR(SSL2TP either LAPACK libraries cannot be used together.)
+        elif test $SSL2 = "yes" ; then
+                matrixlib="SSL2"
+                spmllibname="${spmllibname}-ssl2"
+                SYSLDFLAGS="$SYSLDFLAGS -L$ssl2_libdir"
+                SYSLDLIBS="$SYSLDLIBS -l$ssl2_libname $SYSFLIBS"
+        elif test $SSL2TP = "yes" ; then
+                matrixlib="SSL2TP"
+                spmllibname="${spmllibname}-ssl2tp"
+                SYSLDFLAGS="$SYSLDFLAGS -L$ssl2tp_libdir"
+                SYSLDLIBS="$SYSLDLIBS -l$ssl2tp_libname $SYSFLIBS"
+        elif test $LAPACK = "yes" ; then
+                matrixlib="LAPACK"
+                spmllibname="${spmllibname}-lapack"
+                matrixlib="LAPACK"
+                SYSLDFLAGS="$SYSLDFLAGS -L$lapack_libdir"
+                SYSLDLIBS="$SYSLDLIBS -l$lapack_libname $SYSFLIBS"
+        else
+                matrixlib=""
+        fi
+
+SYSLDLIBS="$SYSLDLIBS $SYSFLIBS"
+SYSFFLAGS="$SYSFFLAGS -I$gtool5_moddir -I$netcdf_incdir"
+#
+# --- --with-mpifc=mpifc
+#
+DC_ARG_WITH(mpifc, [MPI compiler], ac_cv_mpifc, ac_cv_mpifc="no")
+if test -f $ac_cv_mpifc ; then
+   MPIFC=$ac_cv_mpifc
+elif test $ac_cv_mpifc = "no" ; then
+     AC_MSG_WARN(spml library is configued without MPI sources)
+     AC_MSG_NOTICE(specify MPI compiler name (like /usr/local/bin/mpif90) with --with-mpifc= option if you want to use it.)
+     MPI=''
+else
+	AC_MSG_ERROR(specified complier file $ac_cv_mpifc not exist)
+fi
+AC_SUBST(MPIFC)
+#
+# --- --with-docdir=docidir ---
+#
+ac_cv_dest_doc='${prefix}/doc'
+DC_ARG_WITH(docdir, [document installation directory], ac_cv_dest_doc, [
+        AC_MSG_ERROR(specify docdir with --with-docdir=dir)])
+docdir=$ac_cv_dest_doc
+AC_SUBST(docdir)
+
+#
+# --- --enable-debug ---
+#
+
+DC_ARG_ENABLE(debug,
+        [Check Fortran source programs [disable]], ac_cv_debug,
+        [ac_cv_debug=no]
+)
+
+case $ac_cv_debug in
+yes)
+        if test X"$F90MODTYPE" = X"fqs.mod"; then
+            case "$SYSFFLAGS" in
+                *"-E cg"*) ;;
+                *)      SYSFFLAGS="$SYSFFLAGS -E cg";;
+            esac
+            SYSFFLAGS="$SYSFFLAGS -g -H aesux"
+            echo "set compile and link flags \"-E cg -g -H aesux\""
+
+        elif test X"$F90MODTYPE" = X"std.mod" && test X"$FC" = X"g95" ; then
+            case "$SYSFFLAGS" in
+                *"-Wall -ftrace=frame"*) ;;
+                *)      SYSFFLAGS="$SYSFFLAGS -Wall -ftrace=frame";;
+            esac
+            echo "set compile and link flags \"-Wall -ftrace=frame\""
+
+        elif test X"$F90MODTYPE" = X"std.mod" && test X"$FC" = X"ifort" ; then
+            case "$SYSFFLAGS" in
+                *"-warn all -check all -traceback"*) ;;
+                *)      SYSFFLAGS="$SYSFFLAGS -warn all -check all -traceback";;
+            esac
+            echo "set compile and link flags \"-warn all -check all -traceback\""
+
+        else
+           AC_MSG_ERROR(I do not know debug options of your compiler)
+        fi ;;
+no)   ;;
+*)              echo 'reconfigure with --enable-debug or --disable-debug'
+                AC_MSG_ERROR(unknown debug type) ;;
+esac
+
+
+#
+# --- care of some special environments ---
+#
+
+if test X"$F90MODTYPE" = X"intel.d"; then
+        case "$SYSLDLIBS$SYSLDFLAGS$SYSFFLAGS" in
+        *-Vaxlib*) ;;
+        *)      SYSLDLIBS="$SYSLDLIBS -Vaxlib";;
+        esac
+fi
+
+if test X"$F90MODTYPE" = X"fqs.mod"; then
+        case "$SYSFFLAGS" in
+        *-Am*) ;;
+        *)      SYSFFLAGS="$SYSFFLAGS -Am";;
+        esac
+fi
+
+AC_SUBST(spmllibname)
+AC_SUBST(matrixlib)
+
+AC_SUBST(SYSLDLIBS)
+AC_SUBST(SYSLDFLAGS)
+AC_SUBST(SYSFFLAGS)
+
+#
+# --- system dependent runtime selection (not checked) ---
+#
+
+DC_ARG_WITH(abort, [abort runtime procedure], ac_cv_fortran_abort,
+        ac_cv_fortran_abort=abort
+)
+SYSDEPABORT=$ac_cv_fortran_abort
+case $SYSDEPABORT in
+abort)          echo 'sysdepabort() calls ABORT';;
+errtra-setrcd)  echo 'sysdepabort() calls ERRTRA/SETRCD/EXIT (intended for Lahey/Fujitsu Fortran)';;
+exit)           echo 'sysdepabort() calls EXIT (intended for Intel Fortran)';;
+setrcd)         echo 'sysdepabort() calls SETRCD/EXIT (intended for FQS Fortran)';;
+stop)           echo 'sysdepabort() executes STOP';;
+*)              echo 'reconfigure with --with-abort={abort,dcl,errtra-setrcd,exit,setrcd,stop}'
+                AC_MSG_ERROR(unknown abort type) ;;
+esac
+AC_SUBST(SYSDEPABORT)
+
+############################################################
+#== Some system commands
+
+#=== make
+#
+export MAKE
+sh ./chkgmake.sh || exit
+eval `cat chkgmake.cfg`
+
+AC_SUBST(MAKE)
+
+#=== ar
+#
+AC_CHECKING(for ar utility)
+case "${AR-unset}" in
+    unset) AC_CHECK_PROGS(AR, ar, ar) ;;
+    *) AC_CHECK_PROGS(AR, $AR ar, ar) ;;
+esac
+AC_MSG_CHECKING(ar flags)
+case "${ARFLAGS-unset}" in
+    unset) ARFLAGS=cru ;;
+esac
+AC_MSG_RESULT($ARFLAGS)
+AC_SUBST(ARFLAGS)
+
+case "$build" in
+    powerpc-ibm-aix*)
+        case "${ARFLAGS-unset}" in
+            unset) ARFLAGS="-X64" ;;
+            *-X64*) ;;
+            *) ARFLAGS="-X64 $ARFLAGS" ;;
+        esac
+        ;;
+    *)
+        ;;
+esac
+
+AC_SUBST(AR)
+
+#=== ranlib
+#
+AC_PROG_RANLIB
+
+
+#
+# === output ===
+#
+
+AC_OUTPUT(Config.mk:Config.mk.in)
+
+# ${MAKE:-make} ${CHARSET}
+
+echo ""
+echo "  Execute GNU make in the current directory, as follows."
+echo ""
+echo "    $MAKE"
+echo ""
+

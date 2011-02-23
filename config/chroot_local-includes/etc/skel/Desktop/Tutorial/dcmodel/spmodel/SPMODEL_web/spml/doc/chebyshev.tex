@@ -1,0 +1,599 @@
+%表題  SPMODEL レファレンスマニュアル
+%      チェビシェフ関数変換法
+%
+%履歴  2007/10/17 cheb_gal.tex より抜き出し作成
+%      2009/01/03 積分計算を追加
+%
+%
+\documentclass[a4j,12pt]{jarticle}
+\usepackage{Dennou6}
+
+\Dtitle{チェビシェフ関数変換法}
+\Dauthor{竹広真一}
+\Ddate{平成 21 年 1 月 3 日}
+
+\Dparskip
+
+\begin{document}
+
+\maketitle
+
+この文書は, チェビシェフ関数変換法の基本的な定式化を行う. 
+
+\section{チェビシェフ関数の性質}
+
+  チェビシェフ関数系 $T_k(x)$ は区間 $[-1,1]$ で定義される関数からなり, 
+  次の性質ような性質をもつ. 
+  %
+  \begin{itemize}
+    \item 定義
+      \begin{equation}
+        x=\cos \theta; \quad T_k(x) = T_k(\cos\theta) = \cos k\theta.
+      \end{equation}
+
+    \item 微分の表現
+        \footnote{
+          \begin{eqnarray*}
+            \DD{T_k}{x} 
+            &=& \DD{T_k(\cos \theta)}{\theta}\DD{\theta}{x} = 
+            = \frac{(\cos k \theta)'}{(cos\theta)'}
+            = \frac{k\sin k\theta}{\sin\theta},\\
+            \DD[2]{T_k}{x} 
+            &=&
+              \DD{}{\theta}\left(\DD{T_k}{x}\right)\DD{\theta}{x}
+            = \DD{}{\theta}\left(\frac{k\sin k\theta}{\sin\theta}\right)
+                     \frac{1}{(cos\theta)'}
+            = \frac{k^2\cos k\theta\sin\theta - k\sin k\theta \cos\theta}
+                   {-\sin^3\theta}.
+          \end{eqnarray*}
+        }
+      \begin{equation}
+        x=\cos\theta, \quad
+        \DD{T_k}{x} = \frac{k\sin k\theta}{\sin\theta}, \quad
+        \DD[2]{T_k}{x} 
+          = \frac{-k^2\cos k\theta\sin\theta + k\sin k\theta \cos\theta}
+                 {\sin^3\theta}.
+      \end{equation}
+
+    \item 端点での値
+        \footnote{
+          \begin{eqnarray*}
+           \left.\DD{T_k}{x}\right|_{x=1} 
+             &=& \lim_{\theta\rightarrow 0} \frac{k\sin k\theta}{\sin\theta}
+              = \lim_{\theta\rightarrow 0} 
+                  k^2\frac{\sin k\theta}{n\theta}\frac{\theta}{\sin\theta}
+              = k^2, \\
+           \left.\DD{T_k}{x}\right|_{x=-1} 
+             &=&\lim_{\theta\rightarrow \pi} \frac{k\sin k\theta}{\sin\theta}
+              = \lim_{\varphi\rightarrow 0} 
+                 \frac{k\sin k(\pi-\varphi)}{\sin(\pi-\varphi)}
+              = \lim_{\varphi\rightarrow 0} 
+                 \frac{-k\cos k\pi\sin\varphi}{\sin\varphi}\\
+             &=& (-1)^{k+1}\lim_{\varphi\rightarrow 0} 
+                 \frac{k\sin\varphi}{\sin\varphi}
+              =  (-1)^{k+1}k^2, \\
+           \left.\DD[2]{T_k}{x}\right|_{x=1} 
+             &=& \lim_{\theta\rightarrow 0} 
+                  \frac{-k^2\cos k\theta\sin\theta + k\sin k\theta \cos\theta}
+                       {\sin^3\theta}
+              = \lim_{\theta\rightarrow 0} 
+                 \frac{(-k^2\cos k\theta\sin\theta 
+                         + k\sin k\theta \cos\theta)'}
+                       {(\sin^3\theta)'}\\
+             &=& \lim_{\theta\rightarrow 0} 
+                 \frac{k^3\sin k\theta\sin\theta -k^2 \cos k\theta\cos\theta 
+                       + k^2\cos k\theta \cos\theta -k\sin k\theta \sin\theta}
+                       {3\sin^2\theta\cos\theta}\\
+             &=& \lim_{\theta\rightarrow 0} 
+                   k(k^2-1)\frac{\sin k\theta}{3\sin\theta\cos\theta}
+              = \lim_{\theta\rightarrow 0} 
+                   \frac{k^2(k^2-1)}{3}
+                    \frac{\sin k\theta}{k\theta}
+                    \frac{\theta}{\sin\theta}
+                    \frac{1}{\cos\theta}
+              = \frac{n^2(n^2-1)}{3}.\\
+            \left.\DD[2]{T_k}{x}\right|_{x=-1} 
+              &=& \lim_{\theta\rightarrow \pi}
+                   \frac{-k^2\cos k\theta\sin\theta + k\sin k\theta \cos\theta}
+                        {\sin^3\theta}
+               = \lim_{\theta\rightarrow \pi} 
+                    k(k^2-1)\frac{\sin k\theta}{3\sin\theta\cos\theta}\\
+              &=& \lim_{\varphi\rightarrow 0} 
+                    \frac{k(k^2-1)}{3}
+                    \frac{\sin k(\pi-\varphi)}
+                         {\sin(\pi-\varphi)\cos(\pi-\varphi)}
+               = \lim_{\varphi\rightarrow 0} 
+                    \frac{k(k^2-1)}{3}
+                    \frac{-\cos k\pi\sin k\varphi}
+                         {-\sin\varphi\cos\varphi}\\
+              &=& \lim_{\varphi\rightarrow 0} 
+                    (-1)^k\frac{k(k^2-1)}{3}
+                    \frac{\sin k\varphi}{\sin\varphi\cos\varphi}
+               = (-1)^k\frac{k(k^2-1)}{3}
+          \end{eqnarray*}
+          }
+      \begin{eqnarray}
+        & & T_k(1) = 1, \quad T_k(-1) = (-1)^k, \\
+        & & \left.\DD{T_k}{x}\right|_{x=1} = k^2, \quad 
+            \left.\DD{T_k}{x}\right|_{x=-1} = (-1)^{k+1}k^2, \\
+        & & \left.\DD[2]{T_k}{x}\right|_{x=1} = \frac{k^2(k^2-1)}{3}, \quad 
+         \left.\DD[2]{T_k}{x}\right|_{x=-1}= (-1)^k\frac{k^2(k^2-1)}{3}.
+      \end{eqnarray}
+
+    \item 微分方程式
+        \footnote{
+          \begin{eqnarray*}
+            \DD[2]{T_k}{x} 
+             &=& \frac{-k^2\cos k\theta\sin\theta + k\sin k\theta \cos\theta}
+                   {\sin^3\theta}.
+              = -k^2\frac{\cos k\theta}{\sin^2\theta}
+               + k\frac{\sin k\theta \cos\theta}{\sin^3\theta}.
+              = -k^2\frac{T_k(x)}{1-x^2}
+               + \frac{k\sin k\theta}{\sin\theta} 
+                   \frac{\cos\theta}{\sin^2\theta}\\
+             &=& -k^2\frac{T_k(x)}{1-x^2}
+               + \DD{T_k}{x}
+                   \frac{x}{1-x^2}
+             \rightarrow (1-x^2)\DD[2]{T_k}{x}-x\DD{T_k}{x} +k^2T_k(x).
+          \end{eqnarray*}
+          }
+      \begin{equation}
+        (1-x^2)\DD[2]{T_k}{x} - x\DD{T_k}{x} + k^2 T_k = 0.
+      \end{equation}
+
+    \item 漸化式
+      \footnote{
+        三角関数の和を積に直す公式より
+        \begin{displaymath}
+          \cos(k+1)\theta + \cos(k-1)\theta = 2 \cos k\theta \cos\theta 
+          \rightarrow T_{k+1}(x) + T_{k-1}(x) = 2x T_k(x).
+        \end{displaymath}
+        }
+      \begin{equation}
+        T_{k+1}(x) = 2xT_k(x) - T_{k-1}(x).
+      \end{equation}
+
+    \item 昇降漸化式
+        \footnote{
+          \begin{eqnarray*}
+            T_{k+1}(x) 
+              &=& \cos (k+1)\theta
+               = \cos k\theta \cos\theta - \sin k\theta \sin\theta
+               = x T_k(x) 
+                  - \frac{1}{k}\frac{k\sin k\theta}{\sin\theta}\sin^2\theta
+               = x T_k(x) - \frac{1-x^2}{k}\DD{T_k}{x}, \\
+            T_{k-1}(x) 
+              &=& \cos (k-1)\theta
+               = \cos k\theta \cos\theta + \sin k\theta \sin\theta
+               = x T_k(x) 
+                  + \frac{1}{k}\frac{k\sin k\theta}{\sin\theta}\sin^2\theta
+               = x T_k(x) + \frac{1-x^2}{k}\DD{T_k}{x}.
+           \end{eqnarray*}
+           }
+      \begin{equation}
+            T_{k\pm 1}(x) = x T_k(x) \mp \frac{1-x^2}{k}\DD{T_k}{x}
+      \end{equation}
+
+    \item 不定積分
+      \footnote{
+        $x = \cos\theta$ と変換して
+        \begin{eqnarray*}
+          \int T_n(x) dx &=& \int \cos(n\theta)(-\sin\theta)d\theta \\
+            &=& -\frac{1}{2}\int \sin[(n+1)\theta]-\sin[(n-1)\theta]d\theta \\
+            &=& \frac{1}{2}\left\{\frac{1}{n+1}\cos[(n+1)\theta]
+                                -\frac{1}{n-1}\cos[(n-1)\theta]\right\}\\
+            &=& \frac{1}{2}\left\{ \frac{1}{n+1}T_{n+1}(x) 
+                                -\frac{1}{n-1}T_{n-1}(x) \right\}.\\
+          \int T_0(x) dx &=& \int dx = x = T_1(x). \\
+          \int T_1(x) dx &=& \int \cos\theta(-\sin\theta)d\theta 
+                         = -\frac{1}{2}\int \sin(2\theta)d\theta 
+                         = \frac{1}{4}\cos(2\theta)
+                         = \frac{1}{4} T_2(x).
+        \end{eqnarray*}
+      }
+      \begin{eqnarray}
+        \int T_n(x) dx 
+        &=& \frac{1}{2}\left\{  \frac{1}{n+1}T_{n+1}(x)
+                            -\frac{1}{n-1}T_{n-1}(x) \right\}
+                          \quad (n=2,3,\ldots), \\
+        \int T_0(x) dx &=& T_1(x), \quad
+        \int T_1(x) dx = \frac{1}{4}T_2(x)
+      \end{eqnarray}
+
+    \item 直交関係
+        \footnote{
+            \begin{displaymath}
+              \int_{-1}^{1} T_k(x)T_l(x) \frac{dx}{\sqrt{1-x^2}} 
+                = \int_{pi}^{0} \cos k\theta \cos l\theta 
+                   \frac{-\sin\theta \ d\theta}{\sin\theta}
+                = \int_{0}^{\pi} \cos k\theta \cos l\theta \ d\theta.
+            \end{displaymath}
+          $k \neq l$ のとき
+             \begin{eqnarray*}
+               \int_{0}^{\pi} \cos k\theta \cos l\theta \ d\theta
+               &=& \int_{0}^{\pi}\frac{1}{2}
+                    [ \cos(k+l)\theta + \cos(k-l)\theta]\ d\theta\\
+               &=& \frac{1}{2}\left[
+                     \frac{1}{k+l}\sin(n+m)\theta 
+                     + \frac{1}{k-l}\sin(n-m)\theta \right]_0^\pi
+                = 0.
+            \end{eqnarray*}
+          $k = l \neq 0$ のとき
+             \begin{displaymath}
+               \int_{0}^{\pi} \cos k\theta \cos l\theta \ d\theta
+                =  \int_{0}^{\pi} \cos^2 k\theta \ d\theta
+                =  \int_{0}^{\pi}\frac{1}{2}
+                    [ 1 + \cos 2 k \theta ]\ d\theta
+                = \frac{1}{2}\left[
+                     \theta +
+                     \frac{1}{2k}\sin 2k\theta \right]_0^\pi
+                = \frac{\pi}{2}.
+            \end{displaymath}
+          $k = l = 0$ のとき
+             \begin{displaymath}
+               \int_{0}^{\pi} \cos k\theta \cos l\theta \ d\theta
+                =  \int_{0}^{\pi} \ d\theta
+                = \left[\theta \right]_0^\pi
+                = \pi.
+            \end{displaymath}
+          }
+      \begin{equation}
+        \int_{-1}^{1} T_k(x)T_l(x) \frac{dx}{\sqrt{1-x^2}} 
+        = \alpha_k \delta_{kl},
+      \end{equation}
+      %
+      ここで
+      \begin{equation}
+        \alpha_k=\left\{
+        \begin{array}{ll}
+          \pi    & k  = 0   \\
+          \pi/2  & k \neq 0
+        \end{array}
+        \right..
+      \end{equation}
+      である. 
+
+    \item 低次の関数形
+      \begin{eqnarray}
+        & & T_0(x) = 1, \ T_1(x) = x, 
+            \ T_2(x) = 2x^2-1, 
+            \ T_3(x) = 4x^3-3x, \\
+        & & \ T_4(x) = 8x^4-8x^2 + 1, 
+            \ T_5(x) =16x^5-20x^3 + 5x, \ldots
+      \end{eqnarray}
+
+  \end{itemize}
+
+\section{離散チェビシェフ関数変換}
+
+  \subsection{正変換・逆変換の定義}
+
+    区間 $[x_{min},x_{max}]$ でとある時間発展方程式と境界条件の下での解を
+    チェビシェフ関数変換法で数値計算したい. 
+    区間 $[x_{min},x_{max}]$ で定義された関数 $f^*(x^*)$ は
+    次の線形写像で区間 $[-1,1]$ での関数 $f(x)$ へと写される. 
+    %
+    \begin{equation}
+       x^* = \frac{x_{max}+x_{min}}{2} + \frac{x_{max}-x_{min}}{2} \times x.
+    \end{equation}
+    %
+    この区間 $[-1,1]$ での関数 $f(x)$ に関して, $N$ この離散格子点
+    %
+    \begin{equation}
+      x_k= \cos \left(\frac{\pi k}{N}\right)
+    \end{equation}
+    %
+    上での値で表現する. このとき $f(x_k)$ を $K(\le N)$ 次までの
+    チェビシェフ関数の線形和で表すことを考える. 
+    %
+    \begin{equation}
+      f(x_k) = \sum_{n=0}^{K}{}'' c_n T_n(x_k), 
+    \end{equation}
+    %
+    これは離散チェビシェフ逆変換の定義である. 
+    ただし $\sum_{k=0}^{N}{}''$ は
+    % 
+    \begin{eqnarray*}
+      \sum_{k=0}^{N}{}''a_k 
+      &\equiv& \Dinv{2} a_0 +  \sum_{k=1}^{K-1} a_k + \Dinv{2} a_N, \\
+      \sum_{k=0}^{K}{}''a_k 
+      &\equiv& \Dinv{2} b_0 +  \sum_{k=1}^{K-1} b_k + a_K \quad(K<N)\\
+      &\equiv& \Dinv{2} b_0 +  \sum_{k=1}^{K-1} b_k + \Dinv{2}a_K \quad(K=N)
+    \end{eqnarray*}
+    %
+    である. 
+
+    $\{c_n\}$ は $f(x)$ のチェビシェフ関数による展開係数であり, 
+    % 
+    \begin{equation}
+      c_n = \frac{2}{N}\sum_{k=0}^{N}{}''f(x_k)T_n(x_k),
+    \end{equation}
+    % 
+    と計算される. 
+    これが離散チェビシェフ正変換の定義である. 
+
+    格子点が $x_k= \cos \left(\frac{\pi k}{N}\right)$ であることと
+    チェビシェフ関数の定義から
+    % 
+    \begin{displaymath}
+      f(x_k) = \sum_{n=0}^{K}{}'' c_n T_n(x_k), 
+        = \sum_{n=0}^{K}{}'' 
+            c_n T_n\left[\cos\left(\frac{\pi k}{N}\right)\right]
+        = \sum_{n=0}^{K}{}'' 
+            c_n \cos\left(\frac{\pi nk}{N}\right).
+    \end{displaymath}
+      %
+    これは$K$ 次で打ち切られた台形公式の離散 $\cos$ 逆変換に他ならない
+    \footnote{例えば ISPACK/ftpack のマニュアルの FTICTB 等の項を参照のこと}. 
+
+    同様に正変換は
+    %
+    \begin{equation}
+      c_n = \frac{2}{N}\sum_{k=0}^{N}{}''f(x_k)T_n(x_k)
+          = \frac{2}{N}\sum_{k=0}^{N}{}''
+                f(x_k)T_n\left[\cos\left(\frac{\pi k}{N}\right)\right]
+          = \frac{2}{N}\sum_{k=0}^{N}{}''
+                f(x_k)\cos\left(\frac{\pi kn}{N}\right).
+    \end{equation}
+    %
+    これは台形公式の離散 $\cos$ 正変換に他ならない. 
+    したがって, チェビシェフ変換を行うには, 格子点を
+    $x_k= \cos \left(\frac{\pi k}{N}\right)$ に選ぶだけで
+    あとは離散 $\cos$ 変換のサブルーチンを呼ぶだけでいい. 
+
+  \subsection{微分の計算}
+
+    $f(x) = \sum_{n=0}^{K}{}'' c_n T_n(x)$ に対してその微分を
+    %
+    \begin{displaymath}
+      f'(x) = \sum_{n=0}^{K}{}'' d_n T_n(x)
+    \end{displaymath}
+    %
+    を表すチェビシェフ変換係数 $\{d_n\}$ は
+    もとのチェビシェフ変換係数 $\{c_n\}$ から次のように計算される
+    \footnote{
+      実際に $f'(x)$ を積分してみると, チェビシェフ関数の積分の公式から
+      \begin{eqnarray*}
+        \int f'(x)dx &=& \sum_{n=0}^{K}{}'' d_n \int T_n(x) dx\\
+              &=& C + \frac{1}{2}d_0 T_1(x)
+                + \frac{1}{4}d_1 T_2(x)
+                +\sum_{n=2}^{K}{}'' d_n 
+                  \frac{1}{2}\left\{\frac{1}{n+1}T_{n+1}(x)
+                                    -\frac{1}{n-1}T_{n-1}(x)\right\}\\
+              &=& C + \frac{1}{2}d_0 T_1(x)
+                + \frac{1}{4}d_1 T_2(x)
+                +\frac{1}{2}\sum_{n=3}^{K+1}{}'' d_{n-1}
+                  \frac{1}{n}T_{n}(x)
+                -\frac{1}{2}\sum_{n=1}^{K-1}{}'' d_{n+1} 
+                       \frac{1}{n}T_{n}(x)\\
+              &=& C + \frac{1}{2}d_0 T_1(x)
+                + \frac{1}{4}d_1 T_2(x)
+                + \sum_{n=3}^{K-1}{}'' \frac{1}{2n}(d_{n-1}-d_{n+1})T_{n}(x)\\
+              &&+ \frac{1}{2K}d_{K-1}T_K(x) + \frac{1}{4(K+1)}d_{K}T_{K+1}(x)
+                - \frac{1}{2}d_2T_1(x) - \frac{1}{4}d_3T_2(x)\\
+              &=& C
+                + \frac{1}{2}(d_0 - d_2)T_1(x)
+                + \frac{1}{4}(d_1 - d_3)T_2(x)
+                + \sum_{n=3}^{K-1}{}'' \frac{1}{2n}(d_{n-1}-d_{n+1})T_{n}(x)\\
+              &&+ \frac{1}{2K}d_{K-1}T_K(x) + \frac{1}{4(K+1)}d_{K}T_{K+1}(x)\\
+              &=& C
+                + \sum_{n=2}^{K-1}{}'' \frac{1}{2n}(d_{n-1}-d_{n+1})T_{n}(x)
+                + \frac{1}{2K}d_{K-1}T_K(x) + \frac{1}{4(K+1)}d_{K}T_{K+1}(x)
+      \end{eqnarray*}
+      %
+      ただし C は積分定数である. 
+      これと $f(x)dx = \sum_{n=0}^{K}{}'' c_nT_n(x_k)$ を比較して, 
+      $K=N$ の場合には
+      %
+      \begin{displaymath}
+        C = \frac{1}{2}c_0T_0(x), \quad
+        c_n = \frac{1}{2n}(d_{n-1}-d_{n+1}) \quad (n=1,2,\ldots K-1), \quad
+        \frac{c_K}{2} = \frac{1}{2K}d_{K-1}, \quad d_K = 0.
+      \end{displaymath}
+      %
+      $K<N$ の場合には
+      %
+      \begin{displaymath}
+        C = \frac{1}{2}c_0T_0(x), \quad
+        c_n = \frac{1}{2n}(d_{n-1}-d_{n+1}) \quad (n=1,2,\ldots K-1), \quad
+        c_K = \frac{1}{2K}d_{K-1}, \quad d_K = 0.
+      \end{displaymath}
+    }.
+    %
+    \begin{equation}
+      d_{n-1} = d_{n+1} + 2 n c_n. 
+    \end{equation}
+    %
+    $K=N$ の場合 $\Ddsty d_K=0, d_{K-1}= \frac{2Kc_K}{2}$ から, 
+    $K<N$ の場合  $d_K=0, d_{K-1}= 2Kc_K$ から
+    再帰的に計算すれば良い. 
+    
+  \subsection{積分の計算}
+
+    $f(x) = \sum_{n=0}^{K}{}'' c_n T_n(x)$ に対してその積分を
+    %
+    \begin{displaymath}
+      \int f(x) dx = \sum_{n=0}^{K}{}'' b_n T_n(x)
+    \end{displaymath}
+    %
+    を表すチェビシェフ変換係数 $\{b_n\}$ は
+    もとのチェビシェフ変換係数 $\{c_n\}$ から次のように計算される
+    \footnote{
+      先の微分の計算と同様にして
+      実際に $f(x)$ を積分してみると, チェビシェフ関数の積分の公式から
+      %
+      \begin{eqnarray*}
+        \int f(x)dx &=& \sum_{n=0}^{K}{}'' c_n \int T_n(x) dx\\
+              &=& C
+                + \sum_{n=2}^{K-1}{}'' \frac{1}{2n}(c_{n-1}-c_{n+1})T_{n}(x)
+                + \frac{1}{2K}c_{K-1}T_K(x) + \frac{1}{4(K+1)}c_{K}T_{K+1}(x)
+      \end{eqnarray*}
+      %
+      ただし C は積分定数である. 
+      これと $\int f(x)dx = \sum_{n=0}^{K}{}'' b_nT_n(x_k)$ を比較して, 
+      $K=N$ の場合には
+      %
+      \begin{displaymath}
+        \frac{1}{2}b_0 = C, \quad
+        b_n = \frac{1}{2n}(c_{n-1}-c_{n+1}) \quad (n=1,2,\ldots K-1), \quad
+        \frac{b_K}{2} = \frac{1}{2K}c_{K-1}, 
+      \end{displaymath}
+      %
+      $K<N$ の場合には
+      %
+      \begin{displaymath}
+        \frac{1}{2}b_0 =  C, \quad
+        b_n = \frac{1}{2n}(c_{n-1}-c_{n+1}) \quad (n=1,2,\ldots K-1), \quad
+        b_K = \frac{1}{2K}c_{K-1}, \quad d_K = 0.
+      \end{displaymath}
+    }
+    \begin{equation}
+      b_n = \frac{1}{2n}(c_{n-1}-c_{n+1}) \quad (n=1,2,\ldots K-1). 
+    \end{equation}
+    %
+    $K=N$ の場合 $b_{K}= c_K-1/K$ から, 
+    $K<N$ の場合 $b_{K}= c_{K-1}/(2K)$ から定まる. 
+    $b_0$ は境界条件から $x$ のある 1 点での値を与えることにより
+    定められる. 
+
+  \subsection{補間の計算}
+
+    Clenshow's Recurrence Formula
+    \footnote{Clenshow's Recurrence Formula:\\
+      関数 $f(x)$ がとある関数系 $F_k(x)$ で 
+      %
+      \begin{displaymath}
+        f(x)=\sum_0^N c_k F_k(x)
+      \end{displaymath}
+      %
+      と表されているとする. さらに関数系が次の漸化式
+      %
+      \begin{displaymath}
+        F_{n+1}(x)=\alpha(n,x)F_n(x)+\beta(n,x)F_{n-1}(x)
+      \end{displaymath}
+      %
+      を満たしているとする. このとき漸化式 
+      \begin{displaymath}
+        y_{N+2}=y_{N+1}=0, \quad
+        y_k = \alpha(k,x)y_{k+1} + \beta(k+1,x)y_{k+2} + c_k
+      \end{displaymath}
+      %
+      で定義される量 $y_k, (k=N,N-1,\ldots,1)$ を用いると
+      $f(x)$ を求めるための関数系の和は
+      %
+      \begin{displaymath}
+        f(x) = \beta(1,x)F_0(x)y_2 + F_1(x)y_1 + F_0(x)c_0
+      \end{displaymath}
+      %
+      と計算することができる. \\
+
+      ☆「証明」\\
+      $y_k$ に関する漸化式を $c_k$ について解き, $f(x)$ の式に代入すると
+      \begin{eqnarray*}
+        f(x) &=& \sum_0^N c_k F_k(x)\\
+             &=& y_N F_N(x) \\
+             & & + [y_{N-1}-\alpha(N-1,x)y_N]F_{N-1}(x) \\
+             & & + [y_{N-2}-\alpha(N-2,x)y_{N-1}-\beta(N-1,x)y_{N}]F_{N-2}(x)\\
+             & & + [y_{N-3}-\alpha(N-3,x)y_{N-2}-\beta(N-2,x)y_{N}]F_{N-3}(x)\\
+             & & \ldots\\
+             & & + [y_3-\alpha(3,x)y_4-\beta(4,x)y_5]F_3(x)\\
+             & & + [y_2-\alpha(2,x)y_3-\beta(3,x)y_4]F_2(x)\\
+             & & + [y_1-\alpha(1,x)y_2-\beta(2,x)y_3]F_1(x)\\
+             & & + [c_0+\beta(1,x)y_2-\beta(1,x)y_2]F_0(x)
+      \end{eqnarray*}
+      %
+      最後の項だけ $c_0$ のまま残し, $\beta(1,x)y_2$ をわざと足し引きしている.
+      各 $y_k$ について整理すると
+      %
+      \begin{eqnarray*}
+        f(x) &=& y_N[F_N-\alpha(N-1,x)F_{N-1}-\beta(N-1,x)F_{N-2}]\\
+             & & +y_{N-1}[F_{N-1}-\alpha(N-2,x)F_{N-2}-\beta(N-2,x)F_{N-3}]\\
+             & & \ldots\\
+             & & + y_2[F_2-\alpha(1,x)F_1-\beta(1,x)F_0]\\
+             & & + y_1F_1+c_0F_0+\beta(1,x)y_2F_0
+      \end{eqnarray*}
+      %
+      $F_k(x)$ の漸化式より $k=N,N-1,\ldots,2$ まではキャンセルし, 
+      残りの項は最後の行だけになる. したがって
+      %
+      \begin{displaymath}
+        f(x) =  \beta(1,x)F_0(x)y_2 + F_1(x)y_1 + c_0F_0(x).
+      \end{displaymath}
+    }
+    を用いると, 任意の $x$ についての $f(x)$ のチェビシェフ関数による
+    補間値を効率的に求めることができる.
+    チェビシェフ関数の漸化式から $\alpha(n,x)=2x, \beta(n,x)=-1$ 
+    であるから, $K=N$ の場合には
+    %
+    \begin{eqnarray}
+      & & y_{K+2}=y_{K+1} = 0, \nonumber\\
+      & & y_{k} = 2x y_{k+1} - y_{k+2} + c_k, \quad (k=K,K-1,\ldots,1),\\
+      & & f(x) = - y_2 + x y_1 + \frac{c_0}{2} - \frac{c_K}{2}T_K(x).
+    \end{eqnarray}
+    %
+    ただし $T_K(x) = \cos(K \cos^{-1}x)$ と計算することができる. 
+    
+    $K<N$ の場合には最大次の修正が必要なく
+    %
+    \begin{equation}
+      f(x) = - y_2 + x y_1 + \frac{c_0}{2}
+    \end{equation}
+    %
+    で良い. 
+
+  \subsection{領域定積分計算}
+
+    $f(x)$ の領域積分 $\Ddsty \int_{-1}^1 f(x) dx$ を離散格子点上の
+    値 $f(x_k), x_k = cos(k\pi/N), n=0,\ldots,N$ の線形和として表したい. 
+    そのためには
+    %
+    \begin{eqnarray*}
+      \int_{-1}^1 f(x) dx 
+      &=& \int_{-1}^1 T_k(x)\sum_{k=1}^{K}{}''c_k  dx
+       =  \sum_{k=1}^{K}{}''c_k \int_{-1}^1 T_k(x) dx\\
+      &=&  \frac{1}{2} c_0 \int_{-1}^1 T_0(x) dx
+          + c_1 \int_{-1}^1 T_1(x) dx
+          + \sum_{k=2}^{K}{}''c_k \int_{-1}^1 T_k(x) dx\\
+      &=&  c_0 + \sum_{k=2,even}^{K}{}''c_k
+                 \frac{1}{2}\left[ \frac{1}{k+1}T_{k+1}
+                                  -\frac{1}{k-1}T_{k-1}\right]_{-1}^{1}\\
+      &=&  c_0 + \sum_{k=2,even}^{K}{}''c_k
+                      \left( \frac{1}{k+1} -\frac{1}{k-1}\right)\\
+      &=&  c_0 + \sum_{k=2,even}^{K}{}''\frac{2}{1-k^2}c_k
+    \end{eqnarray*}
+    %
+    これに再度 $\Ddsty c_k = \sum_{n=0}^{N}{}''f(x_n)T_k(x_n)$ を代入して
+    和のとり方を逆にすると
+    %
+    \begin{eqnarray*}
+      \int_{-1}^1 f(x) dx 
+      &=&  c_0 + \sum_{k=2,even}^{K}{}''\frac{2}{1-k^2}c_k \\
+      &=&  \sum_{n=0}^{N}{}''f(x_n)T_0(x_n)
+         + \sum_{k=2,even}^{K}{}''\frac{2}{1-k^2}
+               \sum_{n=0}^{N}{}''f(x_n)T_k(x_n) \\
+      &=&  \sum_{n=0}^{N}{}''f(x_n)
+         + \sum_{n=0}^{N}{}''f(x_n)
+              \sum_{k=2,even}^{K}{}''\frac{2}{1-k^2}T_k(x_n) \\
+      &=&  \sum_{n=0}^{N}{}''f(x_n)
+              \left[1+ \sum_{k=2,even}^{K}{}''
+                          \frac{2}{1-k^2}\cos\left(\frac{\pi kn}{N}\right)
+              \right]
+    \end{eqnarray*}
+    %
+    したがって
+    %
+    \begin{equation}
+      \int_{-1}^1 f(x) dx = \sum_{n=0}^{N}{}''w_n f(x_n), \quad
+      w_n \equiv 1 + 
+          \sum_{k=2,even}^{K}{}''
+             \frac{2}{1-k^2}\cos\left(\frac{\pi kn}{N}\right). 
+    \end{equation}
+    
+
+  
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

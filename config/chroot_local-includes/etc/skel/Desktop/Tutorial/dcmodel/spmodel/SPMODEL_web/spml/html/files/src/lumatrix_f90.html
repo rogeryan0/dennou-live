@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: lumatrix.f90</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+  <div id="fileHeader">
+    <h1>lumatrix.f90</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>src/lumatrix.f90
+
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Sun Mar 01 07:35:26 +0900 2009</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <p>
+This file provides the following module.
+</p>
+<ul>
+<li><b><a href="../../classes/lumatrix.html">lumatrix</a></b>
+
+</li>
+</ul>
+
+    </div>
+
+
+
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
+
+      <div class="name-list">
+
+        <a href="lumatrix_f90.html">src/lumatrix.f90</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000004">ludecomp21</a>&nbsp;&nbsp;
+
+        <a href="#M000005">ludecomp32</a>&nbsp;&nbsp;
+
+        <a href="#M000006">lusolve211</a>&nbsp;&nbsp;
+
+        <a href="#M000007">lusolve212</a>&nbsp;&nbsp;
+
+        <a href="#M000008">lusolve322</a>&nbsp;&nbsp;
+
+        <a href="#M000009">lusolve323</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000004" class="method-signature">
+
+
+
+          <span class="method-name">ludecomp21</span><span class="method-args">( alu, kp ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,: )  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(size(alu,1))  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(out)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(NDIM,NDIM), KP(NDIM) NDIM x NDIM の行列を LU 分解. ＬＵ行列は
+入力行列に上書きされる.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000004-source">
+<pre>
+subroutine ludecomp21(alu,kp)
+  !
+  ! ALU(NDIM,NDIM), KP(NDIM)
+  ! NDIM x NDIM の行列を LU 分解.
+  ! ＬＵ行列は 入力行列に上書きされる.
+  !
+  use dc_message
+  
+  real(8), intent(inout) :: alu(:,: )                 ! 入力／ＬＵ行列
+  integer, intent(out)   :: kp(size(alu,1))           ! ピボット
+  
+  if ( size(alu,1) &gt; size(alu,2) ) then
+    call MessageNotify('E','ludecomp', 'The third dimension is less than the second')
+  elseif( size(alu,1) &lt; size(alu,2) ) then
+    call MessageNotify('W','ludecomp', 'The third dimension is grater than the second')
+  endif
+  
+  !&quot; 行列のＬＵ分解（部分ピボット選択）
+  call LUMAKE( alu, kp, 1, size(alu,1) )
+  
+end subroutine ludecomp21
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000005" class="method-signature">
+
+
+
+          <span class="method-name">ludecomp32</span><span class="method-args">( alu, kp ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(inout)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(size(alu,1),size(alu,2))  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(out)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM) NDIM x NDIM の行列 JDIM 個を一度に LU
+分解. ＬＵ行列は 入力行列に上書きされる.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000005-source">
+<pre>
+subroutine ludecomp32(alu,kp)
+  !
+  ! ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM)
+  ! NDIM x NDIM の行列 JDIM 個を一度に LU 分解.
+  ! ＬＵ行列は 入力行列に上書きされる.
+  !
+  use dc_message
+  
+  real(8), intent(inout) :: alu(:,:,:)                  ! 入力／ＬＵ行列
+  integer, intent(out)   :: kp(size(alu,1),size(alu,2)) ! ピボット
+  
+  if ( size(alu,2) &gt; size(alu,3) ) then
+    call MessageNotify('E','ludecomp', 'The third dimension is less than the second')
+  elseif( size(alu,2) &lt; size(alu,3) ) then
+    call MessageNotify('W','ludecomp', 'The third dimension is grater than the second')
+  endif
+  
+  !&quot; 行列のＬＵ分解（部分ピボット選択）
+  call LUMAKE( alu, kp, size(alu,1), size(alu,2) )
+  
+end subroutine ludecomp32
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000006" class="method-signature">
+
+
+
+          <span class="method-name">lusolve211</span><span class="method-args">( alu, kp, b ) result(lusolve211)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="lumatrix_f90.html#M000006">lusolve211</a>(size(b))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 右辺ベクトル
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(NDIM,NDIM), KP(NDIM), B(NDIM) NDIM x NDIM 型行列の連立方程式 A X = B を
+1 個の B に対して計算する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000006-source">
+<pre>
+function lusolve211(alu,kp,b)
+  !
+  ! ALU(NDIM,NDIM), KP(NDIM), B(NDIM)
+  ! NDIM x NDIM 型行列の連立方程式
+  ! A X = B を 1 個の B に対して計算する. 
+  !
+  use dc_message
+  
+  real(8), intent(in)  :: alu(:,:)              ! 入力／ＬＵ行列
+  integer, intent(in)  :: kp(:)                 ! ピボット
+  real(8), intent(in)  :: b(:)                  ! 右辺ベクトル
+  
+  real(8) :: lusolve211(size(b))                   ! 解
+  
+  lusolve211 = b
+  call LUSOL2( lusolve211, alu , kp, 1, size(b) )
+  
+end function lusolve211
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000007" class="method-signature">
+
+
+
+          <span class="method-name">lusolve212</span><span class="method-args">( alu, kp, b ) result(lusolve212)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="lumatrix_f90.html#M000007">lusolve212</a>(size(b,1),size(b,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 右辺ベクトル
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(NDIM,NDIM), KP(NDIM), B(JDIM,NDIM) NDIM x NDIM 型行列の連立方程式 A X =
+B を JDIM 個の B に対して計算する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000007-source">
+<pre>
+function lusolve212(alu,kp,b)
+  !
+  ! ALU(NDIM,NDIM), KP(NDIM), B(JDIM,NDIM)
+  ! NDIM x NDIM 型行列の連立方程式
+  ! A X = B を JDIM 個の B に対して計算する. 
+  !
+  use dc_message
+  
+  real(8), intent(in)  :: alu(:,:)              ! 入力／ＬＵ行列
+  integer, intent(in)  :: kp(:)                 ! ピボット
+  real(8), intent(in)  :: b(:,:)                ! 右辺ベクトル
+  
+  real(8) :: lusolve212(size(b,1),size(b,2))       ! 解
+  
+  lusolve212 = b
+  call LUSOL2( lusolve212, alu , kp, size(b,1), size(b,2) )
+  
+end function lusolve212
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000008" class="method-signature">
+
+
+
+          <span class="method-name">lusolve322</span><span class="method-args">( alu, kp, b ) result(lusolve322)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="lumatrix_f90.html#M000008">lusolve322</a>(size(b,1),size(b,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 右辺ベクトル
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM), B(JDIM,NDIM) NDIM x NDIM 型行列を JDIM
+個並べた連立方程式 A X = B をひとつの B の並びに対して計算する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000008-source">
+<pre>
+function lusolve322(alu,kp,b)
+  !
+  ! ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM), B(JDIM,NDIM)
+  ! NDIM x NDIM 型行列を JDIM 個並べた連立方程式
+  ! A X = B をひとつの B の並びに対して計算する. 
+  !
+  use dc_message
+  
+  real(8), intent(in)  :: alu(:,:,:)                   ! 入力／ＬＵ行列
+  integer, intent(in)  :: kp(:,:)                      ! ピボット
+  real(8), intent(in)  :: b(:,:)                       ! 右辺ベクトル
+  
+  real(8) :: lusolve322(size(b,1),size(b,2))             ! 解
+  
+  lusolve322 = b
+  call LUSOLV( lusolve322, alu , kp, 1, size(b,1), size(b,2) )
+  
+end function lusolve322
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000009" class="method-signature">
+
+
+
+          <span class="method-name">lusolve323</span><span class="method-args">( alu, kp, b ) result(lusolve323)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="lumatrix_f90.html#M000009">lusolve323</a>(size(b,1),size(b,2),size(b,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alu(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 入力／ＬＵ行列
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>kp(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ピボット
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b(:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 右辺ベクトル
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM), B(IDIM,JDIM,NDIM) NDIM x NDIM 型行列を
+JDIM 個並べた連立方程式 A X = B を IDIM 個の B に対して計算する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000009-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000009-source">
+<pre>
+function lusolve323(alu,kp,b)
+  !
+  ! ALU(JDIM,NDIM,NDIM), KP(JDIM,NDIM), B(IDIM,JDIM,NDIM)
+  ! NDIM x NDIM 型行列を JDIM 個並べた連立方程式
+  ! A X = B を IDIM 個の B に対して計算する. 
+  !
+  use dc_message
+  
+  real(8), intent(in)  :: alu(:,:,:)                   ! 入力／ＬＵ行列
+  integer, intent(in)  :: kp(:,:)                      ! ピボット
+  real(8), intent(in)  :: b(:,:,:)                     ! 右辺ベクトル
+  
+  real(8) :: lusolve323(size(b,1),size(b,2),size(b,3)) ! 解
+  
+  lusolve323 = b
+  call LUSOLV( lusolve323, alu , kp, size(b,1), size(b,2), size(b,3) )
+  
+end function lusolve323
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

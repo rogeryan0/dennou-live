@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>2. Array operation features of Fortran90</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec1.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=sec3.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h2><a name="label-0" id="label-0">2. Array operation features of Fortran90</a></h2><!-- RDLabel: "2. Array operation features of Fortran90" -->
+<p>In this section, we briefly introduce the array operation features, 
+the most important features among those of Fortran90 used in the SPMODEL. 
+As for the
+detailed and strict description of the other features enhanced in Fortran90,
+please refer to other more appropriate language reference manuals 
+(ex. <a href="ref.htm">[3]</a>). </p>
+<h3><a name="label-1" id="label-1">2.1. Array operation</a></h3><!-- RDLabel: "2.1. Array operation" -->
+<p>Compared to FORTRAN77, functions of array operation are enhanced in Fortran90.
+One of the features is that we can omit specifying indices of arrays when
+performing the same operation on every element of the arrays. 
+In FORTRAN77,
+however, we must specify the indices of arrays for each case . 
+Below is a simple example.</p>
+<p>The following FORTRAN77 statements,</p>
+<pre>! FORTRAN 77 style
+
+      REAL*8    A(10,10), B(10,10), C(10,10)
+      INTEGER   I, J
+
+      ...
+      DO 1000 J=1,10
+          DO 1000 I=1,10
+          C(I,J) = A(I,J) + B(I,J)
+ 1000 CONTINUE</pre>
+<p>can be rewritten by Fortran90 as follows:</p>
+<pre>real(8) :: a(10,10), b(10,10), c(10,10)
+
+...
+c = a + b</pre>
+<p>Note that only one line is required to write the array calculation.</p>
+<p>A statement similar to the array assignment statement can be used for the
+intrinsic functions. 
+For example, calculation of exponents for every element
+in an array must be written in FORTRAN77 program as follows:</p>
+<pre>! FORTRAN 77 style
+
+       DO 1000 J=1,10
+       DO 1000 I=1,10
+          B(I,J) = EXP(A(I,J))
+  1000 CONTINUE</pre>
+<p>On the other hand, the Fortran90 program simply performs the same calculation
+with the following:</p>
+<pre>b = exp(a)</pre>
+<h3><a name="label-2" id="label-2">2.2. User-defined array-valued functions</a></h3><!-- RDLabel: "2.2. User-defined array-valued functions" -->
+<p>One of the enhanced features of Fortran90 is that 
+the array-valued functions, 
+which return arrayed values like the intrinsic functions 
+as in the example above, 
+can be defined also by the users. 
+In FORTRAN77 programs, users were
+only able to define scalar-valued functions.</p>
+<p>Furthermore, in the user-defined functions, the following features are
+available:</p>
+<ul>
+<li>The sizes of the argument arrays can be inquired.</li>
+<li>Working arrays can be defined and allocated according to the sizes of the
+    argument arrays.</li>
+</ul>
+<p>By the application of these features, procedures which can be realized only as
+subroutines in FORTRAN77 can be redefined as array-valued functions in
+Fortran90.</p>
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>SPMODEL: A Series of Hierarchical Spectral Models for GFD</b>
+</td><td align=right>
+    << <a href=sec1.htm>Prev</a> |
+       <a href=../index.htm>Index</a>|
+       <a href=sec3.htm>Next</a>    >>
+</td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

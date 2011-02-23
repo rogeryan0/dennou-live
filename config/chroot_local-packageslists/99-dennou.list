@@ -1,5 +1,6 @@
 # spml
 netcdf-bin
-#spml-g95
+build-essential
+spml-g95
 # Dennou Ruby
 gphys

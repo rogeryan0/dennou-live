@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>spml インストールガイド</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h1><a name="Title:" href="#Title:">Title:</a> <a name="label-0">spml インストールガイド</a></h1><!-- RDLabel: "spml インストールガイド" -->
+
+<h2><a name="1" href="#1">1</a> <a name="label-1">動作環境</a></h2><!-- RDLabel: "動作環境" -->
+
+<p>spml ライブラリは以下の環境での動作を確認しています.</p>
+<ul>
+<li>OS: <a href="http//www.debian.org/">Debian GNU/Linux</a></li>
+<li>Fortran Compiler
+<ul>
+<li><a href="http://www.g95.org/">G95 Fortran Compiler ver. 0.91</a>
+<ul>
+<li>with <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2 1.0.7</a></li>
+</ul></li>
+<li><a href="http://www.fqs.fujitsu.com/fort-c/">Fujitsu Fortran Driver ver.1.0(Japanese)</a>
+<ul>
+<li>with <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2 1.0.7</a></li>
+</ul></li>
+<li><a href="http://www.fqs.fujitsu.com/fort-c/">Fujitsu Fortran Compiler ver.5.0(Japanese)</a>
+<ul>
+<li>with <a href="http://www.mcs.anl.gov/research/projects/mpich2/">MPICH2 1.0.7</a></li>
+</ul></li>
+<li><a href="http://www.intel.com/software/products/compilers/flin/">Intel Fortran Compiler ver 10.0, 11.0</a></li>
+</ul></li>
+</ul>
+<p>過去には以下の環境でも動作したことが確認されています.
+確認はしていませんが, 現在のバージョンでもおそらく動作すると期待されます.</p>
+<ul>
+<li>Cray XT4 + PGI Fortran</li>
+<li>NEC SX-6 + FORTRAN90/SX</li>
+<li>NEC SX-8 + FORTRAN90/SX</li>
+<li>NEC SX-8R + FORTRAN90/SX</li>
+<li>NEC SX-9 + FORTRAN90/SX</li>
+<li>Linux + PGI Fortran</li>
+</ul>
+<h2><a name="2" href="#2">2</a> <a name="label-2">インストール作業の概略</a></h2><!-- RDLabel: "インストール作業の概略" -->
+
+<p>spml ライブラリのインストールは以下の様に行ないます.
+詳しくは各項目を参照して下さい.</p>
+<ol>
+<li><a href="#label-3">必要なソフトウェア</a> をインストールします.</li>
+<li><a href="#label-4">ビルドの手引き</a> に従い, ソースからライブラリをビルドします.</li>
+<li><a href="#label-36">インストールの手引き</a> に従い, ライブラリをインストールします.</li>
+<li><a href="#label-37">テストプログラム実行の手順</a> に従い, インストールされた
+      ライブラリが正常に機能するかどうか確認してください.</li>
+<li><a href="#label-38">パスの設定</a> を行ってください.</li>
+</ol>
+<h2><a name="3" href="#3">3</a> <a name="label-3">必要なソフトウェア</a></h2><!-- RDLabel: "必要なソフトウェア" -->
+
+<p>spml を利用するためには, 以下のソフトウェアを
+事前にインストールしておく必要があります.</p>
+<ul>
+<li><a href="http://www.gfd-dennou.org/library/netcdf">netCDF</a>, version 3.6</li>
+<li><a href="http://www.gfd-dennou.org/library/gtool">gtool5</a></li>
+<li><a href=":http://www.gfd-dennou.org/library/ispack">ispack</a></li>
+</ul>
+<h2><a name="4" href="#4">4</a> <a name="label-4">ビルドの手引き</a></h2><!-- RDLabel: "ビルドの手引き" -->
+
+<h3><a name="4.1" href="#4.1">4.1</a> <a name="label-5">TGZ パッケージの展開</a></h3><!-- RDLabel: "TGZ パッケージの展開" -->
+
+<p>適当な作業ディレクトリでソースアーカイブを展開します.
+ソースは spml-<var>バージョン</var> というディレクトリに展開されます.</p>
+<pre>$ tar xvzf spml_current.tgz</pre>
+<p>または</p>
+<pre>$ zcat spml_current.tar.gz | tar -xvf -</pre>
+<h3><a name="4.2" href="#4.2">4.2</a> <a name="label-6">Fortran コンパイラの指定</a></h3><!-- RDLabel: "Fortran コンパイラの指定" -->
+
+<p>環境変数 <em> FC </em> に使用する Fortran コンパイラを指定してください.
+以下は, 利用するコンパイラが frt の場合です.</p>
+<ul>
+<li><p>sh, bash の場合</p>
+<pre>$ FC=frt ; export FC</pre></li>
+<li><p>csh, tcsh の場合</p>
+<pre>$ setenv FC frt</pre></li>
+</ul>
+<p>最適化やデバッグのためのオプションは環境変数 <em> SYSFFLAGS </em>
+に設定してください. 以下の例は Fujitsu Fortran を使用する場合の高速化と
+並列化のためのオプションです.</p>
+<ul>
+<li><p>sh, bash の場合</p>
+<pre>$ FFLAGS="-Kfast,parallel" ; export FFLAGS</pre></li>
+<li><p>csh, tcsh の場合</p>
+<pre>$ setenv FFLAGS "-Kfast,parallel"</pre></li>
+</ul>
+<h3><a name="4.3" href="#4.3">4.3</a> <a name="label-7">Config.mk の作成</a></h3><!-- RDLabel: "Config.mk の作成" -->
+
+<p>展開されたディレクトリに移動し, <code> ./configure </code>を実行します. </p>
+<ul>
+<li><code> --with-netcdf= </code> には netCDF ライブラリのパスを指定します. 
+  (以下の例は /usr/local/netcdf/lib/libnetcdf.a にライブラリがある 
+  場合のものです). </li>
+<li><code> --with-gtool5= </code> には gtool5 ライブラリのパスを指定します. 
+  (以下の例は /usr/local/gtool5/lib/libgtool5.a にライブラリがある 
+  場合のものです). </li>
+<li><code> --with-ispack= </code> には ispack ライブラリのパスを指定します. 
+  (以下の例は /usr/local/ispack/lib/libisp.a にライブラリがある 
+  場合のものです). </li>
+</ul>
+<p>このコマンドによって <code> Config.mk </code> ファイルが生成されます. 
+netCDF ライブラリが共有ライブラリである場合, 
+<code> --with-netcdff= </code> も指定する必要があるかもしれません. 
+詳しくは下記のオプションの詳細を参照してください. </p>
+<pre>$ ./configure --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a \
+              --with-gtool5=/usr/local/gtool5/lib/libgtool5.a \
+              --with-ispack=/usr/local/ispack/lib/libisp.a </pre>
+<p>spml を MPI 用にビルドする場合には,
+<a href="#label-32">MPI 用にビルドする場合には</a> を参照してください. </p>
+<p>ビルドには GNU make が必要となるため, configure は PATH 内から
+自動で GNU make を探査しようとしますが, もし見つからない場合,
+エラーを返します. その場合には環境変数 <em> MAKE </em> に
+GNU make コマンドを指定して再度 configure を実行してください.</p>
+<p>インストール先などを変更したい場合は, 以下のように <code> --help </code> オプ
+ションをつけることで, 指定可能なオプションリストが表示されます.</p>
+<pre>$ ./configure --help</pre>
+<p>主なオプションに関しての説明です.</p>
+<dl>
+<dt><a name="label-8" id="label-8"><code>--with-netcdf=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-netcdf=ARG" -->
+<dd>
+<var>ARG</var> に <!-- Reference, RDLabel "ビルドに必要な netCDF ライブラリ" doesn't exist --><em class="label-not-found">ビルドに必要な netCDF ライブラリ</em><!-- Reference end --> 
+を指定します. 必ず明示的に指定する必要があります.
+</dd>
+<dt><a name="label-9" id="label-9"><code>--with-netcdff=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-netcdff=ARG" -->
+<dd>
+netCDF ライブラリが共有ライブラリである場合, C 用ライブラリと
+Fortran 用ライブラリとに分かれてビルドされている場合があります.
+その際は, 上記オプションに C 用ライブラリを指定し, 本オプションの
+<var>ARG</var> に <!-- Reference, RDLabel "Fortran 用ライブラリ" doesn't exist --><em class="label-not-found">Fortran 用ライブラリ</em><!-- Reference end --> を指定します.
+</dd>
+<dt><a name="label-10" id="label-10"><code>--with-netcdf-include=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-netcdf-include=ARG" -->
+<dd>
+必要ならば netCDF ライブラリのヘッダを指定します. 
+</dd>
+<dt><a name="label-11" id="label-11"><code>--with-gtool5=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-gtool5=ARG" -->
+<dd>
+<var>ARG</var> に <!-- Reference, RDLabel "ビルドに必要な gtool5 ライブラリ" doesn't exist --><em class="label-not-found">ビルドに必要な gtool5 ライブラリ</em><!-- Reference end --> 
+を指定します. 必ず明示的に指定する必要があります.
+</dd>
+<dt><a name="label-12" id="label-12"><code>--with-ispack=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-ispack=ARG" -->
+<dd>
+<var>ARG</var> に <!-- Reference, RDLabel "ビルドに必要な ispack ライブラリ" doesn't exist --><em class="label-not-found">ビルドに必要な ispack ライブラリ</em><!-- Reference end --> 
+を指定します. 必ず明示的に指定する必要があります.
+</dd>
+<dt><a name="label-13" id="label-13"><code>--with-ssl2=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-ssl2=ARG" -->
+<dt><a name="label-14" id="label-14"><code>--with-ssl2tp=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-ssl2tp=ARG" -->
+<dt><a name="label-15" id="label-15"><code>--with-lapack=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-lapack=ARG" -->
+<dd>
+<var>ARG</var> に <!-- Reference, RDLabel "固有値問題を解くために使用するライブラリ" doesn't exist --><em class="label-not-found">固有値問題を解くために使用するライブラリ</em><!-- Reference end -->
+を指定します. 
+</dd>
+<dt><a name="label-16" id="label-16"><code>--with-fftw=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-fftw=ARG" -->
+<dt><a name="label-17" id="label-17"><code>--with-rfftw=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-rfftw=ARG" -->
+<dd>
+フーリエ変換に FFTW ver.2 を使用する場合に指定します.
+<!-- Reference, RDLabel "ispack" doesn't exist --><em class="label-not-found">ispack</em><!-- Reference end --> を -FFTW2 付きでビルドしている場合には指定する必要があります.
+</dd>
+<dt><a name="label-18" id="label-18"><code>--with-mpifc=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-mpifc=ARG" -->
+<dd>
+MPI 並列を有効にする場合に指定します. 
+</dd>
+<dt><a name="label-19" id="label-19"><code>--prefix=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;prefix=ARG" -->
+<dd>
+<var>ARG</var> にライブラリやモジュール, 実行ファイルのインストール先の
+ディレクトリのプレフィックスを指定します.
+デフォルトは <code> /usr/local/spml </code> です.
+</dd>
+<dt><a name="label-20" id="label-20"><code>--host=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;host=ARG" -->
+<dd>
+クロスコンパイルを行う場合には, パッケージが実行されるシステムタイプ名
+を <var>ARG</var> に指定します.
+</dd>
+<dt><a name="label-21" id="label-21"><code>--libdir=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;libdir=ARG" -->
+<dd>
+<var>ARG</var> にライブラリのインストール先のディレクトリを指定します.
+デフォルトは <code> /usr/local/spml/lib </code> です.
+</dd>
+<dt><a name="label-22" id="label-22"><code>--includedir=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;includedir=ARG" -->
+<dd>
+<var>ARG</var> にモジュール情報ファイルのインストール先のディレクトリ
+を指定します. デフォルトは <code> /usr/local/spml/include </code> です.
+</dd>
+<dt><a name="label-23" id="label-23"><code>--bindir=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;bindir=ARG" -->
+<dd>
+<var>ARG</var> に実行ファイルのインストール先のディレクトリを指定します.
+デフォルトは <code> /usr/local/spml/bin </code> です.
+</dd>
+<dt><a name="label-24" id="label-24"><code>--docdir=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;docdir=ARG" -->
+<dd>
+<var>ARG</var> にドキュメント/マニュアルのインストール先のディレクトリを指定します.
+デフォルトは <code> /usr/local/spml/doc </code> です.
+</dd>
+<dt><a name="label-25" id="label-25"><code>--with-abort=</code><var>ARG</var></a></dt><!-- RDLabel: "&shy;&shy;with-abort=ARG" -->
+<dd>
+<var>ARG</var> に <code>abort, errtra-setrcd, exit, setrcd, stop</code> のいずれか
+を指定することで, 終了時に用いる Fortran の内部関数を変更することが
+可能です. デフォルトは <code> abort </code> です.
+<dl>
+<dt><a name="label-26" id="label-26">abort</a></dt><!-- RDLabel: "abort" -->
+<dd>
+Fortran の内部サブルーチン abort で終了します.
+</dd>
+<dt><a name="label-27" id="label-27">errtra-setrcd</a></dt><!-- RDLabel: "errtra-setrcd" -->
+<dd>
+Fujitsu Fortran の ERRTRA サービスサブルーチンを呼び出し,
+現在実行中のプログラム単位までのトレースバックマップを出力し,
+終了します. Fujitsu Fortran の SETRCD サービスサブルーチンにて,
+復帰コード 13 を設定し, 終了コードとして 3 を設定します.
+</dd>
+<dt><a name="label-28" id="label-28">exit</a></dt><!-- RDLabel: "exit" -->
+<dd>
+Fortran の内部サブルーチン exit で終了します.
+</dd>
+<dt><a name="label-29" id="label-29">setrcd</a></dt><!-- RDLabel: "setrcd" -->
+<dd>
+Fujitsu Fortran の SETRCD サービスサブルーチンを呼び出し,
+Fortran の復帰コードとして 3 を設定して終了します.
+</dd>
+<dt><a name="label-30" id="label-30">stop</a></dt><!-- RDLabel: "stop" -->
+<dd>
+Fortran の内部関数 stop で終了します.
+</dd>
+</dl>
+</dd>
+<dt><a name="label-31" id="label-31"><code>--config-cache</code> または <code>-C</code></a></dt><!-- RDLabel: "&shy;&shy;config-cache または -C" -->
+<dd>
+<p><code> Config.mk </code> ファイルが生成されると同時に, <code>config.cache</code>
+ファイルが作成され, <code> ./configure </code> の引数に指定されたライブラリの位置
+などの情報が保持されます.</p>
+<p>再度 <code> ./configure </code> を実行する際にもこのオプションを指定することで,
+<code>config.cache</code> が読み込まれ, 前回指定したオプション等が引き継がれます.
+既に存在する <code>config.cache</code> を無視する場合はこのオプションを
+指定せずに <code> ./configure </code> を実行してください.</p>
+<p>例えば下記のように <code> ./configure </code> を実行するとします.</p>
+<pre>$ ./configure -C --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a
+                 --with-gtool5=/usr/local/gtool5/lib/libgtool5.a
+                 --with-ispack=/usr/local/ispack/lib/libisp.a</pre>
+<p>すると次回以降, 下記のように <code> ./configure </code> を実行することで
+ライブラリの位置情報などが引き継がれます.</p>
+<pre>$ ./configure -C</pre>
+</dd>
+</dl>
+<h3><a name="4.4" href="#4.4">4.4</a> <a name="label-32">MPI 用にビルドする場合には</a></h3><!-- RDLabel: "MPI 用にビルドする場合には" -->
+
+<p>spml を MPI 用にビルドする場合にはまず MPI ライブラリをシステムに
+インストールしてください.</p>
+<p>次に gtool5 を MPI サポートを有効にして install します. 
+詳細については
+<a href="http://www.gfd-dennou.org/library/gtool5/INSTALL.htm">gtool5 の install ドキュメント</a>を参照して下さい.</p>
+<p>Config.mk を作成する場合には, 環境変数 FC に mpif90 などの MPI 用コンパイル
+コマンドを指定してください.
+そして, 以下のように configure にはオプション --with-mpifc を指定して下さい</p>
+<pre>$ ./configure -C --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a \
+                 --with-gtool5=/usr/local/gtool5/lib/libgtool5.a \
+                 --with-ispack=/usr/local/ispack/lib/libisp.a \
+                 --with-mpifc=/usr/local/mpich/mpif90</pre>
+<p>その他のオプションなどについては, <a href="#label-7">Config.mk の作成</a> を参照してください. </p>
+<h3><a name="4.5" href="#4.5">4.5</a> <a name="label-33">Config.mk の編集</a></h3><!-- RDLabel: "Config.mk の編集" -->
+
+<p>環境に合わせ <code> Config.mk </code> を手動で編集してください. 
+下記の設定についてよく分からない場合にはとりあえず
+<a href="#label-34">ソースコードのコンパイル</a> へ進んでください. </p>
+<pre>FC          : Fortran コンパイラ
+
+SYSFFLAGS   : コンパイル時・リンク時に必要なフラグ
+              (Fortran コンパイラ実行時に必要なオプション)
+
+SYSLDFLAGS  : リンク時に必要なフラグ
+
+SYSLDLIBS   : リンク時に必要なライブラリ
+
+F90MODTYPE  : モジュール情報の渡し方
+
+DEST_LIB    : spml ライブラリインストールディレクトリ
+
+DEST_INC    : spml モジュールインストールディレクトリ
+
+DEST_BIN    : spml 実行ファイルインストールディレクトリ
+
+DEST_DOC    : spml ドキュメントファイルインストールディレクトリ
+
+MODS        : モジュールファイル拡張子
+
+MAKE        : GNU make コマンド
+
+AR          : アーカイブコマンド
+
+ARFLAGS     : アーカイブ時に必要なフラグ
+
+RANLIB      : アーカイブのインデックスを作成するコマンド</pre>
+<h3><a name="4.6" href="#4.6">4.6</a> <a name="label-34">ソースコードのコンパイル</a></h3><!-- RDLabel: "ソースコードのコンパイル" -->
+
+<p>ビルドには必ず GNU make を使用してください. 他の "make" プログラムを使
+用すると, 正しくビルドが行われません.
+以降 GNU make のコマンド名を "make" と表記しますが,
+これらはシステムの GNU make コマンドの名前に置き換えてください.</p>
+<p>./configure を実行すると, 以下のように GNU make のコマンド名が
+表示されます. このメッセージに従って GNU make を実行してください.</p>
+<pre>Execute GNU make in the current directory, as follows.
+
+  /usr/bin/make</pre>
+<h3><a name="4.7" href="#4.7">4.7</a> <a name="label-35">ドキュメントの生成</a></h3><!-- RDLabel: "ドキュメントの生成" -->
+
+<p>マニュアルとコードリファレンスのコンパイルはカレントディレクトリ
+において, 以下のコマンドを実行してください.
+<a href="http://www.gfd-dennou.org/library/spml/spml.tar.gzz">spml の TGZ パッケージ</a>
+から入手する場合には既に生成済みです.</p>
+<pre>$ make doc
+$ make install</pre>
+<h2><a name="5" href="#5">5</a> <a name="label-36">インストールの手引き</a></h2><!-- RDLabel: "インストールの手引き" -->
+
+<p>カレントディレクトリで以下のコマンドを実行してください.
+システム領域にインストールする場合には管理者権限が
+必要です. (デフォルトの場合はシステム領域にインストールします).</p>
+<pre># make install</pre>
+<h2><a name="6" href="#6">6</a> <a name="label-37">テストプログラム実行の手順</a></h2><!-- RDLabel: "テストプログラム実行の手順" -->
+
+<p>カレントディレクトリにおいて, 以下のコマンドを実行してください.
+エラーが生じずに
+"<code> *** Compilation and installation are succeeded !! *** </code>"
+というメッセージが表示されればインストールは完了です.</p>
+<pre>$ make test</pre>
+<h2><a name="7" href="#7">7</a> <a name="label-38">パスの設定</a></h2><!-- RDLabel: "パスの設定" -->
+
+<p>上記のように正しくインストールが行われたら,
+<em>spmfrt</em> というシェルスクリプトが <code>--prefix=</code><var>ARG</var>
+で指定されたディレクトリ以下の bin ディレクトリ <var>ARG</var>/bin
+に作成されているはずです.
+( <code>--prefix=</code> を指定しなかった場合は
+<code> /usr/local/spml/bin/ </code> 以下).</p>
+<p>このディレクトリへのパスを通してください.
+以下は <code> /usr/local/spml/bin/ </code> 以下に <em>spmfrt</em>
+がインストールされた場合の例です.</p>
+<ul>
+<li><p>sh, bash</p>
+<pre>$ PATH=$PATH:/usr/local/spml/bin ; export PATH</pre></li>
+<li><p>csh, tcsh</p>
+<pre>$ setenv PATH $PATH:/usr/local/spml/bin</pre></li>
+</ul>
+<p><em>spmfrt</em> は spml ライブラリを利用した Fortran プログラムを
+簡単にコンパイル, リンクするためのシェルスクリプトです.
+これまで利用していた Fortran コンパイラのコマンドの代わりに
+spmfrt を用いることで, 自動的に spml ライブラリへの
+リンク, モジュール群へのディレクトリ指定を行ってくれます.</p>
+<pre>$ spmfrt test.f90
+
+/usr/bin/g95 -I/usr/local/spml/include \
+             -I/usr/local/gtool5/include -O test.f90 \
+             -L/usr/local/gtool5/lib \
+             -L/usr/local/netcdf/lib \
+             -L/usr/local/ispack/lib \
+             -L/usr/local/spml/lib \
+             -lgtool5 -lnetcdf -lisp -lspml</pre>
+
+</body>
+</html>

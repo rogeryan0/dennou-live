@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title></title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" href="dennou-ruby.css" type="text/css">
+</head>
+
+<body>
+<h1><a name="title" id="title">電脳Rubyチュートリアル</a></h1>
+
+<hr>
+<p><h2>チュートリアル(全般)</h2>
+
+<p>電脳Ruby諸資源を使ってデータ解析と可視化を行うためのチュートリアル。
+Rubyの全くの初心者が、なにもインストールしてないところからはじめられる親切なメニューです。
+
+<ul>
+ <p><li><a href="./install/index-j.html" target=_top>いんすとーる編</a></li>
+ <p><li><a href="./gokuraku/" target=_top>ruby 基礎編</a><br>
+    <font size=-1>(Rubyの初歩 / Ruby対話利用 / 
+    多次元数値配列扱いと可視化の初歩 / NetCDF)</font></li>
+ <p><li><a href="./rakuraku/" target=_top>ちょっと進んだ使いかた編</a></li>
+</ul>
+
+<p><h2>チュートリアル(個別)</h2>
+
+<ul>
+ <p>
+    <li>
+        <a href="../products/gphys/tutorial" target=_top>GPhysのチュートリアル</a> <br>
+         <font size=-1>(GPhysは物理量データを扱う統合解析可視化ライブラリーです．)</font>
+	<ul>
+	  <p><li> <a href="gpcommands/" target=_top>
+               GPhysコマンドチュートリアル</a> <br>
+               <font size=-1>(GPhys付属のアプリケーションコマンド群の使い方)</font>
+	  <p><li>
+	          <a href="../products/gphys/tutorial/ep_flux" target=_top>GPhys::EP_Flux のチュートリアル</a>
+	</ul>
+    </li>
+ <p><li><a href="rdoc/" target=_top>
+      RDocによる自動ドキュメント生成</a><br> 
+      <font size=-1>(RDocはRubyソースから自動でhtmlドキュメントを生成します.
+      コーディング時にRDocスタイルのコメントをつけていくようにすると,
+      自ずと見やすいドキュメントが作れます.)</font>
+ <p><li><a
+ 　　 href="devel/index.html"
+      target=_top>気象データ解析ライブラリの開発のチュートリアル</a></li>          
+ <p><li> 拡張ライブラリー作成
+    <ul> 
+      <li> <a href="ruby-ext/" target=_top>Ruby 拡張ライブラリー作成チュートリアル
+           </a><br> <font size=-1>(for C; 直書きとSWIG利用の両方)</font>
+      <p><li> <a href="swig/" target=_top>
+          SWIGによる拡張ライブラリー自動生成のチュートリアル </a>
+         <br> <font size=-1>(for Fortran, C & C++. ちょっと古いです)</font>
+    </ul> 
+ <p><li><a href="gsl/index.htm"
+      target=_top>Ruby/GSL を用いたデータ解析スクリプトの紹介</a><br>
+     <font size=-1>(Ruby/GSLは科学計算用ライブラリー GSL (GNU Scientific Library) のRubyラッパーです)</font>
+ <p><li><a href="vtk/index.html" target=_top>Ruby-VTK Tutorial</a><br>
+     <font size=-1>(Ruby-VTK は３次元描画ライブラリー VTK (Visualization ToolKit) のRubyラッパーです)</font>
+</ul>
+
+<p><h2>古いチュートリアル</h2>
+
+<ul>
+ <p><li><a href="./3-gen/" target=_top>もっと進んだ使いかた編</a>
+        (この中のGPhysチュートリアルは古いです。)</li>
+</ul>
+
+<hr>
+<p><h2>参考</h2>
+<ul>
+<p><li> <a href="../doc-link-j.htm">ドキュメンテーションリンク集</a>:
+電脳 Ruby 生活を快適に送るための、ライブラリーのマニュアルなどのリンク集。
+それぞれのホームページへのリンクもあります。
+</ul>
+
+<hr>
+<p><h2>お薦めの文献 (ちょっと古いです)</h2>
+
+<ul>
+ <p><li><a href="http://www.ruby-lang.org/ja/" target=_top>Rubyオフィシャルホームページ</a>
+     オンラインマニュアルが便利。
+ <p><li><a href="http://www.ruby-lang.org/ja/" target=_top>「Rubyデスクトップレファレンス」
+     まつもと著 (オライリージャパン)</a>
+     オンラインマニュアルよりは本が見やすいという場合はこれ。
+ <p><li><a href="http://www.amazon.co.jp/exec/obidos/ASIN/4894714531/249-0417301-3382728" target=_top>
+   「プログラミングRuby」トーマス＆ハント著(ピアソン・エデュケーション)</a><br>
+   定評ある著者による好著。入門用にお薦め。Ruby 1.6ベース。<br>
+   原版(英語)は
+   <a href="http://www.pragmaticprogrammer.com/titles/ruby/index.html" target=_top>
+     "Programming Ruby" by Thomas and Hunt (Addison-Wesley)</a>
+ <p><li><a href="http://www.ascii.co.jp/books/detail/4-7561/4-7561-3254-5.html" target=_top>
+     「オブジェクト指向スクリプト言語Ruby」まつもと・石塚著(アスキー出版局)</a><br>
+     Rubyの能力をフルに活かしたい人に必携。
+     拡張ライブラリーの作りかたの説明もあります。
+     ただし、Rubyをはじめて学ぶひとには敷居が高いかもしれません。索引は不備。
+     Ruby 1.4ベース。
+ <p><li><a href="http://www.ascii.co.jp/books/detail/4-7561/4-7561-3961-2.html" target=_top>
+     「dRubyによる分散オブジェクトプログラミング」関著(アスキー出版局)</a><br>
+     その名の通り！
+ <p><li><a href="http://book.mycom.co.jp/MYCOM/html/book/4-8399-0884-2/4-8399-0884-2.shtml" target=_top>
+     「eRuby テキスト埋め込み型 Ruby」高井著(毎日コミュニケーションズ)</a><br>
+     htmlページを書くときに役に立ちます。
+ <p><li><a href="http://store.sbpnet.jp/bm_detail.asp?sku=4797311126" target=_top>
+     「オブジェクト指向における再利用のためのデザインパターン」
+     Gammaら著(ソフトバンク)</a><br>
+     より使い回しの効くプログラムが書けるようになりたい方は、一度目を通しておくとよいでしょう。
+ <p><li>「オブジェクト指向入門」Meyer著 (アスキー)<br>
+     第1版の日本語訳です。
+     第2版は英語のみ：<a href="http://www.amazon.co.jp/exec/obidos/ASIN/0136291554/inktomi-jp-asin-books-22/249-2141922-2008348" target=_top>
+     "Object-Oriented Software Construction (2nd Edition)" by Meyer
+     (Prentice Hall)</a> (どちらを読んでもいいでしょう).
+     オブジェクト指向の必要性と効能が懇切丁寧に書かれてておすすめ。
+
+     
+</ul>
+
+<hr>
+<p><a href="../index-j.htm" target=_top>電脳Ruby日本語ホームページ</a><br>
+
+<hr>
+Takeshi Horinouchi (horinout @ kurasc.kyoto-u.ac.jp)<br>
+GFD Dennou Club: <img SRC="http://ruby.gfd-dennou.org/htmltool/dcstaff_email.png"><br>
+Copyright (C) GFD Dennou Club, 2003. All rights reserved.
+<hr>
+<address></address>
+<!-- hhmts start -->
+Last modified: Thu Jan 06 22:20:47 JST 2005
+<!-- hhmts end -->
+</body> </html>

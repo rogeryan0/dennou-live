@@ -1,0 +1,539 @@
+<html>
+<head>
+<title>Dennou-Ruby Tutorial</title>
+<link rel="stylesheet" href="dennou-ruby.css" type="text/css">
+</head>
+<body>
+
+<h1>Dennou-Rubyチュートリアルページ(応用編)</h1>
+
+<p><h4>2003年3月　堀之内 武</h4>
+<hr>
+
+<ul>
+ <li>
+  <a href="http://www.gfd-dennou.org/arch/ruby/doc-link-j.htm">
+  ドキュメンテーションリンク集
+  </a>
+ </li>
+</ul>
+
+<hr>
+
+<h2>便利な機能たち</h2>
+
+<!-- move to ../rakuraku/exception.html
+<p><h3>例外処理</h3>
+
+<p>Rubyプログラミングにおいては、エラーへの対処のしかたとして、
+「例外」というものを発生するのが有効です。
+<p>例: <a href=exception.rb>exception.rb</a></p>
+<table width=80%><tr><td><pre class="source">
+% cat exception.rb
+def plus10(num)
+   raise "Not a Numeric" if ! num.is_a?(Numeric)
+   num + 10
+end
+def call_plus10(num)
+   plus10(num)
+end
+p call_plus10("hi!")
+
+% ruby exception.rb
+exception.rb:2:in `plus10': Not a Numeric (RuntimeError)
+        from exception.rb:6:in `call_plus10'
+        from exception.rb:8
+</pre></td></tr></table>
+<p>raise は例外を発生するグローバルメソッドです。
+上のように、デフォルトでは実行が中断され、トレースバックが表示されます。
+呼出しをさかのぼってファイル名と行番号が表示されていることに注意してください。
+
+<p>ある程度エラーが予測されている場合は、
+エラー時にはこう対処したいということがあるでしょう。
+以下のように begin .. rescue .. end
+節を使うと例外を捕捉し、rescue以下の部分を実行します。
+<p>例: <a href=rescue.rb>rescue.rb</a></p>
+<table width=80%><tr><td><pre class="source">
+% cat rescue.rb
+def plus10(num)
+   raise "Not a Numeric" if ! num.is_a?(Numeric)
+   num + 10
+end
+def plus_str10(num)
+   num + "10"
+end
+
+s = "20"
+begin
+   p plus10(s)
+rescue
+   p plus_str10(s)
+end
+
+%  ruby rescue.rb
+"2010"
+</pre></td></tr></table>
+<p>例外を捕捉したときだけその下を実行する rescue に加えて、例外が発生しようがし
+まいが必ず実行する ensure というのもあります。これも begin .. ensure
+.. end の形で使います。例外処理をうまく使うことで、
+まさに「例外的な状況」に強いプログラムを作ることが出来ます。
+汎用なプログラムをつくるためには、必須の機能です。
+なお、軽微な例外的状況への対応のしかたとしては、
+メソッドの戻り値を本来戻すべきクラスのオブジェクトでなく nil 
+を返すという方法も良く使われます。例えば
+<table width=80%><tr><td><pre class="source">
+a = [10,20]
+p a[1]
+   => 20
+p a[2]
+   => nil
+</pre></td></tr></table>
+-->
+
+<p><h3>オプション引数</h3>
+<p>メソッドの引数にデフォルト値を定めて省略可能にしたいことは、良くあるでしょう。
+これは以下のように、メソッドの引数定義を「変数名=デフォルト値」と書く
+ことで実現できます。デフォルト値を与えた引数は呼出し時に省略できます。
+<table width=80%><tr><td><pre class="source">
+def set_window( xmin=0.2, xmax=0.8, ymin=0.2, ymax=0.8 )
+   hogehoge( xmin, xmax, ymin, ymax )
+   ...
+end
+
+set_window                             # デフォルト値を使う
+set_window(0.1,0.9,0.1,0.9)            # 陽に指定する
+</pre></td></tr></table>
+
+<p>オプション引数を多くサポートしたい場合、順番でなく名前(キーワード)
+で指定したいことでしょう。Rubyにはキーワード引数はありませんが、
+Hash を使うことで同等のことが出来ます。
+これに限らず Hash は非常に使いでがありますので、是非なれ親しんで下さい。
+<p>例: <a href=keyword_arg.rb>keyword_arg.rb</a></p>
+<table width=80%><tr><td><pre class="source">
+require "numru/dcl"
+include NumRu
+
+def plot(x, y=nil, options=nil)
+   if y == nil
+      y = x
+      x = NArray.float(y.length).indgen!
+   end
+   DCL.grfrm
+   if options
+      if (val=options[:xtitle]);  DCL.uscset("cxttl", val); end
+      if (val=options[:ytitle]);  DCL.uscset("cyttl", val); end
+   end
+   DCL.usgrph(x, y)
+end
+
+x = NArray.float(20).indgen! - 10
+z = x ** 2 / 20
+
+DCL.gropn(1)
+plot(z)                                      # キーワード引数なし 
+plot(z, nil, {:xtitle=>"X", :ytitle=>"Y"})   # Hashによる「キーワード引数」
+plot(x,   z,  :xtitle=>"X", :ytitle=>"Y")    # 呼出し末尾では {} は省略可
+DCL.grcls
+</pre></td></tr></table>
+<p>これを実行すると、以下のような図が表示されるはずです＋
+<hr>
+<img src='keyword_arg_001.jpg'><hr>
+<img src='keyword_arg_002.jpg'><hr>
+<img src='keyword_arg_003.jpg'><hr>
+<p>上の例で、{}を省略した最後の表現<br>
+　　plot(x,   z,  :xtitle=>"X", :ytitle=>"Y")<br>
+はだいぶキーワード引数の雰囲気を漂わせていますね。なお、
+ここではタイプの量を減らすため、キーワードとして、コンマで始まる
+Symbol (:xtitleなど) を使いましたが、文字列もよく使われます。
+Symbol の値は実行時に内部的に割り振られますから、
+例えば一度描いた図をのちに再現するためにキーワードもファイルに
+出力して保存する場合は文字列を使うべきです。
+
+<p><h3>変数とオブジェクト / クローニング / ゴミ集め(GC)</h3>
+
+<p>ちょと混乱しやすいことについて。
+Rubyでは、「全てがオブジェクト」ですが、オブジェクトは Ruby
+セッション中にメモリー上に存在する何かであって、
+プログラム中の変数そのものではありません。
+後者はあくまで変数名です。だから、以下のようになります。
+(irb(main):001:0>等は irb のプロンプト)
+<table width=80%><tr><td><pre class="source">
+% irb
+irb(main):001:0> a = [10, 20]
+=> [10, 20]
+irb(main):002:0> b = a
+=> [10, 20]
+irb(main):003:0> a.id
+=> 427272
+irb(main):004:0> b.id
+=> 427272
+irb(main):005:0> b[0] = 999
+=> 999
+irb(main):006:0> a
+=> [999, 20]
+</pre></td></tr></table>
+
+<p> 上では a と b が同じ id を持つことから、
+同じオブジェクトであることがわかります。従って、
+b に代入すると、a の値も変っています。
+a や b はオブジェクトそのものではなく、ラベルでしかありません。
+変数(名)とオブジェクトの関係は、
+C言語におけるポインターとその参照先のようなものです。
+a と b を別オブジェクトにしたい場合は、clone メソッドを使います：
+
+<table width=80%><tr><td><pre class="source">
+% irb
+irb(main):001:0>  a = [10, 20]
+=> [10, 20]
+irb(main):002:0> b = a.clone
+=> [10, 20]
+irb(main):003:0> a.id
+=> 425568
+irb(main):004:0> b.id
+=> 415692
+irb(main):005:0> b[0] = 999
+=> 999
+irb(main):006:0> a
+=> [10, 20]
+</pre></td></tr></table>
+
+<p>cloneメソッドは、オブジェクトのコピーを作ります。
+ただし、参照先を追い掛けていって、その全てのコピーを作る
+"deep" なクローンではなく、そのオブジェクトだけをコピーする
+"shallow" なクローンです
+
+<p>さて、Cのポインターのようなものと言えば、迷子が発生する
+恐れがあるでしょう。例えば、
+<table width=80%><tr><td><pre class="source">
+a = [ 10, 20 ]
+a = 1
+p a
+   => 1 
+</pre></td></tr></table>
+<p>の2行目のように、同じ変数名 a を別のオブジェクトを指すようにすると、
+その前に指していた配列 [10,20] はどこからも参照できなくなります。
+この迷子を、一般にゴミ(Garbage)と呼びます。C のプログラミングの教室では、
+ゴミを作らないように自分で管理するよう言われるでしょうが、
+Ruby は現代的な言語の例に漏れず、裏でゴミを集めていて回収する、
+<font color=red>「ゴミ集め(Garbage Collection)」</font>の機能があります。
+ちなみに Fortran90 を使っている方、
+ポインターを使えばやはりゴミが溜っていく危険がありますが、
+もちろん Fortran90 にゴミ集めはありません。ご注意を。
+オブジェクト指向プログラミングではゴミは溜りやすいので、
+ゴミ集め機能のないオブジェクト指向言語を使うのは極力避けましょう(^_^)。
+
+<p><h2>Rubyオブジェクト指向プログラミング</h2>
+
+<p><h3>(データ解析プログラミングのための)オブジェクト指向入門</h3>
+
+<p>「オブジェクト指向とは何か？」はさておき、
+「オブジェクト指向とは何のための技術であるか？」と問えば、
+(少なくとも筆者の) 答えは簡単で、
+より信頼性・発展性があるプログラムをより少ない労力で作るための技術
+であるということになる。
+その観点から、「ちょっと進んだ使いかた編」で扱った NArrayMiss クラス
+を題材に、オブエジェクト指向で重要な要素を簡単に解説する。
+<ul>
+  <li> <b>情報隠蔽（カプセル化 -- encapsulation）</b><br>
+       （解説書きはあとで）
+  <li> <b>多態性（polymorphism）</b><br>
+       （解説書きはあとで）
+  <li> <b>継承（inheritance）</b><br>
+       （解説書きはあとで）
+</ul>
+
+<p><h3>Rubyのオブジェクト指向機能について</h3>
+
+<ul>
+  <li> <b>すべてはオブジェクト</b><br>
+       （解説書きはあとで）
+
+  <li> <b>メソッドの種類あれこれ</b><br>
+       クラスメソッド／インスタンスメソッド／特異メソッド
+       public / private / protected
+       <br>（解説書きはあとで）
+
+  <li> <b>モジュールとMixin</b><br>
+       （解説書きはあとで）
+</ul>
+
+<p>以上述べてきた機能や考えは、次項の GPhys
+ライブラリーにおいて活用されている。
+
+<p><h2><a href=http://ruby.gfd-dennou.org/products/gphys/>GPhys</a>
+を用いたデータ解析・可視化と数値シミュレーション</h2>
+
+<p><b><a href=http://ruby.gfd-dennou.org/products/gphys/>GPhys</a>とは？</b>
+
+<ul>
+  <li> 座標を持つ、格子状に離散化された物理量のクラス GPhys を中心とす
+      るライブラリー。名前は Gridded Physical quantity より。
+  <li> グリッド（座標データ）と配列データからなる。
+  <li> 数学・算術演算や、積分等の座標に関する演算が行なえる。
+</ul>
+
+<p><b>何につかうのか？</b>
+
+<ul>
+  <li> 流体等、連続空間における物理量に関するデータ解析（incl.可視化）と数値シミュレーション
+</ul>
+
+<p><b>開発の現状</b>
+
+<p> まだ最初期段階である（１年前に卒業した修士の学生(川那辺君)と共
+同で開発した。それは廃棄してごく最近完全に最初から作り直している）。
+ソースコードは(今のところ)約2000行とコンパクト。
+
+GPhysをダウンロードして展開し、インストールしよう。
+
+<table width=80%><tr><td><pre class="source">
+% tar xvzf gphys-0.0.3.tar.gz 
+% cd gphys-0.0.3
+% ruby install.rb
+</pre></td></tr></table>
+
+（なお、GPhysライブラリーはすべて
+Ruby のみで書いてあるので、インストールといっても展開したファイルがしかるべきディレクトリーにコピーされるだけである。
+インストールせずに展開だけして ruby のオプション -I <I>path</I>
+で指定するだけでもよい。ここで、<I>path</I> には gphys-0.0.3/lib
+を指定する。）
+
+<p> まずは絵を描いてみよう。
+
+gphys-0.0.3 の配布パッケージにはテスト用に、T.jan.ncという
+NetCDFファイルが含まれているので、それを使う。
+中身は NCEP 再解析による、全球の気温の気候値である。
+まずは以下を実行してみよう。
+<table width=80%><tr><td><pre class="source">
+% cd gphys-0.0.3/lib
+% ruby ggraph_old.rb
+</pre></td></tr></table>
+
+<p>ここで ggraph_old.rb は、GPhys の可視化ライブラリーのソースコード
+であるが、それ自身を ruby コマンドにソースファイルとして渡すと
+末尾のテストプログラムが実行されるようになっている。
+なお、ggraph_old.rb という名前になっているのは、
+グラフィックライブラリー(ggraph.rb)を全面的に作り直す予定で、
+作業中だからという事情による。
+
+<p> 本プログラムを実行すると、下のような気温データの図が２枚表示される
+であろう。
+<br>
+<hr>
+<img src='ggraph_001.jpg'><hr>
+<img src='ggraph_002.jpg'><hr>
+
+
+<p> テストプログラム本体を少し簡潔にしたものは以下のようになる。
+
+<table width=80%><tr><td><pre class="source">
+if $0 == __FILE__
+   include NumRu
+   file = NetCDF.open("../testdata/T.jan.nc")
+   temp = GPhys::NetCDF_IO.open(file,"T")
+   DCL.uzfact(0.6)
+   GGraph.open(1)
+   GGraph.contour(temp.mean(0))
+   GGraph.contour(temp[true,true,5])
+   GGraph.close
+end
+</pre></td></tr></table>
+
+<p>全体を囲む if ブロックにより、
+$0 (rubyコマンドに与えたソースファイル) がこのファイルの名前
+__FILE__ (ファイル名を収める組み込み変数) に等しい場合に、
+その中身が実行されることがわかる。
+これをライブラリーから切り離して別ファイルにして実行するには以下のように
+require を最初に呼ぶ。($0 == __FILE__)の制限はもはやいらない。
+<br>
+
+<p>例: <a href=ggraph_test.rb>ggraph_old_test.rb</a></p>
+<table width=80%><tr><td><pre class="source">
+require "numru/ggraph_old"
+include NumRu
+file = NetCDF.open("../testdata/T.jan.nc")
+temp = GPhys::NetCDF_IO.open(file,"T")
+DCL.uzfact(0.6)
+GGraph.open(1)
+GGraph.contour(temp.mean(0))
+GGraph.contour(temp[true,true,5])
+GGraph.close
+</pre></td></tr></table>
+
+<p>
+上のソースを irb で一行ずつ打ち込んでみよう。なお、
+<pre>
+    GGraph.open(1)
+</pre>
+<p>を
+<pre>
+    GGraph.open(2)
+</pre>
+<p>に変えると、postscriptファイルが出来るので、印刷できる。
+<br>
+
+<p>ここではまず、ファイル "T.jan.nc" 中の変数 "T" を開き、
+GPhys オブジェクトを構成して（GPhys::NetCDF_IO.openによる）、
+temp という変数名をつけている。この東西平均( temp.mean(0) )
+並びに下から5番目のレベルでの断面（temp[true,true,5]）を
+とって、図示している。temp はGPhys のオブジェクトであるが、
+平均やサブセットの取り方が NArray
+のそれと全く同じであることに注意せよ。
+</p>
+
+<p> 可視化を行うのはモジュール GGraph のメソッド contour である。
+その引数は uwnd （の平均やサブセット）のみであるが、表示される
+座標軸やタイトルが正しく書けていることに注意せよ。
+モジュール GPhys::NetCDF_IO が NetCDF の規則を知っており、
+GPhys::NetCDF_IO.open はその規則に従った解釈を行って座標情報を
+読み取り、GPhys オブジェクトを構成しているのである。
+GGraph は GPhys の一部ではなく独立であるため、GPhysオブジェクトの
+内部情報に直接アクセスすることは出来ない。GGraph.contour は、
+あくまで GPhys が外部に公開しているインターフェースを通じて、
+問合わせを行い、その結果に基づいて可視化しているのである。
+このため、GPhys クラスに何らかの変更があっても、
+GPhys の公開インターフェースの外部への仕様が変らない限り、
+影響を被らない。<font color=red>---（情報隠蔽）</font>
+</p>
+
+<p> 上に、GPhysオブジェクトたる temp は NArray と全く同じ
+やりかたで平均が取れる（temp.mean(0)）と書いた。これは
+内部で然るべきデータに関し NArray と同様な単純平均が
+とられているのではない。実は平均の取り方そのものが再定義
+されており、離散化された座標軸にそっての積分を積分区間の
+長さで割ったものとなっている。
+<font color=red>---（多態性）</font> <br>
+ファイル中のデータは本当に必要になるまで、
+読み込みが行われないようになっている（上の例では、
+平均をとる時点で、また平均を取らないほうの例では可視化
+されるときに初めて、値が読みこまれる）
+<font color=red>---（実行遅延）</font>
+
+実は、上の例で用いた GGraph による描画では、描画結果を
+「コマンドオブジェクト」(またはその集合)として返すようになっている。
+ソースを以下のように変更すると、描いたものを再描画する。
+<p>例: <a href=ggraph_test2.rb>ggraph_test2.rb</a></p>
+<table width=80%><tr><td><pre class="source">
+require "numru/ggraph"
+include NumRu
+file = NetCDF.open("../testdata/T.jan.nc")
+temp = GPhys::NetCDF_IO.open(file,"T")
+DCL.uzfact(0.6)
+
+gobjs = [
+   GGraph.open(1) ,        # 実は各描画命令はオブジェクト化されて各メソッドの
+   GGraph.contour(temp.mean(0)) ,    # 戻り値となっている。複合なら配列として
+   GGraph.contour(temp[true,true,5])  ,
+   GGraph.close  ]
+
+gobjs.flatten!                 # 入れ子になってる配列をフラットに
+gobjs.each{|i| p i.class}      # 各コマンドのクラスを表示してみる
+gobjs.each{|i| i.exec}         # 再実行 --- 先ほど描いたものが再現される
+</pre></td></tr></table>
+
+
+<br>
+<p>GPhys のソースディレクトリーに存在する各ファイルには、
+それぞれ末尾にテストプログラムが付いているので、
+実行してみると良い。
+<table width=80%><tr><td><pre class="source">
+% ruby attribute.rb
+% ruby attributenetcdf.rb
+% ruby axis.rb
+% ruby ggraph.rb
+% ruby gphys.rb
+% ruby gphys_netcdf_io.rb
+% ruby grid.rb
+% ruby subsetmapping.rb
+% ruby varray.rb
+% ruby varraynetcdf.rb
+</pre></td></tr></table>
+
+<br>
+<p>GPhys の構成とその他の機能については、
+<a href="../../workshop200303/horinout/">こちらの発表資料に概要が説明されている</a>
+ここでは、以下のように中身を調べてみよう。irbへの入力と出力を
+そのまま表示する。入力は、<tt>irb(main):001:0> </tt>等のプロンプトに
+続く部分である。# に続く部分は後から付け加えたコメントである。
+<table width=80%><tr><td><pre class="source">
+% irb
+irb(main):001:0> require "numru/ggraph_old"
+=> true
+irb(main):002:0> include NumRu
+=> Object
+irb(main):003:0> file = NetCDF.open("../testdata/T.jan.nc")
+=> NetCDF:../testdata/T.jan.nc
+irb(main):004:0> temp = GPhys::NetCDF_IO.open(file,"T")
+=> <GPhys grid=<3D grid <axis pos=<'lon' in '../testdata/T.jan.nc'  sfloat[36]>>
+        <axis pos=<'lat' in '../testdata/T.jan.nc'  sfloat[19]>>
+        <axis pos=<'level' in '../testdata/T.jan.nc'  sfloat[9]>>>
+   data=<'T' in '../testdata/T.jan.nc'  sfloat[36, 19, 9]>>
+irb(main):005:0> temp.rank
+=> 3      # データが 3 次元であることがわかる。
+irb(main):006:0> temp.class
+=> NumRu::GPhys   # temp のクラスは NumRu::GPhys である。
+irb(main):007:0> ( temp.methods - Object.new.methods ).sort
+        # GPhys クラス固有のメソッドを表示
+=> ["%", "&", "*", "**", "+", "-", "-@", "/", "<", "<=", ">", ">=",
+    "[]", "[]=", "^", "add!", "all?", "and", "any?", "axnames",
+    "ceil", "copy", "data", "div!", "each_subary_at_dims",
+    "each_subary_at_dims_with_index", "eq", "floor", "ge", "grid",
+    "gt", "integ", "le", "length", "lt", "mean", "mod!", "mul!",
+    "name", "name=", "ne", "none?", "not", "or", "rank", "round",
+    "shape", "shape_coerce", "shape_current", "sub!", "to_f", "to_i",
+    "total", "typecode", "val", "val=", "where", "where2", "xor", "|",
+    "~"]
+irb(main):008:0> temp.shape_current
+=> [36, 19, 9]   # 現在の各次元の長さは 36, 19, 9 であることがわかる。
+                 # (最後の次元が無制限次元がある場合、より長くなり得る)
+irb(main):011:0> temp.grid
+=> ＜3D grid ＜axis pos=＜'lon' in '../testdata/T.jan.nc'  sfloat[36]＞＞
+        ＜axis pos=＜'lat' in '../testdata/T.jan.nc'  sfloat[19]＞＞
+        ＜axis pos=＜'level' in '../testdata/T.jan.nc'  sfloat[9]＞＞＞
+                 # grid メソッドは temp の座標情報を返す
+irb(main):012:0> temp.grid.class
+=> NumRu::Grid   # 座標情報が収まっているオブジェクトは NumRu::Grid クラスである。
+irb(main):012:0> ( temp.grid.methods - Object.new.methods ).sort
+        # Grid クラス固有のメソッドを表示
+=> ["[]", "add_collapsed", "axis", "axnames", "change_axis",
+"change_axis!", "collapsed", "copy", "dim_index", "exclude",
+"get_axis", "insert_axis", "insert_axis!", "integ", "mean", "rank",
+"set_axis", "set_collapsed", "shape", "shape_current"] 
+irb(main):013:0> temp.grid.axis(0)
+=> <axis pos=<'lon' in '../testdata/T.jan.nc'  sfloat[36]>>
+    # 最初(0)の次元は lon (経度) である。長さは 36。
+irb(main):014:0> temp.grid.axis(1)
+=> <axis pos=<'lat' in '../testdata/T.jan.nc'  sfloat[19]>>
+    # 2番目(1)の次元は lat (緯度) である。長さは 19。
+irb(main):015:0> temp.grid.axis(0).pos  # 座標の格子点値
+=> <'lon' in '../testdata/T.jan.nc'  sfloat[36]>
+irb(main):016:0> temp.grid.axis(0).pos.class
+=> NumRu::VArrayNetCDF   # そのクラスは NumRu::VArrayNetCDF
+irb(main):038:0> temp.grid.axis(0).pos.val
+=> NArray.sfloat(36): 
+[ 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, ... ]
+    # その値を表示
+irb(main):039:0> temp.data
+=> <'T' in '../testdata/T.jan.nc'  sfloat[36, 19, 9]>
+   # こんどは気温データ本体のほう。３次元なのが確認できる。
+irb(main):008:0> temp.data.val
+   # その値：
+=> NArray.sfloat(36,19,9): 
+[ [ [ -28.66, -28.51, -28.37, -28.25, -28.15, -28.08, -28.03, -28.02, ... ], 
+    [ -19.05, -18.5, -19.76, -21.54, -22.85, -23.79, -24.49, -25.0, ... ], 
+    [ 1.237, 0.4303, -4.348, -6.418, -6.424, -11.27, -18.78, -22.37, ... ], 
+    [ 4.255, 0.2145, -3.836, -8.34, -11.44, -13.52, -15.81, -17.16, ... ], 
+    [ 4.685, 1.562, -2.378, -5.007, -6.997, -9.384, -12.11, -12.59, ... ], 
+    [ 9.936, 11.18, 7.982, 5.878, 4.129, 4.092, -1.15, 3.713, 4.431, ... ], 
+    [ 14.22, 13.72, 13.64, 13.47, 12.7, 13.4, 14.43, 15.11, 15.58, ... ], 
+    [ 20.5, 20.03, 18.69, 18.6, 23.27, 20.74, 21.09, 22.86, 23.66, ... ], 
+    [ 27.76, 27.44, 28.59, 28.95, 28.19, 24.26, 24.38, 25.93, 25.25, ... ], 
+    [ 25.9, 25.81, 26.4, 27.7, 28.28, 25.11, 25.69, 26.15, 26.19, ... ], 
+ ...
+</pre></td></tr></table>
+<hr>
+
+<p>Copyright (C) 2003 GFD Dennou Club. All Rights Reserved.<p>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+= TODO
+
+== プログラム集の修正
+
+* sample プログラム, シェルスクリプトを揃える
+  * nml ファイル名を引数として与える形にする.
+    * dc_args を使用
+    * 3d-shell-wt/mhd-boussinesq/f90 以下のプログラムを参考に
+
+* sample プログラムの変数名修正?
+
+== 優先度低
+
+* 球領域, 円盤領域のモジュールのテスト者募集中.
+
+* thread unsafe -> thread safe にする.
+  * thread unsafe なモノはドコでしょう?
+
+* test での精度確認
+  * 現状は非常に曖昧. きちんと勘定して設定すべき?
+  * とりあえず 10 桁確保を目標にする.
+    * aq_test_intaver は 9 桁が限界?
+
+* 全ての test を dc_test を使用するようにする
+  * 文字列出力も修正すべき(80文字幅に納まらないと気持ち悪い...)
+
+#== Mode setting for Emacs
+#Local Variables:
+#mode: rd
+#End:
+

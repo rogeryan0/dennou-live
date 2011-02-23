@@ -26,25 +26,23 @@ http://www.gfd-dennou.org/library/spmodel/LiveCD/index.htm
 * Debian Live のカスタマイズ
 
 
-
 Debian Live について
--------------------
+--------------------
 
 この DVD は, Debian Live Project の live-build を用いて制作された Debian
 Live とDebian Live Installer のハイブリッド DVD です. Debian Testing
 (Squeeze) ベースで作られ, 手軽に Debian テスト版の最新環境を試せるように
 なっています.
 
-  * Debian GNU/Linux Squeeze/Testing
+  * Debian GNU/Linux 6.0(Squeeze)
   * live-build/live-boot/live-config
   * Debian Live Installer
-  * Live Installer Launcher
 
-インストーラには Debian Live Installer を使用し, Debian Live のSqueeze
-(Testing) 環境をそのままハードディスクにインストールできます.
+インストーラには Debian Live Installer を使用し, Debian GNU/Linux 6.0
+(Squeeze) の環境をそのままハードディスクにインストールできます.
 
-今回も実験的に Debian Live 上から Debian Installer を起動して Debian をハー
-ドディスクにインストールする, Live Installer Laucher を収録しました.
+今回も実験的に Debian Live 上から Debian Installer を起動して Debian を
+ハードディスクにインストールする, Live Installer Laucher を収録しました.
 
 Live Installer Launcher には表示の不具合があるので, ご利用になるかたは,
 Live Installer Launcher の項目もご覧ください.
@@ -159,7 +157,6 @@ Live Installer の初期設定ではリポジトリが無効になっていま�
 
 deb http://cdn.debian.net/debian/ squeeze main contrib non-free
 deb-src http://cdn.debian.net/debian/ squeeze main contrib non-free
-
 
 ### USB メモリにインストールする ###
 

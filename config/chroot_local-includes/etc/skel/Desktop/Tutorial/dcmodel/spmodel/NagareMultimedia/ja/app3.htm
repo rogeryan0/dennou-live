@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>補遺 3. 出力結果の後処理と描画：地球流体電脳倶楽部 ruby プロジェクト</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>階層的地球流体スペクトルモデル集 SPMODEL</b>
+</td><td align=right>
+       <a href=../index_ja.htm>Index</a>
+    </td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h2><a name="label-0" id="label-0">補遺 3. 出力結果の後処理と描画：地球流体電脳倶楽部 ruby プロジェクト</a></h2><!-- RDLabel: "補遺 3. 出力結果の後処理と描画：地球流体電脳倶楽部 ruby プロジェクト" -->
+<p>netCDF gtool4 データ形式で出力された計算結果を
+効率よく解析・描画を行なうためのツールは, 
+地球流体電脳倶楽部 ruby プロジェクト
+(<a href="ref.htm">[17]</a>)により開発されつつある. </p>
+<p>gtool4 データをの変数を読み取り, 四則演算・数学関数・平均操作や
+切り出し, 描画などの基本的な操作を行なうためのライブラリが GPhys である. 
+GPhys はスクリプト言語 ruby で構築された
+多次元物理データを扱うライブラリであり, 
+gtool4 データ形式だけでなく一般的な NetCDF や GrADS形式の
+データを扱うことができる. 
+また, GPhys は
+ファイル中や実行時のメモリー上のデータを統一的に扱うことができる. 
+ruby のインターフェースを利用してインタラクティブにデータ操作することも
+できれば, スクリプトを作成して機械的にバッチ処理を行なうこともできる. </p>
+<p>切り出しや描画をより簡単に行なうことができるツールが gave である. 
+GPhys をベースとしてグラフィカルユーザインターフェースを加えたものであり
+多次元データの断面描画やアニメーション表示等をマウス操作で
+簡単に行なうことができる. </p>
+<p>スクリプト言語 ruby がインストールできる環境であれば
+基本的にこれらのツールが動作するので
+(描画には GTK ライブラリが必要), 
+UNIX 的環境が実現する PC や計算資源上であればたいてい利用可能である. </p>
+<p><center>
+[gave のスクリーンショット]
+</center>
+<center><img src=../fig/gave.png></center></p>
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>階層的地球流体スペクトルモデル集 SPMODEL</b>
+</td><td align=right>
+       <a href=../index_ja.htm>Index</a>
+    </td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+○spmodel ライブラリのディレクトリ構造		   2006/03/09 S.Takehiro
+
+  src/
+    lumatrix_f77.f  LU 分解による連立 1 次方程式の解(F77 版). 
+    lumatrix.f90    LU 分解による連立 1 次方程式の解. lumatrix_f77 を使用.
+
+    eigmatrix.f90   固有値問題を解くサブルーチンの f90 版インターフェース
+    ssl2_eigen.f90  SSL II の固有値問題サブルーチンの f90 版インターフェース
+    lapack_eigen.f90  LAPACK の固有値問題サブルーチンの f90 版インターフェース
+    indexx.f90	    ソートのための順番づけ関数. Numerical Recipes のものを
+                    f90 で書き換えたもの. 固有値問題での解の並び替えに使用. 
+
+    ae_module.f90   1 次元 Fourier 変換. ISPACK/ftpack の実 Fourier 変換を使用.
+
+    at_module.f90   1 次元 チェビシェフ変換. ISPACK/ftpack の cos 変換を使用.
+
+    at_ad_galerkin_DD.f90  1 次元 チェビシェフーガラーキン法
+                           (両端で値0), at_module.f90 を使用
+    at_av_galerkin_NN.f90  1 次元 チェビシェフーガラーキン法
+                           (両端で勾配0), at_module.f90 を使用
+    at_ab_galerkin_ND.f90  1 次元 チェビシェフーガラーキン法
+                           (片側で勾配0, 他端で値が0), at_module.f90 を使用n
+    at_ap_galerkin_DN.f90  1 次元 チェビシェフーガラーキン法
+                           (片側で値が0, 他端で勾配0), at_module.f90 を使用
+    at_af_galerkin_MM.f90  1 次元 チェビシェフーガラーキン法
+                           (両端で混合境界条件), at_module.f90 を使用
+    at_ah_galerkin_MMex.f90 1 次元 チェビシェフーガラーキン法
+                            (両端で混合境界条件, 多層用), at_module.f90 を使用
+    at_aq_galerkin_RRSS.f90  1 次元 チェビシェフーガラーキン法
+                            (両端で値が0, 勾配あるいは 2 階微分が0), 
+			    at_module.f90 を使用
+
+    ee_module.f90   矩形領域 2 重周期境界条件. ISPACK/n2pack を使用.
+    esc_module.f90  チャネル領域. ISPACK/c2pack を使用. 
+
+    w_base_module.f90    球面調和関数変換(1層). ISPACK/snpack を使用
+    w_deriv_module.f90   球面調和関数変換の微分計算(1層). ISPACK/sppack を使用
+    w_integral_module.f90   球面上の積分・平均計算(1層). w_base_module を使用
+    wa_base_module.f90   球面調和関数変換(多層). ISPACK/snpack を使用
+    wa_deriv_module.f90  球面調和関数変換の微分計算(多層). ISPACK/sppack を使用
+    wa_integral_module.f90  球面上の積分・平均計算(多層). wa_base_module を使用
+    w_module.f90	 球面領域(1層). w_base_module, w_deriv_module, 
+		    w_integral_module を使用.
+    wa_module.f90   球面領域(多層). 
+                    w_base_module, w_deriv_module, w_integral_module, 
+		    wa_base_module, wa_deriv_module wa_integral_module を使用.
+
+    et_module.f90   チャネル領域. 断面方向チェビシェフ変換.
+		    ae_module, at_module を使用. 
+
+    wt_module.f90   3 次元球殻内. 動径方向チェビシェフ変換. 
+		    wa_module, at_module を使用. 
+
+    et_galerkin_module.f90   チャネル領域. 断面方向チェビシェフ-ガラーキン法
+		    ae_module, at_a?_galerkin_* at_module を使用. 
+
+    wt_galerkin_module.f90   3 次元球殻内. 動径方向チェビシェフ-ガラーキン法
+		    wa_module, at_a?_galerkin_*, at_module を使用. 
+
+
+  supplemental/ src に格納されているモジュールと交換可能な
+		異なった定式化によるモジュール置場. 
+		現在は at_a?_galerkin_* の別タイプモジュールが格納されている.
+
+  spmfrt/	spmodel ライブラリを使うためのスクリプト
+  test/		テストプログラム
+  demo/		簡単なデモプログラム. 各 geometry での拡散方程式. 
+  doc/		レファレンス, チュートリアルドキュメントのソース置場
+  html/		レファレンス, チュートリアルドキュメント. 
+		doc 資源から作成するので消去可能. 
+
+
+○各モジュール, ISPACK ライブラリの依存関係
+
+  注 : チェビシェフ変換に関係するルーチンは matrix モジュールに依存
+
+            
+             et_module   wt_module  wg_module  w_module  ee_module  esc_module
+               |            |          |         |          |          |
+               |________    |______    |         |          |          |
+SPMODEL	       |        |   |      |   |         |          |          |
+            ae_module  at_module   wa_module     |          |          |
+	       |___________|           |_________|          |          |      
+-------              |                      |               |          |
+                     |                      |               |          |
+ISPACK		   ftpack             snpack/sppack       n2pack     c2pack   
+
+
+○TODO
+
+  ・y_, ya_, yt_ シリーズは w_, wa_, wt_ シリーズの格子点データの各座標を
+     区別していない旧バージョン. デモの整理とともに廃棄予定. 

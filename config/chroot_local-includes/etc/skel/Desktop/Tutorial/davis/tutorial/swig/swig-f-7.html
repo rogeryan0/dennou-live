@@ -1,0 +1,478 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"> 
+<HTML lang="ja">
+ <HEAD>
+  <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <META name="author" content="whitecat">
+  <LINK REV=MADE HREF="mailto:kozuka@unyo.marushin.media.kyoto-u.ac.jp">
+  <LINK REL="CONTENTS" href="./index.html">
+  <LINK rel="stylesheet" href="./css/base.css" type="text/css">
+  <LINK rel="stylesheet" href="./css/top.css" type="text/css">
+  <TITLE>SWIG:Ruby Programing for FORTRAN</TITLE>
+ </HEAD>
+ <BODY>
+  <DIV class="title">
+   <SPAN class="main">Ruby Programing for FORTRAN</SPAN>
+   ～SWIGを使う(7)～
+  </DIV>
+  <H2>
+   内容
+  </H2>
+  <P>
+   今までの総まとめとしてDCLをラップしてみます。
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   これまでの解説でFORTRANの関数をラップする上で必要となるテクニックはすべて説明しました。
+   チュートリアルの一応の締めとしてDCLのラッピングに挑戦したいと思います。
+  </P>
+  <P>
+   とりあえず今まで出てきたラッピングの手法を整理します。
+   まずは配列、及び文字列から。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%typemap(ruby,in) int *ARRAY {
+  int i, len;
+
+  Check_Type($source, T_ARRAY);
+  len = RARRAY($source)->len;
+  $target = (int*)malloc(sizeof(int)*len);
+  for (i = 0; i < len; i++)
+    $target[i] = NUM2INT(rb_Integer(RARRAY($source)->ptr[i]));
+}
+
+%typemap(ruby,in) float *ARRAY {
+  int i, len;
+
+  Check_Type($source, T_ARRAY);
+  len = RARRAY($source)->len;
+  $target = (float*)malloc(sizeof(float)*len);
+  for (i = 0; i < len; i++)
+    $target[i] = (float)RFLOAT(rb_Float(RARRAY($source)->ptr[i]))->value;
+}
+
+%typemap(ruby,in) double *ARRAY {
+  int i, len;
+
+  Check_Type($source, T_ARRAY);
+  len = RARRAY($source)->len;
+  $target = (double*)malloc(sizeof(double)*len);
+  for (i = 0; i < len; i++)
+    $target[i] = (double)RFLOAT(rb_Float(RARRAY($source)->ptr[i]))->value;
+}
+
+%typemap(ruby,ignore) int *LENGTH(int tmp) {
+  tmp = 0;
+  $target = &tmp;
+}
+
+%typemap(ruby,in) char *ARRAY {
+  int len;
+
+  Check_Type($source, T_STRING);
+  len = RSTRING($source)->len;
+  $target = (char*)malloc(len + 1);
+  strncpy($target, RSTRING(rb_String($sourc)e)->ptr, len);
+  $target[len] = '\0';
+}
+
+%typemap(ruby,ignore) int LENGTH {
+  $target = 0;
+}
+
+%typemap(ruby,freearg) int *ARRAY,
+                       char *ARRAY,
+                       float *ARRAY,
+                       double *ARRAY
+{
+  free($source);
+}
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   intと同様にfloat doubleについても同様な定義を作っていきます。
+   使い方は配列のポインタ引数に*ARRAYを指定し、長さを与える引数部分は*LENGTHを指定します。
+   ただし、charの配列である文字列については長さに関してはLENGTHを使用します。
+  </P>
+  <P>
+   次は複素数型について。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%{
+
+struct complex
+{
+  float r;
+  float i;
+};
+
+struct d_complex
+{
+  double r;
+  double i;
+};
+
+%}
+
+%typemap(ruby,in) struct d_complex *COMPLEX_IN,
+                  struct d_complex *DCOMPLEX_IN {
+  Check_Type($source, T_ARRAY);
+  $target = ($type)malloc(sizeof($basetype));
+  $target->r = NUM2DBL(RARRAY($source)->ptr[0]);
+  $target->i = NUM2DBL(RARRAY($source)->ptr[1]);
+}
+
+%typemap(ruby,ignore) struct d_complex *COMPLEX_OUT,
+                      struct d_complex *DCOMPLEX_OUT {
+  $target = ($type)malloc(sizeof($basetype));
+}
+
+%typemap(ruby,argout) struct d_complex *COMPLEX_OUT,
+                      struct d_complex *DCOMPLEX_OUT {
+  $target = rb_ary_new();
+  rb_ary_push($target, rb_float_new($source->r));
+  rb_ary_push($target, rb_float_new($source->i));
+}
+
+%typemap(ruby,freearg) struct d_complex *COMPLEX_IN,
+                       struct d_complex *DCOMPLEX_IN,
+                       struct d_complex *COMPLEX_OUT,
+                       struct d_complex *DCOMPLEX_OUT {
+  free($source);
+}
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   倍精度に加えて、倍精度も用意します。
+   ところで、上の例でも使っていましたが、この%typemapでは対応させる型を,で列挙することができます。
+   ただ、列挙することでmallocで確保すべきメモリサイズの指定等をsizeof(d_complex)のようにきめ打ちすることができなくなります。
+   そんなとき使うのが$typeと$basetypeです。
+   $typeは%typemapを適用する型そのものを$basetypeは$typeの元となる型、例えば$typeがポインタであるならば*を取り除いたものを示すことになります。
+   使い方は前回ほぼ同じです。単精度ならCOMPLEX何某を、倍精度ならDCOMPLEX何某を使ってください。
+  </P>
+  <P>
+   最後にDCLに特化したものかもしれませんが、1 or 0で指定するフラグについて。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%typemap(ruby,in) int *FLAG(int tmp) {
+  if ($source == Qnil || $source == Qfalse)
+    tmp = 0;
+  else if ($source == Qtrue)
+    tmp = 1;
+
+  $target = &tmp;
+}
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   nilまたはfalseを与えられた場合は0、それ以外の場合は1を渡すようにしています。
+   本来intのポインタとして取り扱うものですから、int *INPUTをint *FLAGにするだけで使用できます。
+  </P>
+  <P>
+   なお、文字列を返すものについてはあまり汎用性がない上に、そもそもFORTRANで文字列を返す関数を作ることはあまりないと思うので説明は省きます。
+  </P>
+  <P>
+   以上のものをまとめたものを<A href="extra.i" accesskey="ex">extra.i</A>として保存します。
+  </P>
+  <P>
+   さて、実際のラップ作業に入るとしましょう。
+   が、DCLかなり大きいライブラリなので全部ここで例を挙げようなものならばとてつもなく長くなってしまいます。
+   そこで説明ではA href="http://dennou-k.kugi.kyoto-u.ac.jp/arch/ruby/Ruby/dcl/" accesskey="rd">地球流体電脳倶楽部で作られているRuby/DCL</A>のDemoのhop.rbを動かすことを目標とします。
+   以下がhop.rbの動作に必要な関数をそろえたインターフェースです。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%cat dcl.i
+%module dcl
+%include typemaps.i
+%include extra.i
+
+void gropn_(int *INPUT);
+void grcls_();
+void grfrm_();
+void sgpwsn_();
+void ussttl_(char *ARRAY, char *ARRAY, char *ARRAY, char *ARRAY, int LENGTH, int LENGTH, int LENGTH, int LENGTH);
+void usgrph_(int *LENGTH, float *ARRAY, float *ARRAY);
+void sgpwsn_();
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   特に意図したわけではないのですが、配列、文字列両方とも存在している好例ですね。
+  </P>
+  <P>
+   とりあえず、dcl_wrap.cを生成します。が、そのままでは上手く動かないことは明らかですね。
+   文字列を扱うussttl_、配列を扱うusgraph_があるからです。
+   少々長いですが、以下にdcl_wrap.cのussttl_、usgraph_を呼び出すラッパ関数を示します。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+static VALUE
+_wrap_ussttl_(int argc, VALUE *argv, VALUE self) {
+    VALUE varg0 ;
+    VALUE varg1 ;
+    VALUE varg2 ;
+    VALUE varg3 ;
+    VALUE varg4 ;
+    VALUE varg5 ;
+    VALUE varg6 ;
+    VALUE varg7 ;
+    char *arg0 ;
+    char *arg1 ;
+    char *arg2 ;
+    char *arg3 ;
+    int arg4 ;
+    int arg5 ;
+    int arg6 ;
+    int arg7 ;
+
+    {
+        arg4 = 0;
+    }
+    {
+        arg5 = 0;
+    }
+    {
+        arg6 = 0;
+    }
+    {
+        arg7 = 0;
+    }
+    rb_scan_args(argc, argv, "40", &varg0, &varg1, &varg2, &varg3);
+    {
+        int len;
+
+        Check_Type(varg0, T_STRING);
+        len = RSTRING(varg0)->len;
+        arg0 = (char*)malloc(len + 1);
+        strncpy(arg0, RSTRING(rb_String($sourc)e)->ptr, len);
+        arg0[len] = '\0';
+    }
+    {
+        int len;
+
+        Check_Type(varg1, T_STRING);
+        len = RSTRING(varg1)->len;
+        arg1 = (char*)malloc(len + 1);
+        strncpy(arg1, RSTRING(rb_String($sourc)e)->ptr, len);
+        arg1[len] = '\0';
+    }
+    {
+        int len;
+
+        Check_Type(varg2, T_STRING);
+        len = RSTRING(varg2)->len;
+        arg2 = (char*)malloc(len + 1);
+        strncpy(arg2, RSTRING(rb_String($sourc)e)->ptr, len);
+        arg2[len] = '\0';
+    }
+    {
+        int len;
+
+        Check_Type(varg3, T_STRING);
+        len = RSTRING(varg3)->len;
+        arg3 = (char*)malloc(len + 1);
+        strncpy(arg3, RSTRING(rb_String($sourc)e)->ptr, len);
+        arg3[len] = '\0';
+    }
+    ussttl_(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+    {
+        free(arg0);
+    }
+    {
+        free(arg1);
+    }
+    {
+        free(arg2);
+    }
+    {
+        free(arg3);
+    }
+    return Qnil;
+}
+
+static VALUE
+_wrap_usgrph_(int argc, VALUE *argv, VALUE self) {
+    VALUE varg0 ;
+    VALUE varg1 ;
+    VALUE varg2 ;
+    int *arg0 ;
+    float *arg1 ;
+    float *arg2 ;
+    int tmp ;
+
+    {
+        tmp = 0;
+        arg0 = &tmp;
+    }
+    rb_scan_args(argc, argv, "20", &varg1, &varg2);
+    {
+        int i, len;
+
+        Check_Type(varg1, T_ARRAY);
+        len = RARRAY(varg1)->len;
+        arg1 = (float*)malloc(sizeof(float)*len);
+        for (i = 0; i < len; i++)
+        arg1[i] = (float)RFLOAT(rb_Float(RARRAY(varg1)->ptr[i]))->value;
+    }
+    {
+        int i, len;
+
+        Check_Type(varg2, T_ARRAY);
+        len = RARRAY(varg2)->len;
+        arg2 = (float*)malloc(sizeof(float)*len);
+        for (i = 0; i < len; i++)
+        arg2[i] = (float)RFLOAT(rb_Float(RARRAY(varg2)->ptr[i]))->value;
+    }
+    usgrph_(arg0,arg1,arg2);
+    {
+        free(arg1);
+    }
+    {
+        free(arg2);
+    }
+    return Qnil;
+}
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   まず、_wrap_ussttl_についてですが、これは前にこのチュートリアルで示したものと同じ処置をします。
+   すなわち、rb_scan_argsを先頭に持っていき、長さをあらわすargにそれぞれ対応する文字列の長さを入れていきます。
+   実際の修正は以下のとおり。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+    rb_scan_args(argc, argv, "40", &varg0, &varg1, &varg2, &varg3);
+    {
+        //arg4 = 0;
+        arg4 = RSTRING(varg0)->len;
+    }
+    {
+        //arg5 = 0;
+        arg5 = RSTRING(varg1)->len;
+    }
+    {
+        //arg6 = 0;
+        arg6 = RSTRING(varg2)->len;
+    }
+    {
+        //arg7 = 0;
+        arg7 = RSTRING(varg3)->len;
+    }
+    //rb_scan_args(argc, argv, "40", &varg0, &varg1, &varg2, &varg3);
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   まあこれはあまり頭を悩ますことはないでしょう。
+  </P>
+  <P>
+   _wrap_usgraph、これは少々工夫が要ります。
+   配列は確かに2つあるのですが長さを指定する引数は一つだけです。ちょっと悩みました。
+   なお、本家(?)のラッピングではこういった配列の長さはRuby側でも渡すことにしていました。
+   でも省くことが不可能ではないような気がします。以下のように書けば。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+    rb_scan_args(argc, argv, "20", &varg1, &varg2);
+    {
+        if (RARRAY(varg1)->len < RARRAY(varg2)->len)
+          tmp = RARRAY(varg1)->len;
+        else
+          tmp = RARRAY(varg2)->len;
+        //tmp = 0;
+        arg0 = &tmp;
+    }
+    //rb_scan_args(argc, argv, "20", &varg1, &varg2);
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   2つの配列のうち、短い方を引数として渡すようにすればいいのではないでしょうか？
+   ただ、元のFORTRANの関数がそもそも何をやっているか理解していないので実は問題ある手法かもしれませんが:)
+  </P>
+  <P>
+   以上のように配列の長さを渡すという作業は文字列と違って関数が自主的に定義するため、
+   その関数の構成如何によって若干代わってきます。
+   その都度考えるという割と頭を使い、単純作業ではいかない部分といえるでしょう。
+  </P>
+  <P>
+   さて、あとは拡張ライブラリを生成するだけです。
+   がその前にもういくつか手直しが要ります。
+  </P>
+  <P>
+   まず、いつもどおりに生成したMakefileの修正をしなければなりません。
+   DCLライブラリ自体をリンクするように修正するのは当然ですが、
+   それ以外にもDCLが使用しているXやさまざまなFORTRANのランタイムのライブラリをリンクする必要があります。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+#DLDFLAGS = -Wl,-soname,$(.TARGET) -L/usr/local/lib
+DLDFLAGS = -Wl,-soname,$(.TARGET) -L/usr/local/lib -L/usr/X11R6/lib
+
+#LIBS = -L. -l$(RUBY_INSTALL_NAME) -lc
+LIBS = -L. -l$(RUBY_INSTALL_NAME) -lc -lX11 -lg2c -ldcl
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   あと、dcl_wrap.cのInit_dclで各モジュール関数の名前から_を取り除いておくと色々と便利でしょう。
+  </P>
+  <P>
+   後はMakeして動作確認するだけです。が、hop.rbは当然そのままでは動きません。以下のように修正してください。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+#$:.push "../work"  #  These tricks are needed for
+#$:.push "work"     #          pre-install test only.
+
+require "dcl.so"
+include Dcl
+
+include Math
+
+NMAX = 400
+dt = 2*PI / (NMAX-1)
+x, y = [], []
+
+for n in 0..NMAX
+  t = dt*n
+  x[n] = 1e2*sin(4*t)
+  y[n] = 1e-3*cos(5*t)+6
+end
+
+iws = (ARGV[0] || (puts ' WORKSTATION ID (I)  ? ;'; sgpwsn; gets)).to_i
+gropn iws
+grfrm
+
+ussttl('X-TITLE', 'x-unit', 'Y-TITLE', 'y-unit')
+usgrph(x, y)
+
+grcls
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   上手く動いたでしょうか？動作しなかった場合、dcl_warp.cで加えた修正に問題があったのかもしれません。
+   rb_scan_argsを前に持ってくるのを忘れるというのは単純なミスですが、意外と忘れがちなのでしっかりと確認しましょう。
+   (本当は最初から先頭に持ってこれるとよいのですが)
+  </P>
+  <P>
+   さて、目標となったhop.rbは動かすことができました。
+   この後、残りの関数を....とやっていくわけですが重複する部分が多いため
+   上のものに残りの部分を付け加えた<A href="dcl.i" accesskey="i">dcl.i</A>とそれから生成したコードを修正した<A href="dcl_wrap.c" accesskey="w">dcl_wrap.c</A>をおいておきます。
+   DCLライブラリについてはどのように使えばいいのかまるで分かっていないので是非テストをよろしくお願いします。
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   <A href="swig-f-6.html" accesskey="b">前に戻る</A>
+   <A href="swig-f.html" accesskey="in">[目次]</A>
+   <A href="swig-f-8.html" accesskey="f">次に進む</A>
+  <DIV class="footer">
+   <A href="http://jigsaw.w3.org/css-validator">
+    <IMG style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss.gif" alt="Valid CSS!">
+   </A>
+  </DIV>
+ </BODY>
+</HTML>

@@ -1,0 +1,1145 @@
+% 表題  回転球面上での 2 次元順圧流体の定式化
+%
+% 履歴  2007/11/25 竹広 真一  新規作成
+%       2008/01/12 竹広 真一, 小布施祈織  ミスタイプ修正
+%
+%
+\documentclass[a4j,12pt]{jarticle}
+\usepackage{Dennou6}
+
+\Dtitle[回転球面順圧流体]
+       {回転球面上での\\ 2 次元順圧流体の定式化}
+\Dauthor[竹広 真一]{竹広 真一, SPMODEL 開発グループ}
+\Ddate{平成 20 年 1 月 12 日} 
+\Dparskip
+
+\begin{document}
+
+\maketitle
+
+この文書では回転 2 次元球面上の非圧縮流体の支配方程式と
+渦度方程式を導出することを行う. 
+
+導出の計算の見通しは 3 次元系において渦度方程式をベクトル形式で
+表現し, その後に球面への拘束条件を適用し動径成分を書き下すやり方が
+お薦めである(理論マニュアル線形波動「ロスビー波(2次元非発散球面)」)が, 
+以下では緯度経度動径座標の各成分の式をまず書き下し, 
+式変形していくという手間のかかる計算を敢えて行う. 
+
+\section{回転 2 次元球面上の非圧縮流体の支配方程式の導出}
+
+  まず 3 次元回転系の非圧縮流体の支配方程式から
+  回転 2 次元球面上の非圧縮流体の支配方程式を導出する. 
+  3 次元回転系での非圧縮流体の支配方程式を緯度経度動径座標
+  ($\lambda,\varphi, r)$ で書き表すと, 
+  %
+  \begin{eqnarray}
+    \Deqlab{3 次元運動方程式経度}
+    & & \DP{u}{t}
+          +\frac{u}{r\cos\varphi}\DP{u}{\lambda}
+          +\frac{v}{r}\DP{u}{\varphi}
+          + w\DP{u}{r}
+          + \frac{uw - uv\tan\varphi}{r} \nonumber\\
+    & & \qquad
+         - 2\Omega\sin\varphi v
+          + 2\Omega\cos\varphi w 
+          = -\frac{1}{\rho r\cos\varphi}\DP{p}{\lambda} \nonumber\\
+    & &  \qquad 
+          + \nu\left[
+                    \frac{1}{r^2\cos^2\varphi}\DP[2]{u}{\lambda}
+                  + \frac{1}{r^2}\DP[2]{u}{\varphi}
+                  - \frac{\tan\varphi}{r^2}\DP{u}{\varphi}
+                  + \frac{1}{r}\DP[2]{}{r}(ru) \right.\nonumber\\
+    & &  \qquad\qquad  \left. 
+                  + \frac{2}{r^2\cos\varphi}\DP{w}{\lambda}
+                  -\frac{2\sin\varphi}{r^2\cos^2\varphi}\DP{v}{\lambda}
+                  - \frac{u}{r^2\cos^2\varphi}, \right],\\
+    \Deqlab{3 次元運動方程式緯度}
+    & & \DP{v}{t}
+          +\frac{u}{r\cos\varphi}\DP{v}{\lambda}
+          +\frac{v}{r}\DP{v}{\varphi}
+          + w\DP{v}{r}
+          + \frac{vw + u^2\tan\varphi}{r}
+          + 2\Omega\sin\varphi u
+          = -\frac{1}{\rho r}\DP{p}{\varphi}\nonumber\\
+    & &  \qquad 
+          + \nu\left[
+                    \frac{1}{r^2\cos^2\varphi}\DP[2]{v}{\lambda}
+                  + \frac{1}{r^2}\DP[2]{v}{\varphi}
+                  - \frac{\tan\varphi}{r^2}\DP{v}{\varphi}
+                  + \frac{1}{r}\DP[2]{}{r}(rv) \right.\nonumber\\
+    & &  \qquad\qquad  \left. 
+                  + \frac{2}{r^2}\DP{w}{\varphi}
+                  +\frac{2\sin\varphi}{r^2\cos^2\varphi}\DP{u}{\lambda}
+                  - \frac{v}{r^2\cos^2\varphi}, \right],\\
+    \Deqlab{3 次元運動方程式動径}
+    & & \DP{w}{t}
+          +\frac{u}{r\cos\varphi}\DP{w}{\lambda}
+          +\frac{v}{r}\DP{w}{\varphi}
+          + w\DP{w}{r}
+          - \frac{u^2+v^2}{r}
+          - 2\Omega\cos\varphi u
+          = -\frac{1}{\rho}\DP{p}{r} \nonumber\\
+    & &  \qquad 
+          + \nu\left[
+                    \frac{1}{r^2\cos^2\varphi}\DP[2]{w}{\lambda}
+                  + \frac{1}{r^2}\DP[2]{w}{\varphi}
+                  - \frac{\tan\varphi}{r^2}\DP{w}{\varphi}
+                  + \frac{1}{r}\DP[2]{}{r}(rw) \right.\nonumber\\
+    & &  \qquad\qquad  \left. 
+                  - \frac{2}{r^2}\DP{v}{\varphi}
+                  + \frac{2v\tan\varphi }{r^2}
+                  - \frac{2}{r^2\cos\varphi}\DP{u}{\lambda}
+                  - \frac{2w}{r^2}, \right],\\
+    \Deqlab{3 次元連続の式}
+    & & \frac{1}{r\cos\varphi}\DP{u}{\lambda} 
+       +\frac{1}{r\cos\varphi}\DP{}{\varphi}(v\cos\varphi)
+       + \frac{1}{r^2}\DP{}{r}(r^2w)=0.
+  \end{eqnarray}
+  %
+  ここで $u,v,w$ はそれぞれ速度の緯度, 経度, 動径成分である. 
+  $\Omega$ は系の回転角速度でありその回転軸は北極向きである.
+  球面への拘束条件として, $u,v \propto r, \ w=0$ を適用し, 
+  $ r \rightarrow a $ の極限をとると, 
+  $w$ のついた項は消え, 粘性項の
+  $\Ddsty \frac{1}{r}\DP[2]{}{r}(ru) = \frac{2u}{a^2}$,
+  $\Ddsty \frac{1}{r}\DP[2]{}{r}(rv) = \frac{2v}{a^2}$
+  となるので, 
+  %
+  \begin{eqnarray}
+    \Deqlab{運動方程式経度}
+    & & \DP{u}{t}
+          +\frac{u}{a\cos\varphi}\DP{u}{\lambda}
+          +\frac{v}{a}\DP{u}{\varphi}
+          - \frac{uv\tan\varphi}{a}
+          - 2\Omega\sin\varphi v
+          = -\frac{1}{\rho a\cos\varphi}\DP{p}{\lambda}
+           + f_\lambda, \\
+    \Deqlab{運動方程式緯度}
+    & & \DP{v}{t}
+          +\frac{u}{a\cos\varphi}\DP{v}{\lambda}
+          +\frac{v}{a}\DP{v}{\varphi}
+          + \frac{u^2\tan\varphi}{a}
+          + 2\Omega\sin\varphi u
+          = -\frac{1}{\rho a}\DP{p}{\varphi}
+           + f_\varphi,\\
+    \Deqlab{連続の式}
+    & & \frac{1}{a\cos\varphi}\DP{u}{\lambda} 
+       +\frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi) =0.
+  \end{eqnarray}
+  ただし
+  $f_\lambda,f_\varphi$ は粘性項であり, 
+  %
+  \begin{eqnarray}
+   & & f_\lambda =\nu\left[
+                    \frac{1}{a^2\cos^2\varphi}\DP[2]{u}{\lambda}
+                  + \frac{1}{a^2}\DP[2]{u}{\varphi}
+                  - \frac{\tan\varphi}{a^2}\DP{u}{\varphi}
+                  + \frac{2u}{a^2}
+                  -\frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{v}{\lambda}
+                  - \frac{u}{a^2\cos^2\varphi}, \right]\\
+   & & f_\varphi = \nu\left[
+                    \frac{1}{a^2\cos^2\varphi}\DP[2]{v}{\lambda}
+                  + \frac{1}{a^2}\DP[2]{v}{\varphi}
+                  - \frac{\tan\varphi}{a^2}\DP{v}{\varphi}
+                  + \frac{2v}{a^2}
+                  +\frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{u}{\lambda}
+                  - \frac{v}{a^2\cos^2\varphi}\right].
+  \end{eqnarray}
+  %
+  球面への拘束条件を適用した  $u,v \propto r, \ w=0$ は
+  $r$ が有限の元では正しい解にはならないことに注意されたい.
+  運動方程式の動径成分とつじつまをあわせることができなくなる. 
+  $r\rightarrow a$ の極限では動径方向には壁からの応力により
+  球面へ運動が拘束されていると考えて運動方程式の動径成分は扱わない. 
+
+
+\section{回転 2 次元球面上の非圧縮流体の渦度方程式の導出}
+
+  ここでは回転する 2 次元球面上の非圧縮流体の支配方程式から
+  渦度方程式を導出する. 
+  支配方程式は回転系での 2 次元球面上の運動方程式および連続の式
+  \Deqref{運動方程式経度},\Deqref{運動方程式緯度},\Deqref{連続の式}である. 
+  %
+  渦度方程式は\Deqref{運動方程式経度}に 
+  $\Ddsty -\frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi$,
+  \Deqref{運動方程式緯度}に 
+  $\Ddsty \frac{1}{a\cos\varphi}\DP{}{\lambda}$ を作用させることにより
+  求まる. 両式の時間変化項からは
+  %
+  \begin{eqnarray*}
+    & & -\frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi \DP{u}{t} 
+        +\frac{1}{a\cos\varphi}\DP{}{\lambda}\DP{v}{t} 
+    = \DP{}{t}\left[-\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+                    +\frac{1}{a\cos\varphi}\DP{v}{\lambda} \right]\\
+    & & = \DP{\zeta}{t}
+  \end{eqnarray*}
+  %
+  ここで $\Ddsty \zeta = -\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+                        +\frac{1}{a\cos\varphi}\DP{v}{\lambda}$
+  は渦度(の動径成分)である. 
+
+  非線形項からは
+  %
+  \begin{eqnarray*}
+    & & -\frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi
+        \left[  \frac{u}{a\cos\varphi}\DP{u}{\lambda}
+               + \frac{v}{a}\DP{u}{\varphi}
+               - \frac{uv\tan\varphi}{a} \right] \\
+    &&  +\frac{1}{a\cos\varphi}\DP{}{\lambda}
+        \left[  \frac{u}{a\cos\varphi}\DP{v}{\lambda}
+              + \frac{v}{a}\DP{v}{\varphi}
+              + \frac{u^2\tan\varphi}{a} \right]
+  \end{eqnarray*}
+  %
+  渦度の移流の形と連続の式の形を意識して変形していく. 
+  第 1 項目は
+  \begin{eqnarray*}
+    & & -\frac{1}{a\cos\varphi}\DP{}{\varphi}\left(\cos\varphi
+           \frac{u}{a\cos\varphi}\DP{u}{\lambda}\right)
+       = -\frac{1}{a\cos\varphi}\DP{}{\varphi}\left(
+         \frac{u}{a}\DP{u}{\lambda}\right) \\
+    & & = -\frac{1}{a\cos\varphi}
+              \frac{u}{a}\DP{}{\lambda}\left(\DP{u}{\varphi}\right)
+          -\frac{1}{a^2\cos\varphi}
+               \left(\DP{u}{\lambda}\DP{u}{\varphi}\right) \\
+    & &  = -\frac{u}{a\cos\varphi}
+              \frac{1}{a}\DP{}{\lambda}
+                 \left[\DP{}{\varphi}\frac{u\cos\varphi}{\cos\varphi}\right]
+          -\frac{1}{a^2\cos\varphi}\DP{u}{\lambda}\DP{u}{\varphi}\\
+    & &  = -\frac{u}{a\cos\varphi}
+              \frac{1}{a}\DP{}{\lambda}
+                 \left[\frac{1}{\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+                       +\frac{u\cos\varphi\sin\varphi}{\cos^2\varphi}\right]
+          -\frac{1}{a^2\cos\varphi}\DP{u}{\lambda}\DP{u}{\varphi}\\
+    & &  = -\frac{u}{a\cos\varphi}
+              \DP{}{\lambda}\left[\frac{1}{a\cos\varphi}
+                                   \DP{}{\varphi}(u\cos\varphi)\right]
+           -\frac{u}{a\cos\varphi}
+                       \frac{\tan\varphi}{a}\DP{u}{\lambda}
+          -\frac{1}{a^2\cos\varphi}\DP{u}{\lambda}\DP{u}{\varphi}
+  \end{eqnarray*}
+  %
+  第 2 項目は
+  \begin{eqnarray*}
+    & & - \frac{1}{a\cos\varphi}\DP{}{\varphi}
+            \left(\cos\varphi\frac{v}{a}\DP{u}{\varphi}\right)
+     =  - \frac{v}{a}\DP{}{\varphi}\left(\frac{1}{a}\DP{u}{\varphi}\right)
+        - \frac{1}{a}\DP{u}{\varphi}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi)\\
+    & & 
+     =  - \frac{v}{a}\DP{}{\varphi}
+           \left[\frac{1}{a}\DP{}{\varphi}
+                  \left(\frac{u\cos\varphi}{\cos\varphi}\right)\right]
+        - \frac{1}{a}\DP{u}{\varphi}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi)\\
+    & &
+     =  - \frac{v}{a}\DP{}{\varphi}
+           \left[\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+                 +\frac{u\cos\varphi}{a}\frac{-\sin\varphi}{-\cos\varphi^2}
+           \right]
+        - \frac{1}{a}\DP{u}{\varphi}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi)\\
+    & &
+     =  - \frac{v}{a}\DP{}{\varphi}
+           \left[\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)\right]
+        - \frac{v}{a}\DP{}{\varphi} \left[\frac{u\tan\varphi}{a}\right]
+        - \frac{1}{a}\DP{u}{\varphi}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi)
+  \end{eqnarray*}
+  %
+  第 3 項目は
+  %
+  \begin{eqnarray*}
+    & &   -\frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi 
+             \left(- \frac{uv\tan\varphi}{a}\right)
+       =   \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}
+              \DP{}{\varphi}(v\cos\varphi) 
+          +\frac{v\cos\varphi}{a\cos\varphi}
+             \DP{}{\varphi}\left(\frac{u\tan\varphi}{a}\right)\\
+    & & =  \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi) 
+          +\frac{v}{a}\DP{}{\varphi}\left(\frac{u\tan\varphi}{a}\right)
+  \end{eqnarray*}
+  %
+  第 4 項目は
+  %
+  \begin{eqnarray*}
+    & &     \frac{1}{a\cos\varphi}\DP{}{\lambda}
+               \left(\frac{u}{a\cos\varphi}\DP{v}{\lambda}\right)
+         = \frac{u}{a\cos\varphi}\DP{}{\lambda}
+                  \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+          + \frac{1}{a^2\cos^2\varphi}\DP{u}{\lambda}\DP{v}{\lambda}
+  \end{eqnarray*}
+  %
+  第 5 項目は
+  %
+  \begin{eqnarray*}
+    & &    \frac{1}{a\cos\varphi}\DP{}{\lambda}
+                  \left(\frac{v}{a}\DP{v}{\varphi}\right)
+        =   \frac{v}{a}\frac{1}{a\cos\varphi}\DP{}{\varphi}
+               \left(\DP{v}{\lambda}\right)
+          + \frac{1}{a^2\cos\varphi}\DP{v}{\lambda}\DP{v}{\varphi} \\
+    & &
+        =   \frac{v}{a}\frac{1}{a\cos\varphi}\DP{}{\varphi}
+                \left(\frac{\cos\varphi}{\cos\varphi}\DP{v}{\lambda}\right)
+           + \frac{1}{a^2\cos\varphi}\DP{v}{\lambda}\DP{v}{\varphi} \\
+    & & =   \frac{v}{a}\frac{1}{a}\DP{}{\varphi}
+                \left(\frac{1}{\cos\varphi}\DP{v}{\lambda}\right)
+           -\frac{v}{a}\frac{1}{a\cos\varphi}
+                \left(\frac{\sin\varphi}{\cos\varphi}\DP{v}{\lambda}\right)
+           + \frac{1}{a^2\cos\varphi}\DP{v}{\lambda}\DP{v}{\varphi} \\
+    & & =   \frac{v}{a}\DP{}{\varphi}
+                \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+           -\frac{v\tan\varphi}{a^2\cos\varphi}\DP{v}{\lambda}
+           + \frac{1}{a^2\cos\varphi}\DP{v}{\lambda}\DP{v}{\varphi}\\
+    & & =   \frac{v}{a}\DP{}{\varphi}
+                \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+           + \frac{1}{a^2\cos\varphi}\DP{v}{\lambda}
+               \left(\DP{v}{\varphi} - v\tan\varphi\right)\\
+    & & =   \frac{v}{a}\DP{}{\varphi}
+                \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+           + \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+             \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)
+  \end{eqnarray*}
+  %
+  第 6 項目は
+  %
+  \begin{eqnarray*}
+    & &   \frac{1}{a\cos\varphi}\DP{}{\lambda}
+             \left(\frac{u^2\tan\varphi}{a}\right)
+        =   \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}\DP{u}{\lambda}
+         +  \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}\DP{u}{\lambda}
+  \end{eqnarray*}
+  %
+  全ての項を足しあわせると, 
+  \begin{eqnarray*}
+    &= & -\frac{u}{a\cos\varphi}
+          \DP{}{\lambda}\left[\frac{1}{a\cos\varphi}
+                               \DP{}{\varphi}(u\cos\varphi)\right]
+          -\frac{u}{a\cos\varphi}
+                   \frac{\tan\varphi}{a}\DP{u}{\lambda}
+          -\frac{1}{a^2\cos\varphi}\DP{u}{\lambda}\DP{u}{\varphi}\\
+    & &  - \frac{v}{a}\DP{}{\varphi}
+           \left[\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)\right]
+        - \frac{v}{a}\DP{}{\varphi} \left[\frac{u\tan\varphi}{a}\right]
+        - \frac{1}{a}\DP{u}{\varphi}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi)\\
+    & & +  \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi) 
+          +\frac{v}{a}\DP{}{\varphi}\left(\frac{u\tan\varphi}{a}\right)\\
+    & & + \frac{u}{a\cos\varphi}\DP{}{\lambda}
+                  \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+          + \frac{1}{a^2\cos^2\varphi}\DP{u}{\lambda}\DP{v}{\lambda}\\
+    & &   + \frac{v}{a}\DP{}{\varphi}
+                \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+           + \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+             \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)\\
+    & &  +   \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}\DP{u}{\lambda}
+         +  \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}\DP{u}{\lambda}\\
+    &=& 
+         -\frac{u}{a\cos\varphi}
+          \DP{}{\lambda}\left[\frac{1}{a\cos\varphi}
+                               \DP{}{\varphi}(u\cos\varphi)\right]
+          -\frac{1}{a^2\cos\varphi}\DP{u}{\lambda}\DP{u}{\varphi}\\
+    & &  - \frac{v}{a}\DP{}{\varphi}
+           \left[\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)\right]
+        - \frac{1}{a}\DP{u}{\varphi}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi)\\
+    & & +  \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}
+            \DP{}{\varphi}(v\cos\varphi)  \\
+    & & + \frac{u}{a\cos\varphi}\DP{}{\lambda}
+                  \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+          + \frac{1}{a^2\cos^2\varphi}\DP{u}{\lambda}\DP{v}{\lambda}\\
+    & &   + \frac{v}{a}\DP{}{\varphi}
+                \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+           + \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+             \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)\\
+    & &  +   \frac{u\tan\varphi}{a}\frac{1}{a\cos\varphi}\DP{u}{\lambda}\\
+    &=& 
+         \frac{u}{a\cos\varphi}\DP{}{\lambda}
+              \left[   \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+                     - \frac{1}{a\cos\varphi}
+                          \DP{}{\varphi}(u\cos\varphi)\right]
+        + \frac{v}{a}\DP{}{\varphi}
+           \left[\frac{1}{a\cos\varphi}\DP{v}{\lambda}
+                 - \frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)\right]\\
+   & &  +  \frac{u\tan\varphi}{a}
+              \left[ \frac{1}{a\cos\varphi}\DP{u}{\lambda}
+                    + \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)\right]
+          - \frac{1}{a}\DP{u}{\varphi}
+            \left[    \frac{1}{a\cos\varphi}\DP{u}{\lambda}
+                    + \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)
+            \right]\\
+   & &    + \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+               \left[   \frac{1}{a\cos\varphi}\DP{u}{\lambda}
+                      + \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)
+               \right]\\
+    &=&     \left[
+               \frac{u}{a\cos\varphi}\DP{}{\lambda} + \frac{v}{a}\DP{}{\varphi}
+            \right]
+            \left[   \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+                     - \frac{1}{a\cos\varphi}
+                          \DP{}{\varphi}(u\cos\varphi)
+            \right]\\
+   & &  +  \left[\frac{1}{a\cos\varphi}\DP{v}{\lambda}
+              - \frac{1}{a}\DP{u}{\varphi} + \frac{u\tan\varphi}{a} \right]
+              \left[ \frac{1}{a\cos\varphi}\DP{u}{\lambda}
+                    + \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)
+              \right]\\
+    &=&     \left[
+               \frac{u}{a\cos\varphi}\DP{}{\lambda} + \frac{v}{a}\DP{}{\varphi}
+            \right]
+            \left[   \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+                     - \frac{1}{a\cos\varphi}
+                          \DP{}{\varphi}(u\cos\varphi)
+            \right]\\
+   & &  +  \left[\frac{1}{a\cos\varphi}\DP{v}{\lambda}
+                     - \frac{1}{a\cos\varphi}
+                          \DP{}{\varphi}(u\cos\varphi)
+           \right]
+              \left[ \frac{1}{a\cos\varphi}\DP{u}{\lambda}
+                    + \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)
+           \right]\\
+    &=&     \left[
+               \frac{u}{a\cos\varphi}\DP{}{\lambda} + \frac{v}{a}\DP{}{\varphi}
+            \right] \zeta
+        +  \zeta
+              \left[ \frac{1}{a\cos\varphi}\DP{u}{\lambda}
+                    + \frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)
+              \right]\\
+    &=&     \left[
+               \frac{u}{a\cos\varphi}\DP{}{\lambda} + \frac{v}{a}\DP{}{\varphi}
+            \right] \zeta
+  \end{eqnarray*}
+  %
+  最後に連続の式\Deqref{連続の式}を用いた. 
+
+  コリオリ力の項からは
+  \begin{eqnarray*}
+    & & 
+       -\frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi(- 2\Omega\sin\varphi v)
+       + \frac{1}{a\cos\varphi}\DP{}{\lambda}(2\Omega\sin\varphi u) \\
+    & &
+     =   2\Omega\frac{\sin\varphi}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)
+       + 2\Omega\frac{v\cos\varphi}{a\cos\varphi}\DP{}{\varphi}(\sin\varphi)
+       + 2\Omega\frac{\sin\varphi}{a\cos\varphi}\DP{u}{\lambda}\\
+    & &
+     =   2\Omega\sin\varphi
+           \left[ \frac{1}{a\cos\varphi}\DP{u}{\lambda}
+                 +\frac{1}{a\cos\varphi}\DP{}{\varphi}(v\cos\varphi)\right]
+       + 2\Omega\frac{v}{a}\cos\varphi
+     = 2\Omega\frac{v}{a}\cos\varphi.
+  \end{eqnarray*}
+  %
+  圧力項は
+  %
+  \begin{eqnarray*}
+   & &
+       - \frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi
+           \left(\frac{1}{\rho a\cos\varphi}\DP{p}{\lambda}\right)
+       + \frac{1}{a\cos\varphi}\DP{}{\lambda}    
+           \left(\frac{1}{\rho a}\DP{p}{\varphi}\right)\\
+   & &
+    =   - \frac{1}{a\cos\varphi}\DP{}{\varphi}
+           \left(\frac{1}{\rho a}\DP{p}{\lambda}\right)
+       + \frac{1}{\rho a^2\cos\varphi}
+           \frac{\partial^2 p}{\partial\lambda\partial\varphi}\\
+   & &
+    =   - \frac{1}{\rho a^2\cos\varphi}
+           \frac{\partial^2 p}{\partial\lambda\partial\varphi}
+       + \frac{1}{\rho a^2\cos\varphi}
+           \frac{\partial^2 p}{\partial\lambda\partial\varphi}
+    = 0.
+  \end{eqnarray*}
+
+  粘性項は, まず $f_\lambda$ の 2,3,6 項目をまとめて 
+  %
+  \begin{eqnarray*}
+   & &      \frac{1}{a^2}\DP[2]{u}{\varphi}
+          - \frac{\tan\varphi}{a^2}\DP{u}{\varphi}
+          - \frac{u}{a^2\cos^2\varphi}
+       =    \frac{1}{a^2}\DP[2]{u}{\varphi}
+          - \frac{1}{a^2}\DP{}{\varphi}(u\tan\varphi) \\
+   & & =    \frac{1}{a^2}\DP[]{}{\varphi} 
+              \left(\DP[]{u}{\varphi} - u\tan\varphi\right)
+       =    \frac{1}{a^2}\DP[]{}{\varphi} 
+              \left[\frac{1}{\cos\varphi}\DP[]{}{\varphi}(u\cos\varphi)\right]
+  \end{eqnarray*}
+  %
+  $f_\varphi$ も同様に, 
+  %
+  \begin{eqnarray*}
+    & &      \frac{1}{a^2}\DP[2]{v}{\varphi}
+           - \frac{\tan\varphi}{a^2}\DP{v}{\varphi}
+           - \frac{v}{a^2\cos^2\varphi}
+       =    \frac{1}{a^2}\DP[]{}{\varphi} 
+              \left[\frac{1}{\cos\varphi}\DP[]{}{\varphi}(v\cos\varphi)\right]
+  \end{eqnarray*}
+  %
+  したがって, 
+  \begin{eqnarray*}
+    & &   - \frac{1}{a\cos\varphi}\DP{}{\varphi}(\cos\varphi f_\lambda)
+          + \frac{1}{a\cos\varphi}\DP{f_\varphi}{\lambda} \\
+    &=&    - \frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi
+              \left\{
+                   \frac{1}{a^2\cos^2\varphi}\DP[2]{u}{\lambda}
+                 + \frac{1}{a^2}\DP[]{}{\varphi} 
+                      \left[\frac{1}{\cos\varphi}
+                            \DP[]{}{\varphi}(u\cos\varphi)\right]
+                 + \frac{2u}{a^2}
+                 - \frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{v}{\lambda}
+              \right\} \\
+    & &    + \frac{1}{a\cos\varphi}\DP{}{\lambda}
+              \left\{
+                    \frac{1}{a^2\cos^2\varphi}\DP[2]{v}{\lambda}
+                  + \frac{1}{a^2}\DP[]{}{\varphi} 
+                       \left[\frac{1}{\cos\varphi}
+                               \DP[]{}{\varphi}(v\cos\varphi)\right]
+                  + \frac{2v}{a^2}
+                  +\frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{u}{\lambda}
+              \right\}
+  \end{eqnarray*}
+  %
+  これより渦度の形を意識しながら変形していく. 第 1 項目は
+  %
+  \begin{eqnarray*}
+    & &  - \frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi
+              \left\{
+                   \frac{1}{a^2\cos^2\varphi}\DP[2]{u}{\lambda}    
+              \right\}
+     =   - \frac{1}{a\cos\varphi}\DP{}{\varphi}
+              \left[
+                   \frac{1}{a^2\cos\varphi}\DP[2]{u}{\lambda}    
+              \right]\\
+    &=&   - \frac{1}{a\cos\varphi}\DP[2]{}{\lambda}\DP{}{\varphi}
+              \left(\frac{u}{a^2\cos\varphi}\right)
+     =   - \frac{1}{a\cos\varphi}\DP[2]{}{\lambda}\DP{}{\varphi}
+              \left(\frac{u\cos\varphi}{a^2\cos^2\varphi}\right)\\
+    &=&   - \frac{1}{a\cos\varphi}\DP[2]{}{\lambda}
+              \left[  \frac{1}{a^2\cos^2\varphi}
+                        \DP{}{\varphi}(u\cos\varphi)
+                    + u\cos\varphi
+                       \frac{2\sin\varphi\cos\varphi}{a^2\cos^4\varphi}
+              \right]\\
+    &=&   - \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+              \left[\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+              \right]
+         - \frac{1}{a\cos\varphi}\DP[2]{}{\lambda}
+                    \left(\frac{2u\sin\varphi}{a^2\cos^2\varphi}\right) \\
+    &=&   - \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+              \left[\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+              \right]
+         - \frac{1}{a\cos\varphi}\DP[]{}{\lambda}
+                 \left(\frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{u}{\lambda}
+                 \right).
+  \end{eqnarray*}
+  %
+  第 2 項目は
+  %
+  \begin{eqnarray*}
+   & &  - \frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi
+                 \left\{ \frac{1}{a^2}\DP[]{}{\varphi} 
+                      \left[\frac{1}{\cos\varphi}
+                            \DP[]{}{\varphi}(u\cos\varphi)\right]\right\}\\
+   &=& - \frac{1}{a^2\cos\varphi}\DP{}{\varphi}\left\{
+                 \cos\varphi\DP[]{}{\varphi} 
+                      \left[\frac{1}{a\cos\varphi}
+                            \DP[]{}{\varphi}(u\cos\varphi)\right]\right\}.
+  \end{eqnarray*}
+  %
+  第 3 項目は
+  \begin{eqnarray*}
+      - \frac{1}{a\cos\varphi}\DP{}{\varphi}
+         \left(\cos\varphi \frac{2u}{a^2}\right)
+    = - \frac{2}{a^2}\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi).
+  \end{eqnarray*}
+  %
+  第 4 項目は
+  %
+  \begin{eqnarray*}
+    & &   - \frac{1}{a\cos\varphi}\DP{}{\varphi}\cos\varphi
+               \left(
+                 - \frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{v}{\lambda}
+               \right)
+      =    \frac{1}{a\cos\varphi}\DP{}{\varphi}
+               \left(
+                  \frac{2\sin\varphi}{a^2\cos\varphi}\DP{v}{\lambda}
+               \right).
+  \end{eqnarray*}
+  %
+  第 5 項目は
+  %
+  \begin{eqnarray*}
+    & &  \frac{1}{a\cos\varphi}\DP{}{\lambda}
+            \left[\frac{1}{a^2\cos^2\varphi}\DP[2]{v}{\lambda}\right]
+     =   \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+            \left[\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right].
+  \end{eqnarray*}
+  %
+  第 6 項目は
+  %
+  \begin{eqnarray*}
+    & &    \frac{1}{a\cos\varphi}\DP{}{\lambda}
+              \left\{
+                 \frac{1}{a^2}\DP[]{}{\varphi} 
+                     \left[\frac{1}{\cos\varphi}
+                           \DP[]{}{\varphi}(v\cos\varphi)\right]
+              \right\}
+     =     \frac{1}{a^3\cos\varphi}\DP[]{}{\varphi}
+                  \left[\frac{1}{\cos\varphi}
+                        \DP[]{}{\varphi}\left(\cos\varphi\DP{v}{\lambda}\right)
+                  \right]\\
+    &=&    \frac{1}{a^3\cos\varphi}\DP[]{}{\varphi}
+                  \left[\frac{1}{\cos\varphi}
+                     \DP[]{}{\varphi}
+                       \left(
+                          \frac{\cos\varphi}{\cos\varphi^2}\DP{v}{\lambda}
+                       \right)
+                  \right]\\
+    &=&    \frac{1}{a^3\cos\varphi}\DP[]{}{\varphi}
+                  \left[\frac{1}{\cos\varphi}
+                  \left(
+                      \cos^2\varphi\DP[]{}{\varphi}
+                         \left(\frac{1}{\cos\varphi}\DP{v}{\lambda}\right)
+                    + \frac{1}{\cos\varphi}\DP{v}{\lambda}
+                        (-2\sin\varphi\cos\varphi)
+                  \right)\right]\\
+    &=&    \frac{1}{a^3\cos\varphi}\DP[]{}{\varphi}
+                  \left[   \cos\varphi\DP[]{}{\varphi}
+                              \left(\frac{1}{\cos\varphi}\DP{v}{\lambda}\right)
+                         -\frac{2\sin\varphi}{\cos\varphi}\DP{v}{\lambda}
+                  \right]\\
+    &=&    \frac{1}{a^2\cos\varphi}\DP[]{}{\varphi}
+                  \left[\cos\varphi\DP[]{}{\varphi}
+                          \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+                  \right]
+         - \frac{1}{a\cos\varphi}\DP[]{}{\varphi}\left(
+                         \frac{2\sin\varphi}{a^2\cos\varphi}\DP{v}{\lambda}
+                  \right).
+  \end{eqnarray*}
+  %
+  第 7 項目は
+  %
+  \begin{eqnarray*}
+    & &   \frac{1}{a\cos\varphi}\DP{}{\lambda}\left(\frac{2v}{a^2}\right)
+     =   \frac{2}{a^2} \frac{1}{a\cos\varphi}\DP{v}{\lambda}.
+  \end{eqnarray*}
+  %
+  第 8 項目はそのままで
+  %
+  \begin{eqnarray*}
+        \frac{1}{a\cos\varphi}\DP{}{\lambda}
+            \left(
+             \frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{u}{\lambda}\right).
+  \end{eqnarray*}
+  %
+  全てまとめると
+  %
+  \begin{eqnarray*}
+    & &   - \frac{1}{a\cos\varphi}\DP{}{\varphi}(\cos\varphi f_\lambda)
+          + \frac{1}{a\cos\varphi}\DP{f_\varphi}{\lambda} \\
+    &=&   - \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+              \left[\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+              \right]
+         - \frac{1}{a\cos\varphi}\DP[]{}{\lambda}
+                 \left(\frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{u}{\lambda}
+                 \right)\\
+    & & - \frac{1}{a^2\cos\varphi}\DP{}{\varphi}\left\{
+                  \cos\varphi\DP[]{}{\varphi} 
+                       \left[\frac{1}{a\cos\varphi}
+                             \DP[]{}{\varphi}(u\cos\varphi)\right]\right\}\\
+    & & - \frac{2}{a^2}\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+        +  \frac{1}{a\cos\varphi}\DP{}{\varphi}
+                \left(
+                   \frac{2\sin\varphi}{a^2\cos\varphi}\DP{v}{\lambda}
+                \right) \\
+    & & +  \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+             \left[\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right]
+        +   \frac{1}{a^2\cos\varphi}\DP[]{}{\varphi}
+                   \left[\cos\varphi\DP[]{}{\varphi}
+                           \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+                   \right] \\
+    & & - \frac{1}{a\cos\varphi}\DP[]{}{\varphi}\left(
+                          \frac{2\sin\varphi}{a^2\cos\varphi}\DP{v}{\lambda}
+                   \right)
+        + \frac{2}{a^2} \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+        + \frac{1}{a\cos\varphi}\DP{}{\lambda}
+             \left(
+              \frac{2\sin\varphi}{a^2\cos^2\varphi}\DP{u}{\lambda}\right)\\
+    %
+    &=&   - \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+              \left[\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+              \right]\\
+    & & - \frac{1}{a^2\cos\varphi}\DP{}{\varphi}\left\{
+                  \cos\varphi\DP[]{}{\varphi} 
+                       \left[\frac{1}{a\cos\varphi}
+                             \DP[]{}{\varphi}(u\cos\varphi)\right]\right\}\\
+    & & - \frac{2}{a^2}\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+        +  \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+             \left[\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right]\\
+    & & +   \frac{1}{a^2\cos\varphi}\DP[]{}{\varphi}
+                   \left[\cos\varphi\DP[]{}{\varphi}
+                           \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}\right)
+                   \right]
+        + \frac{2}{a^2} \frac{1}{a\cos\varphi}\DP{v}{\lambda}\\
+    %
+    &=&   \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+             \left[  \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+                   - \frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+             \right]\\
+    & &  + \frac{1}{a^2\cos\varphi}\DP[]{}{\varphi}
+                   \left[\cos\varphi\DP[]{}{\varphi}
+                     \left(\frac{1}{a\cos\varphi}\DP{v}{\lambda}
+                           -\frac{1}{a\cos\varphi}
+                               \DP[]{}{\varphi}(u\cos\varphi)
+                     \right)
+                   \right]\\
+    & &  + \frac{2}{a^2}
+             \left[  \frac{1}{a\cos\varphi}\DP{v}{\lambda}
+                    -\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+             \right] \\
+    %
+    &=&   \frac{1}{a^2\cos^2\varphi}\DP[2]{\zeta}{\lambda}
+         + \frac{1}{a^2\cos\varphi}\DP[]{}{\varphi}
+                   \left(\cos\varphi\DP{\zeta}{\varphi}\right)
+         + \frac{2\zeta}{a^2}. 
+  \end{eqnarray*}
+
+  これより, 渦度方程式は
+  %
+  \begin{eqnarray*}
+    \Deqlab{渦度方程式渦度}
+    & &\DP{\zeta}{t} 
+      + \left[
+            \frac{u}{a\cos\varphi}\DP{}{\lambda} + \frac{v}{a}\DP{}{\varphi}
+        \right] \zeta
+      + 2\Omega\frac{v}{a}\cos\varphi \\
+    & & \hspace*{30mm}
+     =  \nu\left[ \frac{1}{a^2\cos^2\varphi}\DP[2]{\zeta}{\lambda}
+         + \frac{1}{a^2\cos\varphi}\DP[]{}{\varphi}
+                   \left(\cos\varphi\DP{\zeta}{\varphi}\right)
+         + \frac{2\zeta}{a^2}\right]. 
+  \end{eqnarray*}
+  %
+  ここで流線関数 $\psi$ を
+  %
+  \begin{equation}
+    \Deqlab{流線関数}
+    u = -\frac{1}{a}\DP{\psi}{\varphi}, \quad 
+    v = \frac{1}{a\cos\varphi}\DP{\psi}{\lambda},
+  \end{equation}
+  %
+  として定義すると, 連続の式\Deqref{連続の式}を自動的に満たす. 
+  渦度 $\zeta$ は
+  %
+  \begin{eqnarray*}
+    \zeta &=& -\frac{1}{a\cos\varphi}\DP{}{\varphi}(u\cos\varphi)
+                 +\frac{1}{a\cos\varphi}\DP{v}{\lambda}\\
+          &=& \frac{1}{a^2\cos\varphi}\DP{}{\varphi}
+                \left(\cos\varphi\DP{\psi}{\varphi}\right)
+            + \frac{1}{a^2\cos^2\varphi}\DP[2]{\psi}{\lambda}
+          =  \Dlapla \psi.
+  \end{eqnarray*}
+  %
+  ここで $\Ddsty \Dlapla= \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+                         +\frac{1}{a^2\cos\varphi}\DP{}{\varphi}
+                            \cos\varphi\DP{}{\varphi}$
+  は球面上の水平ラプラシアンである. 
+  これらを渦度方程式\Deqref{渦度方程式渦度}に代入すると, 
+  %
+  \begin{eqnarray*}
+    & & \DP{\Dlapla\psi}{t} 
+      + \left[
+           - \frac{1}{a}\DP{\psi}{\varphi}\frac{1}{a\cos\varphi}\DP{}{\lambda}
+           + \frac{1}{a\cos\varphi}\DP{\psi}{\lambda}\frac{1}{a}\DP{}{\varphi}
+        \right] \Dlapla\psi
+      + \frac{2\Omega}{a^2}\DP{\psi}{\lambda}
+    = \nu\left(\Dlapla + \frac{2}{a^2}\right)\Dlapla\psi. 
+  \end{eqnarray*}
+  %
+  さらに $\sin$ 緯度 $\mu=\sin\varphi$ を導入すると, 
+  $\Ddsty \DP{}{\mu}= \frac{1}{\cos\varphi}\DP{}{\varphi}$
+  であるから, 
+  \begin{eqnarray*}
+    & & \DP{\Dlapla\psi}{t} 
+      + \left[
+           - \frac{1}{a^2}\DP{\psi}{\mu}\DP{}{\lambda}
+           + \frac{1}{a^2}\DP{\psi}{\lambda}\DP{}{\mu}
+        \right] \Dlapla\psi
+      + \frac{2\Omega}{a^2}\DP{\psi}{\lambda}
+    =  \nu\left(\Dlapla + \frac{2}{a^2}\right)\Dlapla\psi. 
+  \end{eqnarray*}
+  %
+  よって
+  %
+  \begin{equation}
+    \Deqlab{渦度方程式}
+    \DP{\Dlapla\psi}{t} 
+      + \frac{1}{a^2}J(\psi,\Dlapla\psi)
+      + \frac{2\Omega}{a^2}\DP{\psi}{\lambda}
+    = \nu \left(\Dlapla + \frac{2}{a^2}\right)\Dlapla\psi.
+  \end{equation}
+  %
+  ただし $J(f,g)=(\partial_\lambda f)(\partial_\mu g)
+                -(\partial_\lambda g)(\partial_\mu f)$ は
+  ヤコビアンである. 
+  ラプラシアンを $\mu $ で表しておくと
+  \begin{equation}
+     \Dlapla= \frac{1}{a^2\cos^2\varphi}\DP[2]{}{\lambda}
+             +\frac{1}{a^2\cos\varphi}\DP{}{\varphi}
+                            \cos\varphi\DP{}{\varphi}
+            = \frac{1}{a^2(1-\mu^2)}\DP[2]{}{\lambda}
+             +\frac{1}{a^2}\DP{}{\mu}(1-\mu^2)\DP{}{\mu}.
+  \end{equation}
+
+
+\section{角運動量保存則}
+
+  $\psi$ の球面調和函数 $Y_n^m(\mu,\lambda)$ で展開した成分のうち, 
+  $n=0$ は剛体回転流を表わす. 
+  $(n,m)=(1,0)$ は極方向を回転軸とする剛体回転流, 
+  $(n,m)=(1,1),(1,-1)$ は赤道面上の軸を回転軸とする剛体回転流である. 
+  したがってこれらの成分は各々の軸に対する角運動量となっており, 
+  非回転系では全て, 回転系では $(n,m)=(1,0)$ 成分だけ保存しているはずである. 
+  そのことを確かめてみよう. 
+
+  いま流線関数が球面調和函数の足しあわせで
+  %
+  \begin{equation}
+    \Deqlab{球面調和函数表現}
+    \psi(\lambda,\mu,t) = \sum_{n=1}^\infty\sum_{m=-n}^n 
+                           \tilde{\psi}_{n,m} Y_n^m(\lambda,\mu)
+                        = \sum_{n=1}^\infty\sum_{m=-n}^n 
+                           \tilde{\psi}_{n,m} P_n^m(\lambda)e^{i\mu\lambda}
+  \end{equation}
+  %
+  と表わされているとする. 
+  このとき $\psi$ が実数であることから係数には
+  %
+  \begin{equation}
+    \tilde{\psi}_{n,-m} = \tilde{\psi}_{n,m}^*
+  \end{equation}
+  %
+  が成り立つ. 
+
+  まず $(n,m)=(1,0)$ 成分について考えよう. 
+  渦度方程式\Deqref{渦度方程式}において, 粘性項の 1,0 成分は
+  \begin{equation}
+    \left(\Dlapla + \frac{2}{a^2}\right)\Dlapla 
+        \tilde{\psi}_{1,0} Y_1^0(\lambda,\mu)
+   =  \left( \frac{-1\times 2}{a^2} + \frac{2}{a^2}\right) 
+         \frac{-1\times 2}{a^2}\tilde{\psi}_{1,0} Y_1^0(\lambda,\mu) 
+   = 0. 
+  \end{equation}
+  %
+  \Deqref{渦度方程式}の$\beta$ 項の 1,0 成分は
+  \begin{equation}
+      \frac{2\Omega}{a^2}\DP{}{\lambda}
+        \tilde{\psi}_{1,0} Y_1^0(\lambda,\mu) = 0. 
+  \end{equation}
+  %
+  非線形項からの寄与は, \Deqref{球面調和函数表現}をヤコビアンに代入して
+  $Y_1^0(\lambda,\mu)=\mu$ をかけて球面上で積分することにより得られる. 
+  %
+  \begin{eqnarray*}
+    & &
+    \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu
+       \frac{1}{a^2}J(\psi,\Dlapla\psi)Y_1^0(\lambda,\mu)\\
+    &=& \frac{1}{a^2} \sum_{n,m}\sum_{n',m'} 
+          \int_0^{2\pi}\int_{-1}^1 
+             \left[
+               im \tilde{\psi}_{n,m}\tilde{\psi}_{n',m'}
+                     \mu Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+               -im' \tilde{\psi}_{n,m}\tilde{\psi}_{n',m'}
+                     \mu \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] d\lambda d\mu \\
+    &=& \frac{1}{a^2} \sum_{n,m}\sum_{n',m'} 
+          \tilde{\psi}_{n,m}\tilde{\psi}_{n',m'}
+          \int_0^{2\pi}\int_{-1}^1 
+             \left[
+                im \mu Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+               -im' \mu \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right]d\lambda d\mu 
+  \end{eqnarray*}
+  %
+  ここで $m=-m'$ 成分のみ 0 でないことに注意すると
+  %
+  \begin{eqnarray*}
+    & &  \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu 
+             \left[
+                im \mu Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+               -im' \mu \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] \\
+    &=&  \int_0^{2\pi}\left[ im \mu Y_n^m Y_{n'}^{m'}\right]_{-1}^1 d\lambda
+       -\int_0^{2\pi}\int_{-1}^1 
+             im Y_n^m Y_{n'}^{m'}d\lambda d\mu 
+       -\int_0^{2\pi}\int_{-1}^1 
+             im \mu \DP{Y_n^m}{\mu}Y_{n'}^{m'} d\lambda d\mu  \\
+    & & +\int_0^{2\pi}\int_{-1}^1
+             \left[
+               -im' \mu \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] d\lambda d\mu  \\
+    &=&  \int_0^{2\pi}\left[ im \mu Y_n^m Y_{n'}^{-m}\right]_{-1}^1 d\lambda
+       -\int_0^{2\pi}\int_{-1}^1 
+             im Y_n^m Y_{n'}^{-m}d\lambda d\mu 
+       -\int_0^{2\pi}\int_{-1}^1 
+             im \mu \DP{Y_n^m}{\mu}Y_{n'}^{-m} d\lambda d\mu  \\
+    & & +\int_0^{2\pi}\int_{-1}^1 
+             im \mu \DP{Y_n^m}{\mu}Y_{n'}^{-m} d\lambda d\mu \\
+    &=&  \int_0^{2\pi}\left[ im \mu Y_n^m Y_{n'}^{-m}\right]_{-1}^1 d\lambda
+        -\int_0^{2\pi}\int_{-1}^1 im Y_n^m Y_{n'}^{-m} d\lambda d\mu\\
+    &=&  \int_0^{2\pi}\left[ im \mu Y_n^m Y_{n'}^{-m}\right]_{-1}^1 d\lambda
+        -\int_0^{2\pi}\int_{-1}^1 im Y_n^m Y_{n}^{-m} d\lambda d\mu
+  \end{eqnarray*}
+  %
+  最後に $Y_n^m$ の直交関係を用いている. 
+  第 1 項目の値を評価する. 
+  $Y_n^m$ の $\mu=\pm 1$ での値は $m\neq 0$ のとき 0 である. 
+  $m=0$ のときは係数 $m$ がかかっているので結局この項は 0 となる. 
+  したがって, $n,m$, $n',m'$ 成分からは
+  %
+  \begin{equation}
+    -\tilde{\psi}_{n,m}\tilde{\psi}_{n,-m}
+        \int_0^{2\pi}\int_{-1}^1 im Y_n^m Y_{n}^{-m}d\lambda d\mu 
+   = -|\tilde{\psi}_{n,m}|^2
+        \int_0^{2\pi}\int_{-1}^1 im Y_n^m Y_{n}^{-m} d\lambda d\mu 
+  \end{equation}
+  %
+  一方, $n,-m$ から
+  %
+  \begin{equation}
+    -|\tilde{\psi}_{n,-m}|^2
+        \int_0^{2\pi}\int_{-1}^1 (-im Y_n^{-m} Y_{n}^{m})d\lambda d\mu
+    =|\tilde{\psi}_{n,m}^*|^2
+        \int_0^{2\pi}\int_{-1}^1 im Y_n^{-m} Y_n^m d\lambda d\mu 
+  \end{equation}
+  %
+  したがってこの項は互いにキャンセルする. 
+  結局非線形項からの $(n,m)=(1,0)$ への寄与は 0 となる. 
+  最後に時間変化項は
+  %
+  \begin{equation}
+    \DP{}{t}\Dlapla\tilde{\psi}_{1,0}(t)Y_1^0 
+    = -\frac{1(1+1)}{a^2}\DD{\tilde{\psi}_{1,0}}{t}Y_1^0
+  \end{equation}
+  よって
+  %
+  \begin{equation}
+    \DD{\tilde{\psi}_{1,0}}{t} = 0
+  \end{equation}
+  %
+  となり極方向を軸とする角運動量は保存する. 
+
+  次に $(n,m)=(1,1)$ 成分について考えよう. 
+  粘性項の $(1,1)$ 成分は $(n,m)=(1,0)$ と同様にして 0 である. 
+  \Deqref{渦度方程式}の$\beta$ 項の 1,1 成分は
+  \begin{equation}
+      \frac{2\Omega}{a^2}\DP{}{\lambda}
+        \tilde{\psi}_{1,1} Y_1^1(\lambda,\mu) = 
+     = i\frac{2\Omega}{a^2}\tilde{\psi}_{1,1} Y_1^1(\lambda,\mu). 
+  \end{equation}
+  %
+  非線形項からの寄与は, \Deqref{球面調和函数表現}をヤコビアンに代入して
+  $Y_1^1(\lambda,\mu)=\sqrt{1-\mu^2}e^{i\lambda}$ をかけて
+  球面上で積分することにより得られる. 
+  %
+  \begin{eqnarray*}
+    & &
+    \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu
+       \frac{1}{a^2}J(\psi,\Dlapla\psi)Y_1^1(\lambda,\mu)\\
+    &=& \frac{1}{a^2} \sum_{n,m}\sum_{n',m'} 
+          \int_0^{2\pi}\int_{-1}^1 
+             \left[
+               im \tilde{\psi}_{n,m}\tilde{\psi}_{n',m'}
+                   \sqrt{1-\mu^2}e^{i\lambda} Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+             \right.\\
+    & & \hspace{50mm}\left.
+               -im' \tilde{\psi}_{n,m}\tilde{\psi}_{n',m'}
+                   \sqrt{1-\mu^2}e^{i\lambda} \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] d\lambda d\mu \\
+    &=& \frac{1}{a^2} \sum_{n,m}\sum_{n',m'} 
+          \tilde{\psi}_{n,m}\tilde{\psi}_{n',m'}
+          \int_0^{2\pi}\int_{-1}^1 
+             \left[
+                im \sqrt{1-\mu^2}e^{i\lambda} Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+               -im' \sqrt{1-\mu^2}e^{i\lambda}\DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right]d\lambda d\mu 
+  \end{eqnarray*}
+  %
+  ここで $m'=-1-m$ 成分のみ 0 でないことに注意すると, 
+  $m=n$ のときは 0 になり, $0< m < n+1$ なる $n,m$ に対して
+  %
+  \begin{eqnarray*}
+    & &  \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu 
+             \left[
+                im \sqrt{1-\mu^2}e^{i\lambda} Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+               -im' \sqrt{1-\mu^2}e^{i\lambda} \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] \\
+    &=& \int_0^{2\pi}\left[ im\sqrt{1-\mu^2}e^{i\lambda}Y_n^m Y_{n'}^{m'}
+                      \right]_{-1}^1 d\lambda
+       -\int_0^{2\pi}\int_{-1}^1 
+             -im \frac{\mu}{\sqrt{1-\mu^2}}e^{i\lambda}
+                 Y_n^m Y_{n'}^{m'}d\lambda d\mu \\
+    & &-\int_0^{2\pi}\int_{-1}^1 
+             im \sqrt{1-\mu^2}e^{i\lambda}\DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+                 d\lambda d\mu 
+       +\int_0^{2\pi}\int_{-1}^1
+             \left[
+               -im' \sqrt{1-\mu^2}e^{i\lambda} \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] d\lambda d\mu  \\
+    &=& \int_0^{2\pi}\int_{-1}^1 
+             im \frac{\mu}{\sqrt{1-\mu^2}}e^{i\lambda}
+                 Y_n^m Y_{n'}^{m'}d\lambda d\mu 
+       -i(m+m')\int_0^{2\pi}\int_{-1}^1 
+                 \sqrt{1-\mu^2}e^{i\lambda}\DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+                 d\lambda d\mu  \\
+    &=& \int_0^{2\pi}\int_{-1}^1 
+             im \frac{\mu}{\sqrt{1-\mu^2}}e^{i\lambda}
+                 Y_n^m Y_{n'}^{m'}d\lambda d\mu 
+        +i\int_0^{2\pi}\int_{-1}^1 
+                 \sqrt{1-\mu^2}e^{i\lambda}\DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+                 d\lambda d\mu  \\
+    &=& i\int_0^{2\pi}\int_{-1}^1 \frac{1}{\sqrt{1-\mu^2}}e^{i\lambda}
+           \left[ m\mu Y_n^m + (1-\mu^2)\DP{Y_n^m}{\mu} \right]Y_{n'}^{m'} 
+                 d\lambda d\mu \\
+  \end{eqnarray*}
+  %
+  ここでルジャンドル函数の漸化式
+  \begin{equation}
+    (1-\mu^2)\DP{P_n^m}{\mu} = \sqrt{1-\mu^2}P_n^{m+1}-m\mu P_n^m
+  \end{equation}
+  %
+  より
+  \begin{eqnarray*}
+        e^{i\lambda} \left[ m\mu Y_n^m + (1-\mu^2)\DP{Y_n^m}{\mu}\right]
+    &=& e^{i(m+1)\lambda} \left[ m\mu P_n^m + (1-\mu^2)\DP{P_n^m}{\mu}\right]\\
+    &=& \sqrt{1-\mu^2}P_n^{m+1}e^{i(m+1)\lambda}
+     = \sqrt{1-\mu^2}Y_n^{m+1}.
+  \end{eqnarray*}
+  %
+  したがって, $n,m$ 成分からの寄与は
+  %
+  \begin{eqnarray*}
+    & &  \frac{1}{a^2}\tilde{\psi}_{n,m}\tilde{\psi}_{n',m'}
+         \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu 
+             \left[
+                im \sqrt{1-\mu^2}e^{i\lambda} Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+               -im' \sqrt{1-\mu^2}e^{i\lambda} \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] \\
+    &=&  i \frac{1}{a^2}\tilde{\psi}_{n,m}\tilde{\psi}_{n',-m-1}
+            \int_0^{2\pi}\int_{-1}^1 
+            Y_n^{m+1}Y_{n'}^{m'} d\lambda d\mu d\lambda d\mu \\
+    &=&  i \frac{1}{a^2}\tilde{\psi}_{n,m}\tilde{\psi}_{n,-m-1}
+           \int_0^{2\pi}\int_{-1}^1 
+            Y_n^{m+1}Y_{n}^{-m-1} d\lambda d\mu d\lambda d\mu 
+  \end{eqnarray*}
+  %
+  最後に直交関係を使って $n'=n$ とした. 
+  
+  一方 $m<0$ の成分に対して, $m \rightarrow -m-1 > -n-1$ を選んで計算すると
+  $m'=m$ の時のみ 0 でなく, 
+  %
+  \begin{eqnarray*}
+    & &  \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu 
+             \left[
+                im \sqrt{1-\mu^2}e^{i\lambda} Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+               -im' \sqrt{1-\mu^2}e^{i\lambda} \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] \\
+    &=&  \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu 
+             \left[
+                i(-m-1)\sqrt{1-\mu^2}e^{i\lambda} Y_n^{-m-1} \DP{Y_{n'}^{m'}}{\mu}
+               -im' \sqrt{1-\mu^2}e^{i\lambda} \DP{Y_n^{-m-1}}{\mu}Y_{n'}^{m'} 
+             \right] \\
+    &=&  \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu 
+             \left[
+                i(-m-1)\sqrt{1-\mu^2}e^{i\lambda} Y_n^{-m-1} \DP{Y_{n'}^{m}}{\mu}
+               -im \sqrt{1-\mu^2}e^{i\lambda} \DP{Y_n^{-m-1}}{\mu}Y_{n'}^{m} 
+             \right] \\
+    &=& -\int_0^{2\pi}\int_{-1}^1 d\lambda d\mu 
+             \left[
+               im \sqrt{1-\mu^2}e^{i\lambda} Y_{n'}^{m} \DP{Y_n^{-m-1}}{\mu}
+               -i(-m-1)\sqrt{1-\mu^2}e^{i\lambda}\DP{Y_{n'}^{m}}{\mu}Y_n^{-m-1} 
+             \right] \\
+    &=& -i \int_0^{2\pi}\int_{-1}^1 
+            Y_{n'}^{m+1}Y_{n}^{-m-1} d\lambda d\mu d\lambda d\mu \\
+    &=& -i \int_0^{2\pi}\int_{-1}^1 
+            Y_{n}^{m+1}Y_{n}^{-m-1} d\lambda d\mu d\lambda d\mu.
+  \end{eqnarray*}
+  %
+  最後の計算は $n,m$ の時の式変形と同様に行った. 
+  したがって, $n,-m-1$ 成分からの寄与は
+  %
+  \begin{eqnarray*}
+    & &  \frac{1}{a^2}\tilde{\psi}_{n,-m-1}\tilde{\psi}_{n',m'}
+         \int_0^{2\pi}\int_{-1}^1 d\lambda d\mu 
+             \left[
+                im \sqrt{1-\mu^2}e^{i\lambda} Y_n^m \DP{Y_{n'}^{m'}}{\mu}
+               -im' \sqrt{1-\mu^2}e^{i\lambda} \DP{Y_n^m}{\mu}Y_{n'}^{m'} 
+             \right] \\
+    &=& -i \frac{1}{a^2}\tilde{\psi}_{n,-m-1}\tilde{\psi}_{n',m}
+            \int_0^{2\pi}\int_{-1}^1 
+            Y_n^{-m-1}Y_{n'}^{m} d\lambda d\mu d\lambda d\mu \\
+    &=& -i \frac{1}{a^2}\tilde{\psi}_{n,-m-1}\tilde{\psi}_{n,m}
+           \int_0^{2\pi}\int_{-1}^1 
+            Y_n^{-m-1}Y_{n}^{m} d\lambda d\mu d\lambda d\mu 
+  \end{eqnarray*}
+  %
+  よって $n,m$ 成分と $n,-m-1$ 成分からの寄与が打ち消しあって
+  非線形項は 0 となる. 
+
+  最後に時間変化項は $(1,0)$ 成分と同じであり
+  %
+  \begin{equation}
+    \DP{}{t}\Dlapla\tilde{\psi}_{1,1}(t)Y_1^1
+    = -\frac{1(1+1)}{a^2}\DD{\tilde{\psi}_{1,1}}{t}Y_1^1
+  \end{equation}
+  %
+  よって $(1,1)$ 成分の式は
+  %
+  \begin{equation}
+    -\frac{2}{a^2}\DD{\tilde{\psi}_{1,1}}{t} 
+       + i \frac{2\Omega}{a^2}\tilde{\psi}_{1,1}=0,
+    \qquad \tilde{\psi}_1^1 = A e^{i \Omega t}.
+  \end{equation}
+  %
+  $A$ は任意定数であり初期値で定まる. 
+  したがって $(1,1)$ 成分の振舞は
+  %
+  \begin{equation}
+    \psi(\mu,\lambda,t) = A e^{i(\lambda+\Omega t)}P_1^1(\mu)
+  \end{equation}
+  %
+  緯度方向に速度 $\Omega$ で逆向きに伝播する. 
+  この解は回転系で見れば波数 $(1,1)$ のロスビー波である. 
+  慣性系から見て保存している極をとおる剛体回転流を, 回転系から見ると
+  $\Omega$ で逆まわりしているように見えるのがこの解である. 
+
+  $(1,-1)$ 成分は $(1,1)$ 成分と同様に粘性項, 非線形項の寄与が 0 となる.
+  %
+  \begin{equation}
+    -\frac{2}{a^2}\DD{\tilde{\psi}_{1,-1}}{t} 
+    - i \frac{2\Omega}{a^2}\tilde{\psi}_{1,-1}=0,
+    \qquad \tilde{\psi}_1^1 = A e^{-i \Omega t}.
+  \end{equation}
+  %
+  したがって $(1,1)$ 成分の振舞は
+  %
+  \begin{equation}
+    \psi(\mu,\lambda,t) = A e^{-i(\lambda+\Omega t)}P_1^1(\mu)
+  \end{equation}
+  %
+  緯度方向に速度 $\Omega$ で逆向きに伝播する. 
+  特に回転がなければ時間微分が 0 となり保存する. 
+
+
+\begin{Dreference}
+  \item 地球流体電脳倶楽部理論マニュアル「ロスビー波(2 次元非発散球面)」
+    https://www.gfd-dennou.org/GFD\_Dennou\_Club/dc-arch/zz1998/gfd-note/waveli/ros2dnds/index.htm
+\end{Dreference}
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

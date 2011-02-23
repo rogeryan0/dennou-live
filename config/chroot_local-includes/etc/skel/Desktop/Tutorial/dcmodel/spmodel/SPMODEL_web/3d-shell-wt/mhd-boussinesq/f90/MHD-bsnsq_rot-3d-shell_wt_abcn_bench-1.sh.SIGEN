@@ -1,0 +1,8 @@
+Subject: 回転球殻ブシネスク磁気流体モデル : ベンチマーク用プログラム実行シェルスクリプト
+Maintainer: 竹広真一
+Update: 2006/04/15
+Description: 実行ファイル MHD-bsnsq_rot-3d-shell_wt_abcn_bench.out へ
+	     NAMELIST 変数を読ませるためのスクリプト. 内部初期値生成用.
+
+履歴
+	2006/04/15 竹広真一   新規作成

@@ -1,0 +1,54 @@
+!--
+!----------------------------------------------------------------------
+!     Copyright (c) 2005--2008 Shin-ichi Takehiro. All rights reserved.
+!----------------------------------------------------------------------
+!
+!表題  eigmatrix :: 固有値問題サブルーチン 
+!
+!       spml/eigmatrix モジュールは, 実行列の固有値問題を解くための 
+!       Fortran90 サブルーチンを提供する. このモジュールで提供する
+!       サブルーチンは単純なインターフェースを提供するだけであり, 
+!       実際には内部で行列計算ライブラリ SSL II あるいは LAPACK の
+!       固有値問題を解くサブルーチンを呼んでいる.
+!
+!履歴  2005/01/25  竹広真一
+!      2006/03/19  竹広真一  RDoc 用コメントを追加
+!      2008/08/14  竹広真一  スレッド並列版 ssl2 サブルーチン追加
+!      2009/01/29  佐々木洋平 RDoc 用コメントを追加
+!++
+module eigmatrix
+  !     
+  != eigmatrix 
+  !
+  ! Authors:: Shin-ichi Takehiro, Youhei SASAKI
+  ! Version:: $Id: eigmatrix.g90,v 1.4 2009-01-29 09:37:20 uwabami Exp $
+  ! Copyright&License:: See COPYRIGHT[link:../../COPYRIGHT]
+  !
+  !== 概要
+  !
+  ! spml/eigmatrix モジュールは, 実行列の固有値問題を解くための 
+  ! Fortran90 サブルーチンを提供する. 
+  !
+  ! このモジュールで提供するサブルーチンは単純なインターフェースを
+  ! 提供するだけであり, 実際には内部で行列計算ライブラリ SSL II あるいは
+  ! Lapack の固有値問題を解くサブルーチンを呼んでいる.
+  !
+  !== 変数・手続き群の要約
+  !
+  ! eigen  :: 実正方行列の固有値, 固有ベクトルを求める
+  ! indexx :: 並び替えのための番号順づけを行う
+  !
+
+#ifdef SSL2
+  use ssl2_eigen, only : eigen => deig1_ssl2
+#endif
+#ifdef SSL2TP
+  use ssl2tp_eigen, only : eigen => dm_eig1_ssl2tp
+#endif
+#ifdef LAPACK
+  use lapack_eigen, only : eigen => deigen_lapack
+#endif
+  private
+  public eigen
+
+end module eigmatrix

@@ -1,0 +1,16 @@
+spml -- a Fortran 90 library for spectral model based on ispack and gtool
+
+See html/index.html or http://www.gfd-dennou.org/library/spmodel/, 
+
+Installation Guide is INSTALL 
+
+** Important Notice ** 
+
+In This release, some moudles gird declaration is modified. If you
+used old verson's w_module(and wa_module, wt_module, etc.), you should
+modified grid declaration,
+
+   (im,jm)   -> (0:im, 1:jm) 
+
+---
+2009/02/25 GFD-Dennou Club spmodel Project <dcstaff_(at)_gfd-dennou.org>

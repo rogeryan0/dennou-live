@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>tone (GPhys_tone)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File gphys_tone2.rb, line 97</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tone</span>(<span class="ruby-identifier">itr</span>=<span class="ruby-value">1</span>)
+    <span class="ruby-identifier">gphys</span> = <span class="ruby-constant">GPhys</span><span class="ruby-operator">::</span><span class="ruby-constant">IO</span>.<span class="ruby-identifier">open</span>(<span class="ruby-constant">FILENAME</span>, <span class="ruby-ivar">@var</span>)
+    <span class="ruby-constant">DCL</span>.<span class="ruby-identifier">gropn</span>(<span class="ruby-value">1</span>) ; <span class="ruby-constant">DCL</span>.<span class="ruby-identifier">sgpset</span>(<span class="ruby-value str">'lcntl'</span>, <span class="ruby-keyword kw">false</span>) ; <span class="ruby-constant">DCL</span>.<span class="ruby-identifier">uzfact</span>(<span class="ruby-value">0</span><span class="ruby-value">.7</span>)
+    <span class="ruby-constant">GGraph</span>.<span class="ruby-identifier">set_fig</span>( <span class="ruby-value str">'itr'</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">itr</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>) <span class="ruby-operator">?</span> <span class="ruby-value">1</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">itr</span>.<span class="ruby-identifier">to_i</span>)
+    <span class="ruby-constant">GGraph</span>.<span class="ruby-identifier">tone</span>( <span class="ruby-identifier">gphys</span> ) <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@draw_tone</span>
+    <span class="ruby-constant">GGraph</span>.<span class="ruby-identifier">contour</span>( <span class="ruby-identifier">gphys</span>, <span class="ruby-operator">!</span><span class="ruby-ivar">@draw_tone</span> )
+    <span class="ruby-constant">DCL</span>.<span class="ruby-identifier">grcls</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

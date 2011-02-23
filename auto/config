@@ -1,22 +1,22 @@
 #!/bin/sh
 
-MIRROR_DEBIAN="http://cdn.debian.net/debian/"
+MIRROR_DEBIAN="http://ftp.jp.debian.org/debian/"
 MIRROR_SECURITY="http://security.debian.org/"
 MIRROR_BOOTSTRAP=${MIRROR_DEBIAN}
 MIRROR_VOLATILE=${MIRROR_DEBIAN}
 
 DISTRIBUTION="squeeze"
 
+#	--debian-installer live \
+#	--debian-installer-distribution ${DISTRIBUTION} \
 lb config noauto \
 	--apt-recommends true \
-	--archive-areas "main" \
+	--archive-areas "main contrib non-free" \
 	--backports false \
 	--binary-images iso-hybrid \
 	--bootloader syslinux \
-	--debian-installer live \
-	--debian-installer-distribution ${DISTRIBUTION} \
 	--iso-publisher "GFD Dennou Club; http://www.gfd-dennou.org/;" \
-	--linux-flavours 486 \
+	--linux-flavours 686 \
 	--mirror-binary ${MIRROR_DEBIAN} \
 	--mirror-binary-security ${MIRROR_SECURITY} \
 	--mirror-binary-volatile ${MIRROR_VOLATILE} \
@@ -25,8 +25,8 @@ lb config noauto \
 	--mirror-chroot-security ${MIRROR_SECURITY} \
 	--mirror-chroot-volatile ${MIRROR_VOLATILE} \
 	--security true \
-	--syslinux-timeout 10 \
-	--tasks "japanese japanese-desktop lxde desktop laptop" \
+	--syslinux-timeout 30 \
+	--tasks "japanese japanese-desktop laptop desktop xfce-desktop" \
 	--tasksel aptitude \
 	--volatile false \
 	--win32-loader true \

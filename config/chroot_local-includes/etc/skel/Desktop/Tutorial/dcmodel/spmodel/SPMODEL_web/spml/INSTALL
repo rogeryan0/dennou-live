@@ -1,0 +1,314 @@
+<<<<<<< INSTALL
+Title: Spml Installation Guide
+
+1 Operation Environment
+
+Spml library is operated by following environments.
+
+  * OS: Debian GNU/Linux
+  * Fortran Compiler
+      + G95 Fortran Compiler ver. 0.91
+          o with MPICH2 1.0.7
+          o with OpenMPI 1.3.2
+      + Fujitsu Fortran Driver ver.1.0(Japanese)
+          o with MPICH2 1.0.7
+          o with OpenMPI 1.3.2
+      + Fujitsu Fortran Compiler ver.5.0(Japanese)
+          o with MPICH2 1.0.7
+      + Intel Fortran Compiler ver 10.0, 11.0
+
+Spml library was operated by following environments in the past. Latest version
+may be operated (unconfirmed).
+
+  * Cray XT4 + PGI Fortran
+  * NEC SX-6 + FORTRAN90/SX
+  * NEC SX-8 + FORTRAN90/SX
+  * NEC SX-8R + FORTRAN90/SX
+  * NEC SX-9 + FORTRAN90/SX
+  * Linux + PGI Fortran
+
+2 General outline
+
+Install spml as follows. Refer each items for details.
+
+ 1. Satisfy Software Requirements.
+ 2. Build the library following How to build.
+ 3. Install the library following How to install.
+ 4. Check whether the installed library functions normally following Execute
+    test programs.
+ 5. Set PATH.
+
+3 Software Requirements
+
+The following software needs to use spml
+
+  * netCDF, version 3.6
+  * gtool5
+  * ispack
+
+4 How to build
+
+4.1 Extract TGZ Package
+
+Make an empty directory, and extract archive. A directory `spml-version'
+created at the current working directory.
+
+$ tar xvzf spml_current.tgz
+
+or
+
+$ zcat spml_current.tar.gz | tar -xvf -
+
+4.2 Specify Fortran Compiler
+
+Specify Fortran compiler to environment variable FC . For example, if you use
+"frt",
+
+  * sh, bash
+
+    $ FC=frt ; export FC
+
+  * csh, tcsh
+
+    $ setenv FC frt
+
+
+Specify Fortran compiler options for optimization and debug to environment
+variable SYSFFLAGS . For example, if you set options for automatic optimization
+and automatic parallelization to Fujitsu Fortran,
+
+  * sh, bash
+
+    $ SYSFFLAGS="-Kfast,parallel" ; export FFLAGS
+
+  * csh, tcsh
+
+    $ setenv SYSFFLAGS "-Kfast,parallel"
+
+
+4.3 Create `Config.mk'
+
+Move created directroy, and excute ` ./configure '. You should set necessary
+library location, netCDF, gtool5, ispack. If your path of netCDF library is `/
+usr/local/netcdf/lib/libnetcdf.a', gtool5 library is `/usr/local/gtool5/lib/
+libgtool5.a', ISPACK library is `/usr/local/ispack/lib/libisp.a', you should
+set options as follow. Then a configure file `Config.mk' will be created at the
+current working directory. If the netCDF library is a shared library,
+--with-netcdff= option may be needed. See details of options as follows.
+
+$ ./configure --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a \
+              --with-gtool5=/usr/local/gtool5/lib/libgtool5.a \
+              --with-ispack=/usr/local/ispack/lib/libisp.a
+
+If spml is built for MPI, see How to build for MPI.
+
+GNU make is needed to build, so configure automatically inquires into GNU make
+in PATH. However, it returns error when GNU make is not found. In that case,
+please set the GNU make command for environment variable MAKE . And rerun
+execute ` ./configure '.
+
+If you want to change directory to which the library and the module, etc. are
+installed, please set --help option as follow. Available options are showed.
+
+$ ./configure --help
+
+Descriptions about principal options are listed below.
+
+--with-netcdf=ARG
+    Specify netCDF library needed for build to ARG. You must specify
+    explicitly.
+--with-netcdff=ARG
+    If the netCDF library is a shared library, the library may be divided C
+    library from Fortran library. In the case, specify the C library to above
+    option, and specify the Fortran library to ARG in this option.
+--with-netcdf-include=ARG
+    Set location of netCDF header file for fortran(netcdf.inc), if you need.
+--with-gtool5=ARG
+    Specify gtool5 library needed for build to ARG. You must specify
+    explicitly.
+--with-ispack=ARG
+    Specify ispack library needed for build to ARG. You must specify
+    explicitly.
+--with-ssl2=ARG
+--with-ssl2tp=ARG
+--with-lapack=ARG
+    Specify library using solve eigenvalue problem to ARG, if you need.
+--with-fftw=ARG
+--with-rfftw=ARG
+    Specify library using FFTW ver.2. You must specify explicitly if you build
+    ispack library with -FFTW2 option.
+--with-mpifc=ARG
+    Specify MPI Fortran Compiler to ARG if you want to build MPI support.
+--prefix=ARG
+    Specify prefix to ARG. Default value is /usr/local/spml .
+--host=ARG
+    When cross-compiling, specify the type of system on which the package will
+    run to ARG.
+--libdir=ARG
+    Specify directory to which the library is installed to ARG. Default value
+    is /usr/local/spml/lib .
+--includedir=ARG
+    Specify directory to which the module is installed to ARG. Default value is
+    /usr/local/spml/include .
+--bindir=ARG
+    Specify directory to which the executable file is installed to ARG. Default
+    value is /usr/local/spml/bin .
+--with-docdir=ARG
+    Specify directory to which the documentation file is installed to ARG.
+    Default value is /usr/local/spml/doc .
+--with-abort=ARG
+    Specify one of abort, errtra-setrcd, exit, setrcd, stop to ARG. Default
+    value is abort .
+
+    abort
+        Stop by intrinsic subroutine "abort".
+    errtra-setrcd
+        Stop by Fujitsu Fortran service subroutine "ERRTRA". And outputs error
+        trace back map.
+    exit
+        Stop by intrinsic subroutine "exit".
+    setrcd
+        Stop by Fujitsu Fortran service subroutine "SETRCD". And outputs error
+        trace back map.
+    stop
+        Stop by intrinsic subroutine "stop".
+
+--config-cache or -C
+
+    config.cache is created at the same time as Config.mk 's being generated.
+    config.cache stores information investigated with ./configure .
+
+    If you set this option, when you execute ./configure again, config.cache is
+    loaded. If you want to ignore config.cache, don't set this option
+
+    For example, execute ./configure as follows.
+
+    $ ./configure -C --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a \
+                     --with-gtool5=/usr/local/gtool5/lib/libgtool5.a \
+                     --with-ispack=/usr/local/ispack/lib/libisp.a
+
+    Then, information such as the locations of libraries is succeeded by
+    executing ./configure as follows after next time.
+
+    $ ./configure -C
+
+
+4.4 How to build for MPI
+
+If spml is built for MPI, install MPI library to a system, and build gtool5
+library with MPI support, see Gtool5 Installation Guide.
+
+When "Config.mk" is edited, specify a compile commend like as "mpif90" to
+environment variable FC . And specify "--with-mpiexec" option of "configure".
+
+$ ./configure -C --with-netcdf=/usr/local/netcdf/lib/libnetcdf.a \
+                 --with-gtool5=/usr/local/gtool5/lib/libgtool5.a \
+                 --with-ispack=/usr/local/ispack/lib/libisp.a \
+                 --with-mpifc=/usr/local/mpich/mpif90
+
+See Create `Config.mk' about other options.
+
+4.5 Edit `Config.mk'
+
+Edit `Config.mk' manually, if you want to change. If you do not understand
+following settings, go forward to Compile source code tentatively.
+
+FC          : Fortran Compiler
+
+SYSFFLAGS   : Flags needed when compiled and linked
+
+SYSLDFLAGS  : Flags needed when linked
+
+SYSLDLIBS   : Libraries needed when linked
+
+F90MODTYPE  : Information of Modules
+              (std.mod, HP.mod, fqs.mod, intel.d, hitachi.f90)
+
+DEST_LIB    : Directory to which the library file is installed
+
+DEST_INC    : directory to which the module files are installed
+
+DEST_BIN    : directory to which the executable files are installed
+
+DEST_DOC    : directory to which the documantation files are installed
+
+MODS        : Extensions of Module Files used when "make clean"
+
+MAKE        : GNU make command
+
+AR          : Archive command
+
+ARFLAGS     : Flags of AR
+
+RANLIB      : Generate index to archive
+
+4.6 Compile source code
+
+You must use GNU make to build. No other "make" program is acceptable. "make"
+tentatively means GNU make at the following. Replace them with GNU make of your
+system.
+
+When ./configure is executed, the command name of GNU make is displayed as
+follows. Execute GNU make according to this message.
+
+Execute GNU make in the current directory, as follows.
+
+  /usr/bin/make
+
+4.7 Generate documentations
+
+To generate documentations, execute the following command in current directory.
+If you get from Spml TGZ package, documentations are already generated.
+
+$ make doc
+$ make install
+
+5 How to install
+
+In current directory, execute following command. If you install to system, you
+need to be administrator. (By default, you install to system).
+
+# make install
+
+6 Execute test programs
+
+In current directry, execute following command. If message " *** Compilation
+and installation are succeeded !! *** " are showed without error, installation
+is completed.
+
+$ make test
+
+7 Set PATH
+
+If the installation is correctly done as stated above, shell script spmfrt is
+made under the directory --prefix=ARG/bin (By default, /usr/local/spml/bin/ ).
+
+Please specify PATH to this directory. It is an example as follows when spmfrt
+is installed in /usr/local/spml/bin/ .
+
+  * sh, bash
+
+    $ PATH=$PATH:/usr/local/spml/bin ; export PATH
+
+  * csh, tcsh
+
+    $ setenv PATH $PATH:/usr/local/spml/bin
+
+
+spmfrt is a shell script in order to easily compile and link Fortran programs
+which utilizes the spml library. Link to the gtool5 library and directory
+appointment to the modules are done automatically by using spmfrt in place of
+command of the Fortran compiler.
+
+$ spmfrt test.f90
+
+/usr/bin/g95 -I/usr/local/spml/include \
+             -I/usr/local/gtool5/include -O test.f90 \
+             -L/usr/local/gtool5/lib \
+             -L/usr/local/netcdf/lib \
+             -L/usr/local/ispack/lib \
+             -L/usr/local/spml/lib \
+             -lgtool5 -lnetcdf -lisp -lspml
+
+=======
+>>>>>>> 1.11

@@ -1,0 +1,26 @@
+/*
+  dennou-ruby-install.css
+  Copyright (C) 2003-2004 GFD Dennou Club. All rights reserved.
+*/
+
+body{ background-color: #ffffff;
+	color: #000000;
+	margin: 3ex 3ex 3ex 3ex; }
+
+a:link{ color: #339933;
+        text-decoration: none; }
+a:visited{ color: #00cccc;
+           text-decoration: none; }
+a:active{ color: #cc9933;
+          text-decoration: underline; }
+a,a[name]:hover{ text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+h1, h2{ color: #205080; }
+
+img{ margin-left: 2ex; }
+
+kbd{ background-color: #dbd7be; }
+
+pre{ background-color: #dbd7be; }
+

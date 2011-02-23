@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0049)http://enomosphere.ddo.jp/mac/dcl-ruby/index.html -->
+<?xml version="1.0" encoding="EUD-JP"><HTML xml:lang="ja" 
+xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>Terminal</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=euc-jp" 
+characterset='EUC-JP"' ;><LINK href="mac-by-eno.files/default.css" type=text/css 
+rel=stylesheet>
+<META content="MSHTML 6.00.2900.2802" name=GENERATOR></HEAD>
+<BODY>
+<P class=navigation>[<A 
+href="http://enomosphere.ddo.jp/index.html">enomosphere</A>][<A 
+href="http://enomosphere.ddo.jp/mac/index.html">Mac OS X</A>]</P>
+<H1>電脳Ruby on Mac OS X</H1>
+<P>電脳RubyをMac OS 
+Xにインストールしてみました．どなたか熱心な方，FinkのパッケージかDarwinPortsのportsを書いてください．</P>
+<H2>インストール</H2>
+<P>電脳Rubyで提供されている一括インストーラは，基本的にはMacでも動くが，/usr/localなど管理者権限が必要なところにインストールするときはsudoをつける必要がある．ダウンロードしたファイルや展開したソースがすべて管理者の所有になってしまう．時々FTPサイトからリストをとれないことがあるようだ．一括インストーラと手動インストールを併用してgaveまでインストールすることができた．以下，手動でインストールしたものだけまとめておく．</P>
+<H3>ソースの入手先</H3>
+<UL>
+  <LI><A href="http://www.ruby-lang.org/">Ruby</A> 
+  <LI><A href="http://www.ir.isas.ac.jp/~masa/ruby/">NArray</A> 
+  <LI><A href="http://www.gfd-dennou.org/arch/ruby/index-j.htm">電脳Ruby</A> 
+</LI></UL>
+<H3>ruby-1.8.4</H3>
+<P>Mac OS X 
+10.4にプレインストールされているものより新しいし，/usr/libはいじりたくないので，新たに/usr/localに入れることにした．make; make 
+installで問題なくインストールできた．</P>
+<H3>dcl-5.3.1-C</H3>
+<P>GTK+2.0はFinkからインストール．ソースの改変が<A 
+href="http://www-clim.kugi.kyoto-u.ac.jp/satomura/memo/comp_memo/DCLonMac.html">必要</A>なので，手動でインストール．src/grph1/swpack/zxpack.cのwaitが/usr/include/sys/wait.hの定義とぶつかるので，別の名前にする．</P>
+<H3>ruby-dcl-1.5.2</H3>
+<P>NArray, NArrayMissは一括インストーラを使ってインストールした．lib/dcl.rbの冒頭にrequire "gtk2"と<A 
+href="http://www-aos.eps.s.u-tokyo.ac.jp/pukiwiki/pukiwiki.php?MacOSX%2FDCLBuildMemo">書く</A>．ruby 
+extconf.rb; make; make installでインストールできる．</P></BODY></HTML>

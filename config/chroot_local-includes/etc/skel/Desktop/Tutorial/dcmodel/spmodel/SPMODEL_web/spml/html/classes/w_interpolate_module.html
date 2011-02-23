@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: w_interpolate_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">w_interpolate_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/w_interpolate_module_f90.html">
+
+                src/w_interpolate_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="w_interpolate_module.html">w_interpolate_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a
+href="../files/src/w_interpolate_module_f90.html">w_interpolate_module.f90</a>,v
+1.9 2009-02-28 21:33:47 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/w_deriv_module モジュールは球面上での 2 次元流体運動を
+球面調和函数を用いたスペクトル法によって数値計算するための モジュール <a
+href="w_module.html">w_module</a> の下部モジュールであり,
+スペクトル法による 補間計算のための Fortran90 関数を提供する.
+</p>
+<p>
+内部で ISPACK の SPPACK と SNPACK の Fortran77 サブルーチンを呼んでいる.
+スペクトルデータおよび格子点データの格納方法や変換の詳しい計算法に ついては
+ISPACK/SNPACK,SPPACK のマニュアルを参照されたい.
+</p>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000204">Interpolate_w</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+
+        <span class="include-name"><a href="w_base_module.html">w_base_module</a></span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000204" class="method-detail">
+        <a name="M000204"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000204" class="method-signature">
+
+
+
+          <span class="method-name">Interpolate_w</span><span class="method-args">( w_data, alon, alat ) result(Interpolate_array00_w)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>Interpolate_array00_w  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間した値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alon  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間する位置(経度)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alat  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間する位置(緯度)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+緯度 alat, 経度 alon における関数値を その球面調和変換係数 w_data
+から補間計算する
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000204-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000204-source">
+<pre>
+    function Interpolate_array00_w(w_data,alon,alat)
+      !
+      ! 緯度 alat, 経度 alon における関数値を
+      ! その球面調和変換係数 w_data から補間計算する
+      !
+      real(8), intent(IN) :: w_data((nm+1)*(nm+1))  ! スペクトルデータ
+      real(8), intent(IN) :: alon                   ! 補間する位置(経度)
+      real(8), intent(IN) :: alat                   ! 補間する位置(緯度)
+      real(8)             :: Interpolate_array00_w  ! 補間した値
+      
+      real(8) :: mu
+      real(8) :: y0, y1, y2, AnmPnm
+      integer :: k,m
+
+      mu = sin(alat)
+      Interpolate_array00_w = 0.0D0
+
+      !---- Σa_n^0 P_n^0 の計算
+      y2 = 0 
+       y1 = 0
+      do k=nm,1,-1
+         y0 = alpha(k,0,mu) * y1 + beta(k+1,0)*y2 + w_data(l_nm(k,0))
+         y2 = y1 
+          y1 = y0
+      enddo
+      Interpolate_array00_w = (  beta(1,0) * y2 + mu*sqrt(3.0D0) * y1 + w_data(l_nm(0,0))  ) * Pmm(0,mu)
+
+      !---- cos mλ Σa_n^m P_n^m の計算
+      do m=1,nm
+         y2 = 0 
+          y1 = 0
+         do k=nm,m+1,-1
+            y0 = alpha(k,m,mu) * y1 + beta(k+1,m) * y2 + w_data(l_nm(k,m))
+            y2 = y1 
+             y1 = y0
+         enddo
+
+         AnmPnm =(w_data(l_nm(m,m)) + beta(m+1,m)*y2 + mu*sqrt(2.0D0*m+3)*y1 ) * Pmm(m,mu)
+
+         Interpolate_array00_w = Interpolate_array00_w + AnmPnm*sqrt(2.0D0)*cos(m*alon)
+      end do
+
+      !---- sin λ Σa_n^m P_n^m の計算
+      do m=1,nm
+         y2 = 0 
+          y1 = 0
+         do k=nm,m+1,-1
+            y0 = alpha(k,m,mu) * y1 + beta(k+1,m)*y2 + w_data(l_nm(k,-m))
+            y2 = y1 
+             y1 = y0
+         enddo
+
+         AnmPnm =(w_data(l_nm(m,-m)) + beta(m+1,m)*y2 + mu*sqrt(2.0D0*m+3)*y1 ) * Pmm(m,mu)
+
+
+         Interpolate_array00_w = Interpolate_array00_w - AnmPnm*sqrt(2.0D0)*sin(m*alon)
+      end do
+      
+    end function Interpolate_array00_w
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>mac_osx_install.rd</title>
+</head>
+<body>
+<h1><a name="label-0" id="label-0">Mac OS X への電脳Ruby関連資源のインストールメモ</a></h1><!-- RDLabel: "Mac OS X への電脳Ruby関連資源のインストールメモ" -->
+<p>北村 祐二</p>
+<p>2006/03</p>
+<h2><a name="label-1" id="label-1">はじめに</a></h2><!-- RDLabel: "はじめに" -->
+<p>本稿ではRubyからDCLをはじめとするライブラリ群をMac OS X上で利用するた
+めの手順をまとめる．今回は必要最小限の環境を自前で構築するための最短距
+離を提供することを目的としているため，例えばDCLでGTKを用いるなどの話題
+については除外してある．このインストールメモにおいて前提としている環境
+は以下の通りである．</p>
+<ul>
+<li>Mac OS X (PowerPC版，Intelプラットフォームについては未検証)</li>
+<li>gcc4</li>
+<li>X11</li>
+</ul>
+<p>gcc4については，開発環境(Xcode)を別途インストールする必要がある．最近
+のMacにははじめからインストールディスクが用意されているようだが，手元
+にない場合でもAppleのサイトから最新版をダウンロードすることが可能であ
+る(要Developer登録)．X11についてはOSの導入の際にカスタムインストールが
+必要となるかもしれないので，その点についても注意が必要である．</p>
+<p>筆者はMac OS X 10.4.5 + gcc4 (Xcode 2.2.1)の環境で最低限の動作確認を
+行ったが，あらゆる環境で動作を保証するものではないことに注意．</p>
+<h2><a name="label-2" id="label-2">準備</a></h2><!-- RDLabel: "準備" -->
+<h3><a name="label-3" id="label-3">ruby-1.8.4</a></h3><!-- RDLabel: "ruby-1.8.4" -->
+<p>入手先:</p>
+<ul>
+<li>http://www.ruby-lang.org/ja/</li>
+<li>ftp://ftp.gnu.org/gnu/readline/readline-5.1.tar.gz</li>
+</ul>
+<p>Mac OS XにはデフォルトでRubyがインストールされているが，readlineがリン
+クされていないので特にirbを使うときに不便である．今回はRubyも自前で入
+れることにした．</p>
+<p>まず，readline-5.1のインストールから行う．</p>
+<pre>% tar xzvf readline-5.1.tar.gz
+% cd readline-5.1
+% ./configure --prefix=/usr/local
+% make
+% sudo make install</pre>
+<p>次にRubyのインストール．</p>
+<pre>% tar xzvf ruby-1.8.4.tar.gz 
+% cd ruby-1.8.4
+% ./configure --prefix=/usr/local --with-readline-dir=/usr/local
+% make
+% sudo make install</pre>
+<p>参考サイト:</p>
+<ul>
+<li>http://d.hatena.ne.jp/tsimo/20060212</li>
+<li>http://hivelogic.com/articles/2005/12/01/ruby_rails_lighttpd_mysql_tiger</li>
+</ul>
+<h3><a name="label-4" id="label-4">DCL-5.3.1-C</a></h3><!-- RDLabel: "DCL-5.3.1-C" -->
+<p>入手先:</p>
+<ul>
+<li>http://www.gfd-dennou.org/arch/dcl/</li>
+</ul>
+<p>makeする前に以下のようにソースの修正が必要である．</p>
+<p>src/grph1/swpack/zxpack.c中の</p>
+<pre>#include &lt;stdlib.h&gt;</pre>
+<p>をコメントアウトする．</p>
+<p>そのままだとsrc/grph1/swpack/zxpack.cでwaitが多重定義されるというエラー
+になる．これは，/usr/include/libstd.hから/sys/wait.hを呼んでいるためと
+推察される．ただし，この作業はMac OS X 10.3以前には不要だった記憶がある．</p>
+<p>以上の修正を行ったのち，</p>
+<pre>% env CFLAGS='-O' ./configure --prefix=/usr/local/dcl-5.3.1-C
+% make
+% sudo make install</pre>
+<p>make installのあとに</p>
+<pre>% sudo ranlib /usr/local/dcl-5.3.1-C/lib/libcdcl53.a
+% sudo ranlib /usr/local/dcl-5.3.1-C/lib/libf2c4dcl.a</pre>
+<p>が必要となる．</p>
+<h3><a name="label-5" id="label-5">netCDF-3.6.1</a></h3><!-- RDLabel: "netCDF-3.6.1" -->
+<p>入手先:</p>
+<ul>
+<li>http://www.unidata.ucar.edu/software/netcdf/</li>
+</ul>
+<p>今回はRuby-NetCDFから呼び出すことだけを想定し，Cのライブラリ以外は作ら
+ない方針とする．Fortran用のライブラリを利用するための設定は，用いる
+Fortranコンパイラに強く依存するため，ここでは触れないことにする．</p>
+<pre>% env CC=gcc CXX='' FC='' F90='' ./configure --prefix=/usr/local
+% make
+% make check
+% sudo make install</pre>
+<h2><a name="label-6" id="label-6">Rubyのライブラリ群のインストール</a></h2><!-- RDLabel: "Rubyのライブラリ群のインストール" -->
+<p>上に述べた準備ができていれば，Rubyのライブラリをインストールするのはそ
+れほど難しくない．Linux等と同様の手順で基本的にOKである．</p>
+<h3><a name="label-7" id="label-7">NArray-0.5.8</a></h3><!-- RDLabel: "NArray-0.5.8" -->
+<p>入手先:</p>
+<ul>
+<li>http://narray.rubyforge.org/index.html.ja</li>
+</ul>
+<pre>% ruby extconf.rb
+% make
+% sudo make install</pre>
+<h3><a name="label-8" id="label-8">ruby-dcl-1.5.2</a></h3><!-- RDLabel: "ruby-dcl-1.5.2" -->
+<p>入手先(以下についても同様):</p>
+<ul>
+<li>http://ruby.gfd-dennou.org/products.htm</li>
+</ul>
+<pre>% ruby extconf.rb
+% make
+% sudo make install</pre>
+<h3><a name="label-9" id="label-9">ruby-netcdf-0.6.2</a></h3><!-- RDLabel: "ruby-netcdf-0.6.2" -->
+<pre>% ruby extconf.rb
+% make
+% make test
+% sudo make install</pre>
+<h3><a name="label-10" id="label-10">NArrayMiss-1.1.2</a></h3><!-- RDLabel: "NArrayMiss-1.1.2" -->
+<pre>% ruby setup.rb config
+% sudo ruby setup.rb install</pre>
+<h3><a name="label-11" id="label-11">numru-units-1.5</a></h3><!-- RDLabel: "numru-units-1.5" -->
+<pre>% sudo ruby install.rb</pre>
+<h3><a name="label-12" id="label-12">numru-misc-0.0.6</a></h3><!-- RDLabel: "numru-misc-0.0.6" -->
+<pre>% sudo ruby install.rb</pre>
+<h3><a name="label-13" id="label-13">gphys-0.5.1</a></h3><!-- RDLabel: "gphys-0.5.1" -->
+<pre>% sudo ruby install.rb</pre>
+<h2><a name="label-14" id="label-14">[付録] GTK対応にする場合のメモ</a></h2><!-- RDLabel: "[付録] GTK対応にする場合のメモ" -->
+<p>電脳ライブラリをGTK対応にするには，GTK+2関連のライブラリをあらかじめ導
+入しておく必要がある．これらのライブラリをすべて自力でコンパイルするの
+はかなりの手間なので，ここでは，Finkというパッケージシステムを利用する
+ことにする．実は上記において自力で導入したライブラリのいくつかはFinkを
+使っても導入可能なのだが，今回はGTK+2関連のインストールのみにFinkを使
+う方針とした．ただし，本インストールメモは筆者が実際に行った作業を書き
+留めただけなので，実際には不要な作業が紛れ込んでいる可能性もあることに
+注意していただきたい．</p>
+<h3><a name="label-15" id="label-15">Finkのインストール</a></h3><!-- RDLabel: "Finkのインストール" -->
+<ul>
+<li>http://fink.sourceforge.net/download/index.php?phpLang=ja</li>
+</ul>
+<p>よりFink 0.8.0バイナリインストーラをダウンロード．
+Finkのインストールについては上記サイトを参照のこと．
+デフォルトではunstableパッケージを参照しないので，しかるべき変更を行う．
+具体的には，/sw/etc/fink.confのTrees:にunstable/crypto,unstable/mainを加える:</p>
+<pre>Trees: local/main stable/main stable/crypto unstable/crypto unstable/main</pre>
+<p>/sw/etc/apt/source.listに</p>
+<pre>deb file:/sw/fink unstable main crypto</pre>
+<p>を追加．これらの変更を行ったら，</p>
+<pre>% fink scanpackages; fink index
+% sudo apt-get update</pre>
+<p>を実行．</p>
+<p>その上で，GTK+2関連のライブラリをインストールする．ここでは時間節約の
+ためバイナリインストールを試みる．必要なパッケージは，</p>
+<ul>
+<li>gtk+2</li>
+<li>gtk+2-dev</li>
+<li>pango1-xft2-dev</li>
+<li>glib2-dev</li>
+<li>atk1</li>
+</ul>
+<p>である．以下のようにしてパッケージを順次インストールする．</p>
+<pre>% sudo apt-get install package-name</pre>
+<h3><a name="label-16" id="label-16">Ruby-GTK2</a></h3><!-- RDLabel: "Ruby-GTK2" -->
+<ul>
+<li>http://ruby-gnome2.sourceforge.jp/ja/index.html</li>
+</ul>
+<p>よりruby-gtk2-0.14.1.tar.gzを入手．</p>
+<pre>% ruby extconf.rb
+% make
+% sudo make install</pre>
+<h3><a name="label-17" id="label-17">DCL-5.3.1-C</a></h3><!-- RDLabel: "DCL-5.3.1-C" -->
+<p>GTK非対応版と同じ手順でOK.</p>
+<h3><a name="label-18" id="label-18">ruby-dcl-1.5.2</a></h3><!-- RDLabel: "ruby-dcl-1.5.2" -->
+<p>lib/dcl.rbの2行目</p>
+<pre>if /cygwin|mingw/ =~ RUBY_PLATFORM</pre>
+<p>を</p>
+<pre>if /cygwin|mingw|darwin/ =~ RUBY_PLATFORM</pre>
+<p>としてから，</p>
+<pre>% ruby extconf.rb
+% make
+% sudo make install</pre>
+<h3><a name="label-19" id="label-19">gave-1.2.1</a></h3><!-- RDLabel: "gave-1.2.1" -->
+<pre>% ruby setup.rb config
+% sudo ruby setup.rb install</pre>
+
+</body>
+</html>

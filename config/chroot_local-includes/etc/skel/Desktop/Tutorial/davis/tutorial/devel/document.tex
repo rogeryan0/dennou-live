@@ -1,0 +1,428 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%             Style  Setting             %%%%%%%%
+\documentclass[a4j,12pt,openbib]{jarticle}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%             Package Include            %%%%%%%%
+\usepackage{ascmac}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{Dennou6}
+%%%%%%%%            PageStyle Setting           %%%%%%%%
+\pagestyle{Dmyheadings}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%            Title Setting               %%%%%%%%
+\Dtitle{NumRu::GPhys::EP\_Flux}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%   Set Counter (chapter, section etc. ) %%%%%%%%
+%\setcounter{chapter}{1}
+\setcounter{section}{0}
+\setcounter{equation}{0}
+\setcounter{page}{1}
+\setcounter{figure}{0}
+\setcounter{footnote}{0}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%        Counter Output Format           %%%%%%%%
+
+%\def\thesection{\arabic{chapter}.\arabic{section}}
+%\def\theequation{\arabic{chapter}.\arabic{section}.\arabic{equation}}
+%\def\thepage{\arabic{page}}
+%\def\thefigure{\arabic{section}.\arabic{figure}}
+%\def\thetable{\arabic{section}.\arabic{table}}
+%\def\thefootnote{\arabic{footnote}}
+\def\thesection{\arabic{section}}
+\def\theequation{\arabic{section}.\arabic{equation}}
+\def\thepage{\arabic{page}}
+\def\thefigure{\arabic{section}.\arabic{figure}}
+\def\thetable{\arabic{section}.\arabic{table}}
+\def\thefootnote{\arabic{footnote}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%        Dennou-Style Definition         %%%%%%%%
+\Dparskip
+%\Dnoparskip
+%\Dparindent
+\Dnoparindent
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%            Local Definition            %%%%%%%%
+\def\dfrac#1#2{{\displaystyle\frac{#1}{#2}}}
+\def\minicaption#1#2{\begin{quote} \caption{\footnotesize #1} \Dfiglab{#2} \end{quote}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%             Text Start                 %%%%%%%%
+\begin{document}
+\section{定義}
+本ドキュメントでは, NumRu::EP\_Flux で定義される Eliassen-Palm Flux(EP-Flux)
+計算モジュールその他の解説を行う. 今のところ, 球面上の EP-Flux のみをサポートしている.
+数理モデルは Andrews et al(1987) の第 3 章を参考にした\cite{AHL1987}.
+
+\subsection{EP-Flux とTEM 系の運動方程式}
+
+Andrews et al(1987)における球面上の EP-Flux は次のように定義される.
+\begin{eqnarray}
+  \left.
+  \begin{array}{cl}
+    F_y =& \rho_0 a  \cos \phi \left(\overline{\DP{u}{z}}
+    \frac{\overline{v'\theta'}}{\overline{\DP{\theta}{z}}} - \overline{u'v'}\right)\\
+    F_z =& \rho_0 a \cos \phi \left(\left[ f - \frac{\DP{\overline{u}\cos \phi}{\phi}}{a\cos\phi} \right]
+    \frac{\overline{v'\theta'}}{\overline{\DP{\theta}{z}}} - \overline{u'w'}\right).
+  \end{array}
+  \right\}
+\end{eqnarray}
+$F_y, F_z$がそれぞれ EP-Flux の緯度成分, および鉛直成分である. 
+$\bar{\star}$は東西平均量, $\star'$は東西平均量からの擾乱成分を表す.
+ここで, $u, v, w, \theta$はそれぞれ東西風速, 南北風速, 鉛直風速, 温位である. また$z, \phi$は高度および緯度, $a$は惑星半径(定数), $\rho_0$は参照密度プロファイル, $f$はコリオリパラメータで自転角速度$\Omega$を用いて$2\Omega\sin\phi$と定義する. 
+
+一方, 本モジュールでは次式で定義される量$\hat{F_y}, \hat{F_z}$を EP-Flux と呼ぶ.
+\begin{eqnarray}
+  \left.
+  \begin{array}{cl}
+    \hat{F_y} =& \sigma  \cos \phi \left(\overline{\DP{u}{z}}
+    \frac{\overline{v'\theta'}}{\overline{\DP{\theta}{z}}} - \overline{u'v'}\right)\\
+    \hat{F_z} =& \sigma  \cos \phi \left(\left[ f - \frac{\DP{\overline{u}\cos \phi}{\phi}}{a\cos\phi} \right]
+    \frac{\overline{v'\theta'}}{\overline{\DP{\theta}{z}}} - \overline{u'w'}\right)
+  \end{array}
+  \right\}
+\end{eqnarray}
+%
+ここで$\sigma$ は圧力に比例する無次元量で, 大気の参照密度に相当する量である. 
+%
+\begin{align}
+  \sigma \equiv \frac{p}{p_{00}} = \exp\left(\frac{-z}{H}\right),
+\end{align}
+%
+$H$は圧力対数座標におけるスケールハイト(定数)である. (1.1)式との違いは
+\begin{enumerate}
+  \item 惑星半径$a$がかかっていない(惑星半径で規格化している)
+  \item 参考密度プロファイル$\rho_0$の代わりにそれに比例する無次元量$\sigma$を用いている
+\end{enumerate}
+である. 
+
+$\sigma$と$\rho_0$の次元の違いを無視すれば$F_y, F_z$と$\hat{F_y}, \hat{F_z}$は以下のように関係付けられる.
+\begin{align}
+  (F_y, F_z) = a(\hat{F_y}, \hat{F_z})
+\end{align}
+
+
+球面上の発散は以下の形で定義する.
+%
+\begin{align}
+  \Ddiv{\hat{\Dvect{F}}} = \Dinv{a \cos \phi} \DP{F_y \cos \phi}{\phi} + \DP{F_z}{z}
+\end{align}
+%
+また残差循環$(0, \bar{v}^*, \bar{w}^*)$を以下の形で定義する.
+%
+\begin{align}
+  \overline{v}^* &\equiv \bar{v} 
+   - \Dinv{\sigma}\DP{}{z}\left(\sigma\frac{\overline{v'\theta'}}
+                   {\overline{\DP{\theta}{z}}}\right)\\
+  \overline{w}^* &\equiv \bar{w} 
+   + \Dinv{a \cos\phi}\DP{}{\phi}\left(\cos\phi\frac{\overline{v'\theta'}}
+                   {\overline{\DP{\theta}{z}}}\right)
+\end{align}
+%
+これより変形オイラー平均(TEM)系の流体の運動方程式は
+%
+\begin{align}
+  \DP{\bar{u}}{t} + \bar{v}^*
+          \left[
+              \Dinv{a\cos\phi}\DP{(\bar{u}\cos\phi)}{\phi}-f
+          \right]
+          + \bar{w}^*\DP{\bar{u}}{z} - \bar{X} = \Dinv{\sigma \cos\phi}\Ddiv{\hat{\Dvect{F}}}\label{eq:TEM-ME}
+\end{align}
+%
+と書ける. 右辺において, 惑星半径$a$で割っていないところが通常の TEM 系の運動方程式と異なるところであるが, $\hat{\Dvect{F}}=(\hat{F_y}, \hat{F_z})$が惑星半径で規格化した EP-Flux であることを考慮すれば納得されるだろう. このように, 右辺の量は一般的に定義される TEM 系の運動方程式同様に加速を意味することになる.
+
+\subsection{質量流線関数}
+
+残差循環は双方に$\sigma$をかけると非発散となる. これを用いて本モジュールでは残差循環の質量流線関数$\Psi^*$を
+%
+\begin{align}
+  \sigma\bar{v}^* &= -g\Dinv{2\pi a \cos\phi }\DP{}{p}\Psi^*\\
+  \sigma\bar{w}^* &= g\Dinv{2\pi a^2\cos\phi}\DP{}{\phi}\Psi^*
+\end{align}
+%
+と定義する. ここで z(log-P)系から圧力座標系への変換は(1.3)から
+%
+\begin{align}
+  \DP{}{z}\Psi^* &= -\frac{p}{H}\DP{}{p}\Psi^*
+\end{align}
+%
+を用いる. 本モジュールでは上式を積分して, 大気上端($p=0$)において$\Psi^* = 0$として, 
+%
+\begin{align}
+  \Psi^*(\theta, p) = \frac{2\pi a \cos\phi}{g} \int_{0}^{p}\bar{v}^*\Dd p
+\end{align}
+%
+として質量流線関数を導く.
+
+\subsection{変数変換}
+
+
+入力されるデータの鉛直軸が気圧軸であった場合, 以下の関係式を用いて高度軸に変換し, 計算を行う.
+\begin{align}
+  z &= -H \log \left( \frac{p}{p_{00}} \right),\\
+  p &= p_{00} \exp \left( -\frac{z}{H} \right)
+\end{align}
+ここで$p$は圧力, $p_{00}$は地表面参考気圧(定数)である.
+
+入力が$\theta$や$w$ でなく, 気温$T$, 圧力「速度」$\omega \equiv Dp/Dt$ の場合はそれぞれを元に$w$, $\theta$を求める必要がある. ここでは以下の式を用いて$w, \theta$を求めた.
+%
+\begin{align}
+  w &= -\omega H / p\\
+  \theta &= T \left(\frac{p_{00}}{p}\right)^\kappa, \kappa = R/C_p
+\end{align}
+%
+ここで$R$, $C_p$はそれぞれ乾燥空気の気体定数および定圧比熱である. また(1.7)式は(1.5)式を用いて
+%
+\begin{align}
+  \theta = T\exp \left( \frac{\kappa z}{H} \right )
+\end{align}
+%
+と書くことができる.
+
+
+\clearpage%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{テストプログラムの関数}
+本節ではテストプログラム(demo/test.rb)中で用いる解析関数の概要を述べる. 
+テストプログラムではメソッドに与える引数に関する 3 つのパターンについて
+それぞれテストを行う. パターン2, パターン3で用いられる関数はパターン1で定義される
+ものと同一である. 
+
+\subsection{パターン 1: W, 温度, z 座標}
+テスト用の関数を以下で定義する.
+\begin{align}
+  u(\lambda, \phi, z) &= \sin \lambda \cos \phi + 10 + z,\notag\\
+  v(\lambda, \phi, z) &= 2\sin \lambda \cos \phi + 20,\notag\\
+  w(\lambda, \phi, z) &= 3\sin \lambda \cos \phi + 30,\notag\\
+  T(\lambda, \phi, z) &= 4\sin \lambda \cos \phi + 40 \notag,
+\end{align}
+ここで $u$ は東西風速[m/s],
+       $v$ は南北風速[m/s],
+       $w$ は鉛直速度[m/s],
+       $T$ は温度[K],
+($\lambda, \phi$)は経度および緯度, そして$z$は高度[m]とする.
+$u, v, T, \omega$ それぞれの東西平均および擾乱成分は
+\begin{align}
+  \overline{u} &= 10 + z,\notag\\
+  \overline{v} &= 20,\notag\\
+  \overline{w} &= 30,\notag\\
+  \overline{\theta} &= 40\left(\frac{p_{00}}{p}\right)^\kappa,\notag\\
+                    &= 40\exp\left( \frac{\kappa z}{H} \right),\notag\\
+  {u'} &= \sin \lambda \cos \phi,\notag\\
+  {v'} &= 2\sin \lambda \cos \phi,\notag\\
+  {w'} &= 3\sin \lambda \cos \phi,\notag\\
+  {\theta'} &= 4\sin \lambda \cos \phi\exp\left( \frac{\kappa z}{H} \right)\notag
+\end{align}
+とかける. これらより渦運動量フラックス, 渦熱フラックスはそれぞれ
+\begin{align*}
+  \overline{u'v'} &= \Dinv{2\pi} \int_0^{2\pi} 2 \sin^2 \lambda \cos^2 \phi \Dd \lambda\notag\\
+                  &= \cos^2 \phi\notag\\
+  \overline{v'\theta'} &= \Dinv{2\pi} \int_0^{2\pi}
+                   8\sin^2 \lambda \cos^2 \phi\exp\left( \frac{\kappa z}{H} \right) \Dd \lambda,\\
+                   & = 4 \cos^2 \phi\exp\left(\frac{z \kappa}{H}\right),\\
+  \overline{u'w'} &= \Dinv{2\pi} \int_0^{2\pi} 3 \sin^2 \lambda \cos^2 \phi \Dd \lambda\\                 &= 1.5 \cos^2 \phi
+\end{align*}
+となる. 
+
+また$\overline{\DP{u}{z}}$および$\overline{\DP{\theta}{z}}$は
+\begin{align}
+\overline{\DP{u}{z}} &= 1 \notag\\
+\overline{\DP{\theta}{z}} &= \frac{40 \kappa}{H}\exp\left( \frac{\kappa z}{H} \right) 
+\end{align}
+となる.
+
+コリオリパラメータ$f$は
+
+\begin{align}
+  f = 2 \Omega \sin \phi
+\end{align}
+
+で定義される. ここで$\Omega$は自転角速度である. これより絶対渦度の東西平均値は
+\begin{align}
+  M &= f - \frac{\DP{\overline{u}\cos\phi}{\phi}}{a\cos\phi}\\
+    &= f + \frac{10 + z}{a}\tan\phi
+\end{align}
+
+とかける. これらを用いて Eliassen-Palm Flux は
+\begin{align}
+  F_y &= \exp\left(\frac{-z}{H}\right) \cos \phi 
+  \left( \frac{
+     4 \cos^2\phi \exp\left(\frac{\kappa z}{H}\right) }
+    { \frac{40\kappa}{H}\exp\left(\frac{\kappa z}{H}\right) } - \cos^2 \phi \right)\notag\\      &= \exp\left(\frac{-z}{H}\right) \cos^3 \phi \left( \frac{H}{10\kappa} - 1 \right),\\
+  F_z &= \exp\left(\frac{-z}{H}\right) \cos \phi \left(
+   \left[ f + \frac{10 + z}{a}\tan\phi \right]
+  \frac{
+     4 \cos^2\phi \exp\left(\frac{\kappa z}{H}\right) }
+    { \frac{40\kappa}{H}\exp\left(\frac{\kappa z}{H}\right) } - 1.5 \cos^2 \phi \right)\notag\\
+      &= \exp\left(\frac{-z}{H}\right) \cos^3 \phi 
+           \left( \left[ f + \frac{10 + z}{a}\tan\phi \right] \frac{H}{10\kappa} - 1.5 \right)
+\end{align}
+
+とかける. 
+%ここで$H=a=1$とするならば
+%\begin{align}
+%  F_y &= \exp\left(\frac{-z}{H}\right)\cos \phi 
+%  \left( \frac{
+%    - 4 \cos^2\phi p }
+%    { 300*\kappa } - \cos^2 \phi \right),\\
+%  F_z &= \exp\left(\frac{-z}{H}\right) \cos \phi \left(
+%   \left( f + ({10 + p})\tan\phi \right)
+%    \frac{
+%    4 \cos^2\phi}
+%    {300*\kappa } - 1.5 \cos^2 \phi \right).
+%\end{align}
+%
+また(F$_y$, F$_z$)の発散は
+%
+\begin{align}
+\Ddiv(F) & = \Dinv{a \cos \phi}\DP{F_y}{\phi} + \DP{F_z}{z}\notag\\
+         & = \frac{-4}{3a}\exp\left(\frac{-z}{H}\right)\cos^3 \phi \left\{ \frac{4 p}{300 \kappa} + 1 \right\}\notag\\
+         & -\Dinv{H} \exp\left(\frac{-z}{H}\right) \cos \phi \left(
+   \left( f + ({10 + p})\tan\phi \right)
+    \frac{
+    4 \cos^2\phi}
+    {300*\kappa } - 1.5 \cos^2 \phi \right)\notag\\
+         & -\Dinv{H} \frac{4\cos^3\phi p}{300\kappa} \exp\left(-\frac{z}{H}\right)
+\end{align}
+となる.
+
+残差循環は(1.9),(1.10)よりそれぞれ
+%
+\begin{align}
+  \overline{v}^* &= 
+  20 - \Dinv{\sigma}\DP{}{z}
+     \left(
+        \sigma\frac{4\cos^2\phi\exp\frac{z\kappa}{H}}
+                   {\frac{40 \kappa}{H}\exp\frac{\kappa z}{H}}
+     \right)\notag\\
+                 &= 
+  20 - \Dinv{\exp\left(-\frac{z}{H}\right)}\DP{}{z}
+     \left(
+        H\exp\left(-\frac{z}{H}\right)\frac{\cos^2\phi}
+                   {10 \kappa}
+     \right)\notag\\
+                 &=
+  20 - \Dinv{\exp\left(-\frac{z}{H}\right)}
+     \left(
+        H\cdot-\Dinv{H}\exp\left(-\frac{z}{H}\right)\frac{\cos^2\phi}
+                   {10 \kappa}
+     \right)\notag\\
+                 &=
+  20 + \frac{\cos^2\phi}{10 \kappa},\\
+  \overline{w}^* &= 
+  30 + \Dinv{a\cos\phi}\DP{}{\phi}
+     \left(
+        \cos\phi\frac{4\cos^2\phi\exp\frac{z\kappa}{H}}
+                   {\frac{40 \kappa}{H}\exp\frac{\kappa z}{H}}
+     \right)\notag\\
+                 &= 
+  30 + \Dinv{a\cos\phi}\DP{}{\phi}
+     \left(
+        H\frac{\cos^3\phi}
+                   {10 \kappa}
+     \right)\notag\\
+                 &=
+  30 + \Dinv{a\cos\phi}
+     \left(
+        H\frac{-3\cos^2\phi\sin\phi}
+                   {10 \kappa}
+     \right)\notag\\
+                 &=
+  30 - \frac{3H\sin\phi\cos\phi}{10 a \kappa}.
+\end{align}
+%
+
+(1.15)と(2.23)から質量流線関数$\Psi^*$は
+%
+\begin{align}
+  \Psi^* = \frac{2\pi a \cos\phi}{g}
+             \left(20 + \frac{\cos^2\phi}{10\kappa}\right)p
+\end{align}
+と書ける.
+
+\subsection{パターン 2: $\Omega$, 温位, z 座標}
+
+パターン２は引数に与える鉛直速度および温度がそれぞれ$\Omega$(Pa/s), 温位$\theta$(K)
+である場合に, 内部で正しく処理されるかをテストしている. 利用する関数の形はパターン1
+と同様である.
+
+\subsection{パターン 3: W, 温度, p 座標}
+
+パターン 3 は引数に与えた物理量が圧力座標で定義されている場合のテストである.
+圧力座標で与えられた場合, モジュール内部で一旦 z 系に変換した後に計算を行い, 最後に
+グリッドを圧力座標に戻した値を返すようになっている.
+
+\clearpage
+
+\begin{thebibliography}{1}
+\bibitem{AHL1987} D.G. Andrews, J.R. Holton, and C.B. Leovy. 
+                  Middle atmosphere dynamics, International Geophysics Series. 
+                  Academic Press, 1987
+\end{thebibliography}
+
+
+\end{document}
+%%%%%%%%              Text End                  %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%              Sample                    %%%%%%%%
+
+%%%%%%%%            数式 (ラベル付き)           %%%%%%%%
+%
+%\begin{eqnarray}
+% \Deqlab{1.1} % 教科書での式番号を入れる.
+%  \DP{\rho}{t} + \Ddiv (\rho \Dvect{V}) = 0.
+%\end{eqnarray}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%  数式 (式番号を独立して書きたい場合)   %%%%%%%%
+%
+%$$
+% \DP{p}{z} = \rho g.
+% \eqno \textrm{(1.11)}
+%$$
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%         参考文献 (本文に書く場合)      %%%%%%%%
+%
+%{\bfseries 参考文献}
+%\vspace{-7mm}
+%\begin{description}
+% \item	著者名, 2000:
+%	書籍名, (章, 節).
+%	出版社, 319pp.
+%\end{description}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%             図の貼込み                 %%%%%%%%
+%
+%\begin{figure}[hbtp]
+% \begin{center}
+%  \Depsf[][]{./SEC01/images/fig0101.eps}
+% \end{center}
+% \caption{
+%  見出し
+% }
+% \Dfiglab{fig0101} % 教科書の図の番号を入れる,
+%                   % table の図の場合は tab0101
+%\end{figure}
+%

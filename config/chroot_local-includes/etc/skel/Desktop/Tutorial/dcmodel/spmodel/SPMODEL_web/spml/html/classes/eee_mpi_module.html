@@ -1,0 +1,6201 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: eee_mpi_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">eee_mpi_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src-mpi/eee_mpi_module_f90.html">
+
+                src-mpi/eee_mpi_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="eee_mpi_module.html">eee_mpi_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a
+href="../files/src-mpi/eee_mpi_module_f90.html">eee_mpi_module.f90</a>,v
+1.4 2009-02-27 05:21:52 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/eee_module モジュールは周期境界条件の下での 3 次元矩形領域の
+流体運動をスペクトル法により数値計算するための Fortran90 関数を 提供する.
+</p>
+<p>
+内部で ISPACK/P3PACK の Fortran77 サブルーチンを呼んでいる.
+スペクトルデータおよび格子点データの格納方法については ISPACK/P3PACK
+のマニュアルを参照されたい.
+</p>
+<h2>関数・変数の名前と型について</h2>
+<h3>命名法</h3>
+<ul>
+<li>関数名の先頭 (eef_, zxv_, x_, v_, z_) は, 返す値の形を示している.
+
+<table>
+<tr><td valign="top">eef_ :</td><td>スペクトルデータ (第 1,2 3 次元がそれぞれ Z,Y,X 方向波数(X
+について分割配置))
+
+</td></tr>
+<tr><td valign="top">ee2f :</td><td>2 つのスペクトルデータの並んだもの
+
+</td></tr>
+<tr><td valign="top">zxv_ :</td><td>3 次元格子点データ (第 1,2 3 次元がそれぞれ Z,X,Y 方向の格子点(Y
+について分割配置)
+
+</td></tr>
+<tr><td valign="top">xv_  :</td><td>XY 方向 2 次元格子点データ, zv_ : YZ 方向 2 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">zx_  :</td><td>XZ 方向 2 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">x_   :</td><td>X 方向 1 次元格子点データ, v_ : Y 方向 1 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">z_   :</td><td>Z 方向 1 次元格子点データ
+
+</td></tr>
+</table>
+</li>
+<li>関数名の間の文字列(Dx, Dy, Dz, Lapla, LaplaInv)は,
+その関数の作用を表している.
+
+</li>
+<li>関数名の最後 (_eee_eee,_eee,_zyx, _x, _v) は, 入力変数の形が
+スペクトルデータおよび格子点データであることを示している.
+
+<pre>
+ _eef     :: スペクトルデータ
+ _eef_eef :: 2 つのスペクトルデータ
+ _ee2f    :: 2 つのスペクトルデータの並んだもの
+ _zxv     :: 3 次元格子点データ
+ _x       :: X 方向 1 次元格子点データ
+ _v       :: Y 方向 1 次元格子点データ.
+</pre>
+</li>
+</ul>
+<h3>各データの種類の説明</h3>
+<ul>
+<li>zxv : 2 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)).
+
+</li>
+<li>im, km はそれぞれ X, Z 座標の格子点数であり, サブルーチン <a
+href="eee_mpi_module.html#M000316">eee_mpi_initial</a>
+にてあらかじめ設定しておく.
+
+</li>
+<li><a href="eee_mpi_module.html#M000316">eee_mpi_Initial</a>
+によってプロセス毎に Y 方向の 分割配置が設定され, その情報が public 変数 <a
+href="eee_mpi_module.html#M000305">js</a>,<a
+href="eee_mpi_module.html#M000304">je</a>,<a
+href="eee_mpi_module.html#M000306">jc</a> に設定される.
+
+</li>
+<li><a href="eee_mpi_module.html#M000305">js</a> が分割配置の最小格子点, <a
+href="eee_mpi_module.html#M000304">je</a> が最大格子点, <a
+href="eee_mpi_module.html#M000306">jc</a> が格子点数である.
+
+</li>
+<li>第 1 次元が Z 座標の格子点位置番号, 第 2 次元が X 座標の格子点位置番号, 第
+3 次元が Y 座標であることに注意(X, Y, Zの順ではない).
+
+</li>
+</ul>
+</li>
+<li>eee : スペクトルデータ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>).
+
+</li>
+<li>mm, nm はそれぞれ Y, Z方向の最大波数であり, サブルーチン eee_initial
+にてあらかじめ設定しておく (X, Y, Z 方向波数の順ではない)ことに注意.
+
+</li>
+<li><a href="eee_mpi_module.html#M000316">eee_mpi_Initial</a>
+によってプロセス毎に X 方向波数の 分割配置が設定され, その情報が public
+変数 <a href="eee_mpi_module.html#M000302">ls</a>,<a
+href="eee_mpi_module.html#M000301">le</a>,<a
+href="eee_mpi_module.html#M000303">lc</a> に設定される.
+
+</li>
+<li><a href="eee_mpi_module.html#M000302">ls</a> が分割配置の最小波数, <a
+href="eee_mpi_module.html#M000301">le</a> が最大波数, <a
+href="eee_mpi_module.html#M000306">jc</a> が波数の数である.
+実際の格納のされ方は <a href="eee_mpi_module.html#M000302">ls</a>, <a
+href="eee_mpi_module.html#M000302">ls</a>+1,&#8230;,<a
+href="eee_mpi_module.html#M000301">le</a>,-<a
+href="eee_mpi_module.html#M000301">le</a>,-<a
+href="eee_mpi_module.html#M000301">le</a>+1,&#8230;,-<a
+href="eee_mpi_module.html#M000302">ls</a> の順である. ISPACK/P3PACK-MPI
+マニュアル参照のこと.
+
+</li>
+</ul>
+</li>
+<li>ee2f : 2 つのスペクトルデータのならび.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>).
+
+</li>
+</ul>
+</li>
+<li>x, v, z : X, Y, Z 方向 1 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元はそれぞれ real(8), dimension(0:im-1), real(8),
+dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)) および real(8),
+dimension(0:km-1).
+
+</li>
+</ul>
+</li>
+<li>eee_ で始まる関数が返す値はスペクトルデータに同じ.
+
+</li>
+<li>zxv_ で始まる関数が返す値は 3 次元格子点データに同じ.
+
+</li>
+<li>x_, v_ z_ で始まる関数が返す値は 1 次元格子点データに同じ.
+
+</li>
+<li>スペクトルデータに対する微分等の作用とは, 対応する格子点データに
+微分などを作用させたデータをスペクトル変換したものことである.
+
+</li>
+</ul>
+<h2>変数・手続き群の要約</h2>
+<h4>初期化</h4>
+<table>
+<tr><td valign="top">eee_Initial :</td><td>スペクトル変換の格子点数, 切断波数の設定
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000317">eee_ChangeResolution</a> :</td><td>解像度設定の変更
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000318">lf_l</a>        :</td><td>X 方向波数の位置情報
+
+</td></tr>
+</table>
+<h4>座標変数</h4>
+<table>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000307">x_X</a>, <a href="eee_mpi_module.html#M000308">v_Y</a>, <a href="eee_mpi_module.html#M000309">z_Z</a>    :</td><td>格子点座標(X,Y座標)を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000310">x_X_Weight</a>, <a href="eee_mpi_module.html#M000311">v_Y_Weight</a>,  <a href="eee_mpi_module.html#M000312">z_Z_Weight</a> :</td><td>重み座標を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000313">zxv_X</a>, <a href="eee_mpi_module.html#M000314">zxv_Y</a>, <a href="eee_mpi_module.html#M000315">zxv_Z</a>  :</td><td>格子点データの XYZ 座標(X,Y,Z) (格子点データ型 3 次元配列)
+
+</td></tr>
+</table>
+<h4>基本変換</h4>
+<table>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000319">zxv_eef</a>   :</td><td>スペクトルデータから格子データへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000320">eef_zxv</a>   :</td><td>格子データからスペクトルデータへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000323">xyz_zxv</a>   :</td><td>分散格子点データの集積
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000321">eee2_ee2f</a> :</td><td>分散スペクトルデータの集積
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000322">ee2f_eee2</a> :</td><td>集積スペクトルデータの分散
+
+</td></tr>
+</table>
+<h4>微分</h4>
+<table>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000324">eef_Lapla_eef</a>       :</td><td>スペクトルデータにラプラシアンを作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000325">eef_LaplaInv_eef</a>    :</td><td>スペクトルデータにラプラシアンの逆変換を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000326">eef_Dx_eef</a>          :</td><td>スペクトルデータに X 微分を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000327">eef_Dy_eef</a>          :</td><td>スペクトルデータに Y 微分を作用させる
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000328">eef_Dz_eef</a>          :</td><td>スペクトルデータに Z 微分を作用させる
+
+</td></tr>
+</table>
+<h4>非線形計算</h4>
+<table>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000329">ee2f_RotVelxVor_ee2f</a>   :</td><td>Euler 方程式の非線形項を計算する
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000330">eef_VorFromZeta_ee2f</a>   :</td><td>渦度 2 成分(ζ_1, ζ_2)ら渦度の 1 成分を計算する
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000331">eef_VelFromZeta_ee2f</a>   :</td><td>渦度 2 成分(ζ_1, ζ_2)ら速度の 1 成分を計算する
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000332">ee2f_ZetaFromVor_eef_eef_eef</a> :</td><td>渦度から渦度 2 成分(ζ_1, ζ_2)を計算する
+
+</td></tr>
+</table>
+<h4>積分・平均</h4>
+<table>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000333">IntZXV_zxv</a>, <a href="eee_mpi_module.html#M000352">AvrZXV_zxv</a>   :</td><td>3 次元格子点データの全領域積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000334">z_IntXV_zxv</a>, <a href="eee_mpi_module.html#M000353">z_AvrXV_zxv</a> :</td><td>3 次元格子点データの X,Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000336">x_IntZV_zxv</a>, <a href="eee_mpi_module.html#M000355">x_AvrZV_zxv</a> :</td><td>3 次元格子点データの Y,Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top">y_IntZX_zxv, y_AvrZX_zxv :</td><td>3 次元格子点データの Z,X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000337">zv_IntX_zxv</a>, <a href="eee_mpi_module.html#M000356">zv_AvrX_zxv</a> :</td><td>3 次元格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top">zx_IntY_zxv, zx_AvrY_zxv :</td><td>3 次元格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top">vx_IntZ_zxv, vx_AvrZ_zxv :</td><td>3 次元格子点データの Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000340">IntXV_xv</a>,  <a href="eee_mpi_module.html#M000359">AvrXV_xv</a>  :</td><td>2 次元(XY)格子点データの X,Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000341">v_IntX_xv</a>, <a href="eee_mpi_module.html#M000360">v_AvrX_xv</a> :</td><td>2 次元(XY)格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000342">x_IntV_xv</a>, <a href="eee_mpi_module.html#M000361">x_AvrV_xv</a> :</td><td>2 次元(XY)格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000346">IntZX_zx</a>, <a href="eee_mpi_module.html#M000362">AvrZX_zx</a>   :</td><td>2 次元(ZX)格子点データの Z,X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000348">z_IntX_zx</a>, <a href="eee_mpi_module.html#M000363">z_AvrX_zx</a> :</td><td>2 次元(ZX)格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000347">x_IntZ_zx</a>, <a href="eee_mpi_module.html#M000364">x_AvrZ_zx</a> :</td><td>2 次元(ZX)格子点データの Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000343">IntZV_zv</a>, <a href="eee_mpi_module.html#M000365">AvrZV_zv</a>   :</td><td>2 次元(YZ)格子点データの Y,Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000344">v_IntZ_zv</a>, <a href="eee_mpi_module.html#M000367">v_AvrZ_zv</a> :</td><td>2 次元(YZ)格子点データの Z 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000345">z_IntV_zv</a>, <a href="eee_mpi_module.html#M000366">z_AvrV_zv</a> :</td><td>2 次元(YZ)格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000349">IntX_x</a>, <a href="eee_mpi_module.html#M000368">AvrX_x</a>       :</td><td>1 次元(X)格子点データの X 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000350">IntV_v</a>, <a href="eee_mpi_module.html#M000369">AvrV_v</a>       :</td><td>1 次元(Y)格子点データの Y 方向積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000351">IntZ_z</a>, <a href="eee_mpi_module.html#M000370">AvrZ_z</a>       :</td><td>1 次元(Z)格子点データの Z 方向積分および平均
+
+</td></tr>
+</table>
+<h4>スペクトル解析</h4>
+<table>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000371">EnergyHelicityFromZeta_ee2f</a>  :</td><td>全エネルギーと全ヘリシティーを計算する.
+
+</td></tr>
+<tr><td valign="top"><a href="eee_mpi_module.html#M000372">ESpectralFromZeta</a>            :</td><td>エネルギースペクトルを計算する.
+
+</td></tr>
+</table>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000369">AvrV_v</a>&nbsp;&nbsp;
+
+        <a href="#M000359">AvrXV_xv</a>&nbsp;&nbsp;
+
+        <a href="#M000368">AvrX_x</a>&nbsp;&nbsp;
+
+        <a href="#M000365">AvrZV_zv</a>&nbsp;&nbsp;
+
+        <a href="#M000352">AvrZXV_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000362">AvrZX_zx</a>&nbsp;&nbsp;
+
+        <a href="#M000370">AvrZ_z</a>&nbsp;&nbsp;
+
+        <a href="#M000372">ESpectralFromZeta</a>&nbsp;&nbsp;
+
+        <a href="#M000371">EnergyHelicityFromZeta_ee2f</a>&nbsp;&nbsp;
+
+        <a href="#M000350">IntV_v</a>&nbsp;&nbsp;
+
+        <a href="#M000340">IntXV_xv</a>&nbsp;&nbsp;
+
+        <a href="#M000349">IntX_x</a>&nbsp;&nbsp;
+
+        <a href="#M000343">IntZV_zv</a>&nbsp;&nbsp;
+
+        <a href="#M000333">IntZXV_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000346">IntZX_zx</a>&nbsp;&nbsp;
+
+        <a href="#M000351">IntZ_z</a>&nbsp;&nbsp;
+
+        <a href="#M000329">ee2f_RotVelxVor_ee2f</a>&nbsp;&nbsp;
+
+        <a href="#M000332">ee2f_ZetaFromVor_eef_eef_eef</a>&nbsp;&nbsp;
+
+        <a href="#M000322">ee2f_eee2</a>&nbsp;&nbsp;
+
+        <a href="#M000321">eee2_ee2f</a>&nbsp;&nbsp;
+
+        <a href="#M000317">eee_ChangeResolution</a>&nbsp;&nbsp;
+
+        <a href="#M000316">eee_mpi_Initial</a>&nbsp;&nbsp;
+
+        <a href="#M000326">eef_Dx_eef</a>&nbsp;&nbsp;
+
+        <a href="#M000327">eef_Dy_eef</a>&nbsp;&nbsp;
+
+        <a href="#M000328">eef_Dz_eef</a>&nbsp;&nbsp;
+
+        <a href="#M000325">eef_LaplaInv_eef</a>&nbsp;&nbsp;
+
+        <a href="#M000324">eef_Lapla_eef</a>&nbsp;&nbsp;
+
+        <a href="#M000331">eef_VelFromZeta_ee2f</a>&nbsp;&nbsp;
+
+        <a href="#M000330">eef_VorFromZeta_ee2f</a>&nbsp;&nbsp;
+
+        <a href="#M000320">eef_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000306">jc</a>&nbsp;&nbsp;
+
+        <a href="#M000304">je</a>&nbsp;&nbsp;
+
+        <a href="#M000305">js</a>&nbsp;&nbsp;
+
+        <a href="#M000303">lc</a>&nbsp;&nbsp;
+
+        <a href="#M000301">le</a>&nbsp;&nbsp;
+
+        <a href="#M000318">lf_l</a>&nbsp;&nbsp;
+
+        <a href="#M000302">ls</a>&nbsp;&nbsp;
+
+        <a href="#M000360">v_AvrX_xv</a>&nbsp;&nbsp;
+
+        <a href="#M000354">v_AvrZX_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000367">v_AvrZ_zv</a>&nbsp;&nbsp;
+
+        <a href="#M000341">v_IntX_xv</a>&nbsp;&nbsp;
+
+        <a href="#M000335">v_IntZX_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000344">v_IntZ_zv</a>&nbsp;&nbsp;
+
+        <a href="#M000308">v_Y</a>&nbsp;&nbsp;
+
+        <a href="#M000311">v_Y_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M000361">x_AvrV_xv</a>&nbsp;&nbsp;
+
+        <a href="#M000355">x_AvrZV_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000364">x_AvrZ_zx</a>&nbsp;&nbsp;
+
+        <a href="#M000342">x_IntV_xv</a>&nbsp;&nbsp;
+
+        <a href="#M000336">x_IntZV_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000347">x_IntZ_zx</a>&nbsp;&nbsp;
+
+        <a href="#M000307">x_X</a>&nbsp;&nbsp;
+
+        <a href="#M000310">x_X_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M000358">xv_AvrZ_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000339">xv_IntZ_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000323">xyz_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000366">z_AvrV_zv</a>&nbsp;&nbsp;
+
+        <a href="#M000353">z_AvrXV_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000363">z_AvrX_zx</a>&nbsp;&nbsp;
+
+        <a href="#M000345">z_IntV_zv</a>&nbsp;&nbsp;
+
+        <a href="#M000334">z_IntXV_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000348">z_IntX_zx</a>&nbsp;&nbsp;
+
+        <a href="#M000309">z_Z</a>&nbsp;&nbsp;
+
+        <a href="#M000312">z_Z_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M000356">zv_AvrX_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000337">zv_IntX_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000357">zx_AvrV_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000338">zx_IntV_zxv</a>&nbsp;&nbsp;
+
+        <a href="#M000313">zxv_X</a>&nbsp;&nbsp;
+
+        <a href="#M000314">zxv_Y</a>&nbsp;&nbsp;
+
+        <a href="#M000315">zxv_Z</a>&nbsp;&nbsp;
+
+        <a href="#M000319">zxv_eef</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000369" class="method-detail">
+        <a name="M000369"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000369" class="method-signature">
+
+
+
+          <span class="method-name">AvrV_v</span><span class="method-args">( v ) result(AvrV_v)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000369">AvrV_v</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>v  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000369-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000369-source">
+<pre>
+    function AvrV_v(v)
+      !
+      ! 1 次元(Y)格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(js(ip):je(ip)), intent(IN) :: v
+      !(in)  1 次元格子点データ
+
+      real(8)                               :: AvrV_v !(out) 平均値
+
+      real(8) :: Length, LengthTMP
+      integer :: ierr
+      ! 作業変数
+
+      LengthTMP = sum(v_Y_weight)
+      CALL MPI_ALLREDUCE(LengthTMP,Length,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      AvrV_v = IntV_v(v)/Length
+    end function AvrV_v
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000359" class="method-detail">
+        <a name="M000359"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000359" class="method-signature">
+
+
+
+          <span class="method-name">AvrXV_xv</span><span class="method-args">( xv ) result(AvrXV_xv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000359">AvrXV_xv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの全領域平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, y_Y_Weight をかけた
+総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>*y_Y_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000359-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000359-source">
+<pre>
+    function AvrXV_xv(xv)
+      !
+      ! 2 次元格子点データの全領域平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算し, x_X_Weight*y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:im-1,js(ip):je(ip)), intent(IN)   :: xv
+      !(in)  2 次元格子点データ
+
+      real(8)                             :: AvrXV_xv    
+      !(out) 平均値
+
+      real(8) :: Area, AreaTMP
+      integer :: ierr
+      ! 作業変数
+
+      AreaTMP = sum(x_X_weight)*sum(v_Y_weight)
+      CALL MPI_ALLREDUCE(AreaTMP,Area,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      AvrXV_xv = IntXV_xv(xv)/Area
+
+    end function AvrXV_xv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000368" class="method-detail">
+        <a name="M000368"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000368" class="method-signature">
+
+
+
+          <span class="method-name">AvrX_x</span><span class="method-args">( x ) result(AvrX_x)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000368">AvrX_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(X)格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a> をかけた総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000368-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000368-source">
+<pre>
+    function AvrX_x(x)
+      !
+      ! 1 次元(X)格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:im-1), intent(IN) :: x       !(in)  1 次元格子点データ
+      real(8)                                :: AvrX_x  !(out) 平均値
+
+      AvrX_x = IntX_x(x)/sum(x_X_weight)
+    end function AvrX_x
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000365" class="method-detail">
+        <a name="M000365"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000365" class="method-signature">
+
+
+
+          <span class="method-name">AvrZV_zv</span><span class="method-args">( zv ) result(AvrZV_zv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000365">AvrZV_zv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZV)格子点データの全領域平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>, y_Y_Weight をかけた
+総和を計算し, <a href="eee_mpi_module.html#M000312">z_Z_Weight</a>*<a
+href="eee_mpi_module.html#M000311">v_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000365-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000365-source">
+<pre>
+    function AvrZV_zv(zv)
+      !
+      ! 2 次元(ZV)格子点データの全領域平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight, y_Y_Weight をかけた
+      ! 総和を計算し, z_Z_Weight*v_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,js(ip):je(ip)), intent(IN)   :: zv
+      !(in)  2 次元(ZY)格子点データ
+
+      real(8)                             :: AvrZV_zv    
+      !(out) 平均値
+
+      real(8) :: Area, AreaTMP
+      integer :: ierr
+      ! 作業変数
+
+      AreaTMP = sum(z_Z_weight)*sum(v_Y_weight)
+      CALL MPI_ALLREDUCE(AreaTMP,Area,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      AvrZV_zv = IntZV_zv(zv)/Area
+    end function AvrZV_zv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000352" class="method-detail">
+        <a name="M000352"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000352" class="method-signature">
+
+
+
+          <span class="method-name">AvrZXV_zxv</span><span class="method-args">( zxv ) result(AvrZXV_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000352">AvrZXV_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 3 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの全領域平均.
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, y_Y_Weight, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> を かけた総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>*y_Y_Weight*<a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> の総和で割る
+ことで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000352-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000352-source">
+<pre>
+    function AvrZXV_zxv(zxv)
+      !
+      ! 2 次元格子点データの全領域平均.
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight, z_Z_Weight を
+      ! かけた総和を計算し, x_X_Weight*y_Y_Weight*z_Z_Weight の総和で割る
+      ! ことで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in)  3 次元格子点データ
+
+      real(8)                                    :: AvrZXV_zxv
+      !(out) 積分値
+
+      real(8) :: Vol, VolTMP
+      integer :: ierr
+      ! 作業変数
+
+      VolTMP=sum(x_X_weight)*sum(v_Y_weight)*sum(z_Z_weight)
+      
+      CALL MPI_ALLREDUCE(VolTMP,Vol,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      AvrZXV_zxv = IntZXV_zxv(zxv)/Vol
+
+    end function AvrZXV_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000362" class="method-detail">
+        <a name="M000362"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000362" class="method-signature">
+
+
+
+          <span class="method-name">AvrZX_zx</span><span class="method-args">( zx ) result(AvrZX_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000362">AvrZX_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの全領域平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた 総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>*<a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000362-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000362-source">
+<pre>
+    function AvrZX_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの全領域平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, z_Z_Weight をかけた
+      ! 総和を計算し, x_X_Weight*z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx
+      !(in)  2 次元(ZX)格子点データ
+
+      real(8)                             :: AvrZX_zx    
+      !(out) 平均値
+
+      AvrZX_zx = IntZX_zx(zx)/(sum(x_X_weight)*sum(z_Z_weight))
+    end function AvrZX_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000370" class="method-detail">
+        <a name="M000370"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000370" class="method-signature">
+
+
+
+          <span class="method-name">AvrZ_z</span><span class="method-args">( z ) result(AvrZ_z)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000370">AvrZ_z</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>z  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Z)格子点データの Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた総和を計算し, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000370-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000370-source">
+<pre>
+    function AvrZ_z(z)
+      !
+      ! 1 次元(Z)格子点データの Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算し, 
+      ! z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1), intent(IN) :: z      !(in)  1 次元格子点データ
+      real(8)                                :: AvrZ_z !(out) 平均値
+
+      AvrZ_z = IntZ_z(z)/sum(z_Z_weight)
+    end function AvrZ_z
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000372" class="method-detail">
+        <a name="M000372"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000372" class="method-signature">
+
+
+
+          <span class="method-name">ESpectralFromZeta</span><span class="method-args">( esp, ee2f ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>esp  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:), intent(OUT)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> エネルギースペクトル
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ee2f  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 渦度成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+渦度成分(ζ_1, ζ_2)からエネルギースペクトルを計算する.
+</p>
+<pre>
+  * esp のサイズで求められる波数範囲が定められる
+  * esp の総和が EFFromZeta で求められるエネルギー
+    (全領域平均値)に等しい
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000372-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000372-source">
+<pre>
+    subroutine ESpectralFromZeta(esp,ee2f)
+      !
+      ! 渦度成分(ζ_1, ζ_2)からエネルギースペクトルを計算する. 
+      !
+      !   * esp のサイズで求められる波数範囲が定められる
+      !   * esp の総和が EFFromZeta で求められるエネルギー
+      !     (全領域平均値)に等しい
+      !
+      real(8), dimension(:), intent(OUT)  :: esp
+      ! エネルギースペクトル
+
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip)), intent(in) :: ee2f
+      ! 渦度成分(ζ_1, ζ_2)
+
+      integer kmax
+      ! 作業変数
+      real(8), allocatable :: wesp(:)
+
+      kmax=size(esp)
+      allocate(wesp(kmax))
+      call p3empt(nm,mm,lm,kmax,ee2f,esp,wesp)
+      deallocate(wesp)
+
+    end subroutine ESpectralFromZeta
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000371" class="method-detail">
+        <a name="M000371"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000371" class="method-signature">
+
+
+
+          <span class="method-name">EnergyHelicityFromZeta_ee2f</span><span class="method-args">( ee2f ) result(EnergyHelicityFromZeta_ee2f)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000371">EnergyHelicityFromZeta_ee2f</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(2)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> エネルギーヘリシティー
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ee2f  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 渦度成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+渦度成分(ζ_1, ζ_2)から全領域平均エネルギーとヘリシティーを計算する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000371-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000371-source">
+<pre>
+    function EnergyHelicityFromZeta_ee2f(ee2f)
+      !
+      ! 渦度成分(ζ_1, ζ_2)から全領域平均エネルギーとヘリシティーを計算する.
+      !
+      real(8), dimension(2)                 :: EnergyHelicityFromZeta_ee2f
+      ! エネルギーヘリシティー
+
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip)), intent(in) :: ee2f
+      ! 渦度成分(ζ_1, ζ_2)
+
+      real(8) :: E, H           ! エネルギー, ヘリシティー
+      
+      call p3cmsv(nm,mm,lm,ee2f,E,H)
+
+      EnergyHelicityFromZeta_ee2f(1) = E 
+       EnergyHelicityFromZeta_ee2f(2) = H
+
+    end function EnergyHelicityFromZeta_ee2f
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000350" class="method-detail">
+        <a name="M000350"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000350" class="method-signature">
+
+
+
+          <span class="method-name">IntV_v</span><span class="method-args">( v ) result(IntV_v)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000350">IntV_v</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>v  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000350-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000350-source">
+<pre>
+    function IntV_v(v)
+      !
+      ! 1 次元(Y)格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(js(ip):je(ip))    :: v          !(in)  1 次元格子点データ
+      real(8)                      :: IntV_v     !(out) 積分値
+      
+      real(8) :: IntVTMP
+      integer :: ierr
+
+      IntV_v = sum(v*v_Y_Weight)
+
+      IntVTMP=IntV_v
+      CALL MPI_ALLREDUCE(IntVTMP,IntV_v,1,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+    end function IntV_v
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000340" class="method-detail">
+        <a name="M000340"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000340" class="method-signature">
+
+
+
+          <span class="method-name">IntXV_xv</span><span class="method-args">( xv ) result(IntXV_xv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000340">IntXV_xv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(XY)格子点データの全領域積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, y_Y_Weight をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000340-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000340-source">
+<pre>
+    function IntXV_xv(xv)
+      !
+      ! 2 次元(XY)格子点データの全領域積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:im-1,js(ip):je(ip)), intent(IN)   :: xv          
+      !(in)  2 次元(YX)格子点データ
+
+      real(8)                             :: IntXV_xv
+      !(out) 積分値
+
+      real(8) :: IntXVTMP
+      integer :: i, j
+      integer :: ierr
+      ! 作業変数
+
+      IntXV_xv = 0.0d0
+      do j=js(ip),je(ip)
+         do i=0,im-1
+            IntXV_xv = IntXV_xv + xv(i,j) * v_Y_Weight(j) * x_X_Weight(i)
+         enddo
+      enddo
+
+      IntXVTMP=IntXV_xv
+      CALL MPI_ALLREDUCE(IntXVTMP,IntXV_xv,1,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+
+    end function IntXV_xv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000349" class="method-detail">
+        <a name="M000349"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000349" class="method-signature">
+
+
+
+          <span class="method-name">IntX_x</span><span class="method-args">( x ) result(IntX_x)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000349">IntX_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(X)格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>
+をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000349-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000349-source">
+<pre>
+    function IntX_x(x)
+      !
+      ! 1 次元(X)格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:im-1)   :: x          !(in)  1 次元格子点データ
+      real(8)                      :: IntX_x     !(out) 積分値
+
+      IntX_x = sum(x*x_X_Weight)
+    end function IntX_x
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000343" class="method-detail">
+        <a name="M000343"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000343" class="method-signature">
+
+
+
+          <span class="method-name">IntZV_zv</span><span class="method-args">( zv ) result(IntZV_zv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000343">IntZV_zv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの全領域積分および平均.
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>, y_Y_Weight をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000343-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000343-source">
+<pre>
+    function IntZV_zv(zv)
+      !
+      ! 2 次元(ZY)格子点データの全領域積分および平均.
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight, y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,js(ip):je(ip)), intent(IN)   :: zv          
+      !(in)  2 次元(ZY)格子点データ
+
+      real(8)                             :: IntZV_zv
+      !(out) 積分値
+
+      real(8) :: IntZVTMP
+      integer :: j, k
+      integer :: ierr
+      ! 作業変数
+
+      IntZV_zv = 0.0d0
+      do j=js(ip),je(ip)
+         do k=0,km-1
+            IntZV_zv = IntZV_zv + zv(k,j) * v_Y_Weight(j) * z_Z_Weight(k)
+         enddo
+      enddo
+
+      IntZVTMP=IntZV_zv
+      CALL MPI_ALLREDUCE(IntZVTMP,IntZV_zv,1,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+
+    end function IntZV_zv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000333" class="method-detail">
+        <a name="M000333"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000333" class="method-signature">
+
+
+
+          <span class="method-name">IntZXV_zxv</span><span class="method-args">( zxv ) result(IntZXV_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000333">IntZXV_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 3 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの全領域積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, y_Y_Weight, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000333-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000333-source">
+<pre>
+    function IntZXV_zxv(zxv)
+      !
+      ! 3 次元格子点データの全領域積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight, z_Z_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in)  3 次元格子点データ
+
+      real(8)                                    :: IntZXV_zxv
+      !(out) 積分値
+
+      real(8) :: IntZXVTMP
+      integer :: i, j, k
+      integer :: ierr
+      ! 作業変数
+
+      IntZXV_zxv = 0.0d0
+      do j=js(ip),je(ip)
+         do i=0,im-1
+            do k=0,km-1
+               IntZXV_zxv = IntZXV_zxv + zxv(k,i,j) * z_Z_Weight(k) * v_Y_Weight(j) * x_X_Weight(i)
+            enddo
+         enddo
+      end do
+
+      IntZXVTMP=IntZXV_zxv
+      CALL MPI_ALLREDUCE(IntZXVTMP,IntZXV_zxv,1,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+
+    end function IntZXV_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000346" class="method-detail">
+        <a name="M000346"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000346" class="method-signature">
+
+
+
+          <span class="method-name">IntZX_zx</span><span class="method-args">( zx ) result(IntZX_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000346">IntZX_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの全領域積分および平均.
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a> をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000346-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000346-source">
+<pre>
+    function IntZX_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの全領域積分および平均.
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight, x_X_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx          
+      !(in)  2 次元(ZX)格子点データ
+
+      real(8)                             :: IntZX_zx
+      !(out) 積分値
+
+      integer :: i, k
+      ! 作業変数
+
+      IntZX_zx = 0.0d0
+      do i=0,im-1
+         do k=0,km-1
+            IntZX_zx = IntZX_zx + zx(k,i) * x_X_Weight(i) * z_Z_Weight(k)
+         enddo
+      enddo
+    end function IntZX_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000351" class="method-detail">
+        <a name="M000351"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000351" class="method-signature">
+
+
+
+          <span class="method-name">IntZ_z</span><span class="method-args">( z ) result(IntZ_z)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000351">IntZ_z</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>z  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Z)格子点データの Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000351-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000351-source">
+<pre>
+    function IntZ_z(z)
+      !
+      ! 1 次元(Z)格子点データの Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1)   :: z         !(in)  1 次元格子点データ
+      real(8)                      :: IntZ_z     !(out) 積分値
+
+      IntZ_z = sum(z*z_Z_Weight)
+    end function IntZ_z
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000329" class="method-detail">
+        <a name="M000329"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000329" class="method-signature">
+
+
+
+          <span class="method-name">ee2f_RotVelxVor_ee2f</span><span class="method-args">( ee2f ) result(ee2f_RotVelxVor_ee2f)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000329">ee2f_RotVelxVor_ee2f</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 非線形項のスペクトルデータの 2 つの成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ee2f  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから Euler 方程式の非線形項
+
+    ▽x(u x ω)
+
+ の 2 成分を計算する.
+
+ (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000329-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000329-source">
+<pre>
+    function ee2f_RotVelxVor_ee2f(ee2f)
+      !
+      !  渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから Euler 方程式の非線形項
+      !
+      !     ▽x(u x ω) 
+      !
+      !  の 2 成分を計算する.
+      !
+      !  (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip))     :: ee2f_RotVelxVor_ee2f
+      !(out) 非線形項のスペクトルデータの 2 つの成分
+
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip)), intent(in)  :: ee2f
+      !(in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+      call p3emnl(nm,mm,lm,km,jm,im,ee2f,ee2f_RotVelxVor_ee2f, wg,itk,tk,itj,tj,iti,ti)
+
+    end function ee2f_RotVelxVor_ee2f
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000332" class="method-detail">
+        <a name="M000332"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000332" class="method-signature">
+
+
+
+          <span class="method-name">ee2f_ZetaFromVor_eef_eef_eef</span><span class="method-args">( eef_1, eef_2, eef_3 ) result(ee2f_ZetaFromVor_eef_eef_eef)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000332">ee2f_ZetaFromVor_eef_eef_eef</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 渦度の 2 成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef_1  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 渦度スペクトルデータの各成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef_2  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 渦度スペクトルデータの各成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef_3  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 渦度スペクトルデータの各成分
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 渦度のスペクトルから渦度 2 成分(ζ_1, ζ_2)を計算する.
+
+ (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000332-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000332-source">
+<pre>
+    function ee2f_ZetaFromVor_eef_eef_eef(eef_1,eef_2,eef_3)
+      !
+      !  渦度のスペクトルから渦度 2 成分(ζ_1, ζ_2)を計算する.
+      !
+      !  (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip))     :: ee2f_ZetaFromVor_eef_eef_eef
+      !(out) 渦度の 2 成分(ζ_1, ζ_2)
+
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip)), intent(in)  :: eef_1, eef_2, eef_3
+      !(in) 渦度スペクトルデータの各成分
+
+      integer :: l,m,n
+
+      ee2f_ZetaFromVor_eef_eef_eef = 0.0D0
+      do l=ls(ip),le(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               if ( l /= 0 ) then
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,1,lf_l(l)) = eef_2(n,m,lf_l(l))
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,2,lf_l(l)) = eef_3(n,m,lf_l(l))
+               elseif( m /= 0 ) then
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,1,lf_l(l)) = eef_3(n,m,lf_l(l))
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,2,lf_l(l)) = eef_1(n,m,lf_l(l))
+               else
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,1,lf_l(l)) = eef_1(n,m,lf_l(l))
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,2,lf_l(l)) = eef_2(n,m,lf_l(l))
+               endif
+            enddo
+         enddo
+      enddo
+
+      do l=-le(ip),-ls(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               if ( l /= 0 ) then
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,1,lf_l(l)) = eef_2(n,m,lf_l(l))
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,2,lf_l(l)) = eef_3(n,m,lf_l(l))
+               elseif( m /= 0 ) then
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,1,lf_l(l)) = eef_3(n,m,lf_l(l))
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,2,lf_l(l)) = eef_1(n,m,lf_l(l))
+               else
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,1,lf_l(l)) = eef_1(n,m,lf_l(l))
+                  ee2f_ZetaFromVor_eef_eef_eef(n,m,2,lf_l(l)) = eef_2(n,m,lf_l(l))
+               endif
+            enddo
+         enddo
+      enddo
+
+    end function ee2f_ZetaFromVor_eef_eef_eef
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000322" class="method-detail">
+        <a name="M000322"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000322" class="method-signature">
+
+
+
+          <span class="method-name">ee2f_eee2</span><span class="method-args">( eee2 ) result(ee2f_eee2)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000322">ee2f_eee2</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eee2  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 分散スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータを分散する
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000322-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000322-source">
+<pre>
+    function ee2f_eee2(eee2)
+      !
+      ! スペクトルデータを分散する
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip))       :: ee2f_eee2
+      !(out)  スペクトルデータ
+
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2), intent(IN) :: eee2
+      !(in) 分散スペクトルデータ
+      
+      ! 作業データ
+      integer :: ierr, iip
+      integer :: l 
+
+      do l=ls(ip),le(ip)
+         ee2f_eee2(:,:,:,l-ls(ip)+1) = eee2(:,:,l,:)
+         ee2f_eee2(:,:,:,2*lc(ip)-(l-ls(ip))) = eee2(:,:,-l,:)
+      enddo
+      
+    end function ee2f_eee2
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000321" class="method-detail">
+        <a name="M000321"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000321" class="method-signature">
+
+
+
+          <span class="method-name">eee2_ee2f</span><span class="method-args">( ee2f ) result(eee2_ee2f)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000321">eee2_ee2f</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ee2f  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)),intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 分散スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+分散スペクトルデータを集積する
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000321-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000321-source">
+<pre>
+    function eee2_ee2f(ee2f)
+      !
+      ! 分散スペクトルデータを集積する
+      !
+      real(8), dimension(-nm:nm,-mm:mm,-lm:lm,2)             :: eee2_ee2f
+      !(out)  スペクトルデータ
+
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip)),intent(IN) :: ee2f
+      !(in) 分散スペクトルデータ
+      
+      real(8), dimension(-nm:nm,-mm:mm,2,0:2*sum(lc)-1)       :: ee2e
+      ! 作業データ
+      integer, dimension(0:np-1) :: nm2ls
+      integer :: ierr, iip
+      integer :: l
+
+      nm2ls(0)   = 0
+      do iip=1,np-1
+         nm2ls(iip) = nm2ls(iip-1) + (2*nm+1)*(2*mm+1)*2*2*lc(iip-1)
+      enddo
+
+      call MPI_ALLGATHERV(ee2f,(2*nm+1)*(2*mm+1)*2*2*lc(ip),MPI_REAL8, ee2e,(2*nm+1)*(2*mm+1)*2*2*lc,nm2ls, MPI_REAL8,MPI_COMM_WORLD,IERR)
+
+      do l=ls(0),le(0)
+         eee2_ee2f(:,:,l,:) = ee2e(:,:,:,l-ls(0))
+         if ( l /= 0 ) then
+            eee2_ee2f(:,:,-l,:) = ee2e(:,:,:,2*lc(0)-(l-ls(0)+1))
+         endif
+      enddo
+
+      do iip=1,np-1
+         do l=ls(iip),le(iip)
+            eee2_ee2f(:,:,l,:) = ee2e(:,:,:,2*sum(lc(0:iip-1))+(l-ls(iip)))
+            eee2_ee2f(:,:,-l,:) = ee2e(:,:,:,2*sum(lc(0:iip))-(l-ls(iip)+1))
+         enddo
+      enddo
+
+    end function eee2_ee2f
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000317" class="method-detail">
+        <a name="M000317"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000317" class="method-signature">
+
+
+
+          <span class="method-name">eee_ChangeResolution</span><span class="method-args">( id ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>id  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+</td></tr>
+</table>
+<p>
+解像度設定の変更. eee_Initial で設定する際に かえってくるオプショナル引数
+id の値を用いる.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000317-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000317-source">
+<pre>
+    subroutine eee_ChangeResolution(id)
+      !
+      ! 解像度設定の変更. eee_Initial で設定する際に
+      ! かえってくるオプショナル引数 id の値を用いる. 
+      !
+      integer, intent(in) :: id
+
+      if (id .gt. nparams .or. id .lt. 1) then
+         write(*,*)&quot;id is invalid&quot;
+      end if
+
+      im = params(id)%im
+      jm = params(id)%jm
+      km = params(id)%km
+      lm = params(id)%lm
+      mm = params(id)%mm
+      nm = params(id)%nm
+      ls =&gt; params(id)%ls
+      le =&gt; params(id)%le
+      lc =&gt; params(id)%lc
+      js =&gt; params(id)%js
+      je =&gt; params(id)%je
+      jc =&gt; params(id)%jc
+      itk =&gt; params(id)%itk
+      tk  =&gt; params(id)%tk
+      itj =&gt; params(id)%itj
+      tj  =&gt; params(id)%tj
+      iti =&gt; params(id)%iti
+      ti  =&gt; params(id)%ti
+      x_X =&gt; params(id)%x_X
+      v_Y =&gt; params(id)%v_Y
+      z_Z =&gt; params(id)%z_Z
+      x_X_Weight =&gt; params(id)%x_X_Weight
+      v_Y_Weight =&gt; params(id)%v_Y_Weight
+      z_Z_Weight =&gt; params(id)%z_Z_Weight
+      zxv_X =&gt; params(id)%zxv_X
+      zxv_Y =&gt; params(id)%zxv_Y
+      zxv_Z =&gt; params(id)%zxv_Z
+      w =&gt; params(id)%w
+      ws =&gt; params(id)%ws
+      wg =&gt; params(id)%wg
+      sgwork =&gt; params(id)%sgwork
+
+    end subroutine eee_ChangeResolution
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000316" class="method-detail">
+        <a name="M000316"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000316" class="method-signature">
+
+
+
+          <span class="method-name">eee_mpi_Initial</span><span class="method-args">( i, j, k, l, m, n, [id] ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>i  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(X)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>j  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>k  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(Z)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数(X)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>m  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数(Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>n  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数(X)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>id  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(out), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 解像度領域情報番号
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトル変換の格子点数, 波数を設定する. 領域の範囲は
+[0,2pi]x[0,2pi]x[0,2pi] に決め打ち
+</p>
+<p>
+他の関数や変数を呼ぶ前に, 最初にこのサブルーチンを呼んで
+初期設定をしなければならない.
+</p>
+<p>
+オプショナル引数 id を用いて異なる解像度, 領域を同時に 扱うことができる.
+eee_Initial を解像度, 領域ごとに呼んで 引数 id をキープし, <a
+href="eee_mpi_module.html#M000317">eee_ChangeResolution</a> で切替える.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000316-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000316-source">
+<pre>
+    subroutine eee_mpi_Initial(i,j,k,l,m,n,id)
+      !
+      ! スペクトル変換の格子点数, 波数を設定する.
+      ! 領域の範囲は [0,2pi]x[0,2pi]x[0,2pi] に決め打ち
+      !
+      ! 他の関数や変数を呼ぶ前に, 最初にこのサブルーチンを呼んで
+      ! 初期設定をしなければならない.
+      !
+      ! オプショナル引数 id を用いて異なる解像度, 領域を同時に
+      ! 扱うことができる. eee_Initial を解像度, 領域ごとに呼んで
+      ! 引数 id をキープし, eee_ChangeResolution で切替える.
+      !
+      integer,intent(in) :: i           ! 格子点数(X)
+      integer,intent(in) :: j           ! 格子点数(Y)
+      integer,intent(in) :: k           ! 格子点数(Z)
+      integer,intent(in) :: l           ! 切断波数(X)
+      integer,intent(in) :: m           ! 切断波数(Y)
+      integer,intent(in) :: n           ! 切断波数(X)
+
+      integer, intent(out), optional :: id  ! 解像度領域情報番号
+
+      character(len=3) cid
+      integer :: ii, jj, kk
+      integer :: lls, lle, llc, jjs, jje, jjc
+      integer :: iip
+      integer :: lp, jp
+      integer :: ierr
+
+      im = i         
+       jm = j         
+       km = k
+      lm = l         
+       mm = m         
+       nm = n
+
+      if ( nparams .ge. nparams_max ) then
+         call MessageNotify('W','eee_initial', 'too many call of eee_Initial, nothing was done.')
+         if ( present(id) ) id = -1
+         return
+      end if
+
+      CALL MPI_COMM_RANK(MPI_COMM_WORLD,IP,IERR)
+      CALL MPI_COMM_SIZE(MPI_COMM_WORLD,NP,IERR)
+
+      lp=lm/np+1
+      lls=lp*ip
+      lle=min(lp*(ip+1)-1,lm)
+      if(lle.ge.lls) then
+         llc=lle-lls+1
+      else
+         llc=0 
+           lls=0  
+          lle=0
+      end if
+
+      jp=(jm-1)/np+1
+      jjs=jp*ip
+      jje=min(jp*(ip+1)-1,jm-1)
+      if(jje.ge.jjs) then
+         jjc=jje-jjs+1
+      else
+         jjc=0 
+          jjs=0 
+          jje=0
+      end if
+
+      nparams = nparams + 1
+
+      params(nparams)%im = im
+      params(nparams)%jm = jm
+      params(nparams)%km = km
+      params(nparams)%lm = lm
+      params(nparams)%mm = mm
+      params(nparams)%nm = nm
+      allocate(params(nparams)%ls(0:np-1))
+      allocate(params(nparams)%le(0:np-1))
+      allocate(params(nparams)%lc(0:np-1))
+      allocate(params(nparams)%js(0:np-1))
+      allocate(params(nparams)%je(0:np-1))
+      allocate(params(nparams)%jc(0:np-1))
+
+      allocate(params(nparams)%itk(5))
+      allocate(params(nparams)%itj(5))
+      allocate(params(nparams)%iti(5))
+      allocate(params(nparams)%tk(km*2))
+      allocate(params(nparams)%tj(jm*2))
+      allocate(params(nparams)%ti(im*2))
+      allocate(params(nparams)%w(km*max(im*((jm-1)/np+1),jm*2*(lm/np+1))))
+      allocate(params(nparams)%ws((2*mm+1)*(2*nm+1)*2*2*(lm+1)))
+      allocate(params(nparams)%wg(4*km*max(im*((jm-1)/np+1),jm*2*(lm/np+1))))
+      allocate(params(nparams)%sgwork(km*max(im*((jm-1)/np+1),jm*2*(lm/np+1))))
+
+      allocate(params(nparams)%x_X(0:im-1))
+      allocate(params(nparams)%x_X_Weight(0:im-1))
+      allocate(params(nparams)%v_Y(jjs:jje))
+      allocate(params(nparams)%v_Y_Weight(jjs:jje))
+      allocate(params(nparams)%z_Z(0:km-1))
+      allocate(params(nparams)%z_Z_Weight(0:km-1))
+      allocate(params(nparams)%zxv_X(0:km-1,0:im-1,jjs:jje))
+      allocate(params(nparams)%zxv_Y(0:km-1,0:im-1,jjs:jje))
+      allocate(params(nparams)%zxv_Z(0:km-1,0:im-1,jjs:jje))
+
+      call eee_ChangeResolution(nparams)
+
+      call p3init(km,jm,im,itk,tk,itj,tj,iti,ti)
+
+      do iip=0,np-1
+         lp=lm/np+1
+         ls(iip)=lp*iip
+         le(iip)=min(lp*(iip+1)-1,lm)
+         if(le(iip).ge.ls(iip)) then
+            lc(iip)=le(iip)-ls(iip)+1
+         else
+            lc(iip)=0 
+              ls(iip)=0  
+             le(iip)=0
+         end if
+
+         jp=(jm-1)/np+1
+         js(iip)=jp*iip
+         je(iip)=min(jp*(iip+1)-1,jm-1)
+         if(je(iip).ge.js(iip)) then
+            jc(iip)=je(iip)-js(iip)+1
+         else
+            jc(iip)=0 
+             js(iip)=0 
+             je(iip)=0
+         end if
+      enddo
+
+      do ii=0,im-1
+         x_X(ii) = 2*pi/im*ii
+      enddo
+      x_X_Weight = 2*pi/im
+
+      do jj=js(ip),je(ip)
+         v_Y(jj) = 2*pi/jm*jj
+      enddo
+      v_Y_Weight = 2*pi/jm
+
+      do kk=0,km-1
+         z_Z(kk) = 2*pi/km*kk
+      enddo
+      z_Z_Weight = 2*pi/km
+
+      zxv_X = spread(spread(x_X,1,km),3,jc(ip))
+      zxv_Y = spread(spread(v_Y,1,im),1,km)
+      zxv_Z = spread(spread(z_Z,2,im),3,jc(ip))
+
+      if ( present(id) ) id = nparams
+
+      write(cid,'(I3)') nparams
+      call MessageNotify('M','eee_mpi_initial','eee_mpi_module is initialized')
+      call MessageNotify('M','eee_mpi_initial', 'Resolution ID is '//trim(adjustl(cid)))
+    end subroutine eee_mpi_Initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000326" class="method-detail">
+        <a name="M000326"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000326" class="method-signature">
+
+
+
+          <span class="method-name">eef_Dx_eef</span><span class="method-args">( eef ) result(eef_Dx_eef)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000326">eef_Dx_eef</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに X 微分(∂x)を作用する.
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに X 方向波数 l をかけて 実部 &lt;-&gt;
+虚部成分に入れ換える計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000326-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000326-source">
+<pre>
+    function eef_Dx_eef(eef)
+      !
+      ! 入力スペクトルデータに X 微分(∂x)を作用する.
+      !
+      ! スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに X 方向波数 l をかけて
+      ! 実部 &lt;-&gt; 虚部成分に入れ換える計算を行っている.
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip))              :: eef_Dx_eef
+      !(out) スペクトルデータの X 微分
+
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip)), intent(in)  :: eef
+      !(in) 入力スペクトルデータ
+
+      integer l,m,n
+      ! 作業変数
+
+      eef_Dx_eef = 0.0
+      do l=ls(ip),le(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               eef_Dx_eef(n,m,lf_l(l)) = -l*eef(-n,-m,lf_l(-l))
+            enddo
+         enddo
+      enddo
+
+      do l=-le(ip),-ls(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               eef_Dx_eef(n,m,lf_l(l)) = -l*eef(-n,-m,lf_l(-l))
+            enddo
+         enddo
+      enddo
+    end function eef_Dx_eef
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000327" class="method-detail">
+        <a name="M000327"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000327" class="method-signature">
+
+
+
+          <span class="method-name">eef_Dy_eef</span><span class="method-args">( eef ) result(eef_Dy_eef)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000327">eef_Dy_eef</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに Y 微分(∂y)を作用する.
+</p>
+<p>
+スペクトルデータの Y 微分とは, 対応する格子点データに Y 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに Y 方向波数 m をかけて 実部 &lt;-&gt;
+虚部成分に入れ換える計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000327-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000327-source">
+<pre>
+    function eef_Dy_eef(eef)
+      !
+      ! 入力スペクトルデータに Y 微分(∂y)を作用する.
+      !
+      ! スペクトルデータの Y 微分とは, 対応する格子点データに Y 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに Y 方向波数 m をかけて
+      ! 実部 &lt;-&gt; 虚部成分に入れ換える計算を行っている.
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip))              :: eef_Dy_eef
+      !(out) スペクトルデータの X 微分
+
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip)), intent(in)  :: eef
+      !(in) 入力スペクトルデータ
+
+      integer l,m,n
+      ! 作業変数
+
+      eef_Dy_eef = 0.0
+      do l=ls(ip),le(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               eef_Dy_eef(n,m,lf_l(l)) = -m*eef(-n,-m,lf_l(-l))
+            enddo
+         enddo
+      enddo
+
+      do l=-le(ip),-ls(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               eef_Dy_eef(n,m,lf_l(l)) = -m*eef(-n,-m,lf_l(-l))
+            enddo
+         enddo
+      enddo
+
+    end function eef_Dy_eef
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000328" class="method-detail">
+        <a name="M000328"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000328" class="method-signature">
+
+
+
+          <span class="method-name">eef_Dz_eef</span><span class="method-args">( eef ) result(eef_Dz_eef)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000328">eef_Dz_eef</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに Z 微分(∂z)を作用する.
+</p>
+<p>
+スペクトルデータの Z 微分とは, 対応する格子点データに Z 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに Z 方向波数 n をかけて 実部 &lt;-&gt;
+虚部成分に入れ換える計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000328-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000328-source">
+<pre>
+    function eef_Dz_eef(eef)
+      !
+      ! 入力スペクトルデータに Z 微分(∂z)を作用する.
+      !
+      ! スペクトルデータの Z 微分とは, 対応する格子点データに Z 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに Z 方向波数 n をかけて
+      ! 実部 &lt;-&gt; 虚部成分に入れ換える計算を行っている.
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip))              :: eef_Dz_eef
+      !(out) スペクトルデータの X 微分
+
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip)), intent(in)  :: eef
+      !(in) 入力スペクトルデータ
+
+      integer l,m,n
+      ! 作業変数
+
+      eef_Dz_eef = 0.0
+      do l=ls(ip),le(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               eef_Dz_eef(n,m,lf_l(l)) = -n*eef(-n,-m,lf_l(-l))
+            enddo
+         enddo
+      enddo
+
+      do l=-le(ip),-ls(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               eef_Dz_eef(n,m,lf_l(l)) = -n*eef(-n,-m,lf_l(-l))
+            enddo
+         enddo
+      enddo
+
+    end function eef_Dz_eef
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000325" class="method-detail">
+        <a name="M000325"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000325" class="method-signature">
+
+
+
+          <span class="method-name">eef_LaplaInv_eef</span><span class="method-args">( eef ) result(eef_LaplaInv_eef)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000325">eef_LaplaInv_eef</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの逆ラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに逆ラプラシアン(∂xx+∂yy+∂zz)**(-1)を作用する.
+</p>
+<p>
+スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに全波数 (l**2 + m**2 + n**2) で割る
+計算を行っている. l=m=n=0 成分には 0 を代入している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000325-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000325-source">
+<pre>
+    function eef_LaplaInv_eef(eef)
+      !
+      ! 入力スペクトルデータに逆ラプラシアン(∂xx+∂yy+∂zz)**(-1)を作用する.
+      !
+      ! スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+      ! 逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに全波数 (l**2 + m**2 + n**2) で割る
+      ! 計算を行っている. l=m=n=0 成分には 0 を代入している. 
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip))             :: eef_LaplaInv_eef
+      !(out) スペクトルデータの逆ラプラシアン
+
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip)), intent(in) :: eef
+      !(in) スペクトルデータ
+
+      integer l,m,n
+
+      eef_LaplaInv_eef = 0.0
+      do l=ls(ip),le(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               if ( l.ne.0 .or. m.ne.0 .or. n.ne.0 ) then
+                  eef_LaplaInv_eef(n,m,lf_l(l)) = -eef(n,m,lf_l(l))/(l**2+m**2+n**2)
+                  eef_LaplaInv_eef(n,m,lf_l(-l)) = -eef(n,m,lf_l(-l))/(l**2+m**2+n**2)
+               endif
+            enddo
+         enddo
+      enddo
+    end function eef_LaplaInv_eef
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000324" class="method-detail">
+        <a name="M000324"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000324" class="method-signature">
+
+
+
+          <span class="method-name">eef_Lapla_eef</span><span class="method-args">( eef ) result(eef_Lapla_eef)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000324">eef_Lapla_eef</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータのラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータにラプラシアン(∂xx+∂yy+∂zz)を作用する.
+</p>
+<p>
+スペクトルデータのラプラシアンとは, 対応する格子点データに
+ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに全波数 (l**2 + m**2 + n**2) をかける
+計算を行っている.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000324-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000324-source">
+<pre>
+    function eef_Lapla_eef(eef)
+      !
+      ! 入力スペクトルデータにラプラシアン(∂xx+∂yy+∂zz)を作用する.
+      !
+      ! スペクトルデータのラプラシアンとは, 対応する格子点データに
+      ! ラプラシアンを作用させたデータのスペクトル変換のことである.
+      !
+      ! 実際にはスペクトルデータに全波数 (l**2 + m**2 + n**2) をかける
+      ! 計算を行っている. 
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip))              :: eef_Lapla_eef
+      !(out) スペクトルデータのラプラシアン
+
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip)), intent(in)  :: eef
+      !(in) 入力スペクトルデータ
+
+      integer l,m,n
+      ! 作業変数
+
+      eef_Lapla_eef = 0.0
+
+      do l=ls(ip),le(ip)
+         do m=-mm,mm
+            do n=-nm,nm
+               eef_Lapla_eef(n,m,lf_l(l)) = -(l**2+m**2+n**2)*eef(n,m,lf_l(l))
+               eef_Lapla_eef(n,m,lf_l(-l)) = -(l**2+m**2+n**2)*eef(n,m,lf_l(-l))
+            enddo
+         enddo
+      enddo
+
+    end function eef_Lapla_eef
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000331" class="method-detail">
+        <a name="M000331"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000331" class="method-signature">
+
+
+
+          <span class="method-name">eef_VelFromZeta_ee2f</span><span class="method-args">( ee2f, isw ) result(eef_VelFromZeta_ee2f)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000331">eef_VelFromZeta_ee2f</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 非線形項のスペクトルデータの 2 つの成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ee2f  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>isw  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 出力する渦度の成分のインデックス(1,2,3)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから速度スペクトルの 1 成分
+ を計算する.
+
+ (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000331-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000331-source">
+<pre>
+    function eef_VelFromZeta_ee2f(ee2f,isw)
+      !
+      !  渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから速度スペクトルの 1 成分
+      !  を計算する.
+      !
+      !  (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip))     :: eef_VelFromZeta_ee2f
+      !(out) 非線形項のスペクトルデータの 2 つの成分
+
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip)), intent(in)  :: ee2f
+      !(in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+      integer, intent(IN) :: isw
+      !(in) 出力する渦度の成分のインデックス(1,2,3)
+
+      call p3gmtu(nm,mm,lm,ee2f,eef_VelFromZeta_ee2f,isw)
+
+    end function eef_VelFromZeta_ee2f
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000330" class="method-detail">
+        <a name="M000330"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000330" class="method-signature">
+
+
+
+          <span class="method-name">eef_VorFromZeta_ee2f</span><span class="method-args">( ee2f, isw ) result(eef_VorFromZeta_ee2f)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000330">eef_VorFromZeta_ee2f</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 非線形項のスペクトルデータの 2 つの成分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ee2f  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>isw  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 出力する渦度の成分のインデックス(1,2,3)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから渦度のスペクトルの 1 成分
+ を計算する.
+
+ (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000330-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000330-source">
+<pre>
+    function eef_VorFromZeta_ee2f(ee2f,isw)
+      !
+      !  渦度 2 成分(ζ_1, ζ_2)のスペクトルデータから渦度のスペクトルの 1 成分
+      !  を計算する.
+      !
+      !  (ζ_1, ζ_2) と渦度 ω との関係は ISPACK/P3PACK のマニュアルを参照
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip))     :: eef_VorFromZeta_ee2f
+      !(out) 非線形項のスペクトルデータの 2 つの成分
+
+      real(8), dimension(-nm:nm,-mm:mm,2,2*lc(ip)), intent(in)  :: ee2f
+      !(in) 入力スペクトルデータ. 渦度の 2 成分(ζ_1, ζ_2)
+
+      integer, intent(IN) :: isw
+      !(in) 出力する渦度の成分のインデックス(1,2,3)
+
+      call p3gmto(nm,mm,lm,ee2f,eef_VorFromZeta_ee2f,isw)
+
+    end function eef_VorFromZeta_ee2f
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000320" class="method-detail">
+        <a name="M000320"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000320" class="method-signature">
+
+
+
+          <span class="method-name">eef_zxv</span><span class="method-args">( zxv ) result(eef_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000320">eef_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データからスペクトルデータへ変換する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000320-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000320-source">
+<pre>
+    function eef_zxv(zxv)
+      !
+      ! 格子データからスペクトルデータへ変換する.
+      !
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip))                  :: eef_zxv
+                                                      !(out)  スペクトルデータ
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(in) :: zxv
+                                                      !(in) 格子点データ
+
+      sgwork(1:im*jc(ip)*km) = reshape(zxv,(/im*jc(ip)*km/))
+
+      call p3gmsb(nm,mm,lm,km,jm,im,sgwork,w,itk,tk,itj,tj,iti,ti)
+
+      eef_zxv = reshape(sgwork(1:(2*nm+1)*(2*mm+1)*2*lc(ip)), (/2*nm+1,2*mm+1,2*lc(ip)/))
+
+    end function eef_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000306" class="method-detail">
+        <a name="M000306"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">jc</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000306">jc</a>  </tt></b>  <tt> =&gt; null()      </tt> :</td><td><tt>integer, dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> Y 座標格子点範囲, 数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000304" class="method-detail">
+        <a name="M000304"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">je</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000304">je</a>  </tt></b>  <tt> =&gt; null()      </tt> :</td><td><tt>integer, dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> Y 座標格子点範囲, 数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000305" class="method-detail">
+        <a name="M000305"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">js</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000305">js</a>  </tt></b>  <tt> =&gt; null()      </tt> :</td><td><tt>integer, dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> Y 座標格子点範囲, 数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000303" class="method-detail">
+        <a name="M000303"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">lc</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000303">lc</a>  </tt></b>  <tt> =&gt; null()      </tt> :</td><td><tt>integer, dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 波数範囲, 数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000301" class="method-detail">
+        <a name="M000301"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">le</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000301">le</a>  </tt></b>  <tt> =&gt; null()      </tt> :</td><td><tt>integer, dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 波数範囲, 数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000318" class="method-detail">
+        <a name="M000318"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000318" class="method-signature">
+
+
+
+          <span class="method-name">lf_l</span><span class="method-args">( l ) result(lf_l)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000318">lf_l</a>  </tt></b>  <tt> </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> スペクトルデータ第 3 添え字
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 方向波数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータ eef(-nm:nm,-mm,mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>) での X 方向波数 L の位置情報(第
+3 添え字)を調べる.
+</p>
+<p>
+X 方向波数については <a href="eee_mpi_module.html#M000302">ls</a>,<a
+href="eee_mpi_module.html#M000302">ls</a>+1,&#8230; <a
+href="eee_mpi_module.html#M000301">le</a>, -<a
+href="eee_mpi_module.html#M000301">le</a>,-<a
+href="eee_mpi_module.html#M000301">le</a>+1,&#8230;,-<a
+href="eee_mpi_module.html#M000302">ls</a>
+の順に格納されている(ISPACK/P3PACK マニュアル参照のこと)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000318-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000318-source">
+<pre>
+    function lf_l(l)
+      !
+      ! スペクトルデータ eef(-nm:nm,-mm,mm,2*lc) での
+      ! X 方向波数 L の位置情報(第 3 添え字)を調べる.
+      !
+      ! X 方向波数については ls,ls+1,... le, -le,-le+1,...,-ls
+      ! の順に格納されている(ISPACK/P3PACK マニュアル参照のこと)
+      !
+      integer, intent(IN)  ::  l        ! X 方向波数
+      integer              ::  lf_l     ! スペクトルデータ第 3 添え字
+
+      if ( abs(l) &lt; ls(ip) .OR. le(ip) &lt; abs(l) ) then
+         call MessageNotify('E','l_l','Input wavenumber out of range')
+      endif
+      
+      if ( l &gt;= 0 ) then
+         lf_l = l-ls(ip)+1
+      else
+         lf_l = ls(ip)+2*lc(ip)-abs(l)
+      endif
+
+    end function lf_l
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000302" class="method-detail">
+        <a name="M000302"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ls</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000302">ls</a>  </tt></b>  <tt> =&gt; null()      </tt> :</td><td><tt>integer, dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 波数範囲, 数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000360" class="method-detail">
+        <a name="M000360"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000360" class="method-signature">
+
+
+
+          <span class="method-name">v_AvrX_xv</span><span class="method-args">( xv ) result(v_AvrX_xv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000360">v_AvrX_xv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a> をかけた総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000360-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000360-source">
+<pre>
+    function v_AvrX_xv(xv)
+      !
+      ! 2 次元格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:im-1,js(ip):je(ip)), intent(IN)   :: xv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(js(ip):je(ip))          :: v_AvrX_xv
+      !(out) 平均された 1 次元(Y)格子点データ
+
+      v_AvrX_xv = v_IntX_xv(xv)/sum(x_X_weight)
+    end function v_AvrX_xv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000354" class="method-detail">
+        <a name="M000354"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000354" class="method-signature">
+
+
+
+          <span class="method-name">v_AvrZX_zxv</span><span class="method-args">( zxv ) result(v_AvrZX_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000354">v_AvrZX_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X,Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた 総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>*<a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000354-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000354-source">
+<pre>
+    function v_AvrZX_zxv(zxv)
+      !
+      ! 3 次元格子点データの X,Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, z_Z_Weight をかけた
+      ! 総和を計算し, x_X_Weight*z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(js(ip):je(ip))          :: v_AvrZX_zxv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      v_AvrZX_zxv = v_IntZX_zxv(zxv)/(sum(x_X_weight)*sum(z_Z_weight))
+
+    end function v_AvrZX_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000367" class="method-detail">
+        <a name="M000367"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000367" class="method-signature">
+
+
+
+          <span class="method-name">v_AvrZ_zv</span><span class="method-args">( zv ) result(v_AvrZ_zv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000367">v_AvrZ_zv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた総和を計算し, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000367-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000367-source">
+<pre>
+    function v_AvrZ_zv(zv)
+      !
+      ! 2 次元(ZY)格子点データの Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算し, 
+      ! z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,js(ip):je(ip)), intent(IN)   :: zv
+      !(in) 2 次元(ZY)格子点データ
+
+      real(8), dimension(js(ip):je(ip))          :: v_AvrZ_zv
+      !(out) 平均された 1 次元(X)格子点データ
+
+      v_AvrZ_zv = v_IntZ_zv(zv)/sum(z_Z_weight)
+    end function v_AvrZ_zv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000341" class="method-detail">
+        <a name="M000341"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000341" class="method-signature">
+
+
+
+          <span class="method-name">v_IntX_xv</span><span class="method-args">( xv ) result(v_IntX_xv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000341">v_IntX_xv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(XV)格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>
+をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000341-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000341-source">
+<pre>
+    function v_IntX_xv(xv)
+      !
+      ! 2 次元(XV)格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:im-1,js(ip):je(ip)), intent(IN)   :: xv
+      !(in) 2 次元(YX)格子点データ
+
+      real(8), dimension(js(ip):je(ip))          :: v_IntX_xv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: i
+      ! 作業変数
+
+      v_IntX_xv = 0.0d0
+      do i=0,im-1
+         v_IntX_xv(:) = v_IntX_xv(:) + xv(i,:) * x_X_Weight(i)
+      enddo
+    end function v_IntX_xv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000335" class="method-detail">
+        <a name="M000335"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000335" class="method-signature">
+
+
+
+          <span class="method-name">v_IntZX_zxv</span><span class="method-args">( zxv ) result(v_IntZX_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000335">v_IntZX_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X,Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000335-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000335-source">
+<pre>
+    function v_IntZX_zxv(zxv)
+      !
+      ! 3 次元格子点データの X,Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, z_Z_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(js(ip):je(ip))          :: v_IntZX_zxv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: i, k
+      ! 作業変数
+
+      v_IntZX_zxv = 0.0d0
+      do i=0,im-1
+         do k=0,km-1
+            v_IntZX_zxv(:) = v_IntZX_zxv(:) + zxv(k,i,:) * x_X_Weight(i)* z_Z_Weight(k)
+         enddo
+      enddo
+    end function v_IntZX_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000344" class="method-detail">
+        <a name="M000344"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000344" class="method-signature">
+
+
+
+          <span class="method-name">v_IntZ_zv</span><span class="method-args">( zv ) result(v_IntZ_zv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000344">v_IntZ_zv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(<a href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000344-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000344-source">
+<pre>
+    function v_IntZ_zv(zv)
+      !
+      ! 2 次元(ZY)格子点データの Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1,js(ip):je(ip)), intent(IN)   :: zv          
+      !(in)  2 次元(ZY)格子点データ
+
+      real(8), dimension(js(ip):je(ip))          :: v_IntZ_zv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: k
+      ! 作業変数
+
+      v_IntZ_zv = 0.0d0
+      do k=0,km-1
+         v_IntZ_zv(:) = v_IntZ_zv(:) + zv(k,:) * z_Z_Weight(k)
+      enddo
+    end function v_IntZ_zv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000308" class="method-detail">
+        <a name="M000308"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">v_Y</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000308">v_Y</a>  </tt></b>  <tt> =&gt; null()   </tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(Y)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000311" class="method-detail">
+        <a name="M000311"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">v_Y_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000311">v_Y_Weight</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点重み(Y) Y 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000361" class="method-detail">
+        <a name="M000361"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000361" class="method-signature">
+
+
+
+          <span class="method-name">x_AvrV_xv</span><span class="method-args">( xv ) result(x_AvrV_xv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000361">x_AvrV_xv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000361-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000361-source">
+<pre>
+    function x_AvrV_xv(xv)
+      !
+      ! 2 次元格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, 
+      ! y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:im-1,js(ip):je(ip)), intent(IN)   :: xv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1)          :: x_AvrV_xv
+      !(out) 平均された 1 次元(X)格子点データ
+
+      real(8) :: Length, LengthTMP
+      integer :: ierr
+      ! 作業変数
+
+      LengthTMP = sum(v_Y_weight)
+      CALL MPI_ALLREDUCE(LengthTMP,Length,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      x_AvrV_xv = x_IntV_xv(xv)/Length
+    end function x_AvrV_xv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000355" class="method-detail">
+        <a name="M000355"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000355" class="method-signature">
+
+
+
+          <span class="method-name">x_AvrZV_zxv</span><span class="method-args">( zxv ) result(x_AvrZV_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000355">x_AvrZV_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Y,Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた 総和を計算し,
+y_Y_Weight*<a href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000355-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000355-source">
+<pre>
+    function x_AvrZV_zxv(zxv)
+      !
+      ! 3 次元格子点データの Y,Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight, z_Z_Weight をかけた
+      ! 総和を計算し, y_Y_Weight*z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1)          :: x_AvrZV_zxv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      real(8) :: Area, AreaTMP
+      integer :: ierr
+      ! 作業変数
+
+      AreaTMP = sum(z_Z_weight)*sum(v_Y_weight)
+      CALL MPI_ALLREDUCE(AreaTMP,Area,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      x_AvrZV_zxv = x_IntZV_zxv(zxv)/Area
+
+    end function x_AvrZV_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000364" class="method-detail">
+        <a name="M000364"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000364" class="method-signature">
+
+
+
+          <span class="method-name">x_AvrZ_zx</span><span class="method-args">( zx ) result(x_AvrZ_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000364">x_AvrZ_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた総和を計算し, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000364-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000364-source">
+<pre>
+    function x_AvrZ_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算し, 
+      ! z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx
+      !(in) 2 次元(ZX)格子点データ
+
+      real(8), dimension(0:im-1)          :: x_AvrZ_zx
+      !(out) 平均された 1 次元(X)格子点データ
+
+      x_AvrZ_zx = x_IntZ_zx(zx)/sum(z_Z_weight)
+    end function x_AvrZ_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000342" class="method-detail">
+        <a name="M000342"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000342" class="method-signature">
+
+
+
+          <span class="method-name">x_IntV_xv</span><span class="method-args">( xv ) result(x_IntV_xv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000342">x_IntV_xv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(XV)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(YX)格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000311">v_Y_Weight</a>
+をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000342-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000342-source">
+<pre>
+    function x_IntV_xv(xv)
+      !
+      ! 2 次元(YX)格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に v_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:im-1,js(ip):je(ip)), intent(IN)   :: xv      
+      !(in)  2 次元(XV)格子点データ
+
+      real(8), dimension(0:im-1)        :: x_IntV_xv 
+      !(out) 積分された 1 次元(X)格子点データ
+
+      real(8), dimension(0:im-1)        :: x_IntVTMP
+      integer :: j
+      integer :: ierr
+      ! 作業変数
+
+      x_IntV_xv = 0.0d0
+      do j=js(ip),je(ip)
+         x_IntV_xv(:) = x_IntV_xv(:) + xv(:,j) * v_Y_Weight(j)
+      enddo
+
+      x_IntVTMP=x_IntV_xv
+      CALL MPI_ALLREDUCE(x_IntVTMP,x_IntV_xv,im,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+    end function x_IntV_xv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000336" class="method-detail">
+        <a name="M000336"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000336" class="method-signature">
+
+
+
+          <span class="method-name">x_IntZV_zxv</span><span class="method-args">( zxv ) result(x_IntZV_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000336">x_IntZV_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Y,Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000336-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000336-source">
+<pre>
+    function x_IntZV_zxv(zxv)
+      !
+      ! 3 次元格子点データの Y,Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight, z_Z_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1)          :: x_IntZV_zxv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      real(8), dimension(0:im-1)          :: x_IntZVTMP
+      integer :: j, k
+      integer :: ierr
+      ! 作業変数
+
+      x_IntZV_zxv = 0.0d0
+      do j=js(ip),je(ip)
+         do k=0,km-1
+            x_IntZV_zxv(:) = x_IntZV_zxv(:) + zxv(k,:,j) * v_Y_Weight(j)* z_Z_Weight(k)
+         enddo
+      enddo
+
+      x_IntZVTMP=x_IntZV_zxv
+      CALL MPI_ALLREDUCE(x_IntZVTMP,x_IntZV_zxv,im,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+
+    end function x_IntZV_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000347" class="method-detail">
+        <a name="M000347"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000347" class="method-signature">
+
+
+
+          <span class="method-name">x_IntZ_zx</span><span class="method-args">( zx ) result(x_IntZ_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000347">x_IntZ_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000347-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000347-source">
+<pre>
+    function x_IntZ_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx          
+      !(in)  2 次元(ZX)格子点データ
+
+      real(8), dimension(0:im-1)          :: x_IntZ_zx
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      integer :: k
+      ! 作業変数
+
+      x_IntZ_zx = 0.0d0
+      do k=0,km-1
+         x_IntZ_zx(:) = x_IntZ_zx(:) + zx(k,:) * z_Z_Weight(k)
+      enddo
+    end function x_IntZ_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000307" class="method-detail">
+        <a name="M000307"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_X</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000307">x_X</a>  </tt></b>  <tt> =&gt; null()   </tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(X)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000310" class="method-detail">
+        <a name="M000310"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_X_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000310">x_X_Weight</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点重み(X) X 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000358" class="method-detail">
+        <a name="M000358"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000358" class="method-signature">
+
+
+
+          <span class="method-name">xv_AvrZ_zxv</span><span class="method-args">( zxv ) result(xv_AvrZ_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000358">xv_AvrZ_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Z 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた 総和を計算し, <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000358-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000358-source">
+<pre>
+    function xv_AvrZ_zxv(zxv)
+      !
+      ! 3 次元格子点データの Z 方向平均
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた
+      ! 総和を計算し, z_Z_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1,js(ip):je(ip))          :: xv_AvrZ_zxv
+      !(out) 積分された 1 次元(YX)格子点データ
+
+      xv_AvrZ_zxv = xv_IntZ_zxv(zxv)/sum(z_Z_weight)
+
+    end function xv_AvrZ_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000339" class="method-detail">
+        <a name="M000339"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000339" class="method-signature">
+
+
+
+          <span class="method-name">xv_IntZ_zxv</span><span class="method-args">( zxv ) result(xv_IntZ_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000339">xv_IntZ_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(YX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Z 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000312">z_Z_Weight</a> をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000339-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000339-source">
+<pre>
+    function xv_IntZ_zxv(zxv)
+      !
+      ! 3 次元格子点データの Z 方向積分
+      !
+      ! 実際には格子点データ各点毎に z_Z_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:im-1,js(ip):je(ip))          :: xv_IntZ_zxv
+      !(out) 積分された 1 次元(YX)格子点データ
+
+      integer :: k 
+      ! 作業変数
+
+      xv_IntZ_zxv = 0.0d0
+      do k=0,km-1
+         xv_IntZ_zxv(:,:) = xv_IntZ_zxv(:,:) + zxv(k,:,:) * z_Z_Weight(k)
+      enddo
+
+    end function xv_IntZ_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000323" class="method-detail">
+        <a name="M000323"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000323" class="method-signature">
+
+
+
+          <span class="method-name">xyz_zxv</span><span class="method-args">( zxv ) result(xyz_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000323">xyz_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1,0:jm-1,0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+分散格子データの集積
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000323-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000323-source">
+<pre>
+    function xyz_zxv(zxv)
+      !
+      ! 分散格子データの集積
+      !
+      real(8), dimension(0:im-1,0:jm-1,0:km-1)             :: xyz_zxv
+                                                        !(out) 格子点データ
+
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(in)  :: zxv
+                                                        !(in) 格子点データ
+      real(8), dimension(0:km-1,0:im-1,0:jm-1)  :: zxy
+      ! 作業変数
+
+      integer :: i,j,k
+      integer :: ierr
+
+      call MPI_ALLGATHERV(zxv,km*im*jc(ip),MPI_REAL8, zxy,km*im*jc,km*im*js,MPI_REAL8, MPI_COMM_WORLD,IERR)
+
+      do k=0,km-1
+         do j=0,jm-1
+            do i=0,im-1
+               xyz_zxv(i,j,k) = zxy(k,i,j)
+            enddo
+         enddo
+      enddo
+
+    end function xyz_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000366" class="method-detail">
+        <a name="M000366"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000366" class="method-signature">
+
+
+
+          <span class="method-name">z_AvrV_zv</span><span class="method-args">( zv ) result(z_AvrV_zv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000366">z_AvrV_zv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(Z)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZV)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000311">v_Y_Weight</a> をかけた総和を計算し, <a
+href="eee_mpi_module.html#M000311">v_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000366-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000366-source">
+<pre>
+    function z_AvrV_zv(zv)
+      !
+      ! 2 次元(ZY)格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に v_Y_Weight をかけた総和を計算し, 
+      ! v_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,js(ip):je(ip)), intent(IN)   :: zv
+      !(in) 2 次元(ZV)格子点データ
+
+      real(8), dimension(0:km-1)          :: z_AvrV_zv
+      !(out) 平均された 1 次元(Z)格子点データ
+      real(8) :: Length, LengthTMP
+      integer :: ierr
+      ! 作業変数
+
+      LengthTMP = sum(v_Y_weight)
+      CALL MPI_ALLREDUCE(LengthTMP,Length,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      z_AvrV_zv = z_IntV_zv(zv)/Length
+    end function z_AvrV_zv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000353" class="method-detail">
+        <a name="M000353"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000353" class="method-signature">
+
+
+
+          <span class="method-name">z_AvrXV_zxv</span><span class="method-args">( zxv ) result(z_AvrXV_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000353">z_AvrXV_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X,Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, y_Y_Weight をかけた
+総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>*y_Y_Weight
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000353-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000353-source">
+<pre>
+    function z_AvrXV_zxv(zxv)
+      !
+      ! 3 次元格子点データの X,Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算し, x_X_Weight*y_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1)          :: z_AvrXV_zxv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      real(8) :: Area, AreaTMP
+      integer :: ierr
+      ! 作業変数
+
+      AreaTMP = sum(x_X_weight)*sum(v_Y_weight)
+      CALL MPI_ALLREDUCE(AreaTMP,Area,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      z_AvrXV_zxv = z_IntXV_zxv(zxv)/Area
+
+    end function z_AvrXV_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000363" class="method-detail">
+        <a name="M000363"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000363" class="method-signature">
+
+
+
+          <span class="method-name">z_AvrX_zx</span><span class="method-args">( zx ) result(z_AvrX_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000363">z_AvrX_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元(Z)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元(ZX)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a> をかけた総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000363-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000363-source">
+<pre>
+    function z_AvrX_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, 
+      ! x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx
+      !(in) 2 次元(ZX)格子点データ
+
+      real(8), dimension(0:km-1)          :: z_AvrX_zx
+      !(out) 平均された 1 次元(Z)格子点データ
+
+      z_AvrX_zx = z_IntX_zx(zx)/sum(x_X_weight)
+    end function z_AvrX_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000345" class="method-detail">
+        <a name="M000345"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000345" class="method-signature">
+
+
+
+          <span class="method-name">z_IntV_zv</span><span class="method-args">( zv ) result(z_IntV_zv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000345">z_IntV_zv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZY)格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000345-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000345-source">
+<pre>
+    function z_IntV_zv(zv)
+      !
+      ! 2 次元(ZY)格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1,js(ip):je(ip)), intent(IN)   :: zv          
+      !(in)  2 次元格子点データ
+
+      real(8), dimension(0:km-1)        :: z_IntV_zv 
+      !(out) 積分された 1 次元(X)格子点データ
+
+      real(8), dimension(0:km-1)        :: z_IntVTMP
+      integer :: j
+      integer :: ierr
+      ! 作業変数
+
+      z_IntV_zv = 0.0d0
+      do j=js(ip),je(ip)
+         z_IntV_zv(:) = z_IntV_zv(:) + zv(:,j) * v_Y_Weight(j)
+      enddo
+
+      z_IntVTMP=z_IntV_zv
+      CALL MPI_ALLREDUCE(z_IntVTMP,z_IntV_zv,km,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+
+    end function z_IntV_zv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000334" class="method-detail">
+        <a name="M000334"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000334" class="method-signature">
+
+
+
+          <span class="method-name">z_IntXV_zxv</span><span class="method-args">( zxv ) result(z_IntXV_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000334">z_IntXV_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X,Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>, y_Y_Weight をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000334-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000334-source">
+<pre>
+    function z_IntXV_zxv(zxv)
+      !
+      ! 3 次元格子点データの X,Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1)          :: z_IntXV_zxv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      real(8), dimension(0:km-1)          :: z_IntXVTmp
+      integer :: i, j
+      integer :: ierr
+      ! 作業変数
+
+      z_IntXV_zxv = 0.0d0
+      do i=0,im-1
+         do j=js(ip),je(ip)
+            z_IntXV_zxv(:) = z_IntXV_zxv(:) + zxv(:,i,j) * x_X_Weight(i)* v_Y_Weight(j)
+         enddo
+      enddo
+
+      z_IntXVTMP=z_IntXV_zxv
+      CALL MPI_ALLREDUCE(z_IntXVTMP,z_IntXV_zxv,km,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+
+    end function z_IntXV_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000348" class="method-detail">
+        <a name="M000348"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000348" class="method-signature">
+
+
+
+          <span class="method-name">z_IntX_zx</span><span class="method-args">( zx ) result(z_IntX_zx)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000348">z_IntX_zx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元(ZX)格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>
+をかけた総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000348-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000348-source">
+<pre>
+    function z_IntX_zx(zx)
+      !
+      ! 2 次元(ZX)格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1), intent(IN)   :: zx          
+      !(in)  2 次元格子点データ
+
+      real(8), dimension(0:km-1)        :: z_IntX_zx 
+      !(out) 積分された 1 次元(X)格子点データ
+
+      integer :: i
+      ! 作業変数
+
+      z_IntX_zx = 0.0d0
+      do i=0,im-1
+         z_IntX_zx(:) = z_IntX_zx(:) + zx(:,i) * x_X_Weight(i)
+      enddo
+    end function z_IntX_zx
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000309" class="method-detail">
+        <a name="M000309"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">z_Z</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000309">z_Z</a>  </tt></b>  <tt> =&gt; null()   </tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(Y)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000312" class="method-detail">
+        <a name="M000312"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">z_Z_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000312">z_Z_Weight</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点重み(Y) Z 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000356" class="method-detail">
+        <a name="M000356"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000356" class="method-signature">
+
+
+
+          <span class="method-name">zv_AvrX_zxv</span><span class="method-args">( zxv ) result(zv_AvrX_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000356">zv_AvrX_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a> をかけた 総和を計算し, <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000356-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000356-source">
+<pre>
+    function zv_AvrX_zxv(zxv)
+      !
+      ! 3 次元格子点データの X 方向平均
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた
+      ! 総和を計算し, x_X_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1,js(ip):je(ip))          :: zv_AvrX_zxv
+      !(out) 積分された 2 次元(ZY)格子点データ
+
+      zv_AvrX_zxv = zv_IntX_zxv(zxv)/sum(x_X_weight)
+
+    end function zv_AvrX_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000337" class="method-detail">
+        <a name="M000337"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000337" class="method-signature">
+
+
+
+          <span class="method-name">zv_IntX_zxv</span><span class="method-args">( zxv ) result(zv_IntX_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000337">zv_IntX_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 2 次元(ZY)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの X 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000310">x_X_Weight</a> をかけた
+総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000337-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000337-source">
+<pre>
+    function zv_IntX_zxv(zxv)
+      !
+      ! 3 次元格子点データの X 方向積分
+      !
+      ! 実際には格子点データ各点毎に x_X_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1,js(ip):je(ip))          :: zv_IntX_zxv
+      !(out) 積分された 2 次元(ZY)格子点データ
+
+      integer :: i
+      ! 作業変数
+
+      zv_IntX_zxv = 0.0d0
+      do i=0,im-1
+         zv_IntX_zxv(:,:) = zv_IntX_zxv(:,:) + zxv(:,i,:) * x_X_Weight(i)
+      enddo
+
+    end function zv_IntX_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000357" class="method-detail">
+        <a name="M000357"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000357" class="method-signature">
+
+
+
+          <span class="method-name">zx_AvrV_zxv</span><span class="method-args">( zxv ) result(zx_AvrV_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000357">zx_AvrV_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Y 方向平均
+</p>
+<p>
+実際には格子点データ各点毎に <a
+href="eee_mpi_module.html#M000311">v_Y_Weight</a> をかけた 総和を計算し, <a
+href="eee_mpi_module.html#M000311">v_Y_Weight</a>
+の総和で割ることで平均している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000357-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000357-source">
+<pre>
+    function zx_AvrV_zxv(zxv)
+      !
+      ! 3 次元格子点データの Y 方向平均
+      !
+      ! 実際には格子点データ各点毎に v_Y_Weight をかけた
+      ! 総和を計算し, v_Y_Weight の総和で割ることで平均している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1,0:im-1)          :: zx_AvrV_zxv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      real(8) :: Length, LengthTMP
+      integer :: ierr
+      ! 作業変数
+
+      LengthTMP = sum(v_Y_weight)
+      CALL MPI_ALLREDUCE(LengthTMP,Length,1,MPI_REAL8,MPI_SUM,MPI_COMM_WORLD,IERR)
+
+      zx_AvrV_zxv = zx_IntV_zxv(zxv)/Length
+
+    end function zx_AvrV_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000338" class="method-detail">
+        <a name="M000338"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000338" class="method-signature">
+
+
+
+          <span class="method-name">zx_IntV_zxv</span><span class="method-args">( zxv ) result(zx_IntV_zxv)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000338">zx_IntV_zxv</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>zxv  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip)), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+3 次元格子点データの Y 方向積分
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた 総和を計算している.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000338-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000338-source">
+<pre>
+    function zx_IntV_zxv(zxv)
+      !
+      ! 3 次元格子点データの Y 方向積分
+      !
+      ! 実際には格子点データ各点毎に y_Y_Weight をかけた
+      ! 総和を計算している. 
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip)), intent(IN)   :: zxv
+      !(in) 2 次元格子点データ
+
+      real(8), dimension(0:km-1,0:im-1)          :: zx_IntV_zxv
+      !(out) 積分された 1 次元(Y)格子点データ
+
+      real(8), dimension(0:km-1,0:im-1)          :: zx_IntVTMP
+      integer :: j
+      integer :: ierr
+      ! 作業変数
+
+      zx_IntV_zxv = 0.0d0
+      do j=js(ip),je(ip)
+         zx_IntV_zxv(:,:) = zx_IntV_zxv(:,:) + zxv(:,:,j) * v_Y_Weight(j)
+      enddo
+
+      zx_IntVTMP=zx_IntV_zxv
+      CALL MPI_ALLREDUCE(zx_IntVTMP,zx_IntV_zxv,im*km,MPI_REAL8, MPI_SUM,MPI_COMM_WORLD,IERR)
+    end function zx_IntV_zxv
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000313" class="method-detail">
+        <a name="M000313"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">zxv_X</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000313">zxv_X</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:,:,:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点(X)座標(3 次元) 各格子点(i,j,k)の位置の X 座標を格納した格子データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000314" class="method-detail">
+        <a name="M000314"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">zxv_Y</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000314">zxv_Y</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:,:,:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点(Y)座標(3 次元) 各格子点(i,j,k)の位置の Y 座標を格納した格子データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000315" class="method-detail">
+        <a name="M000315"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">zxv_Z</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000315">zxv_Z</a>  </tt></b>  <tt> =&gt; null()</tt> :</td><td><tt>real(8), dimension(:,:,:), pointer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点(Z)座標(3 次元) 各格子点(i,j,k)の位置の Z 座標を格納した格子データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000319" class="method-detail">
+        <a name="M000319"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000319" class="method-signature">
+
+
+
+          <span class="method-name">zxv_eef</span><span class="method-args">( eef ) result(zxv_eef)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="eee_mpi_module.html#M000319">zxv_eef</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:km-1,0:im-1,<a
+href="eee_mpi_module.html#M000305">js</a>(ip):<a
+href="eee_mpi_module.html#M000304">je</a>(ip))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>eef  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-nm:nm,-mm:mm,2*<a
+href="eee_mpi_module.html#M000303">lc</a>(ip)), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子データへ変換する.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000319-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000319-source">
+<pre>
+    function zxv_eef(eef)
+      !
+      ! スペクトルデータから格子データへ変換する.
+      !
+      real(8), dimension(0:km-1,0:im-1,js(ip):je(ip))        :: zxv_eef
+                                                        !(out) 格子点データ
+      real(8), dimension(-nm:nm,-mm:mm,2*lc(ip)), intent(in) :: eef
+                                                        !(in)  スペクトルデータ
+      sgwork(1:(2*nm+1)*(2*mm+1)*2*lc(ip)) = reshape(eef,(/(2*nm+1)*(2*mm+1)*2*lc(ip)/))
+
+      call p3smgb(nm,mm,lm,km,jm,im,sgwork,w,itk,tk,itj,tj,iti,ti)
+
+      zxv_eef = reshape(sgwork(1:im*km*jc(ip)),(/km,im,jc(ip)/))
+    end function zxv_eef
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

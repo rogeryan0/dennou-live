@@ -1,0 +1,4384 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: et_galerkin_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">et_galerkin_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/et_galerkin_module_f90.html">
+
+                src/et_galerkin_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="et_galerkin_module.html">et_galerkin_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a
+href="../files/src/et_galerkin_module_f90.html">et_galerkin_module.f90</a>,v
+1.3 2009-02-28 21:33:46 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/et_galerkin_module モジュールは 2 次元チャネル領域での流体運動
+をスペクトル法により数値計算するための Fortran90 関数を提供する.
+周期的な境界条件を扱うための X 方向へのフーリエ変換, 境界壁を扱うための Y
+方向のチェビシェフ変換(チェビシェフーガラーキン法)
+のスペクトル計算のためのさまざまな関数を提供する
+</p>
+<p>
+内部で <a href="et_module.html">et_module</a>,
+および境界条件を解くためにチェビシェフーガラーキン法の モジュール群(<a
+href="at_ab_galerkin_ND.html">at_ab_galerkin_ND</a>, <a
+href="at_ad_galerkin_DD.html">at_ad_galerkin_DD</a>, <a
+href="at_af_galerkin_MM.html">at_af_galerkin_MM</a>, <a
+href="at_ah_galerkin_MMex.html">at_ah_galerkin_MMex</a>, <a
+href="at_ap_galerkin_DN.html">at_ap_galerkin_DN</a>, <a
+href="at_aq_galerkin_RRSS.html">at_aq_galerkin_RRSS</a>, <a
+href="at_av_galerkin_NN.html">at_av_galerkin_NN</a>) を用いている.
+</p>
+<h2>関数・変数の名前と型について</h2>
+<p>
+&#8230;作成中&#8230;
+</p>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000700">b_Dx_b</a>&nbsp;&nbsp;
+
+        <a href="#M000694">b_g</a>&nbsp;&nbsp;
+
+        <a href="#M000692">b_t</a>&nbsp;&nbsp;
+
+        <a href="#M000680">d_Dx_d</a>&nbsp;&nbsp;
+
+        <a href="#M000674">d_g</a>&nbsp;&nbsp;
+
+        <a href="#M000672">d_t</a>&nbsp;&nbsp;
+
+        <a href="#M000699">eb_Dx_eb</a>&nbsp;&nbsp;
+
+        <a href="#M000693">eb_eg</a>&nbsp;&nbsp;
+
+        <a href="#M000691">eb_et</a>&nbsp;&nbsp;
+
+        <a href="#M000679">ed_Dx_ed</a>&nbsp;&nbsp;
+
+        <a href="#M000673">ed_eg</a>&nbsp;&nbsp;
+
+        <a href="#M000671">ed_et</a>&nbsp;&nbsp;
+
+        <a href="#M000719">ef_Dx_ef</a>&nbsp;&nbsp;
+
+        <a href="#M000713">ef_eg</a>&nbsp;&nbsp;
+
+        <a href="#M000711">ef_et</a>&nbsp;&nbsp;
+
+        <a href="#M000697">eg_eb</a>&nbsp;&nbsp;
+
+        <a href="#M000677">eg_ed</a>&nbsp;&nbsp;
+
+        <a href="#M000717">eg_ef</a>&nbsp;&nbsp;
+
+        <a href="#M000724">eg_eh</a>&nbsp;&nbsp;
+
+        <a href="#M000707">eg_ep</a>&nbsp;&nbsp;
+
+        <a href="#M000732">eg_eq</a>&nbsp;&nbsp;
+
+        <a href="#M000687">eg_ev</a>&nbsp;&nbsp;
+
+        <a href="#M000725">eh_Dx_eh</a>&nbsp;&nbsp;
+
+        <a href="#M000722">eh_eg</a>&nbsp;&nbsp;
+
+        <a href="#M000721">eh_et</a>&nbsp;&nbsp;
+
+        <a href="#M000709">ep_Dx_ep</a>&nbsp;&nbsp;
+
+        <a href="#M000703">ep_eg</a>&nbsp;&nbsp;
+
+        <a href="#M000701">ep_et</a>&nbsp;&nbsp;
+
+        <a href="#M000734">eq_Dx_eq</a>&nbsp;&nbsp;
+
+        <a href="#M000670">eq_Vor2Strm_et</a>&nbsp;&nbsp;
+
+        <a href="#M000728">eq_eg</a>&nbsp;&nbsp;
+
+        <a href="#M000726">eq_et</a>&nbsp;&nbsp;
+
+        <a href="#M000740">et_Dx_et</a>&nbsp;&nbsp;
+
+        <a href="#M000741">et_Dy_et</a>&nbsp;&nbsp;
+
+        <a href="#M000743">et_Jacobian_et_et</a>&nbsp;&nbsp;
+
+        <a href="#M000742">et_Lapla_et</a>&nbsp;&nbsp;
+
+        <a href="#M000695">et_eb</a>&nbsp;&nbsp;
+
+        <a href="#M000675">et_ed</a>&nbsp;&nbsp;
+
+        <a href="#M000715">et_ef</a>&nbsp;&nbsp;
+
+        <a href="#M000723">et_eh</a>&nbsp;&nbsp;
+
+        <a href="#M000705">et_ep</a>&nbsp;&nbsp;
+
+        <a href="#M000730">et_eq</a>&nbsp;&nbsp;
+
+        <a href="#M000685">et_ev</a>&nbsp;&nbsp;
+
+        <a href="#M000669">et_galerkin_Initial</a>&nbsp;&nbsp;
+
+        <a href="#M000739">et_yx</a>&nbsp;&nbsp;
+
+        <a href="#M000689">ev_Dx_ev</a>&nbsp;&nbsp;
+
+        <a href="#M000683">ev_eg</a>&nbsp;&nbsp;
+
+        <a href="#M000681">ev_et</a>&nbsp;&nbsp;
+
+        <a href="#M000720">f_Dx_f</a>&nbsp;&nbsp;
+
+        <a href="#M000714">f_g</a>&nbsp;&nbsp;
+
+        <a href="#M000712">f_t</a>&nbsp;&nbsp;
+
+        <a href="#M000698">g_b</a>&nbsp;&nbsp;
+
+        <a href="#M000678">g_d</a>&nbsp;&nbsp;
+
+        <a href="#M000718">g_f</a>&nbsp;&nbsp;
+
+        <a href="#M000708">g_p</a>&nbsp;&nbsp;
+
+        <a href="#M000733">g_q</a>&nbsp;&nbsp;
+
+        <a href="#M000688">g_v</a>&nbsp;&nbsp;
+
+        <a href="#M000710">p_Dx_p</a>&nbsp;&nbsp;
+
+        <a href="#M000704">p_g</a>&nbsp;&nbsp;
+
+        <a href="#M000702">p_t</a>&nbsp;&nbsp;
+
+        <a href="#M000735">q_Dx_q</a>&nbsp;&nbsp;
+
+        <a href="#M000729">q_g</a>&nbsp;&nbsp;
+
+        <a href="#M000727">q_t</a>&nbsp;&nbsp;
+
+        <a href="#M000696">t_b</a>&nbsp;&nbsp;
+
+        <a href="#M000676">t_d</a>&nbsp;&nbsp;
+
+        <a href="#M000716">t_f</a>&nbsp;&nbsp;
+
+        <a href="#M000706">t_p</a>&nbsp;&nbsp;
+
+        <a href="#M000731">t_q</a>&nbsp;&nbsp;
+
+        <a href="#M000686">t_v</a>&nbsp;&nbsp;
+
+        <a href="#M000690">v_Dx_v</a>&nbsp;&nbsp;
+
+        <a href="#M000684">v_g</a>&nbsp;&nbsp;
+
+        <a href="#M000682">v_t</a>&nbsp;&nbsp;
+
+        <a href="#M000736">yx_X</a>&nbsp;&nbsp;
+
+        <a href="#M000737">yx_Y</a>&nbsp;&nbsp;
+
+        <a href="#M000738">yx_et</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+
+        <span class="include-name"><a href="lumatrix.html">lumatrix</a></span>
+
+        <span class="include-name"><a href="et_module.html">et_module</a></span>
+
+        <span class="include-name"><a href="at_ad_galerkin_DD.html">at_ad_galerkin_DD</a></span>
+
+        <span class="include-name"><a href="at_av_galerkin_NN.html">at_av_galerkin_NN</a></span>
+
+        <span class="include-name"><a href="at_ab_galerkin_ND.html">at_ab_galerkin_ND</a></span>
+
+        <span class="include-name"><a href="at_ap_galerkin_DN.html">at_ap_galerkin_DN</a></span>
+
+        <span class="include-name"><a href="at_af_galerkin_MM.html">at_af_galerkin_MM</a></span>
+
+        <span class="include-name"><a href="at_ah_galerkin_MMex.html">at_ah_galerkin_MMex</a></span>
+
+        <span class="include-name"><a href="at_aq_galerkin_RRSS.html">at_aq_galerkin_RRSS</a></span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000700" class="method-detail">
+        <a name="M000700"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">b_Dx_b</span><span class="method-args">( b_data ) result(b_Dx_b)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000700">b_Dx_b</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>b_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+X 微分計算(1 次元)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#b_Dx_b
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000694" class="method-detail">
+        <a name="M000694"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">b_g</span><span class="method-args">( g_data ) result(b_g)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000694">b_g</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#b_g
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000692" class="method-detail">
+        <a name="M000692"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">b_t</span><span class="method-args">( t_data ) result(b_t)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000692">b_t</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#b_t
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000680" class="method-detail">
+        <a name="M000680"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">d_Dx_d</span><span class="method-args">( d_data ) result(d_Dx_d)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000680">d_Dx_d</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>d_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+X 微分計算(1 次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#d_Dx_d
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000674" class="method-detail">
+        <a name="M000674"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">d_g</span><span class="method-args">( g_data ) result(d_g)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000674">d_g</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#d_g
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000672" class="method-detail">
+        <a name="M000672"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">d_t</span><span class="method-args">( t_data ) result(d_t)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000672">d_t</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#d_t
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000699" class="method-detail">
+        <a name="M000699"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eb_Dx_eb</span><span class="method-args">( ab_data ) result(ab_Dx_ab)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ab_Dx_ab(size(ab_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ab_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+X 微分計算(2 次元)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#ab_Dx_ab
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000693" class="method-detail">
+        <a name="M000693"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eb_eg</span><span class="method-args">( ag_data ) result(ab_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ab_ag(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#ab_ag
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000691" class="method-detail">
+        <a name="M000691"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eb_et</span><span class="method-args">( at_data ) result(ab_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ab_at(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#ab_at
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000679" class="method-detail">
+        <a name="M000679"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ed_Dx_ed</span><span class="method-args">( ad_data ) result(ad_Dx_ad)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ad_Dx_ad(size(ad_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ad_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+X 微分計算(2 次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#ad_Dx_ad
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000673" class="method-detail">
+        <a name="M000673"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ed_eg</span><span class="method-args">( ag_data ) result(ad_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ad_ag(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#ad_ag
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000671" class="method-detail">
+        <a name="M000671"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ed_et</span><span class="method-args">( at_data ) result(ad_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ad_at(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#ad_at
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000719" class="method-detail">
+        <a name="M000719"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ef_Dx_ef</span><span class="method-args">( af_data ) result(af_Dx_af)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>af_Dx_af(size(af_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>af_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+X 微分計算(2 次元)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#af_Dx_af
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000713" class="method-detail">
+        <a name="M000713"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ef_eg</span><span class="method-args">( ag_data ) result(af_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>af_ag(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#af_ag
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000711" class="method-detail">
+        <a name="M000711"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ef_et</span><span class="method-args">( at_data ) result(af_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>af_at(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#af_at
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000697" class="method-detail">
+        <a name="M000697"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eg_eb</span><span class="method-args">( ab_data ) result(ag_ab)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_ab(size(ab_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ab_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#ag_ab
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000677" class="method-detail">
+        <a name="M000677"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eg_ed</span><span class="method-args">( ad_data ) result(ag_ad)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_ad(size(ad_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ad_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#ag_ad
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000717" class="method-detail">
+        <a name="M000717"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eg_ef</span><span class="method-args">( af_data ) result(ag_af)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_af(size(af_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>af_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#ag_af
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000724" class="method-detail">
+        <a name="M000724"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eg_eh</span><span class="method-args">( ah_data ) result(ag_ah)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_ah(size(ah_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ah_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ah_galerkin_MMex#ag_ah
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000707" class="method-detail">
+        <a name="M000707"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eg_ep</span><span class="method-args">( ap_data ) result(ag_ap)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_ap(size(ap_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#ag_ap
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000732" class="method-detail">
+        <a name="M000732"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eg_eq</span><span class="method-args">( aq_data ) result(ag_aq)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_aq(size(aq_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>aq_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#ag_aq
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000687" class="method-detail">
+        <a name="M000687"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eg_ev</span><span class="method-args">( av_data ) result(ag_av)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_av(size(av_data,1),0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>av_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#ag_av
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000725" class="method-detail">
+        <a name="M000725"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eh_Dx_eh</span><span class="method-args">( ah_data ) result(ah_Dx_ah)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ah_Dx_ah(size(ah_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ah_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+X 微分計算(2 次元)
+</p>
+<p>
+Original external subprogram is at_ah_galerkin_MMex#ah_Dx_ah
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000722" class="method-detail">
+        <a name="M000722"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eh_eg</span><span class="method-args">( ag_data ) result(ah_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ah_ag(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ah_galerkin_MMex#ah_ag
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000721" class="method-detail">
+        <a name="M000721"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eh_et</span><span class="method-args">( at_data ) result(ah_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ah_at(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ah_galerkin_MMex#ah_at
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000709" class="method-detail">
+        <a name="M000709"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ep_Dx_ep</span><span class="method-args">( ap_data ) result(ap_Dx_ap)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_Dx_ap(size(ap_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+X 微分計算(2 次元)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#ap_Dx_ap
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000703" class="method-detail">
+        <a name="M000703"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ep_eg</span><span class="method-args">( ag_data ) result(ap_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_ag(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#ap_ag
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000701" class="method-detail">
+        <a name="M000701"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ep_et</span><span class="method-args">( at_data ) result(ap_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_at(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#ap_at
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000734" class="method-detail">
+        <a name="M000734"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eq_Dx_eq</span><span class="method-args">( aq_data ) result(aq_Dx_aq)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>aq_Dx_aq(size(aq_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>aq_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+X 微分計算(2 次元)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#aq_Dx_aq
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000670" class="method-detail">
+        <a name="M000670"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000670" class="method-signature">
+
+
+
+          <span class="method-name">eq_Vor2Strm_et</span><span class="method-args">( et_Zeta ) result(eq_Vor2Strm_et)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000670">eq_Vor2Strm_et</a>(-km:km,4:lm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 流線 ψ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et_Zeta(-km:km,0:lm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 渦度 ζ=▽^2ψ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 2 次元水路領域
+ Fourier 展開 + チェビシェフ−ガラーキン法用モジュール
+
+ 渦度から流線を計算する.
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000670-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000670-source">
+<pre>
+    function eq_Vor2Strm_et(et_Zeta)
+      !
+      !  2 次元水路領域
+      !  Fourier 展開 + チェビシェフ−ガラーキン法用モジュール
+      !
+      !  渦度から流線を計算する.
+      !
+      real(8), intent(IN) :: et_Zeta(-km:km,0:lm)        !(in)  渦度 ζ=▽^2ψ
+      real(8)             :: eq_Vor2Strm_et(-km:km,4:lm) !(out) 流線 ψ
+
+      real(8), allocatable :: LaplaMT(:,:,:)
+      real(8), allocatable :: LaplaInvMT(:,:,:)
+      integer, allocatable :: kpvot(:,:)
+
+      integer, parameter :: ls=4
+
+      real(8) :: eq_work(-km:km,ls:lm)
+      real(8) :: et_work(-km:km,0:lm)
+
+      integer :: k, m, n, l, p
+      logical :: first = .true.
+      save LaplaInvMT, kpvot, first
+
+      if ( .not. Set_RRSS ) call MessageNotify('E','eq_Vor2Strm_et', 'at_aq_galerkin_RRSS_module not initialized.')
+
+      if ( first ) then
+         first = .false.
+         allocate(LaplaMT(-km:km,0:lm,0:lm))
+         allocate(LaplaInvMT(-km:km,ls:lm,ls:lm),kpvot(-km:km,ls:lm))
+
+         LaplaMT=0.0D0
+         do l=0,lm
+            et_work = 0.0D0 
+             et_work(:,l) = 1.0D0
+            et_work = et_Lapla_et(et_work)
+            LaplaMT(:,:,l) = et_work
+         enddo
+
+         LaplaInvMT=0.0
+         do n=ls,lm
+            do m=ls,lm
+               do l=0,lm
+                  do p=0,lm
+                     LaplaInvMT(:,n,m)=LaplaInvMT(:,n,m) +TQ(l,n)*LaplaMT(:,l,p)*alpha(p)*TQ(p,m)
+                  enddo
+               enddo
+            enddo
+         enddo
+
+         call LUDecomp(LaplaInvMT,kpvot)
+         deallocate(LaplaMT)
+      endif
+
+      eq_work=0.0
+      do m=ls,lm
+         do k=0,lm
+            eq_work(:,m)=eq_work(:,m) + alpha(k) * beta(k) * et_Zeta(:,k)* TQ(k,m) 
+         enddo
+      enddo
+
+      eq_Vor2Strm_et = LUSolve(LaplaInvMT,kpvot,eq_work)
+
+    end function eq_Vor2Strm_et
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000728" class="method-detail">
+        <a name="M000728"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eq_eg</span><span class="method-args">( ag_data ) result(aq_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>aq_ag(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#aq_ag
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000726" class="method-detail">
+        <a name="M000726"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">eq_et</span><span class="method-args">( at_data ) result(aq_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>aq_at(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#aq_at
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000740" class="method-detail">
+        <a name="M000740"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_Dx_et</span><span class="method-args">( et ) result(et_Dx_et)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000740">et_Dx_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに X 微分(∂x)を作用する.
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+実際にはスペクトルデータに X 方向波数 k をかけて sin(kx) &lt;-&gt; cos(kx)
+成分に入れ換える計算を行っている.
+</p>
+<p>
+Original external subprogram is <a
+href="et_module.html#M002161">et_module#et_Dx_et</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000741" class="method-detail">
+        <a name="M000741"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_Dy_et</span><span class="method-args">( et ) result(et_Dy_et)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000741">et_Dy_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの Y 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに Y 微分(∂y)を作用する.
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに Y 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="et_module.html#M002162">et_module#et_Dy_et</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000743" class="method-detail">
+        <a name="M000743"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_Jacobian_et_et</span><span class="method-args">( et_a, et_b ) result(et_Jacobian_et_et)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000743">et_Jacobian_et_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 2 つのスペクトルデータのヤコビアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et_a  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1つ目の入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et_b  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2つ目の入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 2 つのスペクトルデータからヤコビアン
+
+    J(A,B)=(∂xA)(∂yB)-(∂yA)(∂xB)
+
+ を計算する.
+
+ 2 つのスペクトルデータのヤコビアンとは, 対応する 2 つの
+ 格子点データのヤコビアンのスペクトル変換のことである.
+</pre>
+<p>
+Original external subprogram is <a
+href="et_module.html#M002164">et_module#et_Jacobian_et_et</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000742" class="method-detail">
+        <a name="M000742"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_Lapla_et</span><span class="method-args">( et ) result(et_Lapla_et)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000742">et_Lapla_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータのラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータにラプラシアン(∂xx+∂yy)を作用する.
+</p>
+<p>
+スペクトルデータのラプラシアンとは, 対応する格子点データに
+ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="et_module.html#M002163">et_module#et_Lapla_et</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000695" class="method-detail">
+        <a name="M000695"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_eb</span><span class="method-args">( ab_data ) result(at_ab)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_ab(size(ab_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ab_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#at_ab
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000675" class="method-detail">
+        <a name="M000675"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_ed</span><span class="method-args">( ad_data ) result(at_ad)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_ad(size(ad_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ad_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#at_ad
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000715" class="method-detail">
+        <a name="M000715"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_ef</span><span class="method-args">( af_data ) result(at_af)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_af(size(af_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>af_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#at_af
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000723" class="method-detail">
+        <a name="M000723"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_eh</span><span class="method-args">( ah_data ) result(at_ah)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_ah(size(ah_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ah_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ah_galerkin_MMex#at_ah
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000705" class="method-detail">
+        <a name="M000705"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_ep</span><span class="method-args">( ap_data ) result(at_ap)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_ap(size(ap_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ap_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+片端ディリクレ片端ノイマン境界条件 ガラーキン係数 -&gt;
+チェビシェフ係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#at_ap
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000730" class="method-detail">
+        <a name="M000730"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_eq</span><span class="method-args">( aq_data ) result(at_aq)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_aq(size(aq_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>aq_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#at_aq
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000685" class="method-detail">
+        <a name="M000685"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_ev</span><span class="method-args">( av_data ) result(at_av)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>at_av(size(av_data,1),0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>av_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#at_av
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000669" class="method-detail">
+        <a name="M000669"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000669" class="method-signature">
+
+
+
+          <span class="method-name">et_galerkin_Initial</span><span class="method-args">( i, j, k, l, xmin, xmax, ymin, ymax, [DD], [NN], [DN], [ND], [velBC], [MM_cfdx0_xmin], [MM_cfdx1_xmin], [MM_cfdx0_xmax], [MM_cfdx1_xmax], [MMex_cfdx0_xmin], [MMex_cfdx1_xmin], [MMex_cfdx0_xmax], [MMex_cfdx1_xmax] ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>i  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点の設定(X,Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>j  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点の設定(X,Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>k  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数の設定(X,Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数の設定(X,Y)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xmin  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xmax  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ymin  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> Y 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ymax  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> Y 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>DD  </tt></b>  <tt> </tt> :</td><td><tt>logical,intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> モジュール読み込みスイッチ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>NN  </tt></b>  <tt> </tt> :</td><td><tt>logical,intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> モジュール読み込みスイッチ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>DN  </tt></b>  <tt> </tt> :</td><td><tt>logical,intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> モジュール読み込みスイッチ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ND  </tt></b>  <tt> </tt> :</td><td><tt>logical,intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> モジュール読み込みスイッチ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>velBC  </tt></b>  <tt> </tt> :</td><td><tt>character(LEN=2),intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 境界条件(RR/SS/RS/SR)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>MM_cfdx0_xmin  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (0階微分@x=xmin)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>MM_cfdx1_xmin  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(In),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (1階微分@x=xmin)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>MM_cfdx0_xmax  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (0階微分@x=xmax)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>MM_cfdx1_xmax  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (1階微分@x=xmax)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>MMex_cfdx0_xmin(-k:k)  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (0階微分@x=xmin)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>MMex_cfdx1_xmin(-k:k)  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (1階微分@x=xmin)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>MMex_cfdx0_xmax(-k:k)  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (0階微分@x=xmax)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>MMex_cfdx1_xmax(-k:k)  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in),optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (1階微分@x=xmax)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<pre>
+ 2 次元水路領域
+ Fourier 展開 + チェビシェフ−ガラーキン法用モジュール
+
+ 初期化サブルーチン
+</pre>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000669-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000669-source">
+<pre>
+    subroutine et_galerkin_Initial(i,j,k,l,xmin,xmax,ymin,ymax, DD,NN,DN,ND,velBC, MM_cfdx0_xmin, MM_cfdx1_xmin, MM_cfdx0_xmax, MM_cfdx1_xmax, MMex_cfdx0_xmin, MMex_cfdx1_xmin, MMex_cfdx0_xmax, MMex_cfdx1_xmax)
+      !
+      !  2 次元水路領域
+      !  Fourier 展開 + チェビシェフ−ガラーキン法用モジュール
+      !
+      !  初期化サブルーチン
+      !
+      integer,intent(in) :: i, j           ! 格子点の設定(X,Y)
+      integer,intent(in) :: k, l           ! 切断波数の設定(X,Y)
+
+      real(8),intent(in) :: xmin, xmax     ! X 座標範囲
+      real(8),intent(in) :: ymin, ymax     ! Y 座標範囲
+
+      logical,intent(in),optional :: DD  ! モジュール読み込みスイッチ
+      logical,intent(in),optional :: NN  ! モジュール読み込みスイッチ
+      logical,intent(in),optional :: DN  ! モジュール読み込みスイッチ
+      logical,intent(in),optional :: ND  ! モジュール読み込みスイッチ
+
+      ! at_af_galerkin_MM_module 境界条件係数
+      real(8),intent(in),optional :: MM_cfdx0_xmin ! (0階微分@x=xmin)
+      real(8),intent(In),optional :: MM_cfdx1_xmin ! (1階微分@x=xmin)
+      real(8),intent(in),optional :: MM_cfdx0_xmax ! (0階微分@x=xmax)
+      real(8),intent(in),optional :: MM_cfdx1_xmax ! (1階微分@x=xmax)
+
+      ! at_ah_galerkin_MMex_module 境界条件係数
+      real(8),intent(in),optional :: MMex_cfdx0_xmin(-k:k) ! (0階微分@x=xmin)
+      real(8),intent(in),optional :: MMex_cfdx1_xmin(-k:k) ! (1階微分@x=xmin)
+      real(8),intent(in),optional :: MMex_cfdx0_xmax(-k:k) ! (0階微分@x=xmax)
+      real(8),intent(in),optional :: MMex_cfdx1_xmax(-k:k) ! (1階微分@x=xmax)
+
+      ! at_aq_galerkin_RRSS_module 速度場境界条件
+      character(LEN=2),intent(in),optional :: velBC  ! 境界条件(RR/SS/RS/SR)
+
+      !--------------- 引数処理 -----------------
+      im=i 
+       jm = j 
+       km=k 
+       lm=l
+
+      if ( present(DD) ) Set_DD = DD
+      if ( present(NN) ) Set_NN = NN
+      if ( present(DN) ) Set_DN = DN
+      if ( present(ND) ) Set_ND = ND
+
+      if ( present(MM_cfdx0_xmin) .AND.present(MM_cfdx1_xmin) .AND. present(MM_cfdx0_xmax) .AND.present(MM_cfdx1_xmax) ) Set_MM=.true.
+
+      if ( present(MMex_cfdx0_xmin) .AND.present(MMex_cfdx1_xmin) .AND. present(MMex_cfdx0_xmax) .AND.present(MMex_cfdx1_xmax) ) Set_MMex=.true.
+
+      if ( present(velBC) ) Set_RRSS = .true.
+
+      !--------------- モジュール初期化 -----------------
+      call et_Initial(im,jm,km,lm,xmin,xmax,ymin,ymax)
+      if ( Set_DD ) call at_ad_galerkin_DD_Initial(jm,lm)
+      if ( Set_NN ) call at_av_galerkin_NN_Initial(jm,lm)
+      if ( Set_DN ) call at_ap_galerkin_DN_Initial(jm,lm)
+      if ( Set_ND ) call at_ab_galerkin_ND_Initial(jm,lm)
+      if ( Set_MM ) call at_af_galerkin_MM_Initial (jm,lm, MM_cfdx0_xmax, MM_cfdx1_xmax, MM_cfdx0_xmin, MM_cfdx1_xmin   )
+      if ( Set_MMex ) call at_ah_galerkin_MMex_Initial (jm,lm,2*km+1, MMex_cfdx0_xmax, MMex_cfdx1_xmax, MMex_cfdx0_xmin, MMex_cfdx1_xmin   )
+
+      if ( Set_RRSS ) call at_aq_galerkin_RRSS_Initial(jm,lm,velBC)
+
+    end subroutine et_galerkin_initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000739" class="method-detail">
+        <a name="M000739"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">et_yx</span><span class="method-args">( yx ) result(et_yx)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000739">et_yx</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>yx  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データからスペクトルデータへ変換する.
+</p>
+<p>
+Original external subprogram is <a
+href="et_module.html#M002160">et_module#et_yx</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000689" class="method-detail">
+        <a name="M000689"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ev_Dx_ev</span><span class="method-args">( av_data ) result(av_Dx_av)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>av_Dx_av(size(av_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 微分ガラーキン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>av_data(:,ks:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+X 微分計算(1 次元)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#av_Dx_av
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000683" class="method-detail">
+        <a name="M000683"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ev_eg</span><span class="method-args">( ag_data ) result(av_ag)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>av_ag(size(ag_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#av_ag
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000681" class="method-detail">
+        <a name="M000681"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ev_et</span><span class="method-args">( at_data ) result(av_at)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>av_at(size(at_data,1),ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>at_data(:,0:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(2次元データ)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#av_at
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000720" class="method-detail">
+        <a name="M000720"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">f_Dx_f</span><span class="method-args">( f_data ) result(f_Dx_f)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000720">f_Dx_f</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>f_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+X 微分計算(1 次元)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#f_Dx_f
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000714" class="method-detail">
+        <a name="M000714"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">f_g</span><span class="method-args">( g_data ) result(f_g)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000714">f_g</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#f_g
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000712" class="method-detail">
+        <a name="M000712"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">f_t</span><span class="method-args">( t_data ) result(f_t)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000712">f_t</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#f_t
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000698" class="method-detail">
+        <a name="M000698"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">g_b</span><span class="method-args">( b_data ) result(g_b)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000698">g_b</a>(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#g_b
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000678" class="method-detail">
+        <a name="M000678"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">g_d</span><span class="method-args">( d_data ) result(g_d)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000678">g_d</a>(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>d_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#g_d
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000718" class="method-detail">
+        <a name="M000718"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">g_f</span><span class="method-args">( f_data ) result(g_f)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000718">g_f</a>(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>f_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#g_f
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000708" class="method-detail">
+        <a name="M000708"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">g_p</span><span class="method-args">( p_data ) result(g_p)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000708">g_p</a>(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>p_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#g_p
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000733" class="method-detail">
+        <a name="M000733"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">g_q</span><span class="method-args">( q_data ) result(g_q)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000733">g_q</a>(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>q_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#g_q
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000688" class="method-detail">
+        <a name="M000688"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">g_v</span><span class="method-args">( v_data ) result(g_v)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000688">g_v</a>(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>v_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; 格子点データ変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#g_v
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000710" class="method-detail">
+        <a name="M000710"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">p_Dx_p</span><span class="method-args">( p_data ) result(p_Dx_p)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000710">p_Dx_p</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>p_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+X 微分計算(1 次元)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#p_Dx_p
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000704" class="method-detail">
+        <a name="M000704"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">p_g</span><span class="method-args">( g_data ) result(p_g)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000704">p_g</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#p_g
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000702" class="method-detail">
+        <a name="M000702"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">p_t</span><span class="method-args">( t_data ) result(p_t)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000702">p_t</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#p_t
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000735" class="method-detail">
+        <a name="M000735"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">q_Dx_q</span><span class="method-args">( q_data ) result(q_Dx_q)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000735">q_Dx_q</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>q_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+X 微分計算(1 次元)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#q_Dx_q
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000729" class="method-detail">
+        <a name="M000729"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">q_g</span><span class="method-args">( g_data ) result(q_g)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000729">q_g</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#q_g
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000727" class="method-detail">
+        <a name="M000727"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">q_t</span><span class="method-args">( t_data ) result(q_t)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000727">q_t</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#q_t
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000696" class="method-detail">
+        <a name="M000696"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">t_b</span><span class="method-args">( b_data ) result(t_b)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000696">t_b</a>(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>b_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ノイマン片端ディリクレ境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ab_galerkin_ND#t_b
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000676" class="method-detail">
+        <a name="M000676"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">t_d</span><span class="method-args">( d_data ) result(t_d)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000676">t_d</a>(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>d_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ディリクレ境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ad_galerkin_DD#t_d
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000716" class="method-detail">
+        <a name="M000716"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">t_f</span><span class="method-args">( f_data ) result(t_f)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000716">t_f</a>(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>f_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 ディリクレ・ノイマン混合境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_af_galerkin_MM#t_f
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000706" class="method-detail">
+        <a name="M000706"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">t_p</span><span class="method-args">( p_data ) result(t_p)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000706">t_p</a>(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>p_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 片端ディリクレ片端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_ap_galerkin_DN#t_p
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000731" class="method-detail">
+        <a name="M000731"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">t_q</span><span class="method-args">( q_data ) result(t_q)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000731">t_q</a>(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>q_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 非圧縮流体の流線関数・流れポテンシャル用
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_aq_galerkin_RRSS#t_q
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000686" class="method-detail">
+        <a name="M000686"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">t_v</span><span class="method-args">( v_data ) result(t_v)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000686">t_v</a>(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>v_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+ガラーキン係数 -&gt; チェビシェフ係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#t_v
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000690" class="method-detail">
+        <a name="M000690"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">v_Dx_v</span><span class="method-args">( v_data ) result(v_Dx_v)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000690">v_Dx_v</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>v_data(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+X 微分計算(1 次元)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#v_Dx_v
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000684" class="method-detail">
+        <a name="M000684"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">v_g</span><span class="method-args">( g_data ) result(v_g)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000684">v_g</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g_data(0:im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+格子点データ -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#v_g
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000682" class="method-detail">
+        <a name="M000682"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">v_t</span><span class="method-args">( t_data ) result(v_t)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000682">v_t</a>(ks:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) ガラーキン係数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>t_data(0:km)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) チェビシェフ係数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+チェビシェフ−ガラーキン法 両端ノイマン境界条件
+</p>
+<p>
+チェビシェフ係数 -&gt; ガラーキン係数変換(1次元データ)
+</p>
+<p>
+Original external subprogram is at_av_galerkin_NN#v_t
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000736" class="method-detail">
+        <a name="M000736"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">yx_X</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000736">yx_X</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), allocatable</tt>
+
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="et_module.html#M002156">et_module#yx_X</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000737" class="method-detail">
+        <a name="M000737"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">yx_Y</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000737">yx_Y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), allocatable</tt>
+
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="et_module.html#M002157">et_module#yx_Y</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000738" class="method-detail">
+        <a name="M000738"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">yx_et</span><span class="method-args">( et ) result(yx_et)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="et_galerkin_module.html#M000738">yx_et</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:jm,0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>et  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km,0:lm), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子データへ変換する.
+</p>
+<p>
+Original external subprogram is <a
+href="et_module.html#M002159">et_module#yx_et</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

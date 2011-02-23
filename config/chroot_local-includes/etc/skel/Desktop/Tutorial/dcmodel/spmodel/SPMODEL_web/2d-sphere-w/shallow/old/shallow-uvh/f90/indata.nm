@@ -1,0 +1,16 @@
+&NMRUN  RUN='Experiment of Non-linear shallow water equation on a sphere', 
+	SIGN='GFD_Dennou Club davis/spmodel project' /
+&NMINTG DELT=400.0, 
+	TFIL=0.05 / 
+&NMTIME INTRST=216, 
+	ENDRST=20 /
+&NMINIT INPUT_FILE='shallow_uvh_init.nc', 
+	TINIT=0.0  /
+&NMRSTR OUTPUT_FILE='shallow_uvh_001.nc'  /
+&NMODEL MODEL_NAME='shallow_uvh: sample program of SPMODEL', 
+	MODEL='shallow' /
+&NMPCON R0=6.371D6, 
+	Omega=7.292D-5, 
+	GRAV=9.8D0, 
+	H0=5.96D3 /
+&NMCASE EXP_CASE='case5' /

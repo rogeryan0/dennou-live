@@ -1,0 +1,36 @@
+a:link       { color: #339933 }
+.left        {margin-left: 0ex}
+.large       {font-size:120%}
+a:visited    { color: rgb(0,204,204); } 
+a:active     { color: rgb(204,153,51);}
+body         { font-family: Arial; background-color: #ffffff; color:#000000; 
+               MARGIN-LEFT: 3ex; MARGIN-RIGHT: 5ex; line-height: 140% }
+table        { table-border-color-light: rgb(153,204,153); 
+               table-border-color-dark:  rgb(153,204,153); 
+               margin-left: 4ex;
+               margin-right: 1ex; margin-top:0.5ex; margin-bottom:0.5ex}
+h1, h2, h3, h4, h5, h6 { font-family: Arial }
+h1           { color: #205080; margin-left: 1ex; margin-right: 1ex }
+h2           { font-size:150%; color: #205080; 
+               margin-left: 1ex; margin-right: 1ex; margin-top:2ex; 
+               margin-bottom:0ex }
+h3           { font-size:110%; color: #205080; margin-left: 2ex; 
+               margin-right: 1ex; margin-top:2ex; margin-bottom:0ex }
+h4           { color: #205080; margin-left: 3ex; margin-right: 1ex }
+h5           { color: rgb(204,153,51); margin-left: 4ex; margin-right:1ex }
+h6           { color: rgb(153,153,51); margin-left: 5ex; margin-right:1ex }
+p            { text-indent: 0; margin-left: 3ex; margin-right: 1ex;
+               margin-top:0.5ex; margin-bottom:0.5ex; line-height=150%}
+ul           { margin-left: 5ex; margin-top:0.5ex; margin-bottom:0.5ex}
+ol           { margin-left: 5ex }
+.script      { font-family: Courier New }
+.small       { line-height=50%}
+.source      { padding:2ex; background-color: #DBD7BE}
+.results   { margin-left: 8ex; padding:2ex}
+p.source   { width:100%; background-color: #FF0000}
+textarea.source { margin-left: 8ex }
+span.command { 
+	font-weight: bold; 
+#	text-decoration: underline;
+	color: #000090;
+}

@@ -1,0 +1,271 @@
+netcdf epflx_NCEP {
+dimensions:
+	lat = 37 ;
+	level = 12 ;
+	time = 120 ;
+variables:
+	float lat(lat) ;
+		lat:long_name = "Latitude" ;
+		lat:units = "degrees_north" ;
+		lat:actual_range = 90.f, -90.f ;
+	float level(level) ;
+		level:GRIB_id = 100s ;
+		level:positive = "down" ;
+		level:long_name = "Level" ;
+		level:units = "mb" ;
+		level:actual_range = 1000.f, 10.f ;
+		level:GRIB_name = "hPa" ;
+	double time(time) ;
+		time:delta_t = "0000-00-00 06:00:00" ;
+		time:long_name = "Time" ;
+		time:units = "hours since 1-1-1 00:00:0.0" ;
+		time:actual_range = 17531688., 17540442. ;
+	float epflx_y(time, level, lat) ;
+		epflx_y:GRIB_id = 33s ;
+		epflx_y:title = "4xDaily U-wind, NMC reanalysis (2001-04)" ;
+		epflx_y:parent_stat = "Other\n",
+    "-" ;
+		epflx_y:var_desc = "u-wind\n",
+    "U" ;
+		epflx_y:missing_value = 32766s ;
+		epflx_y:long_name = "EP flux y component" ;
+		epflx_y:least_significant_digit = 1s ;
+		epflx_y:units = "m2 s-2" ;
+		epflx_y:level_desc = "Multiple levels\n",
+    "F" ;
+		epflx_y:actual_range = -90.5f, 128.6f ;
+		epflx_y:dataset = "NMC Reanalysis\n",
+    "L" ;
+		epflx_y:precision = 2s ;
+		epflx_y:statistic = "Individual Obs\n",
+    "I" ;
+		epflx_y:GRIB_name = "UGRD" ;
+	float epflx_z(time, level, lat) ;
+		epflx_z:GRIB_id = 33s ;
+		epflx_z:title = "4xDaily U-wind, NMC reanalysis (2001-04)" ;
+		epflx_z:parent_stat = "Other\n",
+    "-" ;
+		epflx_z:var_desc = "u-wind\n",
+    "U" ;
+		epflx_z:missing_value = 32766s ;
+		epflx_z:long_name = "EP flux z component" ;
+		epflx_z:least_significant_digit = 1s ;
+		epflx_z:units = "Pascal.kg-1 m3" ;
+		epflx_z:level_desc = "Multiple levels\n",
+    "F" ;
+		epflx_z:actual_range = -90.5f, 128.6f ;
+		epflx_z:dataset = "NMC Reanalysis\n",
+    "L" ;
+		epflx_z:precision = 2s ;
+		epflx_z:statistic = "Individual Obs\n",
+    "I" ;
+		epflx_z:GRIB_name = "UGRD" ;
+	float v_rmean(time, level, lat) ;
+		v_rmean:GRIB_id = 34s ;
+		v_rmean:missing_value = 32766s ;
+		v_rmean:var_desc = "v-wind\n",
+    "V" ;
+		v_rmean:parent_stat = "Other\n",
+    "-" ;
+		v_rmean:title = "4xDaily V wind, NMC reanalysis (2001-04)" ;
+		v_rmean:long_name = "residual zonal mean V" ;
+		v_rmean:units = "m/s" ;
+		v_rmean:scale_factor = 0.01f ;
+		v_rmean:least_significant_digit = 1s ;
+		v_rmean:actual_range = -91.7f, 83.f ;
+		v_rmean:level_desc = "Multiple levels\n",
+    "F" ;
+		v_rmean:add_offset = 202.66f ;
+		v_rmean:dataset = "NMC Reanalysis\n",
+    "L" ;
+		v_rmean:precision = 2s ;
+		v_rmean:statistic = "Individual Obs\n",
+    "I" ;
+		v_rmean:GRIB_name = "VGRD" ;
+	float w_rmean(time, level, lat) ;
+		w_rmean:GRIB_id = 39s ;
+		w_rmean:title = "4xDaily Omega, NMC reanalysis (2001-04)" ;
+		w_rmean:parent_stat = "Other\n",
+    "-" ;
+		w_rmean:var_desc = "Omega (dp/dt)\n",
+    "Z" ;
+		w_rmean:missing_value = 32766s ;
+		w_rmean:long_name = "residual zonal mean W" ;
+		w_rmean:least_significant_digit = 3s ;
+		w_rmean:units = "Pascal.kg-1 m2 s" ;
+		w_rmean:level_desc = "Multiple levels\n",
+    "F" ;
+		w_rmean:dataset = "NMC Reanalysis\n",
+    "L" ;
+		w_rmean:precision = 3s ;
+		w_rmean:statistic = "Individual Obs\n",
+    "I" ;
+		w_rmean:GRIB_name = "VVEL" ;
+	float phi(lat) ;
+		phi:long_name = "Latitude" ;
+		phi:units = "L" ;
+		phi:actual_range = 90.f, -90.f ;
+	float z(level) ;
+		z:GRIB_id = 100s ;
+		z:positive = "down" ;
+		z:long_name = "z" ;
+		z:units = "m" ;
+		z:actual_range = 1000.f, 10.f ;
+		z:GRIB_name = "hPa" ;
+	float uwnd(time, level, lat) ;
+		uwnd:GRIB_id = 33s ;
+		uwnd:title = "4xDaily U-wind, NMC reanalysis (2001-04)" ;
+		uwnd:parent_stat = "Other\n",
+    "-" ;
+		uwnd:var_desc = "u-wind\n",
+    "U" ;
+		uwnd:missing_value = 32766s ;
+		uwnd:long_name = "4xDaily U-wind" ;
+		uwnd:least_significant_digit = 1s ;
+		uwnd:scale_factor = 0.01f ;
+		uwnd:units = "m/s" ;
+		uwnd:level_desc = "Multiple levels\n",
+    "F" ;
+		uwnd:actual_range = -90.5f, 128.6f ;
+		uwnd:dataset = "NMC Reanalysis\n",
+    "L" ;
+		uwnd:add_offset = 202.66f ;
+		uwnd:precision = 2s ;
+		uwnd:statistic = "Individual Obs\n",
+    "I" ;
+		uwnd:GRIB_name = "UGRD" ;
+	float temp(time, level, lat) ;
+		temp:GRIB_id = 11s ;
+		temp:missing_value = 32766s ;
+		temp:var_desc = "Air temperature\n",
+    "A" ;
+		temp:parent_stat = "Other\n",
+    "-" ;
+		temp:title = "4xDaily Air temperature, NMC reanalysis (2001-04)" ;
+		temp:long_name = "Potential Temperature" ;
+		temp:units = "degK" ;
+		temp:least_significant_digit = 1s ;
+		temp:level_desc = "Multiple levels\n",
+    "F" ;
+		temp:dataset = "NMC Reanalysis\n",
+    "L" ;
+		temp:precision = 2s ;
+		temp:statistic = "Individual Obs\n",
+    "I" ;
+		temp:GRIB_name = "TMP" ;
+	float uv_dash(time, level, lat) ;
+		uv_dash:GRIB_id = 33s ;
+		uv_dash:title = "4xDaily U-wind, NMC reanalysis (2001-04)" ;
+		uv_dash:parent_stat = "Other\n",
+    "-" ;
+		uv_dash:var_desc = "u-wind\n",
+    "U" ;
+		uv_dash:missing_value = 32766s ;
+		uv_dash:long_name = "U\'V\'" ;
+		uv_dash:least_significant_digit = 1s ;
+		uv_dash:units = "m2 s-2" ;
+		uv_dash:level_desc = "Multiple levels\n",
+    "F" ;
+		uv_dash:actual_range = -90.5f, 128.6f ;
+		uv_dash:dataset = "NMC Reanalysis\n",
+    "L" ;
+		uv_dash:precision = 2s ;
+		uv_dash:statistic = "Individual Obs\n",
+    "I" ;
+		uv_dash:GRIB_name = "UGRD" ;
+	float vt_dash(time, level, lat) ;
+		vt_dash:GRIB_id = 34s ;
+		vt_dash:title = "4xDaily V wind, NMC reanalysis (2001-04)" ;
+		vt_dash:parent_stat = "Other\n",
+    "-" ;
+		vt_dash:var_desc = "v-wind\n",
+    "V" ;
+		vt_dash:missing_value = 32766s ;
+		vt_dash:long_name = "V\'T\'" ;
+		vt_dash:least_significant_digit = 1s ;
+		vt_dash:units = "degK.m.s-1" ;
+		vt_dash:level_desc = "Multiple levels\n",
+    "F" ;
+		vt_dash:actual_range = -91.7f, 83.f ;
+		vt_dash:dataset = "NMC Reanalysis\n",
+    "L" ;
+		vt_dash:precision = 2s ;
+		vt_dash:statistic = "Individual Obs\n",
+    "I" ;
+		vt_dash:GRIB_name = "VGRD" ;
+	float uw_dash(time, level, lat) ;
+		uw_dash:GRIB_id = 33s ;
+		uw_dash:title = "4xDaily U-wind, NMC reanalysis (2001-04)" ;
+		uw_dash:parent_stat = "Other\n",
+    "-" ;
+		uw_dash:var_desc = "u-wind\n",
+    "U" ;
+		uw_dash:missing_value = 32766s ;
+		uw_dash:long_name = "U\'W\'" ;
+		uw_dash:least_significant_digit = 1s ;
+		uw_dash:units = "Pascal.kg-1 m3" ;
+		uw_dash:level_desc = "Multiple levels\n",
+    "F" ;
+		uw_dash:actual_range = -90.5f, 128.6f ;
+		uw_dash:dataset = "NMC Reanalysis\n",
+    "L" ;
+		uw_dash:precision = 2s ;
+		uw_dash:statistic = "Individual Obs\n",
+    "I" ;
+		uw_dash:GRIB_name = "UGRD" ;
+	float dtemp_dz(time, level, lat) ;
+		dtemp_dz:GRIB_id = 11s ;
+		dtemp_dz:title = "4xDaily Air temperature, NMC reanalysis (2001-04)" ;
+		dtemp_dz:parent_stat = "Other\n",
+    "-" ;
+		dtemp_dz:var_desc = "Air temperature\n",
+    "A" ;
+		dtemp_dz:missing_value = 32766s ;
+		dtemp_dz:long_name = "d_Potential Temperature_d_z" ;
+		dtemp_dz:least_significant_digit = 1s ;
+		dtemp_dz:units = "degK.m-1" ;
+		dtemp_dz:level_desc = "Multiple levels\n",
+    "F" ;
+		dtemp_dz:dataset = "NMC Reanalysis\n",
+    "L" ;
+		dtemp_dz:precision = 2s ;
+		dtemp_dz:statistic = "Individual Obs\n",
+    "I" ;
+		dtemp_dz:GRIB_name = "TMP" ;
+	float epflx_div(time, level, lat) ;
+		epflx_div:GRIB_id = 33s ;
+		epflx_div:title = "4xDaily U-wind, NMC reanalysis (2001-04)" ;
+		epflx_div:parent_stat = "Other\n",
+    "-" ;
+		epflx_div:var_desc = "u-wind\n",
+    "U" ;
+		epflx_div:missing_value = 32766s ;
+		epflx_div:long_name = "EP Flux divergence" ;
+		epflx_div:least_significant_digit = 1s ;
+		epflx_div:units = "m.s-2" ;
+		epflx_div:valid_range = -125.f, 160.f ;
+		epflx_div:level_desc = "Multiple levels\n",
+    "F" ;
+		epflx_div:actual_range = -90.5f, 128.6f ;
+		epflx_div:dataset = "NMC Reanalysis\n",
+    "L" ;
+		epflx_div:precision = 2s ;
+		epflx_div:statistic = "Individual Obs\n",
+    "I" ;
+		epflx_div:GRIB_name = "UGRD" ;
+
+// global attributes:
+		:history = "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write epflx_y\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write epflx_z\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write v_rmean\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write w_rmean\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write phi\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write z\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write uwnd\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write temp\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write uv_dash\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write vt_dash\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write uw_dash\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write dtemp_dz\n",
+    "2004-09-20 15:36:13 JST daktu32> NumRu::GPhys::NetCDF_IO.write epflx_div" ;
+}

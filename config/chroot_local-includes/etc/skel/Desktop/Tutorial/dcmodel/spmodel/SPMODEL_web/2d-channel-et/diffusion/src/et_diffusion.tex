@@ -1,0 +1,1086 @@
+%表題  SPMODEL レファレンスマニュアル
+%
+%      2 次元水路領域の拡散方程式の解析解
+%      チェビシェフ関数展開を利用した計算チェック用
+%
+%履歴  2006/02/06 作成  竹広真一
+%      2006/02/13 改訂
+%
+\documentclass[a4j,12pt]{jarticle}
+\usepackage{Dennou6}
+
+\Dtitle[2 次元水路での拡散方程式解]
+       {2 次元水路領域での\\拡散型方程式の解析解}
+\Dauthor{竹広真一}
+\Ddate{平成 18 年 2 月 13 日}
+
+\Dparskip
+
+\begin{document}
+
+\maketitle
+
+この文章では, フーリエ--チェビシェフ関数展開を利用した
+2 次元水路領域での流体計算のための SPMODEL ライブラリ(spml)の
+モジュール et\_module のテストのために, 
+2 次元水路領域での拡散型方程式のさまざまな境界条件に対する
+解を(できるだけ)解析的に求めることを行う. 
+
+
+  \section{拡散方程式}
+
+    幅 $d$ の平行壁ではさまれた 2 次元水路領域での拡散問題を
+    考える. 支配方程式は 2 次元拡散方程式
+    %
+    \begin{equation}
+      \Deqlab{拡散方程式}
+      \DP{\phi}{t} = \kappa \left(\DP[2]{}{x}+\DP[2]{}{y}\right)\phi
+    \end{equation}
+    %
+    $\phi$ は拡散する物理量であり, 例えば温度, 組成濃度, 磁場などである.
+    $x$, $y$ はそれぞれ壁に平行および垂直方向の座標, 
+    $\kappa$ は拡散率(正数)である. 
+    一般性を失うことなく, $y$ 座標の原点を水路の中央に選ぶことにする. 
+
+    一般的な境界条件は, 境界での物理量とその $y$ 微分の
+    線形結合で与えられる(混合型境界条件). 
+    %
+    \begin{eqnarray}
+      \Deqlab{混合型境界条件上}
+      & & \alpha_{1,d/2}\DP{\phi}{y} + \alpha_{0,d/2}\phi =0, 
+          \quad {\rm at} \quad y=\frac{d}{2},\\
+      \Deqlab{混合型境界条件下}
+      & & \alpha_{1,-d/2}\DP{\phi}{y} + \alpha_{0,-d/2}\phi =0, 
+          \quad {\rm at} \quad y=-\frac{d}{2},
+    \end{eqnarray}
+    %
+    ここで $\alpha_{i,j}$ は定数係数であり, 以下の条件を満たしている
+    ものとする. 
+    %
+    \begin{equation}
+      \alpha_{1,d/2}\cdot\alpha_{0,d/2} \ge 0, \quad
+      \alpha_{1,-d/2}\cdot\alpha_{0,-d/2} \le 0, \quad
+    \end{equation}
+    %
+    ただし $\alpha_{1,d/2}$ と $\alpha_{0,d/2}$, 
+    および $\alpha_{1,-d/2}$ と $\alpha_{0,-d/2}$ は同時には
+    0 にはならないものとする. 
+
+    \subsection{フーリエ関数展開}
+
+      $x$ 方向には周期的であるからフーリエ関数系で展開して解くことが
+      できる. 以下, その 1 波数成分のみ取りだして扱う. 
+      時間に関しても指数型の解を仮定し, 
+      %
+      \begin{equation}
+        \Deqlab{フーリエ展開}
+        \phi(x,y,t)=\tilde{\phi}(y)e^{ikx+\sigma t},
+      \end{equation}
+      %
+      これを支配方程式に代入すると, 
+      %
+      \begin{equation}
+        \Deqlab{拡散方程式フーリエ展開}
+          \sigma \tilde{\phi} = 
+              \kappa \left(\DD[2]{}{y}-k^2\right) \tilde{\phi},
+      \end{equation}
+      %
+      境界条件は, 
+      %
+      \begin{eqnarray}
+        \Deqlab{混合型境界条件上フーリエ展開}
+        & & \alpha_{1,d/2}\DD{\tilde{\phi}}{y} 
+             + \alpha_{0,d/2}\tilde{\phi} =0, 
+               \quad {\rm at} \quad y=\frac{d}{2},\\
+        \Deqlab{混合型境界条件下フーリエ展開}
+        & & \alpha_{1,-d/2}\DD{\phi}{y} 
+              + \alpha_{0,-d/2}\tilde{\phi} =0, 
+               \quad {\rm at} \quad y=-\frac{d}{2}.
+      \end{eqnarray}
+
+    \subsection{最大成長率の見積もり}
+
+      成長率の最大値を領域積分から見積もることができる. 
+      \Deqref{拡散方程式フーリエ展開}に $\tilde{\phi}^*$ をかけて
+      $y$ 方向に全領域積分を行い, 部分積分を繰り返すと, 
+      %
+      \begin{eqnarray*}
+        \sigma \int_{-d/2}^{d/2}|\tilde{\phi}|^2 dy &=&
+              \int_{-d/2}^{d/2} dy \tilde{\phi}^*  
+                \kappa \left(\DD[2]{}{y}-k^2\right) \tilde{\phi}\\
+        &=& \kappa \int_{-d/2}^{d/2} dy \tilde{\phi}^*\DD[2]{\tilde{\phi}}{y}  
+             -k^2 \kappa \int_{-d/2}^{d/2} |\tilde{\phi}|^2 dy\\
+        &=&  \kappa\left[
+                  \tilde{\phi}^*\DD{\tilde{\phi}}{y}\right]_{-d/2}^{d/2} 
+            \kappa \int_{-d/2}^{d/2}\left|\DD{\tilde{\phi}}{y}\right|^2 dy 
+             -\kappa k^2 \int_{-d/2}^{d/2} |\tilde{\phi}|^2 dy.
+      \end{eqnarray*}
+      %
+      ここで, 境界条件を用いて右辺第 1 項目を見積もると
+      \begin{eqnarray*}
+        & & \left[\tilde{\phi}^*\DD{\tilde{\phi}}{y}\right]_{-d/2}^{d/2}\\
+        &=& \left\{
+        \begin{array}{cc}
+          -\frac{\alpha_{1,d/2}}{\alpha_{0,d/2}}
+               \left|\DD{\tilde{\phi}}{y}\right|^2_{y=d/2}
+          & (\alpha_{0,d/2}\neq0)\\
+          -\frac{\alpha_{0,d/2}}{\alpha_{1,d/2}}|\tilde{\phi}|^2_{y=d/2}
+          & (\alpha_{1,d/2}\neq0)
+        \end{array}
+        \right\}
+        - \left\{
+        \begin{array}{cc}
+          -\frac{\alpha_{1,-d/2}}{\alpha_{0,-d/2}}
+               \left|\DD{\tilde{\phi}}{y}\right|^2_{y=-d/2}
+          & (\alpha_{0,-d/2}\neq0)\\
+          -\frac{\alpha_{0,-d/2}}{\alpha_{1,-d/2}}|\tilde{\phi}|^2_{y=-d/2}
+          & (\alpha_{1,-d/2}\neq0)
+        \end{array}
+        \right\}\\
+        &=& -\left\{
+        \begin{array}{cc}
+          \frac{\alpha_{1,d/2}}{\alpha_{0,d/2}}
+               \left|\DD{\tilde{\phi}}{y}\right|^2_{y=d/2}
+          & (\alpha_{0,d/2}\neq0)\\
+          \frac{\alpha_{0,d/2}}{\alpha_{1,d/2}}|\tilde{\phi}|^2_{y=d/2}
+          & (\alpha_{1,d/2}\neq0)
+        \end{array}
+        \right\}
+        + \left\{
+        \begin{array}{cc}
+          \frac{\alpha_{1,-d/2}}{\alpha_{0,-d/2}}
+               \left|\DD{\tilde{\phi}}{y}\right|^2_{y=-d/2}
+          & (\alpha_{0,-d/2}\neq0)\\
+          \frac{\alpha_{0,-d/2}}{\alpha_{1,-d/2}}|\tilde{\phi}|^2_{y=-d/2}
+          & (\alpha_{1,-d/2}\neq0)
+        \end{array}
+        \right\}\\
+        & \le & 0.
+      \end{eqnarray*}
+      %
+      したがって, 
+      \begin{eqnarray*}
+        \sigma \int_{-d/2}^{d/2}|\tilde{\phi}|^2 dy 
+        &\le& 
+            \kappa \int_{-d/2}^{d/2}\left|\DD{\tilde{\phi}}{y}\right|^2 dy 
+             -\kappa k^2  \int_{-d/2}^{d/2} |\tilde{\phi}|^2 dy\\
+        &\le& -\kappa k^2 \int_{-d/2}^{d/2} |\tilde{\phi}|^2 dy.
+      \end{eqnarray*}
+      %
+      よって成長率の最大値が
+      %
+      \begin{equation}
+        \sigma < -\kappa k^2 
+      \end{equation}
+      %
+      と見積もられる.
+
+    \subsection{両端ディリクレ型境界条件の場合}
+
+      両壁でディリクレ型境界条件
+      %
+      \begin{equation}
+        \Deqlab{両端ディリクレ型境界条件フーリエ展開}
+        \tilde{\phi} = 0 \quad {\rm at} y=\pm \frac{d}{2},
+      \end{equation}
+      %
+      が与えられた場合の解を求める. 
+      \Deqref{拡散方程式フーリエ展開}から
+      %
+      \begin{equation}
+        \left(\DD[2]{}{y}-k^2-\frac{\sigma}{\kappa}\right)\tilde{\phi}=0,
+      \end{equation}
+      %
+      $\sigma \le -\kappa k^2$ よりこの方程式の一般解は
+      %
+      \begin{equation}
+        \tilde{\phi} = A_1 \cos[m(\sigma,k)y] + A_2 \sin[m(\sigma,k)y],
+      \end{equation}
+      %
+      ただし $m(\sigma,k)$ は $y$ 方向の波数であり
+      %
+      \begin{equation}
+        m(\sigma,k)=\sqrt{-k^2-\frac{\sigma}{\kappa}}, \quad
+        \sigma = -\kappa(k^2 + m^2)
+      \end{equation}
+      %
+      を満たす. 
+
+      境界条件が対称であるので, 解も偶関数と奇関数とにわけて
+      別々に求めることができる. 偶関数の場合は
+      %
+      \begin{displaymath}
+        \tilde{\phi} = A_1 \cos[m(\sigma,k)y],
+      \end{displaymath}
+      %
+      境界条件\Deqref{両端ディリクレ型境界条件フーリエ展開}より
+      %
+      \begin{displaymath}
+        \cos\left[\frac{m(\sigma,k)d}{2}\right] = 0, \quad {\rm i.e.} \quad
+        \frac{m(\sigma,k)d}{2} = \left(n+\frac{1}{2}\right)\pi, \quad
+         m(\sigma,k) = \frac{(2n+1)\pi}{d}, 
+      \end{displaymath}
+      %
+      ただし $n=0,1,2,\ldots$ である. 
+      したがって
+      %
+      \begin{equation}
+        \tilde{\phi} = A_1 \cos\left[\frac{(2n+1)\pi}{d}y\right], \quad
+        \sigma = -\kappa\left(k^2 + \frac{(2n+1)^2\pi^2}{d^2}\right),
+        \quad n=0,1,2,\ldots
+      \end{equation}
+      %
+      奇関数の場合は
+      %
+      \begin{displaymath}
+        \tilde{\phi} = A_1 \sin[m(\sigma,k)y],
+      \end{displaymath}
+      %
+      境界条件\Deqref{両端ディリクレ型境界条件フーリエ展開}より
+      %
+      \begin{displaymath}
+        \sin\left[\frac{m(\sigma,k)d}{2}\right] = 0, \quad {\rm i.e.} \quad
+        \frac{m(\sigma,k)d}{2} = n\pi, \quad
+         m(\sigma,k) = \frac{2n\pi}{d}, 
+      \end{displaymath}
+      %
+      ただし $n=1,2,\ldots$ である
+      %
+      したがって
+      %
+      \begin{equation}
+        \tilde{\phi} = A_2 \sin\left[\frac{2n\pi}{d}y\right], \quad
+        \sigma = -\kappa\left(k^2 + \frac{4n^2\pi^2}{d^2}\right), 
+        \quad n=1,2,\ldots
+      \end{equation}
+
+    \subsection{両端ノイマン境界条件の場合}
+
+      両壁でノイマン型境界条件
+      %
+      \begin{equation}
+        \Deqlab{両端ノイマン型境界条件フーリエ展開}
+        \DD{\tilde{\phi}}{y} = 0 \quad {\rm at} y=\pm \frac{d}{2},
+      \end{equation}
+      %
+      が与えられた場合の解を求める. 
+      境界条件が対称であるから
+      両端ディリクレ型の場合と同様に一般解を求め, 
+      それを偶関数と奇関数別々に求めることができる. 
+      偶関数の場合は
+      %
+      \begin{displaymath}
+        \tilde{\phi} = A_1 \cos[m(\sigma,k)y],
+      \end{displaymath}
+      %
+      境界条件\Deqref{両端ノイマン型境界条件フーリエ展開}より
+      %
+      \begin{displaymath}
+        m\sin\left[\frac{m(\sigma,k)d}{2}\right] = 0, \quad {\rm i.e.} \quad
+        \frac{m(\sigma,k)d}{2} = n\pi, \quad
+         m(\sigma,k) = \frac{2n\pi}{d}, 
+      \end{displaymath}
+      %
+      ただし $n=0,1,2,\ldots$ である
+      したがって
+      %
+      \begin{equation}
+        \tilde{\phi} = A_1 \cos\left[\frac{2n\pi}{d}y\right], \quad
+        \sigma = -\kappa\left(k^2 + \frac{4n^2\pi^2}{d^2}\right), 
+        \quad n=0,1,2,\ldots
+      \end{equation}
+      %
+      奇関数の場合は
+      %
+      \begin{displaymath}
+        \tilde{\phi} = A_1 \sin[m(\sigma,k)y],
+      \end{displaymath}
+      %
+      境界条件\Deqref{両端ノイマン型境界条件フーリエ展開}より
+      %
+      \begin{displaymath}
+        m\cos\left[\frac{m(\sigma,k)d}{2}\right] = 0, \quad {\rm i.e.} \quad
+        \frac{m(\sigma,k)d}{2} = \left(n+\frac{1}{2}\right)\pi, \quad
+         m(\sigma,k) = \frac{(2n+1)\pi}{d}, 
+      \end{displaymath}
+      %
+      ただし $n=1,2,\ldots$ である. 
+      したがって
+      %
+      \begin{equation}
+        \tilde{\phi} = A_1 \sin\left[\frac{(2n+1)\pi}{d}y\right], \quad
+        \sigma = -\kappa\left[k^2 + \frac{(2n+1)^2\pi^2}{d^2}\right],
+        \quad n=1,2,\ldots
+      \end{equation}
+
+    \subsection{片側ディリクレ条件片側ノイマン境界条件の場合}
+
+      片側でディリクレ条件, もう一方でノイマン型境界条件が
+      与えられた次の境界条件での解を求める. 
+      %
+      \begin{equation}
+        \Deqlab{上側ディリクレ下側ノイマン境界条件フーリエ展開}
+        \tilde{\phi} = 0 \quad {\rm at} \quad y=\frac{d}{2},\qquad
+        \DD{\tilde{\phi}}{y} = 0 \quad {\rm at} \quad y=-\frac{d}{2},
+      \end{equation}
+      %
+      この境界条件を満たす解は, 両端ディリクレ問題の偶数解の 
+      $0 \le y \le d/2$ の部分が相当する. 
+      座標変換
+      %
+      \begin{displaymath}
+        \tilde{y} = -\frac{d}{2} + 2y, \quad 
+        y = \frac{1}{2}\left(\tilde{y} +\frac{d}{2}\right)
+      \end{displaymath}
+      %
+      を両端ディリクレ問題の偶関数解に適用すると
+      %
+      \begin{equation}
+        \tilde{\phi} 
+          = A_1 \cos\left[\frac{(2n+1)\pi}{d}
+                          \frac{1}{2}\left(y+\frac{d}{2}\right)
+                    \right]
+          = A_1 \cos\left[\left(n + \frac{1}{2}\right)\frac{\pi}{d}
+                         \left(y + \frac{d}{2}\right)
+                       \right]
+      \end{equation}
+      %
+      成長率は
+      %
+      \begin{equation}
+        \sigma = -\kappa\left[k^2 
+          + \left(n+\frac{1}{2}\right)^2\frac{\pi^2}{d^2}\right], 
+      \end{equation}
+      となる. 
+
+      境界条件が入れ替わった
+      片側でノイマン条件, もう一方でディリクレ型境界条件
+      %
+      \begin{equation}
+        \Deqlab{上側ディリクレ下側ノイマン境界条件フーリエ展開}
+        \DD{\tilde{\phi}}{y} = 0 \quad {\rm at} \quad y=\frac{d}{2},\qquad
+        \tilde{\phi} = 0 \quad {\rm at} \quad y=-\frac{d}{2},
+      \end{equation}
+      %
+      の解は, 先の解を $y\rightarrow -y$ と座標変換する
+      %
+      \begin{equation}
+        \tilde{\phi} 
+          = A_1 \cos\left[\left(n + \frac{1}{2}\right)\frac{\pi}{d}
+                         \left(-y + \frac{d}{2}\right)
+                       \right]
+          = A_1 \cos\left[\left(n + \frac{1}{2}\right)\frac{\pi}{d}
+                         \left(y - \frac{d}{2}\right)
+                       \right].
+      \end{equation}
+      %
+      成長率は先のものとおなじである. 
+
+
+
+    \subsection{領域外部の境界領域でラプラス方程式に従う場合}
+
+      有限の熱伝導率を持つ物質で水路両側が満たされている場合の
+      熱拡散問題, あるいはポロイダル磁場の拡散の問題の場合には
+      水路領域の拡散方程式を次のような混合型の境界条件の下で
+      解くことになる
+      \footnote{
+        領域外部の支配方程式は
+        %
+        \begin{displaymath}
+          \Dlapla \phi =0, 
+        \end{displaymath}
+        %
+        $x$ に関してフーリエ変換し, $y=\pm\infty$ で発散しない解を
+        求めると
+        \begin{displaymath}
+          \tilde{\phi} = C_1 e^{-|k|y} 
+              \quad \left(x \ge \frac{d}{2} \right),\qquad
+          \tilde{\phi} = C_2 e^{|k|y} 
+              \quad \left(x \le -\frac{d}{2} \right),
+        \end{displaymath}
+        %
+        境界 $y=d/2$ で値と 1 階微分が連続であることから
+        \begin{eqnarray*}
+          \tilde{\phi}|_{d/2} =  C_1 e^{-|k|d/2}, \quad
+          \left.\DD{\tilde{\phi}}{y}\right|_{d/2} =  -|k| C_1 e^{-|k|d/2}
+        \end{eqnarray*}
+        %
+        これらより $C_1$ を消去すると $y=d/2$ での境界条件
+        %
+        \begin{displaymath}
+          \left.\DD{\tilde{\phi}}{y}\right|_{d/2}+|k|\tilde{\phi}|_{d/2}=0
+        \end{displaymath}
+        %
+        が得られる. $y=-d/2$ の場合も同様に計算すると, 
+        %
+        \begin{displaymath}
+          \left.\DD{\tilde{\phi}}{y}\right|_{-d/2}-|k|\tilde{\phi}|_{-d/2}=0.
+        \end{displaymath}
+      }.
+      %
+      \begin{equation}
+        \Deqlab{両端混合型境界条件フーリエ展開}
+        \DD{\tilde{\phi}}{y} + |k|\tilde{\phi} = 0, 
+          \quad {\rm at} \quad y=\frac{d}{2}, \qquad
+        \DD{\tilde{\phi}}{y} - |k|\tilde{\phi} = 0, 
+           \quad {\rm at} \quad y=-\frac{d}{2}, 
+      \end{equation}
+      %
+      境界条件が対称であるから
+      両端ディリクレ型の場合と同様に一般解を求め, 
+      それを偶関数と奇関数別々に求めることができる. 
+      偶関数の場合は
+      %
+      \begin{displaymath}
+        \tilde{\phi} = A_1 \cos[m(\sigma,k)y],
+      \end{displaymath}
+      %
+      境界条件\Deqref{両端混合型境界条件フーリエ展開}より
+      %
+      \begin{displaymath}
+        -m(\sigma,k)\sin\left[\frac{m(\sigma,k)d}{2}\right]
+            + |k| \cos\left[\frac{m(\sigma,k)d}{2}\right] = 0,
+      \end{displaymath}
+      %
+      すなわち $m$ を定める分散関係が
+      %
+      \begin{equation}
+        \frac{md}{2}\tan\left[\frac{md}{2}\right] 
+        = \frac{|k|d}{2},
+      \end{equation}
+      %
+      と与えられる. この解は $x\tan x$ の関数形から
+      %
+      \begin{displaymath}
+        n\pi < \frac{md}{2} < \left(n+\frac{1}{2}\right)\pi, 
+        \quad n=0,1,2,\ldots
+      \end{displaymath}
+      %
+      に存在する. 
+      
+      奇関数の場合は
+      %
+      \begin{displaymath}
+        \tilde{\phi} = A_2 \sin[m(\sigma,k)y],
+      \end{displaymath}
+      %
+      境界条件\Deqref{両端混合型境界条件フーリエ展開}より
+      %
+      \begin{displaymath}
+        m(\sigma,k)\cos\left[\frac{m(\sigma,k)d}{2}\right]
+            + |k| \sin\left[\frac{m(\sigma,k)d}{2}\right] = 0, \\
+      \end{displaymath}
+      %
+      すなわち $m$ を定める分散関係が
+      %
+      \begin{equation}
+        \frac{md}{2}\cot\left[\frac{md}{2}\right] 
+        = -\frac{|k|d}{2},
+      \end{equation}
+      %
+      と与えられる. この解は $x\cot x$ の関数形から
+      %
+      \begin{displaymath}
+        \left(n+\frac{1}{2}\right)\pi < \frac{md}{2} < (n+1)\pi, 
+        \quad n=0,1,2,\ldots
+      \end{displaymath}
+      %
+      に存在する. 
+
+
+  \section{非圧縮流体の粘性拡散解}
+
+    幅 $d$ の平行壁ではさまれた 2 次元水路領域での非圧縮流体の運動を考える. 
+    ストークス近似した 2 次元非圧縮流体の流線関数 $\psi$ の
+    従う方程式は
+    %
+    \begin{equation}
+        \Deqlab{粘性流方程式}
+      \DP{}{t}\Dlapla\psi = \nu\Dlapla\Dlapla\psi,
+    \end{equation}
+    %
+    ここで $\Dlapla$ は 2 次元のラプラシアン
+    \begin{displaymath}
+      \Dlapla = \DP[2]{}{x}+ \DP[2]{}{y},
+    \end{displaymath}
+    %
+    $x$, $y$ はそれぞれ壁に平行および垂直方向の座標, 
+    $\nu$ は動粘性率である. 
+    一般性を失うことなく, $y$ 座標の原点を水路の中央に選ぶことにする. 
+
+    運動学的境界条件は, 壁を通しての質量流束が 0 となることである:
+    %
+    \begin{equation}
+      \Deqlab{運動学境界条件}
+      \psi = {\rm const.} \quad {\rm at} \quad y=\pm \frac{d}{2}
+    \end{equation}
+    %
+    初期に与える $x$ 方向の全質量流束が 0 である場合だけを考えると, 
+    この一定値を両壁で 0 と選ぶことができる. 
+
+    力学的境界条件は 2 種類考える. 自由すべり条件(応力なし条件)の場合
+    %
+    \begin{equation}
+      \Deqlab{自由すべり条件}
+      \DP[2]{\psi}{y} = {\rm const.} \quad {\rm at \ boundaries}.
+    \end{equation}
+    %
+    一方, 粘着条件の場合
+    %
+    \begin{equation}
+      \Deqlab{粘着条件}
+      \DP{\psi}{y} = {\rm const.} \quad {\rm at \ boundaries}.
+    \end{equation}
+    %
+    である. 
+
+    \subsection{フーリエ関数展開}
+
+      $x$ 方向には周期的であるからフーリエ関数系で展開して解くことが
+      できる. 以下, その 1 波数成分のみ取りだして扱う. 
+      時間に関しても指数型の解を仮定し, 
+      %
+      \begin{equation}
+        \Deqlab{流線関数フーリエ展開}
+        \psi(x,y,t)=\tilde{\psi}(y)e^{ikx+\sigma t},
+      \end{equation}
+      %
+      これを支配方程式に代入すると, 
+      \begin{equation}
+        \Deqlab{粘性流方程式フーリエ展開}
+          \sigma \left(\DD[2]{\tilde{\psi}}{y}-k^2\right) = 
+              \nu \left(\DD[2]{}{y}-k^2\right)^2 \tilde{\psi},
+      \end{equation}
+
+      境界条件は, 自由すべり条件(応力なし条件)の場合
+      %
+      \begin{equation}
+        \Deqlab{自由すべり条件フーリエ展開}
+        \tilde{\psi}=\DD[2]{\tilde{\psi}}{y} = 0 \quad 
+        \quad {\rm at \ boundaries}.
+      \end{equation}
+      %
+      一方, 粘着条件の場合
+      % 
+      \begin{equation}
+        \Deqlab{粘着条件フーリエ展開}
+        \tilde{\psi}=\DD{\tilde{\psi}}{y} = 0 \quad 
+        \quad {\rm at \ boundaries}.
+      \end{equation}
+      % 
+      である. 
+
+    \subsection{最大成長率の見積もり}
+
+      成長率の最大値を領域積分から見積もることができる. 
+      \Deqref{粘性流方程式フーリエ展開}に $\tilde{\psi}^*$ をかけて
+      $y$ 方向に全領域積分を行い, 部分積分を繰り返すと, 
+      %
+      \begin{eqnarray*}
+         & & 
+           \int_{-d/2}^{d/2} dy
+             \sigma \tilde{\psi}^*\left(\DD[2]{\tilde{\psi}}{y}-k^2\right) 
+         = \int_{-d/2}^{d/2} dy
+             \nu \tilde{\psi}^* \left(\DD[2]{}{y}-k^2\right)^2 \tilde{\psi},\\
+         & & 
+           \sigma \int_{-d/2}^{d/2} dy\tilde{\psi}^*\DD[2]{\tilde{\psi}}{y}
+            -\sigma k^2 \int_{-d/2}^{d/2}dy |\tilde{\psi}|^2 \\
+         & &=  \nu\int_{-d/2}^{d/2} dy \tilde{\psi}^* \DD[4]{\tilde{\psi}}{y}
+           -2\nu k^2\int_{-d/2}^{d/2} dy \tilde{\psi}^* \DD[2]{\tilde{\psi}}{y}
+           + \nu k^4\int_{-d/2}^{d/2} dy |\tilde{\psi}|^2,\\
+         & & 
+           \sigma\left[\tilde{\psi}^*\DD[]{\tilde{\psi}}{y}\right]_{-d/2}^{d/2}
+           -\sigma \int_{-d/2}^{d/2} dy \left|\DD[]{\tilde{\psi}}{y}\right|^2
+           -\sigma k^2 \int_{-d/2}^{d/2}dy |\tilde{\psi}|^2 \\
+         & &
+         = \nu\left[\tilde{\psi}^* \DD[3]{\tilde{\psi}}{y}\right]_{-d/2}^{d/2} 
+          - \nu\int_{-d/2}^{d/2} dy
+               \DD{\tilde{\psi}^*}{y}\DD[3]{\tilde{\psi}}{y} \\&&
+          -2\nu k^2\left[\tilde{\psi}^*\DD{\tilde{\psi}}{y}\right]_{-d/2}^{d/2}
+          +2\nu k^2\int_{-d/2}^{d/2} dy \left|\DD{\tilde{\psi}}{y}\right|^2
+           + \nu k^4\int_{-d/2}^{d/2} dy |\tilde{\psi}|^2,\\
+         & & 
+           -\sigma\int_{-d/2}^{d/2} dy\left[
+               \left|\DD[]{\tilde{\psi}}{y}\right|^2
+                 + k^2|\tilde{\psi}|^2 \right]\\ & &
+         = - \nu\left[\DD{\tilde{\psi}^*}{y}
+                          \DD[2]{\tilde{\psi}}{y}\right]_{-d/2}^{d/2} 
+           + \nu\int_{-d/2}^{d/2} dy \left|\DD[2]{\tilde{\psi}}{y}\right|^2
+           +2\nu k^2\int_{-d/2}^{d/2} dy \left|\DD{\tilde{\psi}}{y}\right|^2
+           + \nu k^4\int_{-d/2}^{d/2} dy |\tilde{\psi}|^2,\\
+         & & 
+           -\sigma\int_{-d/2}^{d/2} dy\left[
+               \left|\DD[]{\tilde{\psi}}{y}\right|^2
+                 + k^2  |\tilde{\psi}|^2 \right]
+         = \nu\int_{-d/2}^{d/2} dy \left[
+                \left|\DD[2]{\tilde{\psi}}{y}\right|^2
+                +2 k^2 \left|\DD{\tilde{\psi}}{y}\right|^2
+               + k^4|\tilde{\psi}|^2 \right],\\
+      \end{eqnarray*}
+      %
+      $\tilde{\psi}$ が恒等的に 0 でないので, 左辺を不等式で押えることができて
+      %
+      \begin{eqnarray*}
+           -\sigma\int_{-d/2}^{d/2} dy\left[
+               \left|\DD[]{\tilde{\psi}}{y}\right|^2
+                 + k^2  |\tilde{\psi}|^2 \right]
+          &>& \nu\int_{-d/2}^{d/2} dy \left[
+                 k^2 \left|\DD{\tilde{\psi}}{y}\right|^2
+               + k^4|\tilde{\psi}|^2 \right]\\
+          &&= \nu k^2\int_{-d/2}^{d/2} dy \left[
+                   \left|\DD{\tilde{\psi}}{y}\right|^2
+                 + k^2|\tilde{\psi}|^2 \right]
+      \end{eqnarray*}
+      %
+      よって成長率の最大値が
+      %
+      \begin{equation}
+        \sigma < - \nu k^2,
+      \end{equation}
+      %
+      と見積もられる. 
+
+    \subsection{一般解}
+
+      支配方程式を変形すると
+      %
+      \begin{displaymath}
+        \left(\DD[2]{}{y}-k^2\right)
+           \left(\DD[2]{}{y}- k^2 - \frac{\sigma}{\nu}\right)
+          \tilde{\psi}=0,
+      \end{displaymath}
+      %
+      この微分方程式の一般解は
+      %
+      \begin{equation}
+        \Deqlab{粘性流一般解}
+        \tilde{\psi} = C_1 \cosh(ky) + C_2 \sinh(ky) + 
+                       C_3 \cos(m(\sigma,k)y) +  C_4\sin(m(\sigma,k)y)
+      \end{equation}
+      %
+      ただし $m(\sigma,k)$ は $\sigma < -\nu k^2$ であることから
+      %
+      \begin{equation}
+        \Deqlab{粘性流分散関係}
+        m(\sigma,k) = \sqrt{-\frac{\sigma}{\nu}-k^2}, \quad
+        \sigma = -\nu (k^2 + m^2),
+      \end{equation}
+      %
+      と与えられる. 
+
+      特に境界条件の対称性から奇関数と偶関数にわけて扱える場合には, 
+      偶関数は
+      %
+      \begin{equation}
+        \Deqlab{粘性流一般解偶関数}
+        \tilde{\psi} = A_1 \cosh(ky) + A_2 \cos[m(\sigma,k)y],
+      \end{equation}
+      %
+      奇関数は
+      %
+      \begin{equation}
+        \Deqlab{粘性流一般解奇関数}
+        \tilde{\psi} = A_3 \sinh(ky) + A_4 \sin[m(\sigma,k)y],
+      \end{equation}
+      %
+      となる. 
+
+    \subsection{両端自由すべり条件の場合}
+
+      この場合の境界条件は
+      %
+      \begin{equation}
+        \Deqlab{両端自由すべり条件}
+        \tilde{\psi}=\DD[2]{\tilde{\psi}}{y} = 0 \quad 
+         {\rm at} \quad y=\pm \frac{d}{2}.
+      \end{equation}
+      %
+      境界条件が対称なので, 解を偶関数と奇関数にわけて扱うことができる. 
+      偶関数の場合, 
+      \Deqref{粘性流一般解偶関数}を\Deqref{両端自由すべり条件}に代入して, 
+      %
+      %
+      \begin{eqnarray*}
+        & & A_1 \cosh(kd/2) + A_2 \cos[m(\sigma,k)d/2] = 0, \\
+        & & A_1 k^2 \cosh(kd/2) - A_2 m^2\cos[m(\sigma,k)d/2] = 0, 
+      \end{eqnarray*}
+      %
+      行列の形で表せば,
+      \begin{displaymath}
+        \left(
+          \begin{array}[]{cc}
+             \cosh(kd/2)   & \cos[m(\sigma,k)d/2]   \\
+             k^2 \cosh(kd/2) &  -m^2\cos[m(\sigma,k)d/2]
+          \end{array}
+        \right)
+        \left(
+          \begin{array}[]{c}
+             A_1 \\ A_2
+          \end{array}
+        \right)
+        = 0,
+      \end{displaymath}
+      %
+      $A_1 = A_2 = 0$ 以外の解が存在するためには, 
+      この係数行列の行列式が 0 でなければならない. 
+      したがって
+      %
+      \begin{eqnarray*}
+       & &  -m^2\cosh(kd/2)\cos[m(\sigma,k)d/2]
+         -k^2 \cosh(kd/2)\cos[m(\sigma,k)d/2]\\
+       &=& -(m^2 + k^2)\cosh(kd/2)\cos[m(\sigma,k)d/2] \\
+       &=& \frac{\sigma}{\nu}\cosh(kd/2)\cos[m(\sigma,k)d/2] =0.
+      \end{eqnarray*}
+      %
+      したがって
+      \begin{equation}
+        \frac{m(\sigma,k)d}{2} = \left(n+\frac{1}{2}\right)\pi, \quad
+        n=0,1,2,\ldots \quad {\rm i.e.} \quad
+        m(\sigma,k) = \frac{(2n+1)\pi}{d}
+      \end{equation}
+      %
+      成長率は
+      %
+      \begin{equation}
+        \sigma = -\nu ( k^2 + m^2 )
+               = -\nu \left\{k^2 + \left[\frac{(2n+1)\pi}{d}\right]^2 \right\},
+               \quad n=0,1,2,\ldots.
+      \end{equation}
+      %
+      係数 $A_1, A_2$ の組合せは
+      %
+      \begin{displaymath}
+        \left(
+          \begin{array}[]{c}
+             A_1 \\ A_2
+          \end{array}
+        \right)
+        = 
+        \left(
+          \begin{array}[]{c}
+            \cos[m(\sigma,k)d/2]\\
+             \cosh(kd/2)  
+          \end{array}
+        \right)
+        =
+        \left(
+          \begin{array}[]{c}
+            0 \\
+            \cosh(kd/2)  
+          \end{array}
+        \right)
+      \end{displaymath}
+      %
+      したがって解は
+      %
+      \begin{equation}
+        \Deqlab{粘性流両端すべり偶関数}
+        \tilde{\psi} = A_2 \cos(my), \quad
+        m = \frac{(2n+1)\pi}{d}, \quad
+        \sigma = -\nu \left\{k^2 + \left[\frac{(2n+1)\pi}{d}\right]^2 \right\},
+               \quad n=0,1,2,\ldots.
+      \end{equation}
+
+      奇関数の場合も同様に計算を行うと, 
+      %
+      \begin{displaymath}
+        \left(
+          \begin{array}[]{cc}
+             \sinh(kd/2)   & \sin[m(\sigma,k)d/2]   \\
+             k^2 \sinh(kd/2) &  -m^2\sin[m(\sigma,k)d/2]
+          \end{array}
+        \right)
+        \left(
+          \begin{array}[]{c}
+             A_3 \\ A_4
+          \end{array}
+        \right)
+        = 0,
+      \end{displaymath}
+      %
+      係数行列式が 0 であることから
+      \begin{displaymath}
+         \frac{\sigma}{\nu}\sinh(kd/2)\sin[m(\sigma,k)d/2] =0.
+      \end{displaymath}
+      %
+      したがって, 
+      %
+      \begin{equation}
+        \frac{m(\sigma,k)d}{2} = n\pi, \quad
+        n=1,2,\ldots \quad {\rm i.e.} \quad
+        m(\sigma,k) = \frac{2n\pi}{d}
+      \end{equation}
+      %
+      成長率は
+      %
+      \begin{equation}
+        \sigma = -\nu ( k^2 + m^2 )
+               = -\nu \left[k^2 + \left(\frac{2n\pi}{d}\right)^2 \right],
+               \quad n=1,2,\ldots.
+      \end{equation}
+      %
+      係数 $A_1, A_2$ の組合せは
+      %
+      \begin{displaymath}
+        \left(
+          \begin{array}[]{c}
+             A_1 \\ A_2
+          \end{array}
+        \right)
+        = 
+        \left(
+          \begin{array}[]{c}
+            \sin[m(\sigma,k)d/2] \\ \sinh(kd/2)
+          \end{array}
+        \right)
+        =
+        \left(
+          \begin{array}[]{c}
+            0 \\ \sinh(kd/2)
+          \end{array}
+        \right)
+      \end{displaymath}
+      %
+      したがって解は
+      %
+       \begin{equation}
+         \Deqlab{粘性流両端すべり奇関数}
+         \tilde{\psi} = A_4 \sin(my), \quad
+         m(\sigma,k) = \frac{2n\pi}{d}, \quad
+         \sigma = -\nu \left[k^2 + \left(\frac{2n\pi}{d}\right)^2 \right],
+                \quad n=1,2,\ldots.
+       \end{equation}
+
+    \subsection{両端粘着条件の場合}
+
+      この場合の境界条件は
+      %
+      \begin{equation}
+        \Deqlab{両端粘着条件}
+        \tilde{\psi}=\DD{\tilde{\psi}}{y} = 0 \quad 
+         {\rm at} \quad y=\pm \frac{d}{2}.
+      \end{equation}
+      %
+      境界条件が対称なので, 解を偶関数と奇関数にわけて扱うことができる. 
+      偶関数の場合, 
+      \Deqref{粘性流一般解偶関数}を\Deqref{両端粘着条件}に代入して, 
+      %
+      \begin{eqnarray*}
+        & & A_1 \cosh(kd/2) + A_2 \cos(m(\sigma,k)d/2) = 0, \\
+        & & A_1 k \sinh(kd/2) - A_2 m\sin(m(\sigma,k)d/2) = 0, 
+      \end{eqnarray*}
+      %
+      行列の形で表せば,
+      \begin{displaymath}
+        \left(
+          \begin{array}[]{cc}
+             \cosh(kd/2)   & \cos(m(\sigma,k)d/2)   \\
+             k \sinh(kd/2) &  -m\sin(m(\sigma,k)d/2) 
+          \end{array}
+        \right)
+        \left(
+          \begin{array}[]{c}
+             A_1 \\ A_2
+          \end{array}
+        \right)
+        = 0,
+      \end{displaymath}
+      %
+      $A_1 = A_2 = 0$ 以外の解が存在するためには, 
+      この係数行列の行列式が 0 でなければならない. 
+      したがって
+      %
+      \begin{displaymath}
+        -m\cosh(kd/2)\sin(m(\sigma,k)d/2) -k \sinh(kd/2)\cos(m(\sigma,k)d/2)=0,
+      \end{displaymath}
+      %
+      すなわち, 成長率 $\sigma$ と $y$ 方向の波数 $m(\sigma,k)$ を
+      定めるための分散関係が
+      %
+      \begin{equation}
+        \Deqlab{粘性流両端粘着条件偶関数分散関係}
+        \frac{m(\sigma,k)d}{2}\tan\left(\frac{m(\sigma,k)d}{2}\right)
+        = -\frac{kd}{2}\tanh\left(\frac{kd}{2}\right),
+      \end{equation}
+      %
+      と得られる. 
+      与えられた $k,d$ からこの式を満たす $m$ を数値的に求めることにより, 
+      \Deqref{粘性流分散関係}から
+      成長率 $\sigma$ と $y$ 方向の波数 $m$ の組合せを得ることができる. 
+      これを満たす解は $x\tan x $ の関数形から
+      %
+      \begin{displaymath}
+          \left(n+\frac{1}{2}\right)\pi < \frac{m(\sigma,k)d}{2}   
+          < (n+1)\pi, \quad n=0,1,2,\ldots
+      \end{displaymath}
+      %
+      に存在することがわかる. 
+      \Deqref{粘性流一般解偶関数}の定数係数は
+      %
+      \begin{equation}
+        \Deqlab{粘性流両端粘着条件偶関数係数関係}
+        \left(
+          \begin{array}[]{c}
+             A_1 \\ A_2
+          \end{array}
+        \right)
+        =
+        {\rm const.}\cdot
+        \left(
+          \begin{array}[]{c}
+            \cos\left[\frac{m(\sigma,k)d}{2}\right]\\ 
+            -\cosh\left(\frac{kd}{2}\right)
+          \end{array}
+        \right).
+      \end{equation}
+
+
+      奇関数の場合も同様に計算することができて, 
+      %
+      \begin{displaymath}
+        \left(
+          \begin{array}[]{cc}
+             \sinh(kd/2)   & \sin(m(\sigma,k)d/2)   \\
+             k \cosh(kd/2) &  m\cos(m(\sigma,k)d/2) 
+          \end{array}
+        \right)
+        \left(
+          \begin{array}[]{c}
+             A_3 \\ A_4
+          \end{array}
+        \right)
+        = 0,
+      \end{displaymath}
+      %
+      係数行列式が 0 であることから,
+      %
+      \begin{displaymath}
+        m\sinh(kd/2)\cos(m(\sigma,k)d/2) -k \cosh(kd/2)\sin(m(\sigma,k)d/2)=0,
+      \end{displaymath}
+      %
+      したがって分散関係は
+      %
+      \begin{equation}
+        \Deqlab{粘性流両端粘着条件奇関数分散関係}
+        \frac{m(\sigma,k)d}{2}\cot\left(\frac{m(\sigma,k)d}{2}\right)
+        = \frac{kd}{2}\coth\left(\frac{kd}{2}\right),
+      \end{equation}
+      %
+      と得られる. 
+      与えられた $k,d$ からこの式を満たす $m$ を数値的に求めることにより, 
+      \Deqref{粘性流分散関係}から
+      成長率 $\sigma$ と $y$ 方向の波数 $m$ の組合せを得ることができる. 
+      これを満たす解は $x\cot x $ の関数形から
+      %
+      \begin{displaymath}
+          n\pi < \frac{m(\sigma,k)d}{2}   
+          < \left(n+\frac{1}{2}\right)\pi, \quad n=0,1,2,\ldots
+      \end{displaymath}
+      %
+      に存在することがわかる. 
+      \Deqref{粘性流一般解奇関数}の定数係数は
+      \begin{equation}
+        \Deqlab{粘性流両端粘着条件奇関数係数関係}
+        \left(
+          \begin{array}[]{c}
+             A_3 \\ A_4
+          \end{array}
+        \right)
+        =
+        {\rm const.}\cdot
+        \left(
+          \begin{array}[]{c}
+            \sin\left[\frac{m(\sigma,k)d}{2}\right]\\ 
+            -\sinh\left(\frac{kd}{2}\right)
+          \end{array}
+        \right).
+      \end{equation}
+
+
+    \subsection{片側粘着条件片側自由すべり条件の場合}
+
+      まず $y=d/2$ で粘着条件, $y=-d/2$ で自由すべり条件
+      の場合を考える. この場合の境界条件は, 
+      %
+      \begin{equation}
+        \Deqlab{片側粘着条件片側自由すべり条件}
+        \tilde{\psi}=0 \quad {\rm at} \quad y=\pm\frac{d}{2}, \quad
+        \DD{\tilde{\psi}}{y} = 0 \quad 
+         {\rm at} \quad y=\frac{d}{2}, \quad
+        \tilde{\psi}=\DD[2]{\tilde{\psi}}{y} = 0 \quad 
+         {\rm at} \quad y=-\frac{d}{2}.
+      \end{equation}
+      %
+      両端粘着条件の奇関数解の $0 \le y \le d/2$ の部分が
+      ちょうどこの境界条件を満たす解となっている. 
+      そこで, 領域 $-d\le y \le d$ での奇関数解を求めると, 
+      一般解
+      %
+      \begin{equation}
+        \tilde{\psi} 
+           = A_3 \sinh(ky)+ A_4 \sin\left[ m(\sigma,k) y \right]
+      \end{equation}
+      %
+      に対する分散関係を\Deqref{粘性流両端粘着条件奇関数分散関係}
+      にて $d/2 \rightarrow d$ として
+      % 
+      \begin{equation}
+        m(\sigma,k)d\cot[m(\sigma,k)d]=kd\coth(kd),
+      \end{equation}
+      %
+      である. 
+      \Deqref{粘性流一般解奇関数}の定数係数は
+      \begin{equation}
+        \left(
+          \begin{array}[]{c}
+             A_3 \\ A_4
+          \end{array}
+        \right)
+        =
+        {\rm const.}\cdot
+        \left(
+          \begin{array}[]{c}
+            \sin(md) \\ -\sinh(kd)
+          \end{array}
+        \right).
+      \end{equation}
+      %
+      このようにして求まった解を $y$ 方向に $-d/2$ 平行移動させた
+      ものが求める解である. 
+      %
+      \begin{equation}
+        \tilde{\psi} 
+           = A_3 \sinh\left[k\left(y+\frac{d}{2}\right)\right]
+             + A_4 \sin\left[m\left(y+\frac{d}{2}\right)\right]
+      \end{equation}
+      %
+      成長率は\Deqref{粘性流分散関係}より, 
+      定められた $m$ から $\sigma = -\nu(k^2+m^2)$ で計算される. 
+
+      境界条件が逆になった,  $y=d/2$ で自由すべり条件, $y=-d/2$ で粘着条件
+      の場合, すなわち
+      %
+      \begin{equation}
+        \Deqlab{片側自由すべり片側粘着条件}
+        \tilde{\psi}=0 \quad {\rm at} \quad y=\pm\frac{d}{2}, \quad
+        \tilde{\psi}=\DD[2]{\tilde{\psi}}{y} = 0 \quad 
+         {\rm at} \quad y=\frac{d}{2}, \quad
+        \DD{\tilde{\psi}}{y} = 0 \quad 
+         {\rm at} \quad y=-\frac{d}{2}.
+      \end{equation}
+      %
+      の解は, 上の解の $y$ 方向の平行移動を $d/2$ に変えるだけで得られる.
+      %
+      \begin{equation}
+        \tilde{\psi} 
+           = A_3 \sinh\left[k\left(y-\frac{d}{2}\right)\right]
+             + A_4 \sin\left[m\left(y-\frac{d}{2}\right)\right]
+      \end{equation}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

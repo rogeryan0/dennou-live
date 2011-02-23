@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>SSL2</title>
+<link rel="stylesheet" type="text/css" href="./rubydcl.css">
+</head>
+
+<body>
+
+<h1><a name="title" id="title">Ruby-SSL2</a></h1>
+2003年3月　西澤 誠也<br/>
+2004年3月　西澤 誠也<br/>
+<hr/>
+
+<h2><a name="science" id="science">科学計算ライブラリ</a></h2>
+<p>
+ruby で使える科学計算ライブラリは GSL や LAPACK(mathx)、
+Numerical Recipes(非公開) などがあります。<br/>
+Fortran で使っていて SSL2 に慣れ親しんだ方もいるでしょう。
+そのような方や、SSL2がインストールされた環境をお持ちの方は
+ruby-SSL2をお使い頂けます。
+</p>
+
+<h2><a name="ruby-ssl2" id="ruby-ssl2">Ruby-SSL2 モジュール</a></h2>
+<p>
+Ruby-SSL2 は 富士通科学用サブルーチンライブラリを
+ruby で使えるようにパックしたものです
+(<a href="http://www.gfd-dennou.org/arch/ruby/products/ruby-ssl2/index-j.html">
+ruby-ssl2 homepage</a>)。
+<br/>
+現在、単精度関数の複素数用を除くほとんどすべてをパックしました
+(ただし動作確認は一部のみ)。
+</p>
+<p>
+<ul>
+ <li>利点</li>
+      <ul>
+       <li>今までSSL2を使っていた人はなじみがあり使いやすい</li>
+       <li>Fortran用のマニュアルが充実しており、参考になる</li>
+       <li>性能が良く、多機能である</li>
+      </ul>
+ <li>欠点</li>
+      <ul>
+       <li>ssl2が有料である</li>
+      </ul>
+</ul>
+
+<h2><a name="todo" id="todo">今後の課題</a></h2>
+<p>
+<ul>
+ <li>マニュアル、サンプルの整備</li>
+ <li>オプション引数</li>
+ <li>倍精度関数のパック</li>
+</ul>
+</p>
+
+
+<h2><a name="example" id="example">使用例</a></h2>
+<h3>EOF解析</h3>
+<p>
+<a href="./eof.rb">eof.rb</a> SSL2.rann2(正規乱数の生成) の利用<br/>
+<textarea cols="80" rows="10" class="source">
+require "narray"
+require "ssl2"
+require "eof_ssl2.rb"
+require "numru/dcl"
+
+include NumRu
+
+n = 1000
+x = NArray.float(2,n)
+
+a,ix = SSL2.rann1(0,0.4,0,n)
+b, = SSL2.rann1(0,0.2,ix,n)
+
+theta = Math::PI/6
+x[0,true] = a*Math::cos(theta) - b*Math::sin(theta)
+x[1,true] = a*Math::sin(theta) + b*Math::cos(theta)
+
+val,vec = Analysis.eof(x)
+
+DCL::gropn(1)
+DCL::grfrm
+DCL::grswnd(-1.5,1.5,-1.5,1.5)
+DCL::uspfit
+DCL::grstrf
+DCL::usdaxs
+DCL::sgpmzu(x[0,true],x[1,true],1,1,0.01)
+for i in 0..1
+  fact = val[i]
+  DCL::sgplzu([-vec[0,i]*fact,vec[0,i]*fact],[-vec[1,i]*fact,vec[1,i]*fact],1,3)
+end
+DCL::grcls
+</textarea>
+<br/><a href="./eof_ssl2.rb">eof_ssl2.rb</a>
+SSL2.seig2(実対称行列の固有値固有ベクトルを求める) の利用<br/>
+<textarea cols="80" rows="10" class="source">
+require "narray"
+require "numru/ssl2"
+
+
+module Analysis
+def covariance( x,y,rmiss=nil )
+  if x.length != y.length then
+    print "error\n"
+    exi
+  end
+
+  len = x.length
+
+  if rmiss.nil? then
+    sum = x.mul_add(y,0)
+    n = len
+  else
+     mask = x.ne(rmiss) & y.ne(rmiss)
+     sum = x.mask(mask).mul_add(y.mask(mask),0)
+     n = mask.count_true
+  end
+
+  if n>len/2 then
+    sum/(n-1)
+  else
+    rmiss
+  end
+
+end
+
+def covariance_matrix( x, rmiss=nil, lmean=false, ltotal=false)
+  if x.rank !=2
+    raise "covariance_matrix: x.rank must be 2"
+  end
+  dim, len = x.shape
+
+  rmiss = nil if !rmiss.nil? && x.ne(rmiss).all?
+
+  if lmean
+    if rmiss.nil?
+      x = x - x.mean(1)
+    else
+      for i in 0...dim
+	mask = x[i,true].ne(rmiss)
+	tmp = x[i,true].mask(mask)
+	if tmp.length >= len/2 then
+	  x[i,mask] = tmp - tmp.mean
+	else
+	  x[i,true] = rmiss
+	end
+      end
+    end
+  end
+
+  cov = NArray.new(x.typecode,dim*(dim+1)/2)
+  sind = 0
+  total = 0
+  if rmiss.nil?
+    for i in 0...dim
+      cov[sind..sind+i] = x[0..i,true].mul_add(x[i,true].reshape!(1,len),1)/(len-1)
+      total += cov[sind+i]
+      sind += i+1
+    end
+  else
+    for i in 0...dim
+      for j in 0...i
+	cov[sind] = covariance(x[i,true],x[j,true],rmiss)
+	sind += 1
+      end
+      cov[sind] = x[i,true].mask(x[i,true].ne(rmiss)).stddev**2
+      total += cov[sind]
+      sind += 1
+    end
+  end
+
+  if ltotal
+    return [cov,total]
+  else
+    return cov
+  end
+
+end
+
+def eof( x, rmiss=nil, ndim=nil )
+
+  if x.shape.length!=2 then
+    print "err\n"
+    exit
+  end
+
+  dim,nle = x.shape
+
+  rmiss = nil if !rmiss.nil? && x.ne(rmiss).all?
+
+  p "calc anomary"
+  if rmiss.nil? then
+    x = x - x.mean(1)
+
+  else
+    ary = NArray.byte(dim)
+    for i in 0..dim-1
+      mask = x[i,true].ne(rmiss)
+      tmp = x[i,true]
+      tmp2 = tmp.mask(mask)
+      if tmp2.length >= nle*3/4 then
+        tmp[mask] = tmp2 - tmp2.mean
+	x[i,true] = tmp
+	ary[i] = 1
+      else
+	ary[i] = 0
+      end
+    end
+    if !ary.all? then
+      tdim = ary.where.length
+      y = NArray.sfloat(tdim,nle)
+      k=0
+      for i in 0..dim-1
+	if ary[i]==1 then
+	  y[k,true] = x[i,true]
+	  k+=1
+	end
+      end
+      if k!=tdim then
+	p "BUG: eof of eof_ssl2 k!=tdim"
+	exit
+      end
+      x = y
+      tmp = dim
+      dim = tdim
+      tdim = tmp
+    end
+  end
+
+
+
+  p "make covariance matrix"
+  cova, total = covariance_matrix(x,rmiss,false,true)
+
+  p "calc eigen value"
+  if ndim.nil? then
+    ndim=dim
+  end
+  val, vec = SSL2.seig2(cova,ndim)
+
+  if !rmiss.nil? && !ary.all? then
+    vec2 = NArray.sfloat(tdim,val.length)
+    k=0
+    for i in 0..tdim-1
+      if ary[i]==1 then
+	vec2[i,true] = vec[k,true]
+	k+=1
+      else
+	vec2[i,true] = rmiss
+      end
+    end
+    if k!=dim then
+      p "BUG: eof of eof_ssl2 k!=dim"
+      exit
+    end
+    vec = vec2
+  end
+
+
+  [val/total,vec]
+
+end
+
+module_function :eof, :covariance_matrix, :covariance
+
+end
+</textarea><br/>
+eof.rb の実行結果<br/>
+<img src="eof.png" width="456"/>
+</p>
+
+<hr/>
+<a href="./index.html">return</a>
+
+</body>
+</html>

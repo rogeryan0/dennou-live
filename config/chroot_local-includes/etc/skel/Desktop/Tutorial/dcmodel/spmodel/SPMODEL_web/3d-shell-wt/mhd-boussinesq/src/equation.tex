@@ -1,0 +1,540 @@
+%#LPRdvips main.dvi; lpr main.ps
+%#!platex main.tex
+
+\section{基礎方程式系}
+
+ここでは基礎方程式系の定式化について記述する.
+流体はブシネスク近似を適応した磁気流体であるとし,
+重力加速度は密度が一様な物体の自己重力場,
+基本場の温度分布は内部一様熱源による熱伝導解であると仮定する.
+速度場と磁場をトロイダル--ポロイダルポテンシャルへ分解し,
+その時間発展方程式と境界条件を定式化する
+(Zhang and Busse,1987, Chandrasekhar, 1961).
+
+%--------------------------------------------------------------------------
+ \subsection{系の設定と支配方程式}
+ 
+ 角速度 $\Omega$ で回転する半径 $r_{i},r_{o}$ の球に挟まれた
+ 球殻内にある導電性流体について考える.
+ 球殻内の流体はブシネスク流体かつ磁気流体であるとし,
+ 座標系を球殻の中心を原点とする緯度経度座標系
+ $(\lambda, \varphi, r)$ とする.
+ これを \Dfigref{系の図} に示す.
+
+ \begin{figure}[htbp!]
+  \begin{center}
+   \Depsf[13cm]{./img/cordinate.eps}
+   \caption{考えている系の模式図} \Dfiglab{系の図}
+  \end{center}
+ \end{figure}
+ 
+ \newpage
+ 支配方程式系は
+ 回転系におけるブシネスク流体の方程式系と
+ 磁気流体の方程式系とを
+ 組み合わせることで得られる. 
+ 以下にこれらを書き下す:
+ \begin{eqnarray} 
+  &&\Deqlab{連続の式}
+   \Ddiv{\Dvect{u}}=0, \\
+  &&\Deqlab{磁場のソレノイダル条件}
+   \Ddiv{\Dvect{B}} = 0, \\
+  &&\Deqlab{運動方程式}
+   \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+   + 2\Omega \Dvect{k}\times\Dvect{u}
+   = -\frac{1}{\rho_{0}}\Dgrad p + \frac{\rho}{\rho_{0}}\Dvect{g} 
+   +\nu \Dlapla \Dvect{u} 
+   + \frac{1}{\mu_{0} \rho_{0}}(\Drot\Dvect{B})\times\Dvect{B},\nonumber \\
+  && \\
+  &&\Deqlab{熱の式}
+   \DP{T}{t} + (\Dvect{u}\cdot\Dgrad)T = \kappa\Dlapla{T} + Q, \\
+  &&\Deqlab{誘導方程式}
+   \DP{\Dvect{B}}{t} = 
+   \Drot(\Dvect{u}\times\Dvect{B}) + \eta\Dlapla{\Dvect{B}}.
+ \end{eqnarray}
+
+ 各々の記号が何を表しているかは次の通りである:
+ \begin{quote}
+  \begin{tabular}{ll}
+   $\Dvect{u}$  
+                  & 流速ベクトル. \\
+                  &  成分毎に書く場合には,$\Dvect{u}=(u,v,w)$ \\
+   $\Dvect{B}$    
+                  & 磁束密度ベクトル. \\
+                  & 成分毎に書く場合には, 
+                    $\Dvect{B}=(B_{\lambda},B_{\varphi},B_{r})$ \\
+   $T$
+                  & 流体の実際の温度. \\ 
+                  & 基本場の温度$T_{0}$, 
+                    そこからのずれ $\theta$ を用いて表すと,\\
+                  & $T=T_{0}+\theta$ である. \\
+   $\rho, \rho_{0}$
+                  & 流体の密度, 及びその基本場の密度. \\
+                  & ここではブシネスク流体であることを仮定しているので,\\
+                  & $\rho = \rho_0(1-\alpha\theta)$ である. \\
+   $p$       
+                  & 流体の全圧力.\\
+                  & 基本場の圧力 $p_{0}$, 
+                    そこからのずれ $\pi$ を用いて表すと \\
+                  & $p=p_{0} +\pi$ である.\\
+   $\Dvect{k}$  
+                  & 球殻の回転軸方向の単位ベクトル
+                    ( \Dfigref{系の図}での$z$ 軸方向). \\
+   $\Dvect{g}$    & 重力加速度ベクトル.\\
+   $Q$            & 内部熱源(温度上昇率). \\
+  \end{tabular}
+ \end{quote}  
+  また, 以下の物性定数は一定であるとする.
+ \begin{quote}
+  \begin{tabular}{ll}
+   $\nu$          & 動粘性率.     \\
+   $\kappa$       & 熱拡散率.     \\
+   $\alpha$       & 体積膨張率.   \\
+   $\eta$         & 磁気拡散率.   \\
+   $\mu_{0}$          & 透磁率. 
+  \end{tabular}
+  \end{quote}  
+ 
+ 重力加速度 $\Dvect{g}$ として
+ 密度がほぼ一様な物体の自己重力を考える事とし,
+ \begin{equation}
+  \Dvect{g} = -\gamma \Dvect{r}
+ \end{equation}
+ とする.
+ ここで  $\gamma$ は定数, 
+ $\Dvect{r}$ は球殻の中心を原点とする動径方向の位置ベクトルである
+ \footnote{
+ 重力加速度には
+ 基本場からの密度変化と
+ 回転の効果による非球対称な成分が存在するが,
+ 簡単のためここでは無視する.
+ }.
+ 
+ 基本場は内部一様熱源分布 ($Q=const$) の下での
+ 磁場の無い静止状態であるとし,
+ 基本場の温度分布として
+ \begin{equation}
+  \Deqlab{基本場の温度分布}
+  T_{0}(r) = -\frac{1}{2}\beta r^{2} + C
+ \end{equation}
+ を仮定する.
+ だだし $\displaystyle{\beta \equiv \frac{1}{3}\frac{Q}{\kappa}}$ とした
+ \footnote{
+ 熱伝導方程式を満たす温度分布には $C'/r$ の不定性が残っているが,
+ 後の数学的簡便さのため $C'=0$ の分布を選ぶこととする. 
+ }
+ .
+
+ この基本場を支配方程式系
+ \Deqref{連続の式}〜熱の式\Deqref{熱の式}から分離すると,
+ \begin{eqnarray} 
+  &&\Deqlab{連続の式'}
+   \Ddiv\Dvect{u} =0, \quad \Ddiv\Dvect{B}=0 \\
+  &&\Deqlab{運動方程式'}
+   \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+   + 2\Omega \Dvect{k}\times\Dvect{u}
+   = -\frac{1}{\rho_{0}}\Dgrad \pi 
+     + \alpha \theta \gamma \Dvect{r}
+   +\nu \Dlapla \Dvect{u} 
+   + \frac{1}{\mu_{0} \rho_{0}}(\Drot\Dvect{B})\times\Dvect{B},\nonumber\\
+  && \\
+  &&\Deqlab{熱の式'}
+   \DP{\theta}{t} 
+   + (\Dvect{u}\cdot\Dgrad)\theta - \beta \Dvect{u}\cdot \Dvect{r}
+   = \kappa\Dlapla{\theta}, \\
+  &&\Deqlab{誘導方程式'}
+   \DP{\Dvect{B}}{t} = 
+   \Drot(\Dvect{u}\times\Dvect{B}) + \eta\Dlapla{\Dvect{B}}
+ \end{eqnarray}
+ となる
+ \footnote{
+ 基本場の温度分布として \Deqref{基本場の温度分布} を選んだことで,
+ 基本場の移流が 
+ $\Dvect{u}\cdot\Dgrad T_{0} = -\beta \Dvect{u}\cdot\Dvect{r}$
+ となる. 
+ すなわち, 本モデルでは基本場の温度分布がモデルに組み込まれている.
+ }
+.
+ 
+ 次にこれらの方程式系を以下のスケールを用いてスケーリングする:
+  \begin{quote}
+   \begin{tabular}{lll}
+    長さスケール & $D = r_{o} - r_{i}$ & (球殻の厚さ)    \\
+    時間スケール & $D^{2}/\nu$ & (粘性拡散時間)  \\
+    速度スケール & $\nu/D$ & (粘性速度)\\
+    温度スケール & $\beta D^{2}$ &\\
+    磁場のスケール 
+    & $\sqrt{\mu_{0} \rho_{0}}\nu/D$ 
+    & %アルフヴェン波の速度 ? 
+    \\
+   圧力のスケール &$\rho_{0}\nu^{2}/D^{2}$  &
+   \end{tabular}
+  \end{quote}
+  その結果, 方程式系は
+ \begin{eqnarray}
+  && \Deqlab{無次元連続の式}
+   \Ddiv\Dvect{u} = 0,~~~\Ddiv\Dvect{B}=0, \\
+  &&\Deqlab{無次元運動方程式}
+   \DP{\Dvect{u}}{t} + (\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+   + \tau \Dvect{k}\times\Dvect{u}
+   = - \Dgrad \pi 
+     + P_{r}^{-1}R_{a}
+     \theta\Dvect{r}
+   + \Dlapla \Dvect{u} 
+   + (\Drot\Dvect{B})\times\Dvect{B},\nonumber \\
+  && \\
+  &&\Deqlab{無次元熱の式}
+   \DP{\theta}{t} + (\Dvect{u}\cdot\Dgrad)\theta -\Dvect{u}\cdot\Dvect{r} 
+   =    P_{r}^{-1}\Dlapla{\theta}, \\
+  &&\Deqlab{無次元誘導方程式}
+   \DP{\Dvect{B}}{t} - \Drot(\Dvect{u}\times\Dvect{B}) 
+   =    P_{m}^{-1}\Dlapla{\Dvect{B}}
+ \end{eqnarray}
+ となる.
+ ここで $\Dvect{u},\pi,\Dvect{B},\theta$ は, 
+ 各々
+ 無次元化された速度, 
+ 圧力のずれ, 
+ 磁場, 
+ 温度のずれを表すと定義しなおした.
+
+ スケーリングによって現れた無次元数は各々以下の通りである.
+ $R_{a}$ はレイリー数, $\tau$ はエクマン数 $E$ の逆数,
+ (もしくはテイラー数の平方根),
+ $P_{r}$ はプランドル数, $P_{m}$ は磁気プランドル数であり,
+ それぞれ次式で定義される
+ \footnote{
+ 業界標準の無次元化と種々の論文での無次元化については,
+ appendix 参照(未整備).
+ }
+:
+ \begin{eqnarray}
+  R_{a} &\equiv& \frac{\alpha \gamma \beta D^{6}}{\kappa \nu},\\
+  \tau^{-1}  &=& E \equiv \frac{\nu}{2\Omega D^{2}}, \\
+  P_{r} &\equiv& \frac{\nu}{\kappa}, \\
+  P_{m} &\equiv& \frac{\nu}{\eta}.  
+ \end{eqnarray}
+ これに加えて系に現れる重要なパラメータとして
+ 内径外径比 $\zeta \equiv r_{i}/r_{o}$ が存在する.
+ 
+%--------------------------------------------------------------------------
+\newpage
+ \subsection{ポテンシャルによる方程式系の表現} 
+ 
+ 連続の式および磁場のソレノイダル条件\Deqref{無次元連続の式}
+ より, 速度場と磁場をトロイダル, ポロイダルポテンシャルを用いて表す
+ことができる:
+ \begin{eqnarray}
+  \Deqlab{速度分解}
+  \Dvect{u} &=& \Drot(\psi \Dvect{r}) + \Drot\Drot(\phi\Dvect{r}), \\
+  \Deqlab{磁場分解}
+  \Dvect{B} &=& \Drot(g \Dvect{r}) + \Drot\Drot(h \Dvect{r}). 
+ \end{eqnarray}
+ これらのポテンシャル $\psi, \phi, g, h$ を用いて
+ 方程式系を表す. 
+ 運動方程式 \Deqref{無次元運動方程式}に
+ $\Dvect{r}\cdot\Drot$, $\Dvect{r}\cdot\Drot\Drot$ を作用することで,
+ \begin{eqnarray}
+  \Deqlab{トロ運動}
+   &&
+   \left[ \left( \Dlapla - \DP[]{}{t} \right) L_2 
+   + \tau  \DP{}{\lambda} \right] \psi 
+   - \tau Q \phi  
+   =  
+     \Dvect{r}\cdot\Drot \{( \Dvect{u}\cdot\Dgrad)\Dvect{u} 
+   - (\Dvect{B}\cdot\Dgrad)\Dvect{B})\} \\
+  \Deqlab{ポロ運動}
+  &&\left[ \left( \Dlapla - \DP[]{}{t} \right) L_2 
+     + \tau \DP{}{\lambda} \right] \Dlapla \phi 
+   + \tau Q \psi - P_{r}^{-1}R_{a} L_2 \theta \nonumber \\
+  && \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad
+    =
+    - \Dvect{r}\cdot\Drot\Drot \{(\Dvect{u}\cdot\Dgrad)\Dvect{u} 
+     - (\Dvect{B}\cdot\Dgrad)\Dvect{B})\} 
+ \end{eqnarray}
+ が得られる.
+ 式中の演算子は各々次式で定義した:
+ \begin{eqnarray}
+  \mu &\equiv& \sin\varphi, \\
+  L_{2} 
+   &\equiv&  -r^{2}\Dlapla +\DP{}{r}r^{2}\DP{}{r}  \nonumber \\
+  &=& -\biggl[
+   \frac{1}{\cos^{2}\varphi}\DP[2]{}{\lambda} 
+   +
+   \frac{1}{\cos\varphi}\DP{}{\varphi}\biggl(\cos\varphi\biggr)\DP{}{\varphi}
+   \biggr] \nonumber \\
+  &=& -\biggl[
+   \frac{1}{1-\mu^{2}}\DP[2]{}{\lambda}
+   + 
+   \DP{}{\mu}\biggl\{(1-\mu^{2})\DP{}{\mu}\biggr\}
+   \biggr],     \\
+  Q  &\equiv& \Dvect{k}\cdot\Dgrad 
+   - \Dinv{2}(    L_2 \Dvect{k}\cdot\Dgrad 
+   + \Dvect{k}\cdot\Dgrad L_2   ) \nonumber \\
+  &=& 
+   - r\sin\varphi\Dlapla 
+   + \biggl(L_{2} + r\DP{}{r}\biggr)
+   \times
+   \biggl(\sin\varphi\DP{}{r} 
+   - \frac{cos\varphi}{r}\DP{}{\varphi}\biggr) \nonumber \\
+  &=&
+   -r\mu\Dlapla 
+   +\biggl(L_{2} +r\DP{}{r}\biggr)
+   \times
+   \biggl(\mu\DP{}{r}- \frac{1-\mu^{2}}{r}\DP{}{\mu}\biggr). 
+ \end{eqnarray}
+ 熱の式 \Deqref{無次元熱の式}
+ をポテンシャルで表すと
+ \begin{eqnarray}
+  \Deqlab{ポロ熱}
+   \biggl(P_{r}^{-1}\Dlapla - \DP{}{t}\biggr)\theta
+   + L_{2}\phi &=& \Dvect{u}\cdot\Dgrad\theta.
+ \end{eqnarray}
+ 誘導方程式のポテンシャルでの表現は
+ \Deqref{無次元誘導方程式} へ
+ $\Dvect{r}\cdot\Drot, \Dvect{r}\cdot$ を作用する事で得られる:
+ \begin{eqnarray}
+  \Deqlab{トロ誘導}
+   \biggl(P_{m}^{-1}\Dlapla -\DP{}{t}\biggr)L_{2}g
+   &=&- \Dvect{r}\cdot\Drot\Drot(\Dvect{u}\times\Dvect{B}),\\
+  \Deqlab{ポロ誘導}
+   \biggl(P_{m}^{-1}\Dlapla -\DP{}{t}\biggr)L_{2}h
+   &=& - \Dvect{r}\cdot\Drot(\Dvect{u}\times\Dvect{B}).
+ \end{eqnarray}
+
+ $\Dvect{r}\cdot\Drot, \Dvect{r}\cdot\Drot\Drot$ の座標表現は
+   \begin{eqnarray*}
+     \Dvect{r}\cdot(\Drot\Dvect{F})
+       &=& \frac{1}{\cos\varphi}\DP{F_\varphi}{\lambda}
+         - \frac{1}{\cos\varphi}\DP{}{\varphi}(F_\lambda\cos\varphi),\\
+     \Dvect{r}\cdot(\Drot\Drot\Dvect{F})
+       &=& \frac{1}{\cos\varphi}\DP{(\Drot\Dvect{F})_\varphi}{\lambda}
+         - \frac{1}{\cos\varphi}\DP{}{\varphi}
+              [(\Drot\Dvect{F})_\lambda\cos\varphi]\\
+       &=& \frac{1}{\cos\varphi}\DP{}{\lambda}
+                 \left(  \frac{1}{r}\DP{}{r}(rF_\lambda)
+                        -\frac{1}{r\cos\varphi}\DP{F_r}{\lambda} \right)\\
+       & &  - \frac{1}{\cos\varphi}\DP{}{\varphi}
+              \left[\cos\varphi 
+                     \left( \frac{1}{r}\DP{F_r}{\varphi} 
+                           - \frac{1}{r}\DP{}{r}(rF_\varphi)\right)\right]\\
+       &=& \frac{1}{\cos\varphi}\DP{}{\lambda}
+                  \frac{1}{r}\DP{}{r}(r F_\lambda)
+            + \frac{1}{\cos\varphi}\DP{}{\varphi}
+                  \frac{\cos\varphi}{r}\DP{}{r}(rF_\varphi)\\
+       & &  - \frac{1}{r\cos^2\varphi}\DP[2]{F_r}{\lambda}
+            - \frac{1}{r\cos\varphi}\DP{}{\varphi}
+                  \left(\cos\varphi\DP{F_r}{\varphi}\right)\\
+       &=& \frac{1}{r}\DP{}{r}\left[r \left(
+                \frac{1}{\cos\varphi}\DP{F_\lambda}{\lambda}
+               + \frac{1}{\cos\varphi}\DP{}{\varphi}(F_\varphi\cos\varphi)
+               \right)\right]
+             + \frac{L_2 F_r}{r}.
+   \end{eqnarray*}
+
+  \subsubsection{速度場及び磁場とポテンシャルとの関係式}
+  
+  トロイダル, ポロイダルポテンシャルから
+  速度場を求める式は次の通りである:
+  \begin{eqnarray}
+   u  & = &   
+    \DP[]{~\psi}{\varphi} 
+    + \Dinv{r\cos\varphi} 
+    \DP[]{}{r}\left( r \DP[]{~\phi}{\lambda} \right),\\
+   v  & = & 
+    - \Dinv{\cos\varphi}\DP[]{~\psi}{\lambda}
+    + \Dinv{r} 
+    \DP[]{}{r}\left( r \DP[]{~\phi}{\varphi} \right),\\
+   w  & = & 
+    \frac{L_2 ~\phi}{r}.
+  \end{eqnarray}
+  同様に磁場の各成分について:
+  \begin{eqnarray}
+   B_{\lambda}  & = &   
+    \DP[]{~g}{\varphi} 
+    + \Dinv{r\cos\varphi} 
+    \DP[]{}{r}\left( r \DP[]{~h}{\lambda} \right),\\
+   B_{\varphi}  & = & 
+    - \Dinv{\cos\varphi}\DP[]{~g}{\lambda}
+    + \Dinv{r} 
+    \DP[]{}{r}\left( r \DP[]{~h}{\varphi} \right),\\
+   B_{r}  & = & 
+    \frac{L_2 ~h}{r}.
+  \end{eqnarray}
+
+  逆に, 速度場の各成分からポテンシャルを求めるには, 
+  \Deqref{速度分解}に
+  $\Dvect{r}\cdot$, $\Dvect{r}\cdot\Drot$ を作用させればよい. 
+  %
+  \begin{eqnarray*}
+    & & \Dvect{r}\cdot\Dvect{u} 
+        = \Dvect{r}\cdot[\Drot(\psi\Dvect{r}) + \Drot\Drot(\phi\Dvect{r}) ]
+        = \Dvect{r}\cdot\Drot\Drot(\phi\Dvect{r}) 
+        = L_2\phi,\\
+    & & \Dvect{r}\cdot\Drot\Dvect{u} 
+        = \Dvect{r}\cdot\Drot[\Drot(\psi\Dvect{r}) + \Drot\Drot(\phi\Dvect{r}) ]
+        = \Dvect{r}\cdot\Drot\Drot(\psi\Dvect{r}) = L_2\psi,
+  \end{eqnarray*}
+  %
+  したがって, 
+  \begin{equation}
+        \phi = L_2^{-1}(rw), \quad
+        \psi = L_2^{-1}[\Dvect{r}\cdot(\Drot\Dvect{u})]. 
+  \end{equation}
+  %
+  ここで $L_2^{-1}$ は $L_2$ の逆演算子である. 
+  同様に, \Deqref{磁場分解}に
+  $\Dvect{r}\cdot$, $\Dvect{r}\cdot\Drot$ を作用させることにより
+  磁場の各成分からポテンシャルを求める式が得られる. 
+  \begin{equation}
+        h = L_2^{-1}(rB_r), \quad
+        g = L_2^{-1}[\Dvect{r}\cdot(\Drot\Dvect{B})]. 
+  \end{equation}
+
+%   また , 後の便利のため $U,V$ を
+%   \begin{eqnarray}
+%    U  
+%     & \equiv & u\cos\varphi  \nonumber \\
+%     &=& \cos\varphi\DP[]{~\psi}{\varphi} 
+%         + \Dinv{r} \DP[]{}{r}\left( r \DP[]{~\phi}{\lambda} \right) \nonumber\\
+%     &=& (1-\mu^{2})\DP[]{~\psi}{\varphi} 
+%         + \Dinv{r} \DP[]{}{r}\left( r \DP[]{~\phi}{\lambda} \right), \\
+%    V  & \equiv & v\cos\varphi \nonumber \\ 
+%     &=& -\DP[]{~\psi}{\lambda}
+%     + \frac{\cos\varphi}{r} 
+%     \DP[]{}{r}\left( r \DP[]{~\phi}{\varphi} \right) \nonumber \\
+%     &=& 
+%      -\DP[]{~\psi}{\lambda}
+%      + \frac{1-\mu^{2}}{r} 
+%     \DP[]{}{r}\left( r \DP[]{~\phi}{\varphi} \right) 
+%   \end{eqnarray}
+%   と定義しておく.
+%   同様に磁場についても
+%   \begin{eqnarray}
+%    B_{\lambda }\cos\varphi  
+%     &=& \cos\varphi\DP[]{~g}{\varphi} 
+%         + \Dinv{r} \DP[]{}{r}\left( r \DP[]{~h}{\lambda} \right) \nonumber\\
+%     &=& (1-\mu^{2})\DP[]{~g}{\varphi} 
+%         + \Dinv{r} \DP[]{}{r}\left( r \DP[]{~h}{\lambda} \right), \\
+%    B_{\varphi}\cos\varphi 
+%     &=& -\DP[]{~g}{\lambda}
+%     + \frac{\cos\varphi}{r} 
+%     \DP[]{}{r}\left( r \DP[]{~h}{\varphi} \right) \nonumber \\
+%     &=& 
+%      -\DP[]{~g}{\lambda}
+%      + \frac{1-\mu^{2}}{r} 
+%     \DP[]{}{r}\left( r \DP[]{~h}{\varphi} \right). 
+%   \end{eqnarray}
+
+
+%--------------------------------------------------------------------------
+\newpage   
+ \subsection{境界条件}
+
+\subsubsection{運動学的境界条件}   
+
+運動学的境界条件は, 境界を横切る流れが存在しない, である.
+すなわち:
+\begin{equation}
+ w = 0, ~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}.
+\end{equation}
+
+これをポテンシャルで表現すれば,
+\begin{equation}
+ \phi = 0, ~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}. 
+\end{equation}
+
+\subsubsection{力学的境界条件}   
+
+力学的境界条件としては,
+応力無し(stress-free), もしくは滑べり無し(rigid)を考える.
+
+応力無しの場合には
+\begin{equation}
+ \DP{}{r}\biggl(\frac{u}{r}\biggr) = \DP{}{r}\biggl(\frac{v}{r}\biggr) 
+  = 0, ~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}.
+\end{equation}
+
+ポテンシャルで表現すれば
+\begin{equation}
+ \DP[2]{\phi}{r}
+  = \DP{}{r}\biggl(\frac{\psi}{r}\biggr)
+  = 0, ~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}. 
+\end{equation}
+
+滑べり無しの場合には,
+\begin{equation}
+ u = v = 0,~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}. 
+\end{equation}
+
+ポテンシャルで表現すれば
+\begin{equation}
+ \DP{\phi}{r} = \psi = 0,~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}. 
+\end{equation}
+
+\subsubsection{熱的境界条件}
+
+熱的境界条件としては, 
+境界において温度固定, 
+もしくは熱フラックス固定を考える.
+
+温度固定条件の場合には
+\begin{equation}
+ \theta = 0, ~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}.
+\end{equation}
+
+熱フラックス固定の場合には
+\footnote{
+基本場の熱フラックスが境界において与えられている事になる.
+},
+\begin{equation}
+ \DP{\theta}{r} = 0,~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}.
+\end{equation}
+
+\subsubsection{磁場の境界条件}
+
+磁場の境界条件として
+球殻の外部が不導体である場合と,
+外部と内部の電気伝導度が等しい場合を考える.
+
+球殻の外部が不導体の場合には
+磁場が境界において外部のポテンシャル場に接続される.
+すなわち, 
+外部の磁場を $\Dvect{B}_{e}$, 
+そのポテンシャルを $W$ として
+\begin{equation}
+ \Dvect{B} = \Dvect{B}_{e}
+, ~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}.
+\end{equation}
+ただし $\Dvect{B}_{e} = \Dgrad W,~~~\Dlapla W=0$ である. 
+
+球殻外部と内部の電気伝導度が等しい場合には,
+磁場だけではなく電場の水平成分も
+境界において連続となる:
+\begin{eqnarray}
+ \Deqlab{磁場境界}
+ \Dvect{B} = \Dvect{B}_{e}
+  , ~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}, \\
+ \Deqlab{電場境界}
+ \Dvect{E}_{H} = \Dvect{E}_{eH}
+  , ~~~\mbox{at}~~~ r=\frac{\xi}{1-\xi}, \quad \frac{1}{1-\xi}
+\end{eqnarray}
+ここで 添字 $_H$ は水平成分を表している. 
+球殻外部の電磁場は別途与えられなければならない
+\footnote{
+地球ダイナモで内核を解く際に良く用いられる方法は, 
+内核が角速度 $\Dvect{\omega}_{i}=\omega_i\Dvect{k}$
+で剛体回転しているとして, 
+\[
+ \Dvect{v}_{i} = \Dvect{\omega}_{i}\times\Dvect{r}
+\]
+を誘導方程式\Deqref{無次元誘導方程式}へ代入し$\Dvect{B}_{e}$
+を求める, である. 
+内核の角速度の時間変化は別途トルクの式を用いて求められる.
+}.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

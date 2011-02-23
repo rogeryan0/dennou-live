@@ -1,0 +1,114 @@
+!----------------------------------------------------------------------
+!     Copyright (c) 2002 Shin-ichi Takehiro. All rights reserved.
+!----------------------------------------------------------------------
+! Sample program for gt4_history/gt4f90io and ISPACK   2002/01/25 S.Takehiro
+!                                                      2004/01/26 M.Odaka
+! 
+! Solving KdV equation
+!     d\zeta/dt  = -\zeta d\zeta/dx + d^3\zeta/dx^3
+!
+! Time integration is performed by the leap frog scheme. 
+!
+program kdv
+
+  use ae_module
+  use gt4_history
+  implicit none
+
+ !---- Spartial Resolution  ----
+  integer, parameter :: im=128            ! Dimension of grid points(X)
+  integer, parameter :: km=42             ! Truncation wavenumber(X)
+
+ !---- Variables ----
+  real(8)            :: g_Zeta(0:im-1)     ! Grid data
+  real(8)            :: e_Zeta(-km:km)     ! Spectral data
+  real(8)            :: e_Zeta0(-km:km)    ! Spectral data
+  real(8)            :: e_Zeta1(-km:km)    ! Spectral data
+
+ !---- Coordinate related paremeters ----
+  real(8), parameter :: xmin=0.0, xmax=3.0
+
+ !---- Parameters for time integration ----
+  real(8), parameter :: dt=1e-6             ! Time step interval
+  integer, parameter :: nt=5000, ndisp=100  ! Total timestep, display interval
+
+ !---- Physical parameters ----
+  real(8), parameter :: X1=(xmax+xmin)/2.0      ! Center of the initial dist.
+  real(8), parameter :: U1=720.0                ! Amplitude of the initial dist.
+
+  real(8), parameter :: X2=(xmax+3*xmin)/4.0    ! Center of the initial dist.
+  real(8), parameter :: U2=1440.0               ! Amplitude of the initial dist.
+
+  real(8) :: pi                                 ! Circle ratio
+  integer :: i, j, it                           ! DO variables
+
+  pi = 4.0D0*atan(1.0D0)
+
+  call ae_initial(im,km,xmin,xmax)              ! Initialization of the module 
+
+ !------------------- Initial condition ----------------------
+  !g_Zeta=  cos(pi*g_X)
+  g_Zeta= U1*sech((g_X-X1)/sqrt(12/u1))**2 &
+         + U2*sech((g_X-X2)/sqrt(12/u2))**2 
+
+  e_Zeta = e_g(g_Zeta)
+  e_Zeta1 = e_Zeta ; e_Zeta0 = e_Zeta
+
+  call output_gtool4_init                       ! Initialization of History 
+  call output_gtool4
+
+ !------------------- Time integration ----------------------
+  do it=1,nt
+     e_Zeta = e_Zeta0 + 2*dt * &                ! Leap frog time integral
+          ( -e_g(g_e(e_Zeta1)*g_e(e_Dx_e(e_Zeta1))) &
+            - e_Dx_e(e_Dx_e(e_Dx_e(e_Zeta1)))  )
+     e_Zeta0=e_Zeta1 ; e_Zeta1=e_Zeta
+
+     if(mod(it,ndisp) .eq. 0)then               ! Output
+        g_Zeta = g_e(e_Zeta)
+        call output_gtool4
+     endif
+  enddo
+
+  call output_gtool4_close                      ! Closing procedure
+  stop
+
+contains
+  function sech(x)
+    double precision :: x(0:im-1)
+    double precision :: sech(0:im-1)
+
+    sech = 2/(exp(x)+ exp(-x))
+
+  end function sech
+
+  subroutine output_gtool4_init
+    call HistoryCreate( &                                  ! Create history
+           file='kdv1.nc', title='KDV equation model (Leap frog)',  &
+           source='Sample program of gtool_history/gtool4', &
+           institution='GFD_Dennou Club spmodel/davis project',     &
+           dims=(/'x','t'/), dimsizes=(/im,0/),             &
+           longnames=(/'X-coordinate','time        '/),     &
+           units=(/'1','1'/),                               &
+           origin=0.0, interval=real(ndisp*dt) )
+
+    call HistoryPut('x',g_X)                        ! Output variable
+    call HistoryAddattr('x','topology','circular')  ! Attribute for cyclic coord.
+    call HistoryAddattr('x','modulo',xmax-xmin)     ! Attribute for cyclic coord.
+
+    call HistoryAddVariable( &                      ! Definition of variable
+           varname='zeta', dims=(/'x','t'/), & 
+           longname='displacement', units='1', xtype='double')
+  end subroutine output_gtool4_init
+
+  subroutine output_gtool4
+    write(6,*) 'it = ',it
+    call HistoryPut('t',real(it*dt))
+    call HistoryPut('zeta',g_Zeta)
+  end subroutine output_gtool4
+
+  subroutine output_gtool4_close
+    call HistoryClose
+  end subroutine output_gtool4_close
+
+end program kdv

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>2. Fortran90 の配列機能</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h5>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>階層的地球流体スペクトルモデル集 SPMODEL</b>
+</td><td align=right>
+    << <a href=sec1.htm>Prev</a> |
+       <a href=../index_ja.htm>Index</a>|
+       <a href=sec3.htm>Next</a>    >>
+    </td></p>
+<tr>
+</table>
+</center>
+<hr>
+</h5>
+
+<h2><a name="label-0" id="label-0">2. Fortran90 の配列機能</a></h2><!-- RDLabel: "2. Fortran90 の配列機能" -->
+<p>ここでは SPMODEL に使われている Fortran90 の言語機能のうち
+もっとも重要な配列演算機能について簡単に紹介する. 
+ここで取りあげていない Fortran90 で強化された機能の
+より詳細で厳密な情報は, 適当な Fortran90 の文法書
+(例えば<a href="ref.htm">[3]</a>)を参照して頂きたい. </p>
+<h3><a name="label-1" id="label-1">2.1. 配列の演算</a></h3><!-- RDLabel: "2.1. 配列の演算" -->
+<p>Fortran90 では FORTRAN77 に比べて配列処理機能が強化されている. 
+その一つとして, 配列要素全てにおなじ計算を施したいときに
+配列の添字を指定する必要がなくなったことがあげられる(要素毎演算). 
+これに対して FORTRAN77 では配列の添字を必ず指定して計算させる必要があった. 
+以下, 簡単な例を示そう. </p>
+<p>FORTRAN77 では</p>
+<pre>! FORTRAN 77 style
+
+      REAL*8    A(10,10), B(10,10), C(10,10)
+      INTEGER   I, J
+
+      ...
+      DO 1000 J=1,10
+          DO 1000 I=1,10
+          C(I,J) = A(I,J) + B(I,J)
+ 1000 CONTINUE</pre>
+<p>と書かねばならないところが, Fortran90 では</p>
+<pre>real(8) :: a(10,10), b(10,10), c(10,10)
+
+...
+c = a + b</pre>
+<p>と, 配列式 1 行ですんでしまう. </p>
+<p>このような機能は算術組込み関数にも用いることができる. 
+たとえば配列の各要素の exp を計算したものをさせたい場合には
+FORTRAN77 では</p>
+<pre>! FORTRAN 77 style
+
+       DO 1000 J=1,10
+       DO 1000 I=1,10
+          B(I,J) = EXP(A(I,J))
+  1000 CONTINUE</pre>
+<p>が, Fortran90 では</p>
+<pre>b = exp(a)</pre>
+<p>で済ませられる. </p>
+<h3><a name="label-2" id="label-2">2.2. 配列を返すユーザ定義関数</a></h3><!-- RDLabel: "2.2. 配列を返すユーザ定義関数" -->
+<p>先の組込み関数の例のように, 
+配列を返す関数をユーザが定義できることも
+Fortran90 で強化された機能である. FORTRAN77 では一つの数値を返す
+関数しか定義できなかった. </p>
+<p>さらに, そのユーザ定義関数の中側で, </p>
+<ul>
+<li>引数の配列の大きさを調べることができる,</li>
+<li>引数の配列の大きさに応じて作業用の配列を内部で定義できる,</li>
+</ul>
+<p>という機能が利用できる. これらの機能を利用することで, 
+FORTRAN77 ではサブルーチンとしてしか提供できなかった操作を
+Fortran90 では配列を返す関数として定義し直すことができる. </p>
+<h5>
+<hr>
+<center>
+<table cellSpacing=0 cellPadding=0 width="100%" border=0>
+
+<p><tr><td align=left>
+<b>階層的地球流体スペクトルモデル集 SPMODEL</b>
+</td><td align=right>
+    << <a href=sec1.htm>Prev</a> |
+       <a href=../index_ja.htm>Index</a>|
+       <a href=sec3.htm>Next</a>    >>
+    </td></p>
+<tr>
+</table>
+</center>
+</h5>
+
+
+</body>
+</html>

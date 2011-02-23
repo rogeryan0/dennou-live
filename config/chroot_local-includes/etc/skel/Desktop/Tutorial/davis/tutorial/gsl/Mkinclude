@@ -1,0 +1,21 @@
+# Mkinclude for /GFD_Dennou_Club/ftp/arch/ruby/tutorial/gsl/Makefile
+#
+# 2004/10/26 Tsukahara Daisuke
+#
+RUBY    = /usr/bin/ruby
+RD2     = /usr/bin/rd2
+CHMOD   = /bin/chmod
+CHGRP   = /bin/chgrp
+
+RUBYLIB = .
+CSS     = $(RUBYLIB)/dennou-ruby.css
+RDHINDEX= $(RUBYLIB)/rd/rd-hindex2.rb
+
+RDEXT   = $(RUBYLIB)/rd/rd2html-ext-lib
+RDFLAG  = --with-part=html:include --out-code=euc --ref-extension \
+		--native-inline --headline-secno \
+		--head-element
+CSSFLAG = --with-css=$(CSS)
+
+GID     = ruby
+MODE    = 664

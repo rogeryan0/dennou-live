@@ -1,0 +1,1265 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: ae_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">ae_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/ae_module_f90.html">
+
+                src/ae_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="ae_module.html">ae_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a href="../files/src/ae_module_f90.html">ae_module.f90</a>,v 1.16
+2009-02-28 21:33:45 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/ae_module モジュールは 1 次元周期境界条件の下での流体運動を実
+フーリエ変換によるスペクトル法で数値計算するための Fortran90 関数
+を提供する.
+</p>
+<p>
+2 次元データの 1 次元に関して同時にスペクトル計算を実行するための
+関数も提供しており, 2, 3 次元領域での計算のベースも提供する.
+</p>
+<p>
+このモジュールは内部で ISPACK/FTPACK の Fortran77 サブルーチンを呼
+んでいる. スペクトルデータの格納方法については ISPACK/FTPACK と異なっ
+ているので以下のコメントに注意されたい.
+</p>
+<h2>関数・変数の名前と型について</h2>
+<h3>命名法</h3>
+<ul>
+<li>関数名の先頭 (e_, g_, ae_, ag_) は, 返す値の形を示している.
+
+<table>
+<tr><td valign="top">e_  :</td><td>スペクトルデータ,
+
+</td></tr>
+<tr><td valign="top">g_  :</td><td>1 次元格子点データ,
+
+</td></tr>
+<tr><td valign="top">ae_ :</td><td>1 次元スペクトルデータが複数並んだ 2 次元データ,
+
+</td></tr>
+<tr><td valign="top">ag_ :</td><td>1 次元格子点データが複数並んだ 2 次元データ.
+
+</td></tr>
+</table>
+</li>
+<li>関数名の間の文字列(Dx)は, その関数の作用を表している.
+
+</li>
+<li>関数名の最後 (_e, _ae, _g, _ag) は, 入力変数の形スペクトルデータおよび
+格子点データであることを示している.
+
+<table>
+<tr><td valign="top">_e  :</td><td>スペクトルデータ
+
+</td></tr>
+<tr><td valign="top">_g  :</td><td>1 次元格子点データ
+
+</td></tr>
+<tr><td valign="top">_ae :</td><td>1 次元スペクトルデータが複数並んだ 2 次元データ
+
+</td></tr>
+<tr><td valign="top">_ag :</td><td>1 次元格子点データが複数並んだ 2 次元データ
+
+</td></tr>
+</table>
+</li>
+</ul>
+<h3>各データの種類の説明</h3>
+<ul>
+<li>g : 1 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:im-1).
+
+</li>
+<li>im は X 座標の格子点数であり, サブルーチン <a
+href="ae_module.html#M001548">ae_Initial</a> にて あらかじめ設定しておく.
+
+</li>
+</ul>
+</li>
+<li>e : スペクトルデータ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(-km:km).
+
+</li>
+<li>km は X 方向の最大波数であり, サブルーチン <a
+href="ae_module.html#M001548">ae_Initial</a> にて あらかじめ設定しておく.
+
+</li>
+<li>スペクトルデータの格納のされ方は 0:km までが cos(kx) の係数, -km:-1 が
+sin(kx) の係数となっている.
+
+</li>
+</ul>
+</li>
+<li>ag : 1 次元(X)格子点データの並んだ 2 次元データ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(:,0:im-1). 第 2 次元が X 方向を表す.
+
+</li>
+</ul>
+</li>
+<li>ae : 1 次元スペクトルデータの並んだ 2 次元データ.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(:,-km:km). 第 2
+次元がスペクトルを表す.
+
+</li>
+</ul>
+</li>
+<li>g_ で始まる関数が返す値は 1 次元格子点データに同じ.
+
+</li>
+<li>e_ で始まる関数が返す値はスペクトルデータに同じ.
+
+</li>
+<li>ag_ で始まる関数が返す値は 1 次元格子点データの並んだ 2 次元データに同じ.
+
+</li>
+<li>ae_ で始まる関数が返す値は 1 次元スペクトルデータの並んだ 2
+次元データに同じ.
+
+</li>
+<li>スペクトルデータに対する微分等の作用とは, 対応する格子点データに
+微分などを作用させたデータをスペクトル変換したもののことである.
+
+</li>
+</ul>
+<h2>変数・手続き群の要約</h2>
+<h4>初期化</h4>
+<table>
+<tr><td valign="top"><a href="ae_module.html#M001548">ae_Initial</a>       :</td><td>スペクトル変換の格子点数, 波数, 領域の大きさの設定
+
+</td></tr>
+</table>
+<h4>座標変数</h4>
+<table>
+<tr><td valign="top"><a href="ae_module.html#M001546">g_X</a>              :</td><td>格子点座標(X)を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="ae_module.html#M001547">g_X_Weight</a>       :</td><td>重み座標を格納した 1 次元配列
+
+</td></tr>
+</table>
+<h4>基本変換</h4>
+<table>
+<tr><td valign="top"><a href="ae_module.html#M001550">g_e</a>, <a href="ae_module.html#M001549">ag_ae</a>       :</td><td>スペクトルデータから格子データへの変換
+
+</td></tr>
+<tr><td valign="top"><a href="ae_module.html#M001552">e_g</a>, <a href="ae_module.html#M001551">ae_ag</a>       :</td><td>格子データからスペクトルデータへの変換
+
+</td></tr>
+</table>
+<h4>微分</h4>
+<table>
+<tr><td valign="top"><a href="ae_module.html#M001554">e_Dx_e</a>, <a href="ae_module.html#M001553">ae_Dx_ae</a> :</td><td>スペクトルデータに X 微分を作用させる
+
+</td></tr>
+</table>
+<h4>積分・平均</h4>
+<table>
+<tr><td valign="top"><a href="ae_module.html#M001555">a_Int_ag</a>, <a href="ae_module.html#M001557">a_Avr_ag</a> :</td><td>1 次元格子点データの並んだ 2 次元配列の積分および平均
+
+</td></tr>
+<tr><td valign="top"><a href="ae_module.html#M001556">Int_g</a>, <a href="ae_module.html#M001558">Avr_g</a>       :</td><td>1 次元格子点データの積分および平均
+
+</td></tr>
+</table>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M001558">Avr_g</a>&nbsp;&nbsp;
+
+        <a href="#M001556">Int_g</a>&nbsp;&nbsp;
+
+        <a href="#M001557">a_Avr_ag</a>&nbsp;&nbsp;
+
+        <a href="#M001555">a_Int_ag</a>&nbsp;&nbsp;
+
+        <a href="#M001553">ae_Dx_ae</a>&nbsp;&nbsp;
+
+        <a href="#M001548">ae_Initial</a>&nbsp;&nbsp;
+
+        <a href="#M001551">ae_ag</a>&nbsp;&nbsp;
+
+        <a href="#M001549">ag_ae</a>&nbsp;&nbsp;
+
+        <a href="#M001554">e_Dx_e</a>&nbsp;&nbsp;
+
+        <a href="#M001552">e_g</a>&nbsp;&nbsp;
+
+        <a href="#M001550">g_e</a>&nbsp;&nbsp;
+
+        <a href="#M001546">g_x</a>&nbsp;&nbsp;
+
+        <a href="#M001547">g_x_weight</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M001558" class="method-detail">
+        <a name="M001558"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001558" class="method-signature">
+
+
+
+          <span class="method-name">Avr_g</span><span class="method-args">( g ) result(Avr_g)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001558">Avr_g</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+</td></tr>
+<tr><td valign="top"><b><tt>g  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1), intent(in)</tt>
+
+</td></tr>
+</table>
+<p>
+1 次元格子点データの平均
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001558-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001558-source">
+<pre>
+    function Avr_g(g)
+      !
+      ! 1 次元格子点データの平均
+      !
+      real(8), dimension(0:im-1), intent(in)   :: g
+      real(8)                                  :: Avr_g
+
+      Avr_g = Int_g(g)/sum(g_X_Weight)
+
+    end function Avr_g
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001556" class="method-detail">
+        <a name="M001556"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001556" class="method-signature">
+
+
+
+          <span class="method-name">Int_g</span><span class="method-args">( g ) result(Int_g)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001556">Int_g</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分結果
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元格子点データの積分
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001556-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001556-source">
+<pre>
+    function Int_g(g)
+      !
+      ! 1 次元格子点データの積分
+      !
+      real(8), dimension(0:im-1), intent(in)   :: g      !(in) 格子点データ
+      real(8)                                  :: Int_g  !(out) 積分結果
+
+      Int_g = sum(g*g_X_Weight)
+
+    end function Int_g
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001557" class="method-detail">
+        <a name="M001557"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001557" class="method-signature">
+
+
+
+          <span class="method-name">a_Avr_ag</span><span class="method-args">( ag ) result(a_Avr_ag)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001557">a_Avr_ag</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(ag,1))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均結果
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,0:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元格子点データが並んだ 2 次元配列の平均
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001557-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001557-source">
+<pre>
+    function a_Avr_ag(ag)
+      !
+      ! 1 次元格子点データが並んだ 2 次元配列の平均
+      !
+      real(8), dimension(:,0:), intent(in)     :: ag        !(in) 格子点データ
+      real(8), dimension(size(ag,1))           :: a_Avr_ag  !(out) 平均結果
+
+      a_Avr_ag = a_Int_ag(ag)/sum(g_X_Weight)
+
+    end function a_Avr_ag
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001555" class="method-detail">
+        <a name="M001555"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001555" class="method-signature">
+
+
+
+          <span class="method-name">a_Int_ag</span><span class="method-args">( ag ) result(a_Int_ag)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001555">a_Int_ag</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(ag,1))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分結果
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,0:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元格子点データが並んだ 2 次元配列の積分
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001555-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001555-source">
+<pre>
+    function a_Int_ag(ag)
+      !
+      ! 1 次元格子点データが並んだ 2 次元配列の積分
+      !
+      real(8), dimension(:,0:), intent(in)     :: ag        !(in) 格子点データ
+      real(8), dimension(size(ag,1))           :: a_Int_ag  !(out) 積分結果
+      integer :: i
+
+      if ( size(ag,2) &lt; im ) then
+         call MessageNotify('E','ae_Int_ag', 'The Grid points of input data too small.')
+      elseif ( size(ag,2) &gt; im ) then
+         call MessageNotify('W','ae_Int_ag', 'The Grid points of input data too large.')
+      endif
+
+      a_Int_ag = 0.0d0
+      do i=0,im-1
+         a_Int_ag(:) = a_Int_ag(:) + ag(:,i)*g_X_Weight(i)
+      enddo
+    end function a_Int_ag
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001553" class="method-detail">
+        <a name="M001553"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001553" class="method-signature">
+
+
+
+          <span class="method-name">ae_Dx_ae</span><span class="method-args">( ae ) result(ae_Dx_ae)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>ae  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,-km:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに X 微分を作用する(2 次元データ).
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001553-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001553-source">
+<pre>
+    function ae_Dx_ae(ae)
+      !
+      ! 入力スペクトルデータに X 微分を作用する(2 次元データ).
+      !
+      ! スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      !
+      real(8), dimension(:,-km:), intent(in)  :: ae
+                                         !(in)  入力スペクトルデータ
+      real(8), dimension(size(ae,1),-km:km)   :: ae_dx_ae
+                                         !(out) 入力スペクトルデータの X 微分
+
+      integer k
+
+      if ( size(ae,2) &lt; 2*km+1 ) then
+         call MessageNotify('W','ae_Dx_ae', 'The Fourier dimension of input data too small.')
+      elseif ( size(ae,2) &gt; 2*km+1 ) then
+         call MessageNotify('W','ae_Dx_ae', 'The Fourier dimension of input data too large.')
+      endif
+
+      do k=-km,km
+         ae_Dx_ae(:,k) = -(2*pi*k/xl)*ae(:,-k)
+      enddo
+    end function ae_dx_ae
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001548" class="method-detail">
+        <a name="M001548"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001548" class="method-signature">
+
+
+
+          <span class="method-name">ae_Initial</span><span class="method-args">( i, k, xmin, xmax ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>i  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点の数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>k  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xmin  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xmax  </tt></b>  <tt> </tt> :</td><td><tt>real(8),intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> X 座標範囲
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトル変換の格子点数, 波数, 領域の大きさを設定する.
+</p>
+<p>
+他の関数や変数を呼ぶ前に, 最初にこのサブルーチンを呼んで
+初期設定をしなければならない.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001548-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001548-source">
+<pre>
+    subroutine ae_Initial(i,k,xmin,xmax)
+      !
+      ! スペクトル変換の格子点数, 波数, 領域の大きさを設定する.
+      !
+      ! 他の関数や変数を呼ぶ前に, 最初にこのサブルーチンを呼んで
+      ! 初期設定をしなければならない.
+      !
+      integer,intent(in) :: i              ! 格子点の数
+      integer,intent(in) :: k              ! 切断波数
+      real(8),intent(in) :: xmin, xmax     ! X 座標範囲
+
+      integer :: ii
+
+      im = i
+      km = k
+      xl = xmax-xmin
+
+      if ( im &lt;= 0 .or. km &lt;= 0 ) then
+         call MessageNotify('E','ae_Initial', 'Number of grid points and waves should be positive')
+      elseif ( mod(im,2) /= 0 ) then
+         call MessageNotify('E','ae_Initial', 'Number of grid points should be even')
+      elseif ( km &gt;= im/2 ) then
+         call MessageNotify('E','ae_Initial', 'KM shoud be less than IM/2')
+      endif
+
+      allocate(ti(im*2))
+
+      call fttrui(im,iti,ti)
+
+      allocate(g_x(0:im-1))
+      do ii=0,im-1
+         g_X(ii) = xmin + xl/im*ii
+      enddo
+
+      allocate(g_x_weight(0:im-1))
+      g_X_Weight = xl/im
+
+      call MessageNotify( 'M','ae_initial','ae_module (2009/01/09) is initialized')
+
+    end subroutine ae_Initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001551" class="method-detail">
+        <a name="M001551"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001551" class="method-signature">
+
+
+
+          <span class="method-name">ae_ag</span><span class="method-args">( ag ) result(ae_ag)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001551">ae_ag</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(ag,1),-km:km)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ag  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データからスペクトルデータへ変換する(2 次元データ用)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001551-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001551-source">
+<pre>
+    function ae_ag(ag)
+      !
+      ! 格子点データからスペクトルデータへ変換する(2 次元データ用)
+      !
+      real(8), dimension(:,:), intent(in)     :: ag     !(in)  格子点データ
+      real(8), dimension(size(ag,1),-km:km)   :: ae_ag  !(out) スペクトルデータ
+
+      real(8), dimension(size(ag,1)*im)     :: y
+      real(8), dimension(size(ag,1),0:im-1) :: ag_work
+      integer :: m, k
+
+      m = size(ag,1)
+      if ( size(ag,2) &lt; im ) then
+         call MessageNotify('E','ae_ag', 'The Grid points of input data too small.')
+      elseif ( size(ag,2) &gt; im ) then
+         call MessageNotify('W','ae_ag', 'The Grid points of input data too large.')
+      endif
+      ag_work = ag
+
+      call fttruf(m,im,ag_work,y,iti,ti)
+
+      do k=1,km
+         ae_ag(:,k) = ag_work(:,2*k)
+         ae_ag(:,-k) = ag_work(:,2*k+1)
+      enddo
+      ae_ag(:,0) = ag_work(:,0)
+
+    end function ae_ag
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001549" class="method-detail">
+        <a name="M001549"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001549" class="method-signature">
+
+
+
+          <span class="method-name">ag_ae</span><span class="method-args">( ae ) result(ag_ae)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001549">ag_ae</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(size(ae,1),0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ae  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(:,-km:), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子点データへ変換する(2 次元データ用)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001549-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001549-source">
+<pre>
+    function ag_ae(ae)
+      !
+      ! スペクトルデータから格子点データへ変換する(2 次元データ用)
+      !
+      real(8), dimension(:,-km:), intent(in)  :: ae     !(in)  スペクトルデータ
+      real(8), dimension(size(ae,1),0:im-1)   :: ag_ae  !(out) 格子点データ
+
+      real(8), dimension(size(ae,1)*im)       :: y
+      integer :: m, k
+
+      m=size(ae,1)
+      if ( size(ae,2) &lt; 2*km+1 ) then
+         call MessageNotify('E','ag_ae', 'The Fourier dimension of input data too small.')
+      elseif ( size(ae,2) &gt; 2*km+1 ) then
+         call MessageNotify('W','ag_ae', 'The Fourier dimension of input data too large.')
+      endif
+
+      ag_ae = 0.0D0
+      ag_ae(:,0)=ae(:,0)
+      ag_ae(:,1)=0
+      do k=1,km
+         ag_ae(:,2*k)=ae(:,k)
+         ag_ae(:,2*k+1)=ae(:,-k)
+      enddo
+      ag_ae(:,2*km+2:im-1)=0
+
+      call fttrub(m,im,ag_ae,y,iti,ti)
+    end function ag_ae
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001554" class="method-detail">
+        <a name="M001554"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001554" class="method-signature">
+
+
+
+          <span class="method-name">e_Dx_e</span><span class="method-args">( e ) result(e_Dx_e)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001554">e_Dx_e</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 入力スペクトルデータの X 微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>e  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに X 微分を作用する(1 次元データ).
+</p>
+<p>
+スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+作用させたデータのスペクトル変換のことである.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001554-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001554-source">
+<pre>
+    function e_Dx_e(e)
+      !
+      ! 入力スペクトルデータに X 微分を作用する(1 次元データ).
+      !
+      ! スペクトルデータの X 微分とは, 対応する格子点データに X 微分を
+      ! 作用させたデータのスペクトル変換のことである.
+      !
+      !
+      real(8), dimension(-km:km), intent(in)     :: e
+                                         !(in)  入力スペクトルデータ
+      real(8), dimension(-km:km)                 :: e_Dx_e
+                                         !(out) 入力スペクトルデータの X 微分
+
+      real(8), dimension(1,-km:km)               :: ae_work
+
+      ae_work(1,:) = e
+      ae_work = ae_Dx_ae(ae_work)
+      e_Dx_e = ae_work(1,:)
+
+    end function e_Dx_e
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001552" class="method-detail">
+        <a name="M001552"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001552" class="method-signature">
+
+
+
+          <span class="method-name">e_g</span><span class="method-args">( g ) result(e_g)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001552">e_g</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>g  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データからスペクトルデータへ変換する(1 次元データ用)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001552-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001552-source">
+<pre>
+    function e_g(g)
+      !
+      ! 格子点データからスペクトルデータへ変換する(1 次元データ用)
+      !
+      real(8), dimension(-km:km)              :: e_g   !(out) スペクトルデータ
+      real(8), dimension(0:im-1), intent(in)  :: g     !(in)  格子点データ
+
+      real(8), dimension(1,size(g))        :: ag_work
+      real(8), dimension(1,-km:km)         :: ae_work
+
+      ag_work(1,:) = g
+      ae_work = ae_ag(ag_work)
+      e_g = ae_work(1,:)
+
+    end function e_g
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001550" class="method-detail">
+        <a name="M001550"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M001550" class="method-signature">
+
+
+
+          <span class="method-name">g_e</span><span class="method-args">( e ) result(g_e)</span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001550">g_e</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:im-1)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>e  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(-km:km), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子点データへ変換する(1 次元データ用)
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001550-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001550-source">
+<pre>
+    function g_e(e)
+      !
+      ! スペクトルデータから格子点データへ変換する(1 次元データ用)
+      !
+      real(8), dimension(0:im-1)             :: g_e  !(out) 格子点データ
+      real(8), dimension(-km:km), intent(in) :: e    !(in)  スペクトルデータ
+
+      real(8), dimension(1,size(e))  :: ae_work
+      real(8), dimension(1,0:im-1)   :: ag_work
+
+      ae_work(1,:) = e
+      ag_work = ag_ae(ae_work)
+      g_e = ag_work(1,:)
+
+    end function g_e
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M001546" class="method-detail">
+        <a name="M001546"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">g_x</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001546">g_x</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点座標(X)を格納した 1 次元配列.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M001547" class="method-detail">
+        <a name="M001547"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">g_x_weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="ae_module.html#M001547">g_x_weight</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 重み座標を格納した 1 次元配列. X 方向の格子点の間隔が格納してある.
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

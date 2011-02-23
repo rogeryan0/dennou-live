@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"> 
+<HTML lang="ja">
+ <HEAD>
+  <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <META name="author" content="whitecat">
+  <LINK REV=MADE HREF="mailto:kozuka@unyo.marushin.media.kyoto-u.ac.jp">
+  <LINK REL="CONTENTS" href="./index.html">
+  <LINK rel="stylesheet" href="./css/base.css" type="text/css">
+  <LINK rel="stylesheet" href="./css/top.css" type="text/css">
+  <TITLE>SWIG:Ruby Programing for FORTRAN</TITLE>
+ </HEAD>
+ <BODY>
+  <DIV class="title">
+   <SPAN class="main">Ruby Programing for FORTRAN</SPAN>
+   ～SWIGを使う(3)～
+  </DIV>
+  <H2>
+   内容
+  </H2>
+  <P>
+   前回と同じ内容の関数をFORTRANで書いて拡張ライブラリ化してみます。
+  </P>
+  <H2>
+   .
+  </H2>
+  <P>
+   用意したFORTRANのコードを以下に示します。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%cat test2.f
+        INTEGER FUNCTION ADD(A,B)
+
+        INTEGER A,B
+
+        ADD=A+B
+        RETURN
+        END
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   手始めにCから呼び出してみます。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%cat test2-c.c
+#include <stdio.h>
+
+int main(void)
+{
+  int a = 1, b = 2;
+
+  printf("%d\n", add_(&a, &b));
+  return(0);
+}
+%f77 -c test2.f; gcc -o test2 test2-c.c test2.o
+%./test2
+3
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   FORTRANで作った関数をCから呼ぶ場合、まず関数名のすぐ後ろに"_"をつける必要があります。
+   また、引数はポインタで渡すことになります。(もっとも、COMPLEXやCHARACTERの場合はまた異なりますが。この辺は後々)<BR>
+   さて、動くことがわかったので(FORTRANはまったくの初心者なので意図したどおりなのかすら自信がなかったのです;p)拡張ライブラリ化してみます。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%cat test2.i
+%module test2
+
+int add_(int *a, int *b);
+%swig -ruby test2.i
+%cat Makefile.rb
+require 'mkmf'
+create_makefile('test2')
+^C
+%ruby Makefile.rb
+%make
+cc -fPIC -D_THREAD_SAFE -O -pipe  -fPIC -I/usr/local/lib/ruby/1.6/i386-freebsd4.3 
+-I/usr/local/include -c -o test2_wrap.o test2_wrap.c
+cc -fPIC -D_THREAD_SAFE -O -pipe  -fPIC -I/usr/local/lib/ruby/1.6/i386-freebsd4.3 
+-I/usr/local/include -c -o test2-c.o test2-c.c
+cc -shared -Wl,-soname,test2.so -L/usr/local/lib -o test2.so test2_wrap.o 
+test2-c.o -L. -lruby -lc
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   ありゃ？何かおかしいですね。.f で終る test2.f は無視され、先ほど作った test2-c.c に対応するtest2-c.o がコンパイルされてます。
+   これじゃあ上手く動くはずがありません。Makefileの手直しをしなくては。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+#OBJS = test2_wrap.o test2-c.o
+OBJS = test2_wrap.o test2.o
+
+#下の二行を追加
+.f.o:
+        f77 -fPIC -c -o $@ $<
+.c.o:
+        $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   さて、気を取り直して....
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%make clean
+%make
+cc -fPIC -D_THREAD_SAFE -O -pipe  -fPIC -I/usr/local/lib/ruby/1.6/i386-freebsd4.3
+ -I/usr/local/include -c -o test2_wrap.o test2_wrap.c
+f77 -fPIC -c -o test2.o test2.f
+cc -shared -Wl,-soname,test2.so -L/usr/local/lib -o test2.so test2_wrap.o test2.o
+ -L. -lruby -lc
+%ruby -e "require 'test2.so'; p Test2.add_(1, 2)"
+-e:1:in `add_': Expected int * (TypeError)
+        from -e:1
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   add_へ渡す引数が違うぞと怒られてしまいました。add_を呼び出す部分に何か問題があるのでしょうか？
+   test2_wrap.cでadd_を呼んでいる部分を見ると以下のようになっています。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+static VALUE
+_wrap_add_(VALUE self, VALUE varg0, VALUE varg1) {
+    int *arg0 ;
+    int *arg1 ;
+    int result ;
+    VALUE vresult = Qnil;
+
+    arg0 = (int *)SWIG_ConvertPtr(varg0, SWIGTYPE_p_int);
+    arg1 = (int *)SWIG_ConvertPtr(varg1, SWIGTYPE_p_int);
+    result = (int )add_(arg0,arg1);
+    vresult = INT2NUM(result);
+    return vresult;
+}
+   </PRE>
+ </BLOCKQUOTE>
+ <P>
+  SWIG_ConvertPtrで与えるvarg{0,1}がSWIGTYPE_p_intならば上手くいくように見えます。
+  でも、このような呼び出し時の引数加工は、Ruby側ではなく、ライブラリ側ですべきです。<BR>
+  そこでSWIGの"typemaps"という機能を利用することになります。test2.iを以下のように修正してください。
+ </P>
+ <BLOCKQUOTE>
+  <PRE>
+%module test2
+%include "typemaps.i"
+
+int add_(int *INPUT, int *INPUT);
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   2行目がtypemaps機能を使うためのファイルを読み込む部分です。そしてadd_に適用しています。
+   引数の名前をINPUTとすることによって、Ruby側からInteger型を渡すと、内部でint *へ変換するラッパー関数を生成することができます。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+static VALUE
+_wrap_add_(VALUE self, VALUE varg0, VALUE varg1) {
+    int *arg0 ;
+    int *arg1 ;
+    int temp ;
+    int temp0 ;
+    int result ;
+    VALUE vresult = Qnil;
+
+    {
+        temp = NUM2INT(varg0);
+        arg0 = &temp;
+    }
+    {
+        temp0 = NUM2INT(varg1);
+        arg1 = &temp0;
+    }
+    result = (int )add_(arg0,arg1);
+    vresult = INT2NUM(result);
+    return vresult;
+}
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   適切な変換をしてくれています。<BR>
+   さて、今度こそいくかな....
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+%make clean
+%make
+cc -fPIC -D_THREAD_SAFE -O -pipe  -fPIC -I/usr/local/lib/ruby/1.6/i386-freebsd4.3
+ -I/usr/local/include -c -o test2_wrap.o test2_wrap.c
+f77 -fPIC -c -o test2.o test2.f
+cc -shared -Wl,-soname,test2.so -L/usr/local/lib -o test2.so test2_wrap.o test2.o
+ -L. -lruby -lc
+%ruby -e "require 'test2.so'; p Test2.add_(1, 2)"
+3
+   </PRE>
+  </BLOCKQUOTE>
+  <P>
+   上手くいきました。なお、add_というのは気に食わないという場合はtest2_wrap.cに以下の修正を加えるといいでしょう。
+  </P>
+  <BLOCKQUOTE>
+   <PRE>
+void Init_test2(void) {
+    int i;
+
+    mTest2 = rb_define_module("Test2");
+    _mSWIG = rb_define_module_under(mTest2, "SWIG");
+
+    for (i = 0; swig_types_initial[i]; i++) {
+        swig_types[i] = SWIG_TypeRegister(swig_types_initial[i]);
+        SWIG_define_class(swig_types[i]);
+    }
+
+    //rb_define_module_function(mTest2, "add_", _wrap_add_, 2);
+    rb_define_module_function(mTest2, "add", _wrap_add_, 2);
+}
+   </PRE>
+  </BLOCKQUOTE>
+  <H2>
+   .
+  </H2>
+  <P>
+   <A href="swig-f-2.html" accesskey="b">前に戻る</A>
+   <A href="swig-f.html" accesskey="in">[目次]</A>
+   <A href="swig-f-4.html" accesskey="f">先に進む</A>
+  <DIV class="footer">
+   <A href="http://jigsaw.w3.org/css-validator">
+    <IMG style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss.gif" alt="Valid CSS!">
+   </A>
+  </DIV>
+ </BODY>
+</HTML>

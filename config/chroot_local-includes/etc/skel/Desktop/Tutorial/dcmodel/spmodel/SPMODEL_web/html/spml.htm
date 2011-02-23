@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>SPMODEL ライブラリ (spml)</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ <a href="spml.htm.en">English</a> | Japanese ] [ <a href="/">地球流体電脳倶楽部</a> / <a href="/library/spmodel">SPMODEL プロジェクト</a> / <a href="SIGEN.htm">SIGEN</a> ] </small>
+<h1><a name="label-0" id="label-0">SPMODEL ライブラリ (spml)</a></h1><!-- RDLabel: "SPMODEL ライブラリ (spml)" -->
+<p>SPMODEL ライブラリ (spml) は, スペクトル計算のための Fortran77 ライブ
+ラリ <a href="/library/ispack/">ISPACK</a> のサブルーチンを Fortran90 の
+関数でくるみ, さらにいくつかの便利な微分・積分・境界値問題などのための
+関数やサブルーチンを追加したものです.</p>
+<p>このライブラリに含まれる関数は, Fortran90 で強化された配列機能である</p>
+<ul>
+<li>「要素別演算:配列の要素を指定せずに各要素に対する計算を行えること」</li>
+<li>「配列を返す関数を作成できること」</li>
+</ul>
+<p>を利用し, さらに関数の名前の命名法を 
+(関数の出力するデータ種類)_(機能)_(引数のデータ種類) 
+といった形に統一してあります. </p>
+<p>Fortran90 の配列機能を生かしたこのライブラリの配列関数を用いることで, 
+時間発展方程式の時間変化項以外の部分を
+数式の形そのままにプログラミングすることができるようになってます. 
+支配方程式の形をそのままプログラムソースに反映させられるので
+プログラムの可読性を向上させることができます. 
+また, spml の配列関数は入出力配列の性質が名前からわかるようにするべく
+統一的に命名法にしたがっているので, 関数の使い方が機械的になり, 
+プログラムを修正することも容易に行えるようになっています. 
+また, 引数と出力関数の種類を名前からわかるようにすることで
+引数や出力の間違いを減らすことも狙っています. </p>
+<ul>
+<li><a href="../spml_current.tar.gz">最新 tar+gzip パッケージ(2009.03.03, ver.0.5.0)</a>
+<ul>
+<li><a href="../debian/">Debian パッケージ</a></li>
+</ul></li>
+<li><a href="../spml/">最新 ソースツリー</a></li>
+<li>ドキュメント
+<ul>
+<li><a href="../spml/COPYRIGHT">ライセンス</a></li>
+<li><a href="../spml/html/INSTALL.html.ja">インストールガイド</a></li>
+<li><a href="../spml/html/">マニュアル</a></li>
+</ul></li>
+</ul>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2009/03/04, Since: 2002/02/15 </small>
+
+</body>
+</html>

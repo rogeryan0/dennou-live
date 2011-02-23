@@ -1,0 +1,50 @@
+diff -urN narray-0.5.7_orig/extconf.rb narray-0.5.7/extconf.rb
+--- narray-0.5.7_orig/extconf.rb	2003-03-03 20:15:28.000000000 +0900
++++ narray-0.5.7/extconf.rb	2003-09-16 21:57:43.121651200 +0900
+@@ -34,22 +34,28 @@
+   hfile.close
+ end
+ 
+-alias __install_rb :install_rb
+-def install_rb(mfile, dest, srcdir = nil)
+-  __install_rb(mfile, dest, srcdir)
+-  archdir = dest.sub(/sitelibdir/,"sitearchdir").sub(/rubylibdir/,"archdir")
+-  path = ['$(srcdir)/narray.h','narray_config.h']
+-  path << ['libnarray.a'] if $na_cygwin_with_ruby16
+-  for f in path
+-    mfile.printf "\t@$(RUBY) -r ftools -e 'File::install(ARGV[0], ARGV[1], 0644, true)' %s %s\n", f, archdir
++if RUBY_VERSION < '1.7.0'
++  alias __install_rb :install_rb
++  def install_rb(mfile, dest, srcdir = nil)
++    __install_rb(mfile, dest, srcdir)
++    archdir = dest.sub(/sitelibdir/,"sitearchdir").sub(/rubylibdir/,"archdir")
++    path = ['$(srcdir)/narray.h','narray_config.h']
++    path << ['libnarray.a'] if /cygwin|mingw/ =~ RUBY_PLATFORM
++    for f in path
++      mfile.printf "\t@$(RUBY) -r ftools -e 'File::install(ARGV[0], ARGV[1], 0644, true)' %s %s\n", f, archdir
++    end
+   end
++else
++  $INSTALLFILES = [['narray.h','$(archdir)'], ['narray_config.h','$(archdir)']]
++  $INSTALLFILES << ['libnarray.a','$(archdir)'] if /cygwin|mingw/ =~ RUBY_PLATFORM
+ end
+ 
+-$na_cygwin_with_ruby16 =
+- RUBY_PLATFORM =~ /cygwin|mingw/ && RUBY_VERSION < '1.7.0'
+-
+-if $na_cygwin_with_ruby16
+-  CONFIG["DLDFLAGS"] << " --output-lib libnarray.a"
++if /cygwin|mingw/ =~ RUBY_PLATFORM
++  if RUBY_VERSION < '1.7.0'
++    CONFIG["DLDFLAGS"] << " --output-lib libnarray.a"
++  else
++    CONFIG["DLDFLAGS"] << ",--out-implib=libnarray.a"
++  end
+ end
+ 
+ #$DEBUG = true
+diff -urN narray-0.5.7_orig/libnarray.a narray-0.5.7/libnarray.a
+--- narray-0.5.7_orig/libnarray.a	1970-01-01 09:00:00.000000000 +0900
++++ narray-0.5.7/libnarray.a	2003-09-16 21:58:14.807212800 +0900
+@@ -0,0 +1 @@
++ 

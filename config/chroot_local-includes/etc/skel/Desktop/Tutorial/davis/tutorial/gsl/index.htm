@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>Ruby/GSL</title>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<link href="./dennou-ruby.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h1><a name="Title:" href="#Title:">Title:</a> <a name="label-0">Ruby/GSL</a></h1><!-- RDLabel: "Ruby/GSL" -->
+
+<p><font size="-1"></p>
+<ul>
+<li>編集者: 塚原大輔, 中野満寿男</li>
+<li>最終更新: 2006/03/08 (中野満寿男)</li>
+<li>新規作成: 2005/02/12 (塚原大輔)</li>
+</ul>
+<p></font></p>
+<p><hr>
+<ol class="contents">
+Contents</p>
+<ul>
+<li><a href="#label-1">Ruby/GSL とは</a></li>
+<li><a href="#label-2">バイナリパッケージでインストール</a></li>
+<li><a href="#label-3">ソースコードからインストール</a>
+<ul>
+<li><a href="#label-4">plotutils のインストール</a></li>
+<li><a href="#label-5">GSL のインストール</a></li>
+<li><a href="#label-6">rb-gsl のインストール</a></li>
+</ul></li>
+<li><a href="#label-7">使用例</a>
+<ul>
+<li><a href="#label-8">EOF 解析</a></li>
+</ul></li>
+</ul>
+<p></ol>
+<hr></p>
+<h2><a name="1" href="#1">1</a> <a name="label-1">Ruby/GSL とは</a></h2><!-- RDLabel: "Ruby/GSL とは" -->
+
+<p>GSL(GNU Scientific Library) はその名の通り科学技術計算ライブラリで
+さまざまな数値計算法の関数がたくさん集められています．<a href="http://www.gnu.org/software/gsl/">&lt;URL:http://www.gnu.org/software/gsl/&gt;</a>
+ANSI C で記述されていて，C や C++ から呼び出せます．</p>
+<p>Ruby/GSL は国立天文台の常定さんがメンテナンスしておられる
+GSL の Ruby ラッパーです. 最新版(2006/03/08 現在) 1.7 では
+GSL 1.7 の全ての関数を網羅しています. <a href="http://rb-gsl.rubyforge.org">&lt;URL:http://rb-gsl.rubyforge.org&gt;</a> </p>
+<ul>
+<li>利点
+<ul>
+<li>無料で利用できる</li>
+<li>C 版は日本人も多く利用(日本語ドキュメントが多数存在)</li>
+<li>Ruby 版の一部のメソッドは引数, 戻り値に NArray をとることができる
+<ul>
+<li>インストール時に設定の必要あり</li>
+</ul></li>
+<li>描画ライブラリも付属</li>
+</ul></li>
+</ul>
+<p>このチュートリアルでは Ruby/GSL の使用例をお見せします.   </p>
+<h2><a name="2" href="#2">2</a> <a name="label-2">バイナリパッケージでインストール</a></h2><!-- RDLabel: "バイナリパッケージでインストール" -->
+
+<ul>
+<li><p>Debian, Vine</p>
+<pre># apt-get install rb-gsl</pre></li>
+<li><p>Fedora Core</p>
+<pre># yum install rb-gsl</pre></li>
+<li><p>FreeBSD</p>
+<pre># cd /usr/ports/math/ruby-gsl
+# make install</pre></li>
+<li>Cygwin</li>
+</ul>
+<p>ruby-gsl というパッケージが電脳Ruby プロジェクトから提供されています。詳しくは<a href="http://dennou-k.gfd-dennou.org/arch/ruby/products/cygwin/index-j.html">こちら</a>。</p>
+<h2><a name="3" href="#3">3</a> <a name="label-3">ソースコードからインストール</a></h2><!-- RDLabel: "ソースコードからインストール" -->
+
+<h3><a name="3.1" href="#3.1">3.1</a> <a name="label-4">plotutils のインストール</a></h3><!-- RDLabel: "plotutils のインストール" -->
+
+<p>まずは gsl で使われている描画ライブラリをインストールします.
+(rb-gsl に必須ではないらしいのですが, インストールでこけるので一応.)
+<a href="ftp://ftp.gnu.org/gnu/plotutils/">Plotutils 公式ページ(GNU)</a>から</p>
+<ul>
+<li>plotutils-2.4.1.tar.gz</li>
+</ul>
+<p>をダウンロードします.</p>
+<p>展開した後に, 展開されたディレクトリに移ります. そして</p>
+<pre>% ./configure</pre>
+<p>で Makefile を生成します. この時デフォルトのインストールパス(/usr/local/)
+以外の場所にインストールしたい場合は</p>
+<pre>% ./configure --prefix=&lt;インストール先のパス&gt;</pre>
+<p>などとしましょう. configure が終わったら</p>
+<pre>% make</pre>
+<p>します. 時間がかかるので紅茶でも飲んで待ちましょう. 終わったら</p>
+<pre># make install</pre>
+<p>します(場合によってスーパーユーザになってください). 簡単ですね. </p>
+<h3><a name="3.2" href="#3.2">3.2</a> <a name="label-5">GSL のインストール</a></h3><!-- RDLabel: "GSL のインストール" -->
+
+<p><a href="ftp://ftp.gnu.org/gnu/gsl/">GSL 公式ページ(GNU)</a>から</p>
+<ul>
+<li>gsl-1.7.tar.gz</li>
+</ul>
+<p>をダウンロードしましょう.</p>
+<p>展開した後に, 展開されたディレクトリに移ります. そして plotutils 同様に</p>
+<pre>% ./configure or ./configure --prefix=&lt;インストール先のパス&gt;
+% make
+# make install</pre>
+<p>とします. これで終了です.</p>
+<h3><a name="3.3" href="#3.3">3.3</a> <a name="label-6">rb-gsl のインストール</a></h3><!-- RDLabel: "rb-gsl のインストール" -->
+
+<p>次に Ruby/GSL をインストールします.
+<a href="http://rb-gsl.rubyforge.org/">RubyGSL 公式ページ</a>の 3. Installation, 2 の Download から
+<a href="http://rubyforge.org/frs/?group_id=285">&lt;URL:http://rubyforge.org/frs/?group_id=285&gt;</a>に飛びます. ここから</p>
+<ul>
+<li>rb-gsl-1.7.0.tar.gz</li>
+</ul>
+<p>をダウンロードしましょう.</p>
+<p>落とした資源を展開して, 展開したディレクトリに移ります.</p>
+<p>まずは設定します. NArray を gsl で利用できるようにするには</p>
+<pre>% ruby setup.rb config -- --with-narray-include=&lt;narray.h's path&gt;</pre>
+<p>とします. この時 narray.h のパスを陽に指定しなくてはなりません.
+また plotutils や gsl のインストール先がデフォルトのロードパスにない場合は
+以下の様に設定してやらなければなりません.</p>
+<pre>% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:&lt;インストール先のパス&gt;/lib
+% export C_INCLUDE_PATH=$C_INCLUDE_PATH:&lt;インストール先のパス&gt;/include</pre>
+<p>実行した際に, narray.h がロードされたことを確認したら</p>
+<pre>% ruby setup.rb setup</pre>
+<p>とします. 無事終了したら  </p>
+<pre># ruby setup.rb install</pre>
+<p>します. ただし, rb_gsl.so が取り残されるかもしれません. その時は手動で</p>
+<pre># cd ext; install rb_gsl.so &lt;インストール先のパス&gt;</pre>
+<p>と実行して移してやります. 以上でインストールは終了です.</p>
+<p>それではサンプルを実行してみましょう. サンプルは展開したディレクトリの
+samples/ 以下にあります. <a href="http://rb-gsl.rubyforge.org/ref.html">リファレンスマニュアル</a>
+を眺めつつお好みのプログラムを実行してみましょう.</p>
+<h2><a name="4" href="#4">4</a> <a name="label-7">使用例</a></h2><!-- RDLabel: "使用例" -->
+
+<h3><a name="4.1" href="#4.1">4.1</a> <a name="label-8">EOF 解析</a></h3><!-- RDLabel: "EOF 解析" -->
+
+<p>Ruby/SSL2 の例題スクリプトを参考にしています. ただし欠損値は考慮してません.</p>
+<p><a href="eof_gsl.rb">eof_gsl.rb</a>: GSL::Eigen::symmv(実対称行列の固有値固有ベクトルを求める) の利用</p>
+<textarea cols="80" rows="10" wrap="hard" class="source">
+require "narray"
+require "gsl"
+ 
+module Analysis
+ 
+def covariance(x,y)
+  if x.length != y.length then
+    print "error\n"
+    exi
+  end
+
+  len = x.length
+
+  sum = x.mul_add(y,0)
+  n = len
+
+  return  sum/(n-1)
+end
+
+def covariance_matrix( x )
+  if x.rank !=2
+    raise "covariance_matrix: x.rank must be 2"
+  end
+
+  dim = x.shape[0]  
+  cov = ( NArray.sfloat(dim, dim).fill!(0.0) ).to_gm
+  total = 0
+
+  for i in 0..dim-1
+    for j in 0..i
+      elm = covariance(x[i,true],x[j,true])
+      cov[j, i] = elm  unless i == j
+      cov[i, j] = elm 
+      total += elm
+    end
+  end
+  return cov, total
+end
+
+def eof( x )
+
+  if x.shape.length!=2 then
+    print "err\n"
+    exit
+  end
+
+  dim,nle = x.shape
+
+  p "calc anomary"
+  x = x - x.mean(1)
+
+  p "make covariance matrix"
+  cova, total = covariance_matrix(x)
+
+  p "calc eigen value"
+  val, vec = GSL::Eigen::symmv(cova)
+  vec = vec.transpose.to_na
+
+  [val/total,vec]
+end
+
+module_function :eof, :covariance_matrix, :covariance
+
+end
+</textarea>
+
+<p><a href="eof.rb">eof.rb</a>eof_gsl.rb で定義した Analysis::eof を呼ぶスクリプト.</p>
+<textarea cols="80" rows="10" wrap="hard" class="source">
+require "narray"
+require "gsl"
+require "eof_gsl.rb"
+require "numru/dcl"
+
+include NumRu
+
+def rand_nmal(m, s, n)
+
+  # 正規乱数作成
+  rnd_std_nmal = NArray.sfloat(n).randomn 
+  rnd_nmal     = rnd_std_nmal * s + m 
+
+  return rnd_nmal
+end
+
+n = 1000
+x = NArray.float(2,n)
+
+a = rand_nmal(0,0.4,n)  # 平均 0, 分散 0.4 の正規乱数
+b = rand_nmal(0,0.2,n)  # 平均 0, 分散 0.2 の正規乱数
+
+theta = Math::PI/6
+x[0,true] = a*Math::cos(theta) - b*Math::sin(theta)
+x[1,true] = a*Math::sin(theta) + b*Math::cos(theta)
+
+val,vec = Analysis.eof(x)
+
+DCL::gropn(1)
+DCL::grfrm
+DCL::grswnd(-1.5,1.5,-1.5,1.5)
+DCL::uspfit
+DCL::grstrf
+DCL::usdaxs
+DCL::sgpmzu(x[0, true],x[1,true],1,1,0.01)
+for i in 0..1
+  fact = val[i]
+  DCL::sgplzu([-vec[0,i]*fact,vec[0,i]*fact],[-vec[1,i]*fact,vec[1,i]*fact],1,3)
+end
+DCL::grcls
+</textarea>
+
+<p>eof.rb の実行結果</p>
+<p><center><IMG SRC="eof.png"></center></p>
+
+</body>
+</html>

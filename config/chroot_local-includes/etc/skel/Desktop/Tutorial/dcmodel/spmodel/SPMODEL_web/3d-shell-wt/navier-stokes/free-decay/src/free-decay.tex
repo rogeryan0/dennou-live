@@ -1,0 +1,801 @@
+% 表題  3 次元回転球殻内における粘性流体の自由減衰乱流問題の定式化
+%
+% 履歴  2005/02/24 竹広 真一 
+%       2005/03/02 竹広 真一 
+%
+\documentclass[12pt,a4j,notitlepage]{jarticle}
+\usepackage{Dennou6}
+\usepackage{psfrag}
+\usepackage{ascmac}
+\usepackage{times}
+\Dtitle[3 次元回転球殻内の自由減衰乱流]
+       {3 次元回転球殻内における粘性流体の自由減衰乱流問題の定式化}
+\Dauthor[竹広 真一]{竹広 真一, SPMODEL 開発グループ}
+\Ddate{平成 17 年 3 月 2 日} 
+\Dparskip
+
+\pagestyle{Dheadings}
+
+\begin{document}
+
+\maketitle
+
+\section{はじめに}
+
+  ここでは中心を共有する同じ回転角速度で回転する 2 つの球面(球殻)に
+  挟まれた領域内の非圧縮粘性流体の運動を考える. 
+  初期値として, 運動エネルギーが
+  特定の(高)波数成分を中心としてとある波数幅に集中している速度場を与え, 
+  その時間発展を追っていくことを行う. 
+  運動エネルギーが十分に大きい初期値を与えることで乱流状態を作りだし, 
+  それが減衰しつつつもどのように時間変化していくかを見ていく. 
+  時間発展の様子を観察・考察する上でを興味ある具体的な項目は
+  以下のようである:
+  %
+  \begin{itemize}
+    \item バロトロピックモデルとの対応. \\
+      球殻の動径方向の幅を狭くしていくと, はたして得られる結果は 
+      1 層モデルで得られている結果と定性的な性質が同じになるであろうか?
+    \item 球殻が厚いときでも, そのバロトロピックな成分をみれば
+      1 層モデルでの性質と対応するだろうか?
+    \item ...
+  \end{itemize}
+
+\section{支配方程式}
+
+  支配方程式は
+  速度ベクトル場をトロイダル・ポロイダルポテンシャルで表現した
+  以下の式である
+  \footnote{
+    「3 次元回転球殻内での粘性流体(非圧縮ナビエーストークス方程式)の定式化」
+     (http://www.gfd-dennou.org/arch/spmodel/3d-shell-wt/navier-stokes/teishiki/pub/)を参照のこと
+   }.
+   %
+   \begin{eqnarray}
+    \Deqlab{回転系トロイダル運動}
+        \DP{}{t} (L_2 \psi)
+     &=&   \frac{1}{R_o} \DP{\psi}{\lambda}
+         - \frac{1}{R_o} Q \phi  
+         + \frac{1}{R_e} L_2\Dlapla \psi \nonumber\\
+     &=& - \Dvect{r}\cdot\Drot [(\Dvect{u}\cdot\Dgrad)\Dvect{u}]
+         + \Dvect{r}\cdot\Drot\Dvect{\mathcal{F}}, \\
+    \Deqlab{回転系ポロイダル運動}
+       \DP{}{t} (L_2 \Dlapla \phi)
+     &=&  \frac{1}{R_o}\DP{}{\lambda}(\Dlapla\phi)
+         + \frac{1}{R_o} Q \psi  
+         + \frac{1}{R_e} L_2\Dlapla\Dlapla\phi \nonumber\\
+     & & + \Dvect{r}\cdot\Drot\Drot [(\Dvect{u}\cdot\Dgrad)\Dvect{u}]
+         - \Dvect{r}\cdot\Drot\Drot\Dvect{\mathcal{F}}, 
+   \end{eqnarray}
+   %
+   ここで式中の演算子 $L_2$ は
+   半径 1 の球面上の 2 次元ラプラシアンの逆符号のものであり, 
+   %
+   \begin{equation}
+      L_{2} \equiv  -r^{2}\Dlapla +\DP{}{r}r^{2}\DP{}{r}
+            = -\left[
+                  \frac{1}{\cos^{2}\varphi}\DP[2]{}{\lambda} 
+                +
+                  \frac{1}{\cos\varphi}\DP{}{\varphi}
+                  \left(\cos\varphi\right)\DP{}{\varphi} \right].
+   \end{equation}
+   %
+   演算子 $Q$ は 
+   \begin{equation}
+     Q  \equiv \Dvect{k}\cdot\Dgrad 
+      - \Dinv{2}(    L_2 \Dvect{k}\cdot\Dgrad 
+      + \Dvect{k}\cdot\Dgrad L_2   )
+   \end{equation}
+   で定義される演算子であり, 具体的には, 
+   %
+   \begin{eqnarray}
+     \Dvect{k}\cdot\Dgrad
+         &=& \sin\varphi\DP{}{r}+\frac{\cos\varphi}{r}\DP{}{\varphi},\\
+     Q   &=& \sin\varphi\DP{}{r}+\frac{\cos\varphi}{r}\DP{}{\varphi}\\
+         & & - \Dinv{2}
+                 \left[ 
+                     L_2 \left(  \sin\varphi\DP{}{r}
+                                +\frac{\cos\varphi}{r}\DP{}{\varphi}\right)
+                   + \left(  \sin\varphi\DP{}{r}
+                            +\frac{\cos\varphi}{r}\DP{}{\varphi}\right)L_2
+               \right].
+   \end{eqnarray}
+   %
+   トロイダル・ポロイダルポテンシャルから
+   $\psi,\phi$ から速度場 $\Dvect{u}$ は
+   \begin{equation}
+     \Deqlab{速度分解}
+     \Dvect{u} = \Drot(\psi \Dvect{r}) + \Drot\Drot(\phi\Dvect{r}),
+   \end{equation}
+   %
+   とそのつど計算される. 成分表示すれば, 
+   \begin{eqnarray}
+      u_\lambda  & = & \DP[]{\psi}{\varphi} 
+            + \Dinv{r\cos\varphi}
+                 \DP[]{}{r}\left(r\DP[]{\phi}{\lambda}\right),\\
+      u_\varphi & = &  - \Dinv{\cos\varphi}\DP[]{\psi}{\lambda}
+            + \Dinv{r}
+                 \DP[]{}{r}\left(r\DP[]{\phi}{\varphi} \right),\\
+      u_r  & = & \frac{L_2 ~\phi}{r}. 
+   \end{eqnarray}
+   %
+   これらの方程式は長さスケールを球殻の厚さ $D = r_{o} - r_{i}$, 
+   速度スケールを初期値の典型的な速度 $U$ で, 
+   時間スケールを $D/U$ で
+   スケーリングしている. その結果, 支配方程式に現れている
+   無次元数はレイノルズ数とロスビー数, 
+   \begin{eqnarray}
+     R_e &\equiv& \frac{\nu}{UD}, \\
+     R_o &\equiv& \frac{U}{2\Omega D}, 
+   \end{eqnarray}
+   である. 
+   これに加えて系に現れる重要なパラメータとして
+   内径外径比 $\zeta \equiv r_{i}/r_{o}$ が以下の境界条件に現れる. 
+
+   運動学的境界条件は
+   \begin{equation}
+     \phi = 0, 
+       \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},\frac{1}{1-\zeta}. 
+   \end{equation}
+   
+   力学的境界条件が応力なしの場合は
+   \begin{equation}
+     \DP[2]{\phi}{r} = \DP{}{r}\left(\frac{\psi}{r}\right) = 0, 
+     \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \frac{1}{1-\zeta}. 
+   \end{equation}
+   
+   粘着条件の場合には, 内外球殻が同じ回転角速度で回転している場合のみ考えて, 
+   %
+   \begin{eqnarray*}
+     \Deqlab{慣性系ポテンシャル無次元粘着条件}
+        & &\DP{\phi}{r} = 0, \quad
+           \psi = 0
+           \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta}, \\
+        & & \DP{\phi}{r} = 0, \quad
+           \psi = 0
+           \quad \mbox{at} \quad r=\frac{\zeta}{1-\zeta},
+   \end{eqnarray*}
+
+
+\section{運動エネルギー・エンストロフィー}
+
+  \subsection{定義}
+
+     球殻内の各点$(\lambda,\varphi,r)$における局所的な
+     運動エネルギー $e_k$ は次のように定義される. 
+     %
+     \begin{equation}
+       \Deqlab{局所運動エネルギー}
+       e_k(\lambda,\varphi,r,t)=\frac{1}{2}|\Dvect{u}|^2
+         =\frac{1}{2}(u_\lambda^2+u_\varphi^2+u_r^2).
+     \end{equation}
+     %
+     全運動エネルギー $E_k$ はこれを球殻全体で積分して得られる. 
+     \begin{eqnarray*}
+       \Deqlab{全運動エネルギー}
+       E_k(t) &=& \Dtint_V\Dd V e_k(\lambda,\varphi,r,t)
+               =  \frac{1}{2}\Dtint_V\Dd V |\Dvect{u}|^2 \\
+              &=& \frac{1}{2}\int_{r_i(=\zeta/1-\zeta)}^{r_o(=1/1-\zeta)}\Dd r 
+                  \int_0^{2\pi}\Dd \lambda
+                  \int_{-\pi/2}^{\pi/2}\Dd \varphi r^2\cos\varphi
+                  (u_\lambda^2+u_\varphi^2+u_r^2).
+     \end{eqnarray*}
+     %
+     ただし $\Ddsty r_i=\frac{\zeta}{1-\zeta}$, 
+     $\Ddsty r_o=\frac{1}{1-\zeta}$ である. 
+
+     球殻内の各点$(\lambda,\varphi,r)$における局所的な
+     エンストロフィー $q$ は次のように定義される. 
+     %
+     \begin{equation}
+       \Deqlab{局所エンストロフィー}
+       q(\lambda,\varphi,r,t)=\frac{1}{2}|\Dvect{\omega}|^2
+       = \frac{1}{2}(\omega_\lambda^2+\omega_\varphi^2+\omega_r^2),
+     \end{equation}
+     %
+     ただし $\Dvect{\omega}\equiv\Drot\Dvect{u}$ は渦度ベクトルである. 
+     全エンストロフィー $\cal Q$ はこれを球殻全体で積分して得られる. 
+     %
+     \begin{eqnarray}
+       \Deqlab{全エンストロフィー}
+       {\cal Q}(t) &=& \Dtint_V \Dd V q(\lambda,\varphi,r,t)
+             = \Dtint_V \Dd V \frac{1}{2}|\Dvect{\omega}|^2 \\
+            &=& \frac{1}{2}\int_{r_i}^{r_o}\Dd r 
+                  \int_0^{2\pi}\Dd \lambda
+                  \int_{-\pi/2}^{\pi/2}\Dd \varphi r^2\cos\varphi
+                  (\omega_\lambda^2+\omega_\varphi^2+\omega_r^2).
+     \end{eqnarray}
+     
+
+  \subsection{エネルギー・エンストロフィーのトロイダル・ポロイダル分解}
+
+     非発散ベクトル場 $\Dvect{u}$ のうち, 
+     トロイダル・ポロイダルポテンシャルでそれぞれ表される場を
+     $\Dvect{u}$ のトロイダル成分あるいはポロイダル成分と呼ぶ. 
+     すなわち
+     %
+     \begin{displaymath}
+       \Dvect{u} =  \Drot\Dvect{(\psi\Dvect{r})}
+                   +\Drot\Drot\Dvect{(\phi\Dvect{r})}
+     \end{displaymath}
+     %
+     に対して, 
+     $\Dvect{u}_{\cal T}\equiv\Drot\Dvect{(\psi\Dvect{r})}$ がトロイダル成分, 
+     $\Dvect{u}_{\cal P}\equiv\Drot\Drot\Dvect{(\phi\Dvect{r})}$ がポロイダル成分
+     である. 
+
+     このトロイダル・ポロイダル成分を用いてエネルギーを表せば, 
+     $\Dvect{u}=\Dvect{u}_{\cal T}+\Dvect{u}_{\cal P}$ であるから
+     局所的なエネルギーは
+     \begin{equation}
+       e_k(\lambda,\varphi,r,t)=\frac{1}{2}|\Dvect{u}|^2
+         =\frac{1}{2}|\Dvect{u}_{\cal T}+\Dvect{u}_{\cal P}|^2
+         =\frac{1}{2}(|\Dvect{u}_{\cal T}|^2+|\Dvect{u}_{\cal P}|^2
+                      +2\Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P})
+     \end{equation}
+     %
+     であるが, 全エネルギーは
+     直交関係 $\Ddint_S \Dd S \Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P}=0$
+     を用いて(Appendix \ref{トロイダルポロイダル直交関係} 参照), 
+     %
+     \begin{eqnarray*}
+       E_k(t) &=& \Dtint_V\Dd V e_k(\lambda,\varphi,r,t)
+               =  \frac{1}{2}\Dtint_V\Dd V 
+                     (|\Dvect{u}_{\cal T}|^2+|\Dvect{u}_{\cal P}|^2
+                      +2\Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P}) \\
+              &=& \frac{1}{2}\int_{r_i}^{r_o}\Dd r \Ddint \Dd S
+                     (|\Dvect{u}_{\cal T}|^2+|\Dvect{u}_{\cal P}|^2
+                      +2\Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P})\\
+              &=& \frac{1}{2}\int_{r_i}^{r_o}\Dd r \Ddint \Dd S
+                     (|\Dvect{u}_{\cal T}|^2+|\Dvect{u}_{\cal P}|^2)
+     \end{eqnarray*}
+     %
+     となる. 
+
+     さらに, トロイダル・ポロイダルポテンシャルを水平方向に
+     球面調和函数展開して
+     \begin{eqnarray}
+       \psi(\lambda,\varphi,r)
+           =\sum_{l,m}\tilde{\psi}_{lm}(r)Y_l^m(\lambda,\varphi),\\
+       \phi(\lambda,\varphi,r)
+           =\sum_{l,m}\tilde{\phi}_{lm}(r)Y_l^m(\lambda,\varphi),
+     \end{eqnarray}
+     %
+     とすれば, Appendix \ref{トロイダルポロイダル直交関係} より, 
+     %
+     \begin{eqnarray*}
+       & &E_k(t) = \frac{1}{2}\int_{r_i}^{r_o}\Dd r \Ddint \Dd S
+                     (|\Dvect{u}_{\cal T}|^2+|\Dvect{u}_{\cal P}|^2) \\
+              &=& \frac{1}{2}\int_{r_i}^{r_o}\Dd r 
+                  \sum_{l=0}^\infty\sum_{m=-l}^l 
+                    \left\{
+                        l(l+1)N_l^m |r\tilde{\psi}_{lm}(r)|^2
+                      + l(l+1) N_l^m\left[
+                           \left(\DD{[r\tilde{\phi}_{lm}(r)]}{r}\right)^2
+                          +l(l+1)|\tilde{\phi}_{lm}(r)|^2 
+                        \right]
+                    \right\}.
+     \end{eqnarray*}
+     %
+     ただし
+     \begin{displaymath}
+       N_l^m \equiv \Ddint_S \Dd S |Y_l^m|^2 
+         = \int_0^{2\pi}\Dd\lambda\int_{-\pi/2}^{\pi/2} \Dd\varphi 
+              \cos\varphi |Y_l^m(\lambda,\varphi)|^2.
+     \end{displaymath}
+     %
+     したがって, トロイダル・ポロイダル成分の
+     水平全波数ごとのエネルギー${\cal E}_{k{\cal T}}, {\cal E}_{k{\cal P}}$を
+     次のように定義することができる.
+     %
+     \begin{eqnarray}
+       {\cal E}_{k{\cal T}}(r,l,t) &\equiv&
+           \frac{1}{2}\sum_{m=-l}^l l(l+1)N_l^m |r\tilde{\psi}_{lm}(r)|^2,\\
+       {\cal E}_{k{\cal P}}(r,l,t) &\equiv&
+           \frac{1}{2}\sum_{m=-l}^l 
+            l(l+1) N_l^m\left[
+                           \left(\DD{[r\tilde{\phi}_{lm}(r)]}{r}\right)^2
+                          +l(l+1)|\tilde{\phi}_{lm}(r)|^2 
+                        \right].
+     \end{eqnarray}
+     %
+     そして
+     \begin{equation}
+       E_k(t) = \int_{r_i}^{r_o}\Dd r \sum_{l=0}^\infty
+                    [{\cal E}_{k{\cal T}}(r,l,t)+{\cal E}_{k{\cal P}}(r,l,t)].
+     \end{equation}
+
+     エンストロフィーに対しても, 
+     エネルギーと同様にトロイダル・ポロイダル分解ができる. 
+     \Deqref{速度分解}を用いて渦度を表せば, 
+     \begin{displaymath}
+       \Dvect{\omega}=\Drot\Dvect{u}
+         =\Drot[\Drot(\psi \Dvect{r}) + \Drot\Drot(\phi\Dvect{r})]
+         =-\Drot(\Dlapla\phi\Dvect{r})+ \Drot\Drot(\psi \Dvect{r}) 
+     \end{displaymath}
+     %
+     であるから, 渦度ベクトルのトロイダルポテンシャルは 
+     $-\Dlapla\phi(\lambda,\varphi,r,t)$, 
+     ポロイダルポテンシャルは $\psi(\lambda,\varphi,r,t)$ である. 
+     したがって, トロイダル・ポロイダル成分の
+     水平全波数ごとのエンストロフィー ${\cal Q_T}, {\cal Q_P}$を
+     次のように定義することができる.
+     %
+     \begin{eqnarray}
+       {\cal Q_T}(r,l,t) &\equiv&
+           \frac{1}{2}\sum_{m=-l}^l l(l+1)N_l^m 
+           \left|
+              r\left(\frac{1}{r^2}\DD{}{r}r^2\DD{}{r}-\frac{l(l+1)}{r^2}
+                \right)\tilde{\phi}_{lm}(r)
+           \right|^2,\\
+       {\cal Q_P}(r,l,t) &\equiv&
+           \frac{1}{2}\sum_{m=-l}^l 
+             l(l+1) N_l^m\left[
+                           \left(\DD{[r\tilde{\psi}_{lm}(r)]}{r}\right)^2
+                          +l(l+1)|\tilde{\psi}_{lm}(r)|^2 
+                        \right].
+     \end{eqnarray}
+     %
+     そして
+     \begin{equation}
+       {\cal Q}(t) = \int_{r_i}^{r_o}\Dd r \sum_{l=0}^\infty
+                    [{\cal Q_T}(r,l,t)+{\cal Q_P}(r,l,t)].
+     \end{equation}
+
+
+\section{実験設定}
+
+  \subsection{初期条件}
+
+  \subsection{パラメター}
+
+  \subsection{時間積分}
+
+
+\appendix
+
+\section{球面調和函数の勾配の直交関係}
+
+   ここでは, トロイダル・ポロイダルベクトル場の直交性を示すために
+   必要となる球面調和函数の勾配の直交関係を証明する(Chandrasekhar,1961). 
+
+   球面上のスカラー場 $\psi(\lambda,\varphi)$ に対する
+   単位球面上の 2 次元演算子 $\Dgrad_S$ を次のように導入する. 
+   %
+   \begin{equation}
+      \Dgrad_S\psi \equiv 
+           \Dvect{e_\lambda}\cdot\frac{1}{\cos\varphi}\DP{\psi}{\lambda}
+         + \Dvect{e_\varphi}\cdot\DP{\psi}{\varphi}.
+   \end{equation}
+   %
+   $\Dgrad_S$ は $\psi(\lambda,\varphi)$ の球面に沿った方向の勾配を表す. 
+   球面上の 2 次元ベクトル 
+   $\Dvect{\xi}=\xi_\lambda\Dvect{e_\lambda}+\xi_\varphi\Dvect{e_\varphi}$
+   に対する発散は
+   %
+   \begin{equation}
+      \Ddiv\Dvect{\xi} = \frac{1}{\cos\varphi}\DP{\xi_\lambda}{\lambda}
+                       + \frac{1}{\cos\varphi}
+                           \DP{(\xi_\varphi\cos\varphi)}{\varphi},
+   \end{equation}
+   %
+   2 次元スカラー場に対するラプラシアンは
+   %
+   \begin{equation}
+     \Dlapla_S\psi \equiv \Ddiv(\Dgrad_S\psi) 
+        =   \frac{1}{\cos^2\varphi}\DP[2]{\psi}{\lambda}
+          + \frac{1}{\cos\varphi}\DP{}{\varphi}
+                \left(\cos\varphi\DP{\psi}{\varphi}\right).
+   \end{equation}
+   %
+   特に球面調和函数の各成分に対しては
+   %
+   \begin{equation}
+       \Dlapla_S Y_l^m(\lambda,\varphi) 
+       = -L^2 Y_l^m(\lambda,\varphi) = -l(l+1) Y_l^m(\lambda,\varphi).
+   \end{equation}
+   %
+   となる. 
+
+   また, 
+   球面上の 2 次元ベクトル場に対してガウスの定理を球面全領域において
+   適用すると, 球面には境界がないので 0 となる
+   \footnote{
+     実際に計算してみると
+     \begin{eqnarray*}
+         \Ddint_S \Ddiv\Dvect{\xi} 
+       &=& \int_0^{2\pi}d\lambda \int_{-\pi/2}^{\pi/2}d\varphi \cos\varphi 
+             \left[
+                \frac{1}{\cos\varphi}\DP{\xi_\lambda}{\lambda}
+               +\frac{1}{\cos\varphi}\DP{(\xi_\varphi\cos\varphi)}{\varphi}
+             \right]\\
+       &=& \int_{-\pi/2}^{\pi/2}d\varphi [\xi_\lambda]_0^{2\pi}
+          + \int_0^{2\pi}d\lambda [\xi_\varphi\cos\varphi]_{-\pi/2}^{\pi/2}
+       = 0.
+     \end{eqnarray*}
+     }.
+   %
+   \begin{equation}
+     0 = \int_C \Dvect{\xi}\cdot \Dvect{n}dl = \Ddint_S \Ddiv\Dvect{\xi}. 
+   \end{equation}
+   また, 積の発散は
+   \begin{displaymath}
+     \Ddiv(\psi\Dvect{\xi}) 
+        = \psi\Ddiv{\Dvect{\xi}} + \Dvect{\xi}\cdot\Dgrad_S\psi.
+   \end{displaymath}
+   %
+   この関係に $\psi$ として球面調和函数のとある 1 成分 
+   $Y_{l'}^{m'}(\lambda,\varphi)$ を, 
+   $\Dvect{\xi}$ としてとある 1 成分の勾配
+   $\Dgrad_S Y_l^m(\lambda,\varphi)$ を適用し, 全球面で積分すると
+   %
+   \begin{eqnarray*}
+     0 &=& \Ddint_S dS \Ddiv \{ Y_{l'}^{m'}(\lambda,\varphi)
+             \Dgrad_S[Y_l^m(\lambda,\varphi)]\} \\
+       &=& \Ddint_S dS Y_{l'}^{m'}(\lambda,\varphi)
+               \Dlapla_S Y_l^m(\lambda,\varphi)
+         + \Ddint_S dS \Dgrad_S[Y_{l'}^{m'}(\lambda,\varphi)]\cdot
+                         \Dgrad_S[Y_l^m(\lambda,\varphi)] \\
+       &=& -l(l+1) \Ddint_S dS 
+              Y_{l'}^{m'}(\lambda,\varphi) Y_l^m(\lambda,\varphi)
+         + \Ddint_S dS 
+              \left[ \frac{1}{\cos^2\varphi}
+                        \DP{Y_{l'}^{m'}}{\lambda}\DP{Y_l^m}{\lambda}
+                    +\DP{Y_{l'}^{m'}}{\varphi}\DP{Y_l^m}{\varphi} \right]\\
+       &=& -l(l+1) N_l^m \delta_{l'l}\delta_{m'm}
+          + \Ddint_S dS 
+              \left[ \frac{1}{\cos^2\varphi}
+                        \DP{Y_{l'}^{m'}}{\lambda}\DP{Y_l^m}{\lambda}
+                    +\DP{Y_{l'}^{m'}}{\varphi}\DP{Y_l^m}{\varphi}
+              \right],
+   \end{eqnarray*}
+   %
+   ここで $N_l^m$ は
+   %
+   \begin{equation}
+     N_l^m \equiv \Ddint_S \Dd S |Y_l^m(\lambda,\varphi)|^2 
+         = \int_0^{2\pi}\Dd\lambda\int_{-\pi/2}^{\pi/2} \Dd\varphi 
+              \cos\varphi|Y_l^m(\lambda,\varphi)|^2,
+   \end{equation}
+   %
+   であり, 球面調和函数の規格化によって値が異なる. 
+   \footnote{ISPACK では 2 に規格化されたルジャンドル函数を用いているので
+     $N_l^m=4\pi$ である(要確認)}.
+   これより球面調和函数の勾配の直交関係の式が得られる:
+   %
+   \begin{eqnarray}
+     \Deqlab{球面調和函数勾配直交関係}
+       \Ddint_S dS \Dgrad_S[Y_{l'}^{m'}(\lambda,\varphi)]\cdot
+               \Dgrad_S[Y_l^m(\lambda,\varphi)]
+     &=& \Ddint_S dS 
+         \left[ \frac{1}{\cos^2\varphi}
+                 \DP{Y_{l'}^{m'}}{\lambda}\DP{Y_l^m}{\lambda}
+                +\DP{Y_{l'}^{m'}}{\varphi}\DP{Y_l^m}{\varphi}
+         \right]\nonumber\\
+     &=& l(l+1) N_l^m \delta_{l'l}\delta_{m'm}
+   \end{eqnarray}
+
+\section{トロイダル・ポロイダルベクトル場の直交性}
+  \label{トロイダルポロイダル直交関係}
+
+     トロイダルポテンシャルによって表現されるベクトル場(トロイダル成分)と
+     ポロイダルポテンシャルによって表現されるベクトル場(ポロイダル成分)とは
+     直交することを以下に示す(Chandrasekhar,1961). 
+
+     ベクトル場 $\Dvect{u}$ のトロイダル・ポロイダル成分を
+     それぞれ水平方向に球面調和函数で展開する. すなわち, 
+     %
+     \begin{eqnarray}
+       \psi(\lambda,\varphi,r)
+           =\sum_{l=0}^\infty\sum_{m=-l}^l
+               \tilde{\psi}_{lm}(r)Y_l^m(\lambda,\varphi),\\
+       \phi(\lambda,\varphi,r)
+           =\sum_{l=0}^\infty\sum_{m=-l}^l
+                \tilde{\phi}_{lm}(r)Y_l^m(\lambda,\varphi),
+     \end{eqnarray}
+     %
+     と展開すれば, トロイダル・ポロイダル成分
+     $\Dvect{u}_{\cal T}=({\cal T}_\lambda,{\cal T}_\varphi,{\cal T}_r)$
+     $\Dvect{u}_{\cal P}=({\cal P}_\lambda,{\cal P}_\varphi,{\cal P}_r)$
+     はそれぞれ, 
+     \begin{eqnarray}
+       {\cal T}_\lambda &=& \sum_{l,m}\tilde{\psi}_{lm}(r)
+                                 \DP{Y_l^m(\lambda,\varphi)}{\varphi}\\
+       {\cal T}_\varphi &=& -\sum_{l,m}
+                               \frac{\tilde{\psi}_{lm}(r)}{\cos\varphi}
+                               \DP{Y_l^m(\lambda,\varphi)}{\lambda}\\
+       {\cal T}_r &=& 0, \\
+       {\cal P}_\lambda 
+            &=& \sum_{l,m}\frac{1}{r}\DP{[r\tilde{\phi}_{lm}(r)]}{r}
+                \frac{1}{\cos\varphi}\DP{Y_l^m(\lambda,\varphi)}{\lambda},\\
+          {\cal P}_\varphi
+            &=& \sum_{l,m}\frac{1}{r}\DP{[r\tilde{\phi}_{lm}(r)]}{r}
+                              \DP{Y_l^m(\lambda,\varphi)}{\varphi}, \\
+          {\cal P}_r &=& \sum_{l,m}\frac{\tilde{\phi}_{lm}(r)}{r}
+                         l(l+1)Y_l^m(\lambda,\varphi).
+     \end{eqnarray}
+
+     ベクトル場 $\Dvect{u}$ の絶対値の 2 乗,
+     \begin{displaymath}
+       |\Dvect{u}|^2 = |\Dvect{u}_{\cal T}+\Dvect{u}_{\cal P}|^2
+                     = |\Dvect{u}_{\cal T}|^2+|\Dvect{u}_{\cal P}|^2
+                     +2(\Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P}). 
+     \end{displaymath}
+     %
+     に現れる各項を計算すると, 
+     %
+     \begin{eqnarray*}
+        |\Dvect{u}_{\cal T}|^2 
+              &=& {\cal T}_\lambda^2 + {\cal T}_\varphi^2 + {\cal T}_r^2\\
+              &=& \left[ \sum_{l,m}\tilde{\psi}_{lm}(r)
+                                 \DP{Y_l^m(\lambda,\varphi)}{\varphi}
+                  \right]^2
+                + \left[\sum_{l,m}
+                              \frac{\tilde{\psi}_{lm}(r)}{\cos\varphi}
+                              \DP{Y_l^m(\lambda,\varphi)}{\lambda}
+                  \right]^2 \\
+              &=& \sum_{l',m'}\sum_{l,m}
+                    \tilde{\psi}_{l'm'}(r)\tilde{\psi}_{lm}(r)
+                    \left[ 
+                         \DP{Y_{l'}^{m'}(\lambda,\varphi)}{\varphi}
+                         \DP{Y_l^m(\lambda,\varphi)}{\varphi}
+                        +\frac{1}{\cos^2\varphi}
+                              \DP{Y_{l'}^{m'}(\lambda,\varphi)}{\lambda}
+                              \DP{Y_l^m(\lambda,\varphi)}{\lambda}
+                    \right]\\
+              &=& \sum_{l',m'}\sum_{l,m}
+                    \tilde{\psi}_{l'm'}(r)\tilde{\psi}_{lm}(r)
+                    \left[ 
+                           \Dgrad_SY_{l'}^{m'}(\lambda,\varphi)
+                           \cdot\Dgrad_S Y_l^m(\lambda,\varphi)
+                    \right], \\
+        %
+        |\Dvect{u}_{\cal P}|^2 
+              &=& {\cal P}_\lambda^2 + {\cal P}_\varphi^2 + {\cal P}_r^2\\
+              &=& \left[\sum_{l,m}
+                           \frac{1}{r}\DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                           \frac{1}{\cos\varphi}
+                               \DP{Y_l^m(\lambda,\varphi)}{\lambda}
+                  \right]^2
+                 +\left[\sum_{l,m}
+                      \frac{1}{r}\DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                              \DP{Y_l^m(\lambda,\varphi)}{\varphi}
+                  \right]^2 \\
+              & &+\left[ \sum_{l,m}\frac{\tilde{\phi}_{lm}(r)}{r}
+                                  l(l+1)Y_l^m(\lambda,\varphi)
+                  \right]^2 \\
+              &=& \sum_{l',m'}\sum_{l,m}
+                  \left[
+                      \frac{1}{r^2}\DD{[r\tilde{\phi}_{l'm'}(r)]}{r}
+                                   \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                         \frac{1}{\cos^2\varphi}
+                               \DP{Y_{l'}^{m'}(\lambda,\varphi)}{\lambda}
+                               \DP{Y_l^m(\lambda,\varphi)}{\lambda} \right.\\
+              & & \qquad\qquad
+                   + \frac{1}{r^2}\DD{[r\tilde{\phi}_{l'm'}(r)]}{r}
+                                   \DD{[r\tilde{\phi}_{l'm'}(r)]}{r}
+                              \DP{Y_{l'}^{m'}(\lambda,\varphi)}{\varphi}
+                              \DP{Y_l^m(\lambda,\varphi)}{\varphi}  \\
+              & & \qquad\qquad\left.
+                   + \frac{\tilde{\phi}_{l'm'}(r)\tilde{\phi}_{lm}(r)}{r^2}
+                                  l'(l'+1)Y_{l'}^{m'}(\lambda,\varphi)
+                                  l(l+1)Y_l^m(\lambda,\varphi)
+                  \right] \\
+              &=& \sum_{l',m'}\sum_{l,m}
+                      \frac{1}{r^2}\DD{[r\tilde{\phi}_{l'm'}(r)]}{r}
+                                   \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                  \left[\frac{1}{\cos^2\varphi}
+                               \DP{Y_{l'}^{m'}}{\lambda}
+                               \DP{Y_l^m}{\lambda} 
+                       +  \DP{Y_{l'}^{m'}}{\varphi}
+                          \DP{Y_l^m}{\varphi}
+                  \right] \\
+              & &+\sum_{l',m'}\sum_{l,m}
+                     \frac{\tilde{\phi}_{l'm'}(r)\tilde{\phi}_{lm}(r)}{r^2}
+                                  l'(l'+1)Y_{l'}^{m'}(\lambda,\varphi)
+                                  l(l+1)Y_l^m(\lambda,\varphi)\\
+              &=& \sum_{l',m'}\sum_{l,m}
+                      \frac{1}{r^2}\DD{[r\tilde{\phi}_{l'm'}(r)]}{r}
+                                   \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                       \Dgrad_S Y_{l'}^{m'}(\lambda,\varphi)
+                        \cdot\Dgrad_S Y_l^m(\lambda,\varphi)\\
+              & &+\sum_{l',m'}\sum_{l,m}
+                     \frac{\tilde{\phi}_{l'm'}(r)\tilde{\phi}_{lm}(r)}{r^2}
+                          l'(l'+1)l(l+1)
+                          Y_{l'}^{m'}(\lambda,\varphi)Y_l^m(\lambda,\varphi),\\
+        %
+        \Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P}
+         &=&   {\cal T}_\lambda{\cal P}_\lambda 
+             + {\cal T}_\varphi{\cal P}_\varphi + {\cal T}_r{\cal P}_r \\
+         &=& \sum_{l',m'}\tilde{\psi}_{l'm'}(r)
+                                 \DP{Y_{l'}^{m'}(\lambda,\varphi)}{\varphi}
+             \sum_{l,m}\frac{1}{r}\DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                \frac{1}{\cos\varphi}\DP{Y_l^m(\lambda,\varphi)}{\lambda}\\
+         & &-\sum_{l',m'}\frac{\tilde{\psi}_{l'm'}(r)}{\cos\varphi}
+                               \DP{Y_{l'}^{m'}(\lambda,\varphi)}{\lambda}
+             \sum_{l,m}\frac{1}{r}\DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                              \DP{Y_l^m(\lambda,\varphi)}{\varphi}\\
+         &=& \sum_{l',m'}\sum_{l,m}
+                   \frac{\tilde{\psi}_{l'm'}(r)}{r}
+                   \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                   \frac{1}{\cos\varphi}
+                 \left[ \DP{Y_{l'}^{m'}}{\varphi}
+                        \DP{Y_l^m}{\lambda}
+                       -\DP{Y_{l'}^{m'}}{\lambda}
+                        \DP{Y_l^m}{\varphi}
+                 \right].
+     \end{eqnarray*}
+     %
+     半径 $r$ の球面上にて積分すると
+     \begin{eqnarray*}
+        \Ddint_S dS |\Dvect{u}_{\cal T}|^2 
+          &=& \int_0^{2\pi}d\lambda\int_{-\pi/2}^{\pi/2}d\varphi 
+                     r^2\cos\varphi|\Dvect{u}_{\cal T}|^2\\
+          &=& \sum_{l',m'}\sum_{l,m}
+                 r^2\tilde{\psi}_{l'm'}(r)\tilde{\psi}_{lm}(r)
+              \int_0^{2\pi}d\lambda\int_{-\pi/2}^{\pi/2}d\varphi \cos\varphi
+                   \Dgrad_SY_{l'}^{m'}(\lambda,\varphi)
+                           \cdot\Dgrad_S Y_l^m(\lambda,\varphi)\\
+          &=& \sum_{l',m'}\sum_{l,m}
+                 r^2\tilde{\psi}_{l'm'}(r)\tilde{\psi}_{lm}(r)
+                   l(l+1)N_l^m \delta_{l'l}\delta_{m'm} \\
+          &=& \sum_{l,m}l(l+1)N_l^m |r\tilde{\psi}_{lm}(r)|^2,\\
+       %
+        \Ddint_S dS |\Dvect{u}_{\cal P}|^2 
+          &=& \int_0^{2\pi}d\lambda\int_{-\pi/2}^{\pi/2}d\varphi
+                     r^2\cos\varphi|\Dvect{u}_{\cal P}|^2\\
+              &=& \sum_{l',m'}\sum_{l,m}
+                      \DD{[r\tilde{\phi}_{l'm'}(r)]}{r}
+                      \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                   \int_0^{2\pi}d\lambda\int_{-\pi/2}^{\pi/2}d\varphi
+                       \cos\varphi
+                       \Dgrad_S Y_{l'}^{m'}(\lambda,\varphi)
+                        \cdot\Dgrad_S Y_l^m(\lambda,\varphi)\\
+              & &+\sum_{l',m'}\sum_{l,m}
+                     \tilde{\phi}_{l'm'}(r)\tilde{\phi}_{lm}(r)
+                          l'(l'+1)l(l+1)
+                      \int_0^{2\pi}d\lambda\int_{-\pi/2}^{\pi/2}d\varphi
+                          \cos\varphi
+                          Y_{l'}^{m'}(\lambda,\varphi)Y_l^m(\lambda,\varphi)\\
+              &=& \sum_{l',m'}\sum_{l,m}
+                      \DD{[r\tilde{\phi}_{l'm'}(r)]}{r}
+                      \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                      l(l+1)N_l^m \delta_{l'l}\delta{m'm} \\
+              & &+\sum_{l',m'}\sum_{l,m}
+                     \tilde{\phi}_{l'm'}(r)\tilde{\phi}_{lm}(r)
+                          l'(l'+1)l(l+1)
+                          N_l^m \delta_{l'l}\delta{m'm}\\
+              &=& \sum_{l,m}
+                      \left(\DD{[r\tilde{\phi}_{lm}(r)]}{r}\right)^2
+                      l(l+1) N_l^m
+                  +\sum_{l,m}|\tilde{\phi}_{lm}(r)|^2 l^2(l+1)^2 N_l^m \\
+              &=& \sum_{l,m} l(l+1) N_l^m
+                 \left[ \left(\DD{[r\tilde{\phi}_{lm}(r)]}{r}\right)^2
+                        +l(l+1)|\tilde{\phi}_{lm}(r)|^2 \right], \\
+        %
+        \Ddint_S dS \Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P}
+          &=& \int_0^{2\pi}d\lambda\int_{-\pi/2}^{\pi/2}d\varphi
+                     r^2\cos\varphi\Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P}\\
+          &=& \sum_{l',m'}\sum_{l,m}
+                   r\tilde{\psi}_{l'm'}(r)
+                   \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                 \int_0^{2\pi}d\lambda\int_{-\pi/2}^{\pi/2}d\varphi
+                 \left[ \DP{Y_{l'}^{m'}}{\varphi}
+                        \DP{Y_l^m}{\lambda}
+                       -\DP{Y_{l'}^{m'}}{\lambda}
+                        \DP{Y_l^m}{\varphi}
+                 \right] \\
+          &=& \sum_{l',m'}\sum_{l,m}
+                   r\tilde{\psi}_{l'm'}(r)
+                   \DD{[r\tilde{\phi}_{lm}(r)]}{r}\\
+          & & \times\int_0^{2\pi}d\lambda\int_{-\pi/2}^{\pi/2}d\varphi
+                  \left[ ime^{i(m+m')\lambda}
+                        P_l^{|m|}(\sin\varphi)
+                        \DP{P_{l'}^{|m'|}(\sin\varphi)}{\varphi} \right.\\
+          & &\left.\hspace*{40mm}
+                       -im'e^{i(m+m')\lambda}P_{l'}^{|m'|}(\sin\varphi)
+                        \DP{P_l^{|m|}(\sin\varphi)}{\varphi}
+                  \right]\\
+          &=& \sum_{l',m'}\sum_{l,m}
+                   r\tilde{\psi}_{l'm'}(r)
+                   \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                   \int_0^{2\pi}d\lambda e^{i(m+m')\lambda}\\
+          & & \times
+              \int_{-\pi/2}^{\pi/2}d\varphi
+                  \left[ 
+                        im P_l^{|m|}(\sin\varphi)
+                        \DP{P_{l'}^{|m'|}(\sin\varphi)}{\varphi} 
+                       - im'P_{l'}^{|m'|}(\sin\varphi)
+                        \DP{P_l^{|m|}(\sin\varphi)}{\varphi}
+                  \right] \\
+          &=& \sum_{l',m'}\sum_{l,m}
+                   r\tilde{\psi}_{l'm'}(r)
+                   \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                   2\pi\delta_{m,-m'} \\
+          & & \times
+              \int_{-\pi/2}^{\pi/2}d\varphi
+                  \left[ 
+                        im P_l^{|m|}(\sin\varphi)
+                        \DP{P_{l'}^{|m'|}(\sin\varphi)}{\varphi} 
+                       - im'P_{l'}^{|m'|}(\sin\varphi)
+                        \DP{P_l^{|m|}(\sin\varphi)}{\varphi}
+                  \right] \\
+          &=& \sum_{l',m'}\sum_{l,m}
+                r\tilde{\psi}_{l'm'}(r) \DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                   2\pi\delta_{m,-m'} \\
+          & & \times
+              \int_{-\pi/2}^{\pi/2}d\varphi
+                  \left[ 
+                        im P_l^{|m|}(\sin\varphi)
+                        \DP{P_{l'}^{|m|}(\sin\varphi)}{\varphi} 
+                       + imP_{l'}^{|m|}(\sin\varphi)
+                        \DP{P_l^{|m|}(\sin\varphi)}{\varphi}
+                  \right]\\
+          &=& \sum_{l',m'}\sum_{l,m}
+                r\tilde{\psi}_{l'm'}(r)\DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                   2\pi im\delta_{m,-m'}
+              \int_{-\pi/2}^{\pi/2}d\varphi
+                   \DD{}{\varphi}[P_l^{|m|}(\sin\varphi)
+                                  P_{l'}^{|m|}(\sin\varphi)]\\
+          &=& \sum_{l',m'}\sum_{l,m}
+                 r\tilde{\psi}_{l'm'}(r)\DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                   2\pi im\delta_{m,-m'}
+                 [ P_l^{|m|}(\sin\varphi) 
+                   P_{l'}^{|m|}(\sin\varphi)]_{-\pi/2}^{\pi/2}\\
+          &=& \sum_{l',m'}\sum_{l,m}
+                 r\tilde{\psi}_{l'm'}(r)\DD{[r\tilde{\phi}_{lm}(r)]}{r}
+                   2\pi im\delta_{m,-m'}
+                 [ P_l^{|m|}(1) P_{l'}^{|m|}(1)-P_l^{|m|}(-1) P_{l'}^{|m|}(-1)]\\
+          &=& 0. 
+     \end{eqnarray*}
+     %
+
+
+     \footnote{
+       $\Ddint_S dS \Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P}$ の
+       計算の途中では, 
+       \begin{displaymath}
+         Y_l^m(\lambda,\varphi)= e^{im\lambda}P_l^{|m|}(\sin\varphi)
+       \end{displaymath}
+       の定義式を代入した. 
+       またその最後の計算においては
+       \begin{displaymath}
+         P_l^{|m|}(x)=(1-x^2)^{|m|/2}\tilde{P}_l^{m}(x), \quad
+         \tilde{P}_l^{m}(x) は l-|m| 次の多項式
+       \end{displaymath}
+       であるから(岩波数学公式III,p.130 球函数--陪函数), 
+       $|m|\neq 0$ のとき $P_l^{|m|}(1)=P_l^{|m|}(-1)=0$ となり 0, 
+       $m=0$ のときは係数に $m$ が存在するのでやはり 0 となる. 
+       }
+     %
+     再度結果をまとめると, 
+     %
+     \begin{eqnarray}
+        \Ddint_S dS |\Dvect{u}_{\cal T}|^2 
+          &=& \sum_{l,m}l(l+1)N_l^m |r\tilde{\psi}_{lm}(r)|^2,\\
+      %
+        \Ddint_S dS |\Dvect{u}_{\cal P}|^2 
+              &=& \sum_{l,m} l(l+1) N_l^m
+                 \left[ \left(\DD{[r\tilde{\phi}_{lm}(r)]}{r}\right)^2
+                        +l(l+1)|\tilde{\phi}_{lm}(r)|^2 \right], \\
+      %
+        \Ddint_S dS \Dvect{u}_{\cal T}\cdot\Dvect{u}_{\cal P}&=&0.
+     \end{eqnarray}
+     したがって, 非発散ベクトル場のトロイダル・ポロイダル成分の
+     内積の全球面積分は 0 となり, この意味で両成分は互いに直交している. 
+
+
+\begin{Dreference}
+ \item 竹広 真一, SPMODEL 開発グループ,  2005 : 
+   3 次元回転球殻内での粘性流体(非圧縮ナビエーストークス方程式)の定式化.\\
+   http://www.gfd-dennou.org/arch/spmodel/3d-shell-wt/navier-stokes/teishiki/pub/.
+ \item Chandrasekhar,S.,1961: 
+       {\em Hydrodynamic and Hydromagnetic Stability}. 
+       Oxford University Press.
+\end{Dreference}
+
+\end{document}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

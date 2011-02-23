@@ -1,0 +1,654 @@
+%表題  SPMODEL レファレンスマニュアル
+%
+%      2 次元円盤領域の拡散方程式の解析解
+%      方位角フーリエ動径多項式展開を利用した計算チェック用
+%
+%履歴  2008/04/13 作成  竹広真一
+%
+\documentclass[a4j,12pt]{jarticle}
+\usepackage{Dennou6}
+
+\Dtitle[円盤領域での拡散方程式解]
+       {2 次元円盤領域での\\拡散型方程式の解析解}
+\Dauthor{竹広真一}
+\Ddate{平成 20 年 4 月 13 日}
+
+\Dparskip
+
+\begin{document}
+
+\maketitle
+
+この文章では, フーリエ級数--多項式関数展開を利用した
+2 次元円盤領域での流体計算のための SPMODEL ライブラリ(spml)の
+モジュール eq\_module のテストのために, 
+2 次元円盤領域での拡散型方程式のさまざまな境界条件に対する
+解を(できるだけ)解析的に求めることを行う. 
+
+  \section{拡散方程式}
+
+    半径 $ao$ の円盤内の 2 次元領域での拡散問題を考える. 
+    支配方程式は 2 次元拡散方程式
+    %
+    \begin{equation}
+      \Deqlab{拡散方程式}
+      \DP{\psi}{t} = \kappa \Dlapla \psi
+    \end{equation}
+    %
+    $\phi$ は拡散する物理量であり, 例えば温度, 組成濃度, 磁場などである.
+    $x$, $y$ はそれぞれ壁に平行および垂直方向の座標, 
+    $\kappa$ は拡散率(正数)である. 
+    $\Dlapla$ は 3 次元ラプラシアンであり, 
+    2 次元極座標系$ (r,\phi)$ での表現は
+    %
+    \begin{equation}
+      \Dlapla = \frac{1}{r}\DP{}{r}\left(r\DP{}{r}\right)
+             + \frac{1}{r^2}\DP[2]{}{\phi}.
+    \end{equation}
+    %
+
+    一般的な境界条件は, 外側境界円周での物理量とその $r$ 微分の
+    線形結合で与えられる(混合型境界条件). 
+    %
+    \begin{eqnarray}
+      \Deqlab{混合型境界条件}
+      & & \alpha_{1}\DP{\psi}{r} + \alpha_{0}\psi =0, 
+          \quad {\rm at} \quad r=a,\\
+    \end{eqnarray}
+    %
+    ここで $\alpha_{i}$ は定数係数であり, 以下の条件を満たしている
+    ものとする. 
+    %
+    \begin{equation}
+      \alpha_{1}\cdot\alpha_{0} \le 0, \quad
+    \end{equation}
+    %
+    ただし $\alpha_1$ と $\alpha_0$ は同時には 
+    0 にはならないものとする. 
+
+    \subsection{フーリエ級数展開}
+
+      方位角方向にはフーリエ級数展開して解くことができる. 
+      以下, その 1 波数成分のみ取りだして扱う. 
+      時間に関しても指数型の解を仮定し, 
+      %
+      \begin{equation}
+        \Deqlab{フーリエ級数展開}
+        \psi(x,y,t)=\tilde{\psi}_{m}(r)e^{im\phi+\sigma t}
+      \end{equation}
+      %
+      これを支配方程式に代入すると, 
+      %
+      \begin{equation}
+        \Deqlab{拡散方程式フーリエ級数展開}
+          \sigma \tilde{\psi}_{m} = 
+              \kappa \left[
+                \frac{1}{r}\DD{}{r}\left(r\DD{\tilde{\phi}_{m}}{r}\right)
+                  -\frac{m^2}{r^2}\tilde{\phi}_{m}\right],
+      \end{equation}
+      %
+      境界条件は, 
+      %
+      \begin{equation}
+        \Deqlab{混合型境界条件上拡散方程式フーリエ級数展開}
+        \alpha_{1}\DD{\tilde{\psi}_{m}}{r} 
+             + \alpha_{0}\tilde{\psi}_{m} =0 
+               \quad {\rm at} \quad r=a.
+      \end{equation}
+      %
+
+    \subsection{最大成長率の見積もり}
+
+      成長率の最大値を領域積分から見積もることができる. 
+      \Deqref{拡散方程式フーリエ展開} $r\tilde{\psi}_{m}^*$ をかけて
+      $r$ 方向に全領域積分を行い, 部分積分を繰り返すと, 
+      %
+      \begin{eqnarray*}
+        \sigma \int_0^a r|\tilde{\psi}_m|^2 dr &=&
+               \int_0^a dr r \tilde{\psi}_m^*  
+                \kappa \left[
+                    \frac{1}{r}\DD{}{r}\left(r\DD{\tilde{\psi}_m}{r}\right)
+                   -\frac{m^2}{r^2}\tilde{\psi}_m\right]\\
+        &=& \kappa \int_0^a dr \tilde{\psi}_m^*
+                     \DD{}{r}\left(r\DD{\tilde{\psi}_m}{r}\right)
+             -\kappa m^2 \int_0^a \frac{1}{r}|\tilde{\psi}_m|^2 dr\\
+        &=&  \kappa\left[
+                  r\tilde{\psi}_m^*\DD{\tilde{\psi}_m}{r}\right]_0^a 
+             -\kappa \int_0^a 
+                  r\left|\DD{\tilde{\psi}_m}{r}\right|^2 dr
+             -\kappa m^2 \int_0^a \frac{1}{r}|\tilde{\psi}_m|^2 dr\\
+      \end{eqnarray*}
+      %
+      ここで, 境界条件を用いて右辺第 1 項目を見積もると
+      %
+      \begin{displaymath}
+         \left[r\tilde{\psi}_m^*\DD{\tilde{\psi}_m}{r}\right]_0^a
+        =  \left\{
+        \begin{array}{cc}
+          \Ddsty -\frac{\alpha_{1}}{\alpha_{0}}
+               a^2\left|\DD{\tilde{\psi}_m}{r}\right|^2_{r=a}
+          & (\alpha_{0}\neq0)\\
+          \Ddsty -\frac{\alpha_{0}}{\alpha_{1}}
+               a^2|\tilde{\psi}_m|^2_{r=a}
+          & (\alpha_{1}\neq0)
+        \end{array}
+        \right\}
+         \le  0.
+      \end{displaymath}
+      %
+      したがって, 
+      %
+      \begin{eqnarray*}
+        \sigma \int_0^a r|\tilde{\psi}_m|^2 dr
+        &\le& 
+             -\kappa \int_0^a 
+                  r\left|\DD{\tilde{\psi}_m}{r}\right|^2 dr
+             -\kappa m^2 \int_0^a \frac{1}{r}|\tilde{\psi}_m|^2 dr
+         < -\kappa m^2 \int_0^a |\tilde{\psi}_m|^2 dr,\\
+        \sigma &<& 
+            \frac{\Ddsty -\kappa m^2\int_0^a \frac{1}{r}|\tilde{\psi}_m|^2 dr}
+                 {\Ddsty \int_0^a r|\tilde{\psi}_m|^2 dr}. 
+      \end{eqnarray*}
+      %
+      よって成長率の最大値は負であることがわかる. 
+
+    \subsection{一般解}
+
+      支配方程式を変形すると
+      %
+      \begin{displaymath}
+        \frac{1}{r}\DD{}{r}\left(r\DD{\tilde{\psi}_m}{r}\right)
+          +\left[\frac{-\sigma}{\kappa} -\frac{m^2}{r^2}\right]\tilde{\psi}_m=0.
+      \end{displaymath}
+      %
+      さらに動径座標を
+      \begin{equation}
+        \tilde{r} = \sqrt{\frac{-\sigma}{\kappa}}r, \quad
+        r  = \sqrt{\frac{\kappa}{-\sigma}}\tilde{r},
+      \end{equation}
+      %
+      と変形すると,
+      %
+      \begin{displaymath}
+        \frac{1}{\tilde{r}}\DD{}{\tilde{r}}
+             \left(\tilde{r}\DD{\tilde{\psi}_m}{\tilde{r}}\right)
+          +\left[1 -\frac{m^2}{\tilde{r}^2}\right]\tilde{\psi}_m,
+      \end{displaymath}
+      %
+      この微分方程式はベッセルの微分方程式であり, 
+      その原点で特異性のない一般解は $m$ 次の第 1 種ベッセル函数 
+      $J_m(\tilde{r})$で表される.
+      %
+      \begin{equation}
+        \Deqlab{拡散方程式フーリエ展開一般解}
+        \tilde{\psi}_m = A_1 J_m(\tilde{r}) 
+               = A_1 J_m\left(\sqrt{\frac{-\sigma}{\kappa}}r\right) 
+      \end{equation}
+
+
+    \subsection{外側ディリクレ型境界条件の場合}
+
+      外側での境界条件がディリクレ型の
+      %
+      \begin{equation}
+        \Deqlab{ディリクレ型境界条件フーリエ展開}
+        \tilde{\psi}_m =0 \quad {\rm at} \quad r=a.
+      \end{equation}
+      %
+      場合を考える. これを一般解
+      \Deqref{拡散方程式フーリエ展開一般解}に代入すると
+      %
+      \begin{equation}
+           J_l\left(a \alpha\right) =0.
+      \end{equation}
+      % 
+      ただし $\Ddsty \alpha = \sqrt{\frac{-\sigma}{\kappa}}$ とおいた. 
+      ベッセル函数の零点から動径波数 $\alpha$ と
+      成長率 $\sigma = -\kappa \alpha^2$ が定められる. 
+      係数 $A_1$ は初期条件から定まる. 
+
+    \subsection{外側ノイマン型境界条件の場合}
+
+      外側での境界条件がノイマン型の
+      %
+      \begin{equation}
+        \Deqlab{ノイマン型境界条件球面調和函数展開}
+        \DD{\tilde{\psi}_m}{r} =0 \quad {\rm at} \quad y=a, 
+      \end{equation}
+      %
+      の場合を考える. これを一般解
+      \Deqref{拡散方程式フーリエ展開一般解}に代入して整理すると
+      %
+      \begin{equation}
+           \alpha J'_m\left(a \alpha\right)  = 0. 
+      \end{equation}
+      % 
+      ただし $\Ddsty \alpha = \sqrt{\frac{-\sigma}{\kappa}}$ とおいた. 
+      %
+      係数行列の行列式が 0 であることから, 成長率を定める分散関係に相当する
+      式が得られる. 
+      ベッセル函数の微分の零点から動径波数 $\alpha$ と
+      成長率 $\sigma = -\kappa \alpha^2$ が定められる. 
+      係数 $A_1$ は初期条件から定められる
+      \footnote{
+        微分計算にはベッセル関数の漸化式
+        \begin{displaymath}
+          J'_n(x)   ＝  \frac{n}{x}J_n(x)- J_{n+1}(x)　
+        \end{displaymath}
+        を用いればよい.
+      }. 
+
+
+    \subsection{領域外部の境界領域でラプラス方程式に従う場合}
+
+      有限の熱伝導率を持つ物質で円盤内外領域が満たされている場合の
+      熱拡散問題, あるいはポロイダル磁場の拡散の問題の場合には
+      円盤領域の拡散方程式を次のような混合型の境界条件の下で
+      解くことになる
+      \footnote{
+        領域外部の支配方程式は
+        %
+        \begin{displaymath}
+          \Dlapla \psi =0, 
+        \end{displaymath}
+        %
+        方位角方向に関してフーリエ変換すると
+        %
+        \begin{displaymath}
+          \Deqlab{拡散方程式フーリエ展開}
+          \frac{1}{r}\DD{}{r}\left(r\DD{\tilde{\psi}_m}{r}\right)
+                    -\frac{m^2}{r^2}\tilde{\psi}_m=0
+        \end{displaymath}
+        %
+        この方程式の独立な 2 つの解は $r^{-m}, r^m$ である. 
+         $\infty$ で発散しない解を求めると
+        \begin{displaymath}
+          \tilde{\psi}_m = C_1 r^{-m}
+              \quad \left(r \ge a \right).
+        \end{displaymath}
+        %
+        境界 $r=a$ で値と 1 階微分が連続であることから
+        \begin{eqnarray*}
+          \tilde{\psi}_m|_{r=a} =  C_1 r^{-ma}, \quad
+          \left.\DD{\tilde{\psi}_m}{r}\right|_a =  -m C_1 r^{-(m+1)a}
+        \end{eqnarray*}
+        %
+        これらより $C_1$ を消去すると $r=a$ での境界条件
+        %
+        \begin{displaymath}
+          \left.\DD{\tilde{\psi}_m}{r}\right|_a
+              +\frac{m}{a}\tilde{\psi}_m|_a=0,
+        \end{displaymath}
+        %
+        が得られる. 
+      }.
+      %
+      \begin{equation}
+        \Deqlab{混合型境界条件フーリエ展開}
+         \left.\DD{\tilde{\psi}_m}{r}\right|_a
+              +\frac{m}{a}\tilde{\psi}_m|_a=0,\quad
+      \end{equation}
+      %
+      これを一般解
+      \Deqref{拡散方程式フーリエ展開一般解}に代入して整理すると, 
+      %
+      \begin{equation}
+           J'_m\left(a \alpha\right) 
+             +\frac{m}{a\alpha} J_m\left(a \alpha\right) =0.
+      \end{equation}
+      %
+      ここでベッセル関数の性質
+      \begin{displaymath}
+        xJ'_n(x)   ＝  xJ_{n-1}(x) - nJ_n(x)　
+      \end{displaymath}
+      %
+      を適用すると, 
+      %
+      \begin{equation}
+        J_{l-1}\left(a \alpha\right)  = 0.
+      \end{equation}
+      %
+      ベッセル函数の零点から動径波数 $\alpha$ と
+      成長率 $\sigma = -\nu \alpha^2$ が定められる. 
+
+  \section{非圧縮流体の粘性拡散解}
+
+    半径 $a$ の 2 次元円盤領域での非圧縮流体の 2 次元運動を考える. 
+    非圧縮速度場は流線関数を用いて次のように表すことができる. 
+    %
+    \begin{eqnarray}
+      \Deqlab{速度分解}
+      \Dvect{u} &=& \Dvect{e_z}\times\Dgrad{\psi}, \\
+      & & u_r     = - \frac{1}{r}\DP{\psi}{\phi}, \quad
+          u_\phi  =  \DP{\psi}{r}.
+    \end{eqnarray}
+    %
+    ストークス近似の下でこれらポテンシャルの従う方程式は
+    % 
+    \begin{equation}
+      \Deqlab{渦度方程式}
+          \DP{}{t} \Dlapla \psi = \nu \Dlapla\Dlapla \psi.
+    \end{equation}
+    %
+    運動学的境界条件は, 外側円周にて法線方向の速度成分が 0 となることである. 
+    流線関数で表現すれば,
+    \begin{equation}
+      \psi = 0, \quad \mbox{at} \quad r=a
+    \end{equation}
+    %
+    力学的境界条件が自由すべりの場合は
+    \begin{equation}
+      \Deqlab{流線関数自由すべり条件}
+      r\DP[]{}{r}\left(\frac{1}{r}\DP{\psi}{r}\right)  = 0, 
+      \quad \mbox{at} \quad r=a.
+    \end{equation}
+    %
+    粘着条件の場合には, 
+    \begin{eqnarray*}
+      \Deqlab{流線関数粘着条件}
+         \DP{\psi}{r} = 0, \quad \mbox{at} \quad r=a.
+    \end{eqnarray*}
+
+    \subsection{フーリエ級数展開}
+
+      方位角方向にはフーリエ級数で展開して解くことができる. 
+      以下, その 1 波数成分のみ取りだして扱う. 
+      時間に関しても指数型の解を仮定し, 
+      %
+      \begin{equation}
+        \Deqlab{流線関数フーリエ展開}
+        \psi(x,y,t)=\tilde{\psi}_m(r)e^{im\phi+\sigma t},
+      \end{equation}
+      %
+      これを支配方程式に代入すると, 
+      %
+      \begin{displaymath}
+        \Deqlab{渦度方程式フーリエ展開}
+          \sigma \left[
+                     \frac{1}{r}\DD{}{r}\left(r\DD{\tilde{\psi}_m}{r}\right)
+                  -\frac{m^2}{r^2}\right]\tilde{\psi}_m =
+              \nu \left[
+                     \frac{1}{r}\DD{}{r}\left(r\DD{\tilde{\psi}_m}{r}\right)
+                  -\frac{m^2}{r^2}\right]
+                  \left[
+                     \frac{1}{r}\DD{}{r}\left(r\DD{\tilde{\psi}_m}{r}\right)
+                  -\frac{m^2}{r^2}\right]
+              \tilde{\psi}_m
+      \end{displaymath}
+      %
+      境界条件は自由すべりの場合, 
+      %
+      力学的境界条件が
+      \begin{equation}
+        \Deqlab{流線関数自由すべり条件}
+        \tilde{\psi}_m = 
+        r\DD[]{}{r}\left(\frac{1}{r}\DD{\tilde{\psi}_m}{r}\right)  = 0, \quad
+        \quad \mbox{at} \quad r=a.
+      \end{equation}
+      %
+      粘着条件の場合には, 
+      \begin{equation}
+        \Deqlab{流線関数粘着条件}
+           \tilde{\psi}_m = \DD{\tilde{\psi}_m}{r} = 0, \quad
+           \quad \mbox{at} \quad r=a.
+      \end{equation}
+
+    \subsection{最大成長率の見積もり}
+
+      境界条件が粘着条件の場合には, 最大成長率が負となることを
+      支配方程式を全積分することで求められる. 
+      トロイダルポテンシャルに関しては, 拡散方程式の両端ディリクレ
+      境界条件の場合と同じであるから最大成長率が負であることが分かる. 
+
+      ポロイダルポテンシャルについては, 演算子 ${\cal D}_l$ を
+      %
+      \begin{displaymath}
+        {\cal D}_l \equiv \frac{1}{r}\DD{}{r}\left(r\DD{}{r}\right)
+                        -\frac{m^2}{r^2}
+      \end{displaymath}
+      %
+      と定義すると, 任意の 2 つの関数 $f(r),g(r)$ に対して
+      %
+      \begin{eqnarray*}
+        \int_0^a f(r) {\cal D}_l g(r) r dr
+        &=& \int_0^a f
+             \left[\frac{1}{r}\DD{}{r}\left(r\DD{}{r}\right)
+                        -\frac{m^2}{r^2}\right]g r dr\\
+        &=& \int_0^a f \DD{}{r}\left(r\DD{g}{r}\right)dr
+             - \int_0^a m^2 \frac{fg}{r} dr\\
+        &=& \left[ f r\DD{g}{r} \right]_0^a
+             - \int_0^a \DD{f}{r}\left(r\DD{g}{r}\right) dr
+             - \int_0^a m^2 \frac{fg}{r} dr\\
+        &=& \left[ f r\DD{g}{r} \right]_0^a
+             - \left[ r\DD{f}{r} g \right]_0^a
+             + \int_0^a g \DD{}{r}\left(r\DD{f}{r}\right)
+             - \int_0^a m^2 \frac{fg}{r} dr\\
+        &=& \left[ f r\DD{g}{r} \right]_0^a
+             - \left[ r\DD{f}{r} g \right]_0^a
+             + \int_0^a g(r) {\cal D}_l f(r) r dr
+      \end{eqnarray*}
+      %
+      $f=\psi^*_m(r), g={\cal D}_l\psi_m(r)$ と選ぶと
+      境界条件\Deqref{流線関数粘着条件}を用いて
+      \begin{eqnarray*}
+        \int_0^a \psi^*_m(r)
+                 {\cal D}_l{\cal D}_l\psi_m(r) r dr        
+        &=& \left[ \psi^*_m r\DD{{\cal D}_l\psi_m}{r} 
+            \right]_0^a
+             - \left[ r\DD{\psi^*_m}{r}
+                     {\cal D}_l\psi_m \right]_0^a
+             + \int_0^a {\cal D}_l\psi^*_m{\cal D}_l\psi_m r dr\\
+        &=& \int_0^a |{\cal D}_l\psi_m|^2 r dr
+      \end{eqnarray*}
+      
+      流線関数の式
+      \Deqref{渦度方程式フーリエ展開}に
+      $\psi^*_mr$ をかけて積分すると
+      \begin{eqnarray*}
+        \sigma \int_0^a
+             \tilde{\psi}^*_m{\cal D}_l\tilde{\psi}_m r dr 
+        &=& \nu \int_0^a
+             \tilde{\psi}^*_m{\cal D}_l{\cal D}_l\tilde{\psi}_m r dr,\\
+      \end{eqnarray*}
+      %
+      左辺は拡散方程式の右辺の式変形と同様に計算できて, 
+      \begin{displaymath}
+        \sigma \int_0^a
+             \tilde{\psi}^*_m{\cal D}_l\tilde{\psi}_m r dr 
+        =-\sigma \int_0^a \left[
+              r\left|\DD{\tilde{\psi}_m}{r}\right|^2 
+             + m^2 \int_0^a \frac{1}{r}|\tilde{\psi}_m|^2 \right]dr
+      \end{displaymath}
+      %
+      であるから, 
+      \begin{displaymath}
+        -\sigma \int_0^a \left[
+              r^2\left|\DD{\tilde{\psi}_m}{r}\right|^2 
+                       + \frac{m^2}{r} |\tilde{\psi}_m|^2 \right]dr
+        = \nu\int_0^a |{\cal D}_l\psi_m|^2 r dr, 
+      \end{displaymath}
+      %
+      よって
+      \begin{displaymath}
+        \sigma = - \nu
+           \frac{\Ddsty \int_0^a |{\cal D}_l\psi_m|^2 r dr}
+                {\Ddsty \int_0^a \left[
+                        r\left|\DD{\tilde{\psi}_m}{r}\right|^2 
+                        + \frac{m^2}{r} |\tilde{\psi}_m|^2 \right]dr}.
+      \end{displaymath}
+
+
+    \subsection{一般解}
+
+      拡散方程式の場合と同様に支配方程式を変形すると
+      %
+      \begin{displaymath}
+        \left\{
+          \frac{1}{r}\DD{}{r}\left(r\DD{\tilde{\psi}_m}{r}\right)
+            +\left[\frac{-\sigma}{\kappa} -\frac{m^2}{r^2}\right]
+        \right\}
+        \left[
+          \frac{1}{r}\DD{}{r}\left(r\DD{}{r}\right)-\frac{m^2}{r^2}
+        \right]
+             \tilde{\psi}_m=0.
+      \end{displaymath}
+      %
+      成長率 $\sigma <0$ に対してのこの一般解は
+      %
+      \begin{equation}
+        \Deqlab{流線関数フーリエ展開一般解}
+        \tilde{\psi}_m 
+               = B_1 r^m
+               + B_2 J_m\left(\sqrt{\frac{-\sigma}{\kappa}}r\right) 
+      \end{equation}
+      %
+      流線関数に作用する 2 つのカッコでくくられた演算子は
+      交換可能であることに注意されたい.
+
+
+    \subsection{外側粘着条件の場合の流線関数}
+
+      この場合の境界条件は\Deqref{流線関数自由すべり条件}より
+      %
+      \begin{displaymath}
+        \tilde{\psi}_m= \DD{\tilde{\psi}_m}{r}=0, 
+        \quad {\rm at} \quad r=a. 
+      \end{displaymath}
+      %
+      一般解\Deqref{流線関数フーリエ展開一般解}を
+      これに代入して整理すると
+      \begin{equation}
+        \left(
+        \begin{array}{cc}
+           a^l & J_m\left(a \alpha\right) \\
+           ma^{m-1} & \alpha  J'_m\left(a \alpha\right)
+        \end{array}
+        \right)
+        \left(
+        \begin{array}{c}
+          B_1 \\ B_2 
+        \end{array}
+        \right)
+        =0,
+      \end{equation}
+      %
+      %
+      左辺の係数行列式が 0 なる条件が固有値 $\alpha$ を定める
+      分散関係となる. 
+      %
+      \begin{equation}
+        \left|
+        \begin{array}{cc}
+           a^m      &  J_m\left(a\alpha\right) \\
+           ma^{m-1} & \alpha J'_m\left(a\alpha\right)
+        \end{array}
+        \right| = 0.
+      \end{equation}
+      この分散関係から動径波数 $\alpha$ と
+      成長率 $\sigma = -\nu \alpha^2$ が定められる. 
+
+      係数 $B_1, B_2$ の組合せは, 求まった $\alpha$ を用いて
+      %
+      \begin{equation}
+        \left(
+        \begin{array}{c}
+          B_1 \\ B_2 
+        \end{array}
+        \right)
+        = 
+        \left(
+        \begin{array}{c}
+          J_m(a\alpha) \\
+          - a^m
+        \end{array}
+        \right)
+      \end{equation}
+      %
+      と与えられる. 
+
+
+    \subsection{上側自由すべり条件の場合の流線関数}
+
+      この場合の境界条件は\Deqref{流線関数自由すべり条件}より
+      %
+      \begin{displaymath}
+        \tilde{\psi}_m= r\DD{}{r}\left(\frac{1}{r}\DP{\tilde{\psi}_m}{r}\right)=0, 
+        \quad {\rm at} \quad r=a
+      \end{displaymath}
+      %
+      2 つめの境界条件を書き換えると
+      %
+      \begin{displaymath}
+        r\DD{}{r}\left(\frac{1}{r}\DP{\tilde{\psi}_m}{r}\right)
+        = \DD[2]{\tilde{\psi}_m}{r}-\frac{1}{r}\DD{\tilde{\psi}_m}{r}=0.
+        \quad {\rm at} \quad r=a
+      \end{displaymath}
+      %
+      これに一般解\Deqref{流線関数フーリエ展開一般解}を
+      代入して整理すると
+      %
+      \begin{equation}
+        \left(
+        \begin{array}{cc}
+           a^m &  J_m\left(a\alpha\right) \\
+           m(m-2)a^{m-2} & \alpha^2  J''_m\left(a \alpha\right) 
+                           -\frac{\alpha}{a} J'_m\left(a \alpha\right)
+        \end{array}
+        \right)
+        \left(
+        \begin{array}{c}
+          B_1 \\ B_2 
+        \end{array}
+        \right)
+        =0,
+      \end{equation}
+      %
+      左辺の係数行列式が 0 なる条件が固有値 $\alpha$ を定める
+      分散関係となる. 
+      \footnote{
+        ベッセル函数の 2 階微分はベッセルの満たす微分方程式から
+        \begin{displaymath}
+          J''= -\frac{1}{r}J'
+                      -\left[1-\frac{m^2}{r^2}\right] J, \quad
+        \end{displaymath}
+        と計算される. 
+      }
+      %
+      \begin{equation}
+        \left|
+        \begin{array}{cc}
+           a^m &  J_m\left(a\alpha\right) \\
+           m(m-2)a^{m-2} & \alpha^2  J''_m\left(a \alpha\right) 
+                           -\frac{\alpha}{a} J'_m\left(a \alpha\right)
+        \end{array}
+        \right| = 0.
+      \end{equation}
+      この分散関係から動径波数 $\alpha$ と
+      成長率 $\sigma = -\nu \alpha^2$ が定められる. 
+
+      係数 $B_1, B_2$ の組合せは, 求まった $\alpha$ を用いて
+      %
+      \begin{equation}
+        \left(
+        \begin{array}{c}
+          B_1 \\ B_2 
+        \end{array}
+        \right)
+        = 
+        \left(
+        \begin{array}{c}
+           J_m\left(a\alpha\right)\\
+           -a^m 
+        \end{array}
+        \right)
+      \end{equation}
+      %
+      で定められる. 
+      
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

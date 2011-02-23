@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>Publications</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="paper.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> ] </small>
+<h1><a name="label-0" id="label-0">Publications</a></h1><!-- RDLabel: "Publications" -->
+<dl>
+<dt><a name="label-1" id="label-1">Papers</a></dt><!-- RDLabel: "Papers" -->
+<dd>
+<p>Takehiro, S., Odaka, M., Ishioka, K., Ishiwatari, M., Hayashi, Y.-Y., 2006:
+SPMODEL: A Series of Hierarchical Spectral Models for Geophyiscal Fluid Dynamics,
+Nagare Multimedia 2006, 
+<a href="http://www.nagare.or.jp/mm/2006/spmodel/">http://www.nagare.or.jp/mm/2006/spmodel/</a></p>
+<p>Hayashi, Y.-Y., Odaka, M., Yamada, Y., Morikawa, Y., Ishiwatari, M.,
+Nakajima, K., Takehiro, S., 2005: 
+An aqua-planet experiment on structurization of equatorial
+precipiation activity and related software development toward an
+atmospheric general circulation model for terrestrial planets. 
+CGER's supercomputer activity report, vol.12-2003, 77--86.</p>
+<p>Hayashi, Y.-Y., Ishiwatari, M., Odaka, M., Yamada, Y., Nakajima, K., Takehiro, S., 
+2004: 
+Development of atmospheric general circulation model for terrestrial
+planets and related fundamental experiments on the atmospheric structure. 
+CGER's supercomputer activity report, vol.11-2002, 57--65.</p>
+</dd>
+<dt><a name="label-2" id="label-2">Presentations</a></dt><!-- RDLabel: "Presentations" -->
+<dd>
+<p>Hayashi, Y.-Y., Yamada, M., Takehiro, S., Yoden, S., Ishioka, K., 2006:
+Rossby waves and acceleration-deceleration of jets on a sphere or in a spherical shell.
+Chapman Conference on Jets and Annular Strucutres in Geophysical Fluid Savannah, 
+Georgia, 12 January 2006.</p>
+<p>Takehiro, S., Yamada, M., Hayashi, Y.-Y., 2006: 
+On the Circumpolar Flows Emerging in Two-Dimensional Barotoropic Decaying Turbulence 
+on a Rapidly Rotating Sphere,
+Chapman Conference on Jets and Annular Structures in Geophysical Fluids, Savannah, 
+Georgia, 12 January 2006.</p>
+<p>Masatsugu Odaka, Masaki Ishiwatari, Shin-ichi Takehiro, 
+Keiichi Ishioka, Eizi Toyoda, and Yoshi-Yuki Hayashi, 2003:
+Development of a general circulation model for the earth type
+planetary atmospheres: The GFD Dennou Club atmospheric 
+general circulation model version 6,
+IUGG 2003, July 11, 2003, Sapporo, Japan.</p>
+</dd>
+</dl>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2007/12/05, Since: 2002/02/15 </small>
+
+</body>
+</html>

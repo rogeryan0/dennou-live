@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>Gravity current</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="index.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> / <a href="/library/spmodel/gallery">SPMODEL Gallery</a> ] </small>
+<h1><a name="label-0" id="label-0">Gravity current</a></h1><!-- RDLabel: "Gravity current" -->
+<br>
+<a href="./gravcurrent1-anim.gif"><IMG src="./gravcurrent1.gif"></a>
+
+<ul>
+<li>The left figure is density distribution of fluid
+  associated with gravity current. </li>
+<li>Click figure to start movie.</li>
+<li><a href="../../2d-channel-esc/boussinesq/gravcurrent/f90/gravcurrent1.f90">Source code</a>.</li>
+</ul>
+<h3><a name="label-1" id="label-1">References</a></h3><!-- RDLabel: "References" -->
+<ul>
+<li>Chandrasekhar, S., 1961 : Hydrodynamic and Hdromagnetic stability.
+  Oxford University Press.</li>
+<li>Turner, I. S., 1973: 
+  Buoyance effects in fluids, Cambridge University Press.</li>
+</ul>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2009/01/15, Since: 2002/10/03 </small>
+
+</body>
+</html>

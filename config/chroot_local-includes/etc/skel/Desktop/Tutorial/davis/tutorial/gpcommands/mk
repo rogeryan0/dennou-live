@@ -1,0 +1,3 @@
+ruby rd/rd-hindex.rb index.rd > TOC.rd
+rd2 -r rd/rd2html-ext-lib.rb --with-css=dennou-ruby.css index.rd --native-inline  --headline-secno --head-element  --with-part=html:include > index.html
+rm TOC.rd

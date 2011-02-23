@@ -1,0 +1,4898 @@
+<?xml version="1.0" encoding="euc-jp"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: wa_module</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=euc-jp" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">wa_module</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+
+
+                <a href="../files/src/wa_module_f90.html">
+
+                src/wa_module.f90
+
+                </a>
+
+
+        <br />
+            </td>
+        </tr>
+
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+  <div id="contextContent">
+
+
+
+    <div id="description">
+      <h1><a href="wa_module.html">wa_module</a></h1>
+<table>
+<tr><td valign="top">Authors:</td><td>Shin-ichi Takehiro, Youhei SASAKI
+
+</td></tr>
+<tr><td valign="top">Version:</td><td>$Id: <a href="../files/src/wa_module_f90.html">wa_module.f90</a>,v 1.21
+2009-02-28 21:33:48 uwabami Exp $
+
+</td></tr>
+<tr><td valign="top">Copyright&amp;License:</td><td>See <a href="../../COPYRIGHT">COPYRIGHT</a>
+
+</td></tr>
+</table>
+<h2>概要</h2>
+<p>
+spml/wa_module モジュールは球面上での 2 次元流体運動を
+球面調和函数を用いたスペクトル法によって数値計算するための Fortran90
+関数を提供する.
+</p>
+<p>
+球面上の 1 層モデル用 <a href="w_module.html">w_module</a>
+モジュールを多層モデル用に 拡張したものであり,
+同時に複数個のスペクトルデータ, 格子点データに 対する変換が行える.
+</p>
+<p>
+<a href="wa_module.html">wa_module</a> は実際には基本変換, 微分計算,
+積分・平均計算, スペクトル解析 をそれぞれ担っている下部モジュール <a
+href="wa_base_module.html">wa_base_module</a>, <a
+href="wa_deriv_module.html">wa_deriv_module</a>, <a
+href="wa_integral_module.html">wa_integral_module</a>, <a
+href="wa_spectrum_module.html">wa_spectrum_module</a> および 1
+層用のモジュール <a href="w_module.html">w_module</a> からなっている.
+</p>
+<p>
+内部で ISPACK の SPPACK と SNPACK の Fortran77 サブルーチンを呼んでいる.
+スペクトルデータおよび格子点データの格納方法や変換の詳しい計算法に ついては
+ISPACK/SNPACK,SPPACK のマニュアルを参照されたい.
+</p>
+<h2>関数・変数の名前と型について</h2>
+<p>
+<a href="w_module.html">w_module</a>
+でのものに追加される関数・変数の名前と型についてのみ説明する. <a
+href="w_module.html">w_module</a> での関数・変数の名前と型については <a
+href="w_module.html">w_module</a> の該当項を参照 されたい.
+</p>
+<h3>命名法</h3>
+<ul>
+<li>関数名の先頭 (wa_, nma_, na_, xya_, xa_, ya_, w_, xy_, x_, y_, a_) は,
+返す値の形を示している.
+
+<table>
+<tr><td valign="top">wa_  :</td><td>水平スペクトルデータの並んだ 2 次元配列(スペクトルデータの 並びは
+SNPACK/ISPACK に従ったもの)
+
+</td></tr>
+<tr><td valign="top">nma_ :</td><td>スペクトルデータの並んだ 3 次元配列 (スペクトルデータの並びは 全波数 n,
+帯状波数 m で指定される 2 次元配列)
+
+</td></tr>
+<tr><td valign="top">na_  :</td><td>スペクトルデータの並んだ 2 次元配列 (スペクトルデータの並びは 全波数 n
+で指定される 1 次元配列)
+
+</td></tr>
+<tr><td valign="top">xya_ :</td><td>2 次元格子点データの並んだ 3 次元配列
+
+</td></tr>
+<tr><td valign="top">xa_  :</td><td>経度方向 1 次元格子点データの並んだ 2 次元配列
+
+</td></tr>
+<tr><td valign="top">ya_  :</td><td>緯度方向 1 次元格子点データの並んだ 2 次元配列
+
+</td></tr>
+</table>
+</li>
+<li>関数名の間の文字列(DLon, GradLat, GradLat, DivLon, DivLat, Lapla, LaplaInv,
+Jacobian)は, その関数の作用を表している.
+
+</li>
+<li>関数名の最後 (_wa_wa, _wa, _xya, _xa, _ya, _w_w, _w, _xy, _x, _y) は,
+入力変数の形スペクトルデータおよび格子点データであることを示している.
+
+<table>
+<tr><td valign="top">_wa    :</td><td>スペクトルデータの並んだ 2 次元配列
+
+</td></tr>
+<tr><td valign="top">_wa_wa :</td><td>2 つのスペクトルデータの並んだ 2 次元配列
+
+</td></tr>
+<tr><td valign="top">_xya   :</td><td>2 次元格子点データの並んだ 3 次元配列
+
+</td></tr>
+<tr><td valign="top">_xa    :</td><td>経度方向 1 次元格子点データの並んだ 2 次元配列
+
+</td></tr>
+<tr><td valign="top">_ya    :</td><td>緯度方向 1 次元格子点データの並んだ 2 次元配列
+
+</td></tr>
+</table>
+</li>
+</ul>
+<h3>各データの種類の説明</h3>
+<ul>
+<li>xya : 2 次元格子点データの並んだ 3 次元配列.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:im-1,1:jm,:).
+
+</li>
+<li>im, jm はそれぞれ経度, 緯度座標の格子点数であり, サブルーチン <a
+href="wa_module.html#M000868">wa_Initial</a> にてあらかじめ設定しておく.
+
+</li>
+<li>扱う第 3 次元の大きさの最大値を <a
+href="wa_module.html#M000868">wa_Initial</a> で設定しておく.
+
+</li>
+</ul>
+</li>
+<li>wa : スペクトルデータの並んだ 2 次元配列.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension((nm+1)*(nm+1),:).
+
+</li>
+<li>nm は球面調和函数の最大全波数であり, サブルーチン <a
+href="wa_module.html#M000868">wa_Initial</a> にて あらかじめ設定しておく.
+
+</li>
+<li>スペクトルデータの格納のされ方は関数 <a
+href="wa_module.html#M000877">l_nm</a>, <a
+href="wa_module.html#M000881">nm_l</a> によって調べることができる.
+
+</li>
+<li>扱う第 3 次元の大きさの最大値を <a
+href="wa_module.html#M000868">wa_Initial</a> で設定しておく.
+
+</li>
+</ul>
+</li>
+<li>xa, ya : 経度, 緯度方向 1 次元格子点データ.
+
+<ul>
+<li>変数の種類と次元はそれぞれ real(8), dimension(0:im-1,:) および real(8),
+dimension(1:jm,:).
+
+</li>
+</ul>
+</li>
+<li>nma : スペクトルデータの並んだ 3 次元配列.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:nm,-nm:nm,:).
+
+</li>
+<li>第 1 次元が水平全波数, 第 2 次元が帯状波数を表す.
+
+</li>
+<li>nm は球面調和函数の最大全波数であり, サブルーチン <a
+href="wa_module.html#M000868">wa_Initial</a> にてあらかじめ設定しておく.
+
+</li>
+</ul>
+</li>
+<li>na : スペクトルデータの並んだ 2 次元配列.
+
+<ul>
+<li>変数の種類と次元は real(8), dimension(0:nm,:).
+
+</li>
+<li>第 1 次元が水平全波数を表す.nm は球面調和函数の最大全波数であり,
+サブルーチン <a href="wa_module.html#M000868">wa_Initial</a>
+にてあらかじめ設定しておく.
+
+</li>
+</ul>
+</li>
+<li>wa_ で始まる関数が返す値はスペクトルデータの並んだ 2 次元配列に同じ.
+
+</li>
+<li>nma_ で始まる関数が返す値はスペクトルデータの並んだ 3 次元配列に同じ.
+
+</li>
+<li>na_ で始まる関数が返す値はスペクトルデータの並んだ 2 次元配列に同じ.
+
+</li>
+<li>xya_ で始まる関数が返す値は 2 次元格子点データの並んだ 3 次元配列に 同じ.
+
+</li>
+<li>xa_, ya_ で始まる関数が返す値は 1 次元格子点データの並んだ 2 次元
+配列に同じ.
+
+</li>
+<li>スペクトルデータに対する微分等の作用とは, 対応する格子点データに
+微分などを作用させたデータをスペクトル変換したものことである.
+
+</li>
+</ul>
+<h2>変数・手続き群の要約</h2>
+<h4>初期化</h4>
+<table>
+<tr><td valign="top"><a href="wa_module.html#M000868">wa_Initial</a> :</td><td>スペクトル変換の格子点数, 波数, 領域の大きさ,
+
+</td></tr>
+</table>
+<pre>
+           :: および同時に計算するデータの個数の最大値設定
+</pre>
+<h4>座標変数</h4>
+<table>
+<tr><td valign="top"><a href="wa_module.html#M000869">x_Lon</a>, <a href="wa_module.html#M000870">y_Lat</a>     :</td><td>格子点座標(緯度, 経度座標)を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000871">x_Lon_Weight</a>, <a href="wa_module.html#M000872">y_Lat_Weight</a> :</td><td>重み座標を格納した 1 次元配列
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000873">xy_Lon</a>, <a href="wa_module.html#M000874">xy_Lat</a>   :</td><td>格子点データの経度・緯度座標(X,Y) (格子点データ型 2 次元配列)
+
+</td></tr>
+</table>
+<h4>基本変換</h4>
+<table>
+<tr><td valign="top"><a href="wa_module.html#M000883">xya_wa</a>, <a href="wa_module.html#M000875">xy_w</a> :</td><td>スペクトルデータから格子データへの変換(多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000884">wa_xya</a>, <a href="wa_module.html#M000876">w_xy</a> :</td><td>格子データからスペクトルデータへの変換(多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000877">l_nm</a>, <a href="wa_module.html#M000881">nm_l</a> :</td><td>スペクトルデータの格納位置と全波数・帯状波数の変換
+
+</td></tr>
+</table>
+<h4>微分</h4>
+<table>
+<tr><td valign="top"><a href="wa_module.html#M000900">wa_Lapla_wa</a>, <a href="wa_module.html#M000887">w_Lapla_w</a>        :</td><td>スペクトルデータにラプラシアンを 作用させる(多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000885">rn</a>                            :</td><td>スペクトルデータのラプラシアンを 計算するための係数
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000886">irm</a>                           :</td><td>経度微分演算用配列
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000901">wa_LaplaInv_wa</a>, <a href="wa_module.html#M000888">w_LaplaInv_w</a>  :</td><td>スペクトルデータにラプラシアンの逆変換を 作用させる(多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000902">wa_DLon_wa</a>, <a href="wa_module.html#M000889">w_DLon_w</a>          :</td><td>スペクトルデータに 経度微分∂/∂λを作用させる(多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000903">xya_GradLon_wa</a>, <a href="wa_module.html#M000890">xy_GradLon_w</a>  :</td><td>スペクトルデータに 勾配型経度微分 1/cosφ・∂/∂λ を 作用させる(多層, 1
+層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000904">xya_GradLat_wa</a>, <a href="wa_module.html#M000891">xy_GradLat_w</a>  :</td><td>スペクトルデータに 勾配型緯度微分 ∂/∂φ を 作用させる(多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000905">wa_DivLon_xya</a>, <a href="wa_module.html#M000892">w_DivLon_xy</a>    :</td><td>格子データに 発散型経度微分 1/cosφ・∂/∂λを 作用させる(多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000906">wa_DivLat_xya</a>, <a href="wa_module.html#M000893">w_DivLat_xy</a>    :</td><td>格子データに 発散型緯度微分 1/cosφ・∂(g cosφ)/∂φを 作用させる (多層, 1
+層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000907">wa_Div_xya_xya</a>, <a href="wa_module.html#M000894">w_Div_xy_xy</a>   :</td><td>ベクトル成分である 2 つの格子データに 発散を作用させる(多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000908">wa_Jacobian_wa_wa</a>,<a href="wa_module.html#M000895">w_Jacobian_w_w</a> :</td><td>2つのスペクトルデータからヤコビアンを 計算する(多層, 1 層用)
+
+</td></tr>
+</table>
+<h4>微分(λ,μ=sinφ 座標)</h4>
+<table>
+<tr><td valign="top"><a href="wa_module.html#M000909">xya_GradLambda_wa</a>, <a href="wa_module.html#M000896">xy_GradLambda_w</a>  :</td><td>スペクトルデータに 勾配型経度微分∂/∂λを作用させる (多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000910">xya_GradMu_wa</a>, <a href="wa_module.html#M000897">xy_GradMu_w</a>          :</td><td>スペクトルデータに 勾配型緯度微分(1-μ^2)∂/∂μ を作用させる (多層, 1
+層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000911">wa_DivLambda_xya</a>,<a href="wa_module.html#M000898">w_DivLambda_xy</a>     :</td><td>格子データに発散型経度微分 1 /(1-μ^2)・∂/∂λを作用させる (多層, 1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000912">wa_DivMu_xya</a>,<a href="wa_module.html#M000899">w_DivMu_xy</a>             :</td><td>格子データに発散型緯度微分 ∂/∂μを作用させる(多層, 1 層用)
+
+</td></tr>
+</table>
+<h4>補間計算</h4>
+<table>
+<tr><td valign="top"><a href="wa_module.html#M000913">a_Interpolate_wa</a>, <a href="wa_module.html#M000914">Interpolate_w</a> :</td><td>スペクトルデータから 任意の点の関数値を計算する.
+
+</td></tr>
+</table>
+<h4>積分・平均</h4>
+<table>
+<tr><td valign="top"><a href="wa_module.html#M000925">a_IntLonLat_xya</a>, <a href="wa_module.html#M000930">a_AvrLonLat_xya</a> :</td><td>2 次元格子点データの 全領域積分および平均(多層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000915">IntLonLat_xy</a>, <a href="wa_module.html#M000920">AvrLonLat_xy</a>       :</td><td>2 次元格子点データの 全領域積分および平均(1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000926">ya_IntLon_xya</a>, <a href="wa_module.html#M000931">ya_AvrLon_xya</a>     :</td><td>2 次元格子点データの 経度方向積分および平均(多層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000916">y_IntLon_xy</a>, <a href="wa_module.html#M000921">y_AvrLon_xy</a>         :</td><td>2 次元格子点データの 経度方向積分および平均(1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000927">a_IntLon_xa</a>, <a href="wa_module.html#M000932">a_AvrLon_xa</a>         :</td><td>1 次元(X)格子点データの 経度方向積分および平均(多層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000917">IntLon_x</a>, <a href="wa_module.html#M000922">AvrLon_x</a>               :</td><td>1 次元(X)格子点データの 経度方向積分および平均(1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000928">xa_IntLat_xya</a>, <a href="wa_module.html#M000923">x_AvrLat_xy</a>       :</td><td>2 次元格子点データの 緯度方向積分および平均(多層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000918">x_IntLat_xy</a>, <a href="wa_module.html#M000923">x_AvrLat_xy</a>         :</td><td>2 次元格子点データの 緯度方向積分および平均(1 層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000929">a_IntLat_ya</a>, <a href="wa_module.html#M000934">a_AvrLat_ya</a>         :</td><td>1 次元(Y)格子点データの 緯度方向積分および平均(多層用)
+
+</td></tr>
+<tr><td valign="top"><a href="wa_module.html#M000919">IntLat_y</a>, <a href="wa_module.html#M000924">AvrLat_y</a>               :</td><td>1 次元(Y)格子点データの 緯度方向積分および平均(1 層用)
+
+</td></tr>
+</table>
+<h4>スペクトル解析</h4>
+<p>
+<a href="wa_module.html#M000941">nma_EnergyFromStreamfunc_wa</a>,<a
+href="wa_module.html#M000935">nm_EnergyFromStreamfunc_w</a> ::
+流線関数からエネルギースペクトルを計算する (水平全波数 n, 帯状波数 m
+空間)(多層, 1 層用)
+</p>
+<p>
+<a href="wa_module.html#M000942">na_EnergyFromStreamfunc_wa</a>,<a
+href="wa_module.html#M000936">n_EnergyFromStreamfunc_w</a> ::
+流線関数からエネルギースペクトルを計算する (水平全波数 n 空間) (多層, 1
+層用)
+</p>
+<p>
+<a href="wa_module.html#M000943">nma_EnstrophyFromStreamfunc_wa</a>,<a
+href="wa_module.html#M000937">nm_EnstrophyFromStreamfunc_w</a> ::
+流線関数からエンストロフィースペクトルを計算する (水平全波数 n, 帯状波数 m
+空間)(多層, 1 層用)
+</p>
+<p>
+<a href="wa_module.html#M000944">na_EnstrophyFromStreamfunc_wa</a>,<a
+href="wa_module.html#M000938">n_EnstrophyFromStreamfunc_w</a> ::
+流線関数からエンストロフィースペクトルを計算する(水平全波数 n 空間) (多層,
+1 層用)
+</p>
+<table>
+<tr><td valign="top"><a href="wa_module.html#M000939">w_spectrum_VMiss</a>              :</td><td>欠損値
+
+</td></tr>
+</table>
+
+    </div>
+
+
+
+
+
+   </div>
+
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+
+        <a href="#M000924">AvrLat_y</a>&nbsp;&nbsp;
+
+        <a href="#M000920">AvrLonLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000922">AvrLon_x</a>&nbsp;&nbsp;
+
+        <a href="#M000919">IntLat_y</a>&nbsp;&nbsp;
+
+        <a href="#M000915">IntLonLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000917">IntLon_x</a>&nbsp;&nbsp;
+
+        <a href="#M000914">Interpolate_w</a>&nbsp;&nbsp;
+
+        <a href="#M000934">a_AvrLat_ya</a>&nbsp;&nbsp;
+
+        <a href="#M000930">a_AvrLonLat_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000932">a_AvrLon_xa</a>&nbsp;&nbsp;
+
+        <a href="#M000929">a_IntLat_ya</a>&nbsp;&nbsp;
+
+        <a href="#M000925">a_IntLonLat_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000927">a_IntLon_xa</a>&nbsp;&nbsp;
+
+        <a href="#M000913">a_Interpolate_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000886">irm</a>&nbsp;&nbsp;
+
+        <a href="#M000877">l_nm</a>&nbsp;&nbsp;
+
+        <a href="#M000878">l_nm</a>&nbsp;&nbsp;
+
+        <a href="#M000879">l_nm</a>&nbsp;&nbsp;
+
+        <a href="#M000880">l_nm</a>&nbsp;&nbsp;
+
+        <a href="#M000936">n_EnergyFromStreamfunc_w</a>&nbsp;&nbsp;
+
+        <a href="#M000938">n_EnstrophyFromStreamfunc_w</a>&nbsp;&nbsp;
+
+        <a href="#M000942">na_EnergyFromStreamfunc_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000944">na_EnstrophyFromStreamfunc_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000935">nm_EnergyFromStreamfunc_w</a>&nbsp;&nbsp;
+
+        <a href="#M000937">nm_EnstrophyFromStreamfunc_w</a>&nbsp;&nbsp;
+
+        <a href="#M000881">nm_l</a>&nbsp;&nbsp;
+
+        <a href="#M000882">nm_l</a>&nbsp;&nbsp;
+
+        <a href="#M000941">nma_EnergyFromStreamfunc_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000943">nma_EnstrophyFromStreamfunc_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000885">rn</a>&nbsp;&nbsp;
+
+        <a href="#M000889">w_DLon_w</a>&nbsp;&nbsp;
+
+        <a href="#M000898">w_DivLambda_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000893">w_DivLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000892">w_DivLon_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000899">w_DivMu_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000894">w_Div_xy_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000895">w_Jacobian_w_w</a>&nbsp;&nbsp;
+
+        <a href="#M000888">w_LaplaInv_w</a>&nbsp;&nbsp;
+
+        <a href="#M000887">w_Lapla_w</a>&nbsp;&nbsp;
+
+        <a href="#M000939">w_spectrum_VMiss</a>&nbsp;&nbsp;
+
+        <a href="#M000876">w_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000902">wa_DLon_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000911">wa_DivLambda_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000906">wa_DivLat_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000905">wa_DivLon_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000912">wa_DivMu_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000907">wa_Div_xya_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000868">wa_Initial</a>&nbsp;&nbsp;
+
+        <a href="#M000908">wa_Jacobian_wa_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000901">wa_LaplaInv_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000900">wa_Lapla_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000940">wa_spectrum_VMiss</a>&nbsp;&nbsp;
+
+        <a href="#M000884">wa_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000923">x_AvrLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000918">x_IntLat_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000869">x_Lon</a>&nbsp;&nbsp;
+
+        <a href="#M000871">x_Lon_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M000933">xa_AvrLat_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000928">xa_IntLat_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000896">xy_GradLambda_w</a>&nbsp;&nbsp;
+
+        <a href="#M000891">xy_GradLat_w</a>&nbsp;&nbsp;
+
+        <a href="#M000890">xy_GradLon_w</a>&nbsp;&nbsp;
+
+        <a href="#M000897">xy_GradMu_w</a>&nbsp;&nbsp;
+
+        <a href="#M000874">xy_Lat</a>&nbsp;&nbsp;
+
+        <a href="#M000873">xy_Lon</a>&nbsp;&nbsp;
+
+        <a href="#M000875">xy_w</a>&nbsp;&nbsp;
+
+        <a href="#M000909">xya_GradLambda_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000904">xya_GradLat_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000903">xya_GradLon_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000910">xya_GradMu_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000883">xya_wa</a>&nbsp;&nbsp;
+
+        <a href="#M000921">y_AvrLon_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000916">y_IntLon_xy</a>&nbsp;&nbsp;
+
+        <a href="#M000870">y_Lat</a>&nbsp;&nbsp;
+
+        <a href="#M000872">y_Lat_Weight</a>&nbsp;&nbsp;
+
+        <a href="#M000931">ya_AvrLon_xya</a>&nbsp;&nbsp;
+
+        <a href="#M000926">ya_IntLon_xya</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+
+        <span class="include-name">dc_message</span>
+
+        <span class="include-name"><a href="w_module.html">w_module</a></span>
+
+        <span class="include-name"><a href="wa_base_module.html">wa_base_module</a></span>
+
+        <span class="include-name"><a href="wa_deriv_module.html">wa_deriv_module</a></span>
+
+        <span class="include-name"><a href="wa_interpolate_module.html">wa_interpolate_module</a></span>
+
+        <span class="include-name"><a href="wa_integral_module.html">wa_integral_module</a></span>
+
+        <span class="include-name"><a href="wa_spectrum_module.html">wa_spectrum_module</a></span>
+      </div>
+    </div>
+
+
+
+    <div id="section">
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+    <div id="methods">
+
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+
+      <div id="method-M000924" class="method-detail">
+        <a name="M000924"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">AvrLat_y</span><span class="method-args">( y_data ) result(AvrLat_y)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000924">AvrLat_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元緯度格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの緯度(Y)方向平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000639">w_module#AvrLat_y</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000920" class="method-detail">
+        <a name="M000920"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">AvrLonLat_xy</span><span class="method-args">( xy_data ) result(AvrLonLat_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000920">AvrLonLat_xy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの全領域平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた 総和を計算し,
+x_X_Weight*y_Y_Weight の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000635">w_module#AvrLonLat_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000922" class="method-detail">
+        <a name="M000922"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">AvrLon_x</span><span class="method-args">( x_data ) result(AvrLon_x)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000922">AvrLon_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x_data(0:im-1)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元経度(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(X)格子点データの経度(X)方向平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, x_X_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000637">w_module#AvrLon_x</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000919" class="method-detail">
+        <a name="M000919"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">IntLat_y</span><span class="method-args">( y_data ) result(IntLat_y)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000919">IntLat_y</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>y_data(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元緯度(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元緯度(Y)格子点データの Y 方向積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000634">w_module#IntLat_y</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000915" class="method-detail">
+        <a name="M000915"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">IntLonLat_xy</span><span class="method-args">( xy_data ) result(IntLonLat_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000915">IntLonLat_xy</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの全領域積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000630">w_module#IntLonLat_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000917" class="method-detail">
+        <a name="M000917"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">IntLon_x</span><span class="method-args">( x_data ) result(IntLon_x)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000917">IntLon_x</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>x_data(0:im-1)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元経度(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元経度(X)格子点データの X 方向積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000632">w_module#IntLon_x</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000914" class="method-detail">
+        <a name="M000914"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">Interpolate_w</span><span class="method-args">( w_data, alon, alat ) result(Interpolate_array00_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>Interpolate_array00_w  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間した値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alon  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間する位置(経度)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alat  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間する位置(緯度)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+緯度 alat, 経度 alon における関数値を その球面調和変換係数 w_data
+から補間計算する
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000629">w_module#Interpolate_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000934" class="method-detail">
+        <a name="M000934"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">a_AvrLat_ya</span><span class="method-args">( ya_data ) result(a_AvrLat_ya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000934">a_AvrLat_ya</a>(size(ya_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値の並び(*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ya_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元緯度格子点データの並び(1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元(Y)格子点データの緯度(Y)方向平均(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002132">wa_integral_module#a_AvrLat_ya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000930" class="method-detail">
+        <a name="M000930"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">a_AvrLonLat_xya</span><span class="method-args">( xya_data ) result(a_AvrLonLat_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000930">a_AvrLonLat_xya</a>(size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値の並び(*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データの並び(0:im-1,1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの全領域平均(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた 総和を計算し,
+x_X_Weight*y_Y_Weight の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002129">wa_integral_module#a_AvrLonLat_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000932" class="method-detail">
+        <a name="M000932"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">a_AvrLon_xa</span><span class="method-args">( xa_data ) result(a_AvrLon_xa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000932">a_AvrLon_xa</a>(size(xa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均値の並び(*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xa_data(0:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元経度(X)格子点データの並び(0:im-1,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+経度平均
+</p>
+<p>
+1 次元(X)格子点データの経度(X)方向平均(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, x_X_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002133">wa_integral_module#a_AvrLon_xa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000929" class="method-detail">
+        <a name="M000929"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">a_IntLat_ya</span><span class="method-args">( ya_data ) result(a_IntLat_ya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000929">a_IntLat_ya</a>(size(ya_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値の並び(*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ya_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元緯度(Y)格子点データの並び(1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+1 次元緯度(Y)格子点データの Y 方向積分(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002127">wa_integral_module#a_IntLat_ya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000925" class="method-detail">
+        <a name="M000925"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">a_IntLonLat_xya</span><span class="method-args">( xya_data ) result(a_IntLonLat_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000925">a_IntLonLat_xya</a>(size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分されたデータの並び(*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データの並び(0:im-1,1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの全領域積分(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight, y_Y_Weight をかけた
+総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002124">wa_integral_module#a_IntLonLat_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000927" class="method-detail">
+        <a name="M000927"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">a_IntLon_xa</span><span class="method-args">( xa_data ) result(a_IntLon_xa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000927">a_IntLon_xa</a>(size(xa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分値の並び(*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xa_data(0:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1 次元経度(X)格子点データの並び(0:im-1,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+経度積分
+</p>
+<p>
+1 次元経度(X)格子点データの X 方向積分(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002128">wa_integral_module#a_IntLon_xa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000913" class="method-detail">
+        <a name="M000913"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">a_Interpolate_wa</span><span class="method-args">( wa_data, alon, alat ) result(a_Interpolate_array00_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>a_Interpolate_array00_wa(size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間した値
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alon  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間する位置(経度)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>alat  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(IN)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 補間する位置(緯度)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+緯度 alon, 経度 alat における関数値を その球面調和変換係数 wa_data
+から補間計算する
+</p>
+<p>
+Original external subprogram is <a
+href="wa_interpolate_module.html#M000598">wa_interpolate_module#a_Interpolate_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000886" class="method-detail">
+        <a name="M000886"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">irm</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000886">irm</a>(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 経度微分演算用配列
+
+<p>
+スペクトルデータの経度微分を計算するための係数. 配列サイズは (
+(nm+1)*(nm+1),2 ) である.
+</p>
+<p>
+L番目の格納位置のスペクトルが実部なら, <a
+href="wa_module.html#M000886">irm</a>(L,1)には対応する虚部の格納位置が, <a
+href="wa_module.html#M000886">irm</a>(L,2) には東西波数 m が格納されている.
+また, L番目の格納位置のスペクトル が虚部なら, <a
+href="wa_module.html#M000886">irm</a>(L,1)には対応する実部の格納位置が, <a
+href="wa_module.html#M000886">irm</a>(L,2)には -m が格納され ている.
+</p>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000615">w_module#irm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000877" class="method-detail">
+        <a name="M000877"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_nm</span><span class="method-args">( n, m ) result(l_nm_array00)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>l_nm_array00  </tt></b>  <tt> </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの格納位置
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>n  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 全波数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>m  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 帯状波数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+全波数(n)と東西波数(m)からそのスペクトルデータの格納位置を返す.
+</p>
+<p>
+引数 n,m がともに整数値の場合, 整数値を返す.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000608">w_module#l_nm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000878" class="method-detail">
+        <a name="M000878"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_nm</span><span class="method-args">( n, marray ) result(l_nm_array01)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>l_nm_array01(size(marray))  </tt></b>  <tt> </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ位置
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>n  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 全波数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>marray(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 帯状波数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータの格納位置
+</p>
+<p>
+全波数(n)と東西波数(m)からそのスペクトルデータの格納位置を返す.
+</p>
+<p>
+第 1 引数 n が整数, 第 2 引数 marray が整数 1 次元配列の場合, marray
+と同じ大きさの 1 次元整数配列を返す.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000608">w_module#l_nm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000879" class="method-detail">
+        <a name="M000879"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_nm</span><span class="method-args">( narray, m ) result(l_nm_array10)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>l_nm_array10(size(narray))  </tt></b>  <tt> </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ位置
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>narray(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 全波数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>m  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 帯状波数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+全波数(n)と東西波数(m)からそのスペクトルデータの格納位置を返す.
+</p>
+<p>
+第 1 引数 narray が整数 1 次元配列, 第 2 引数 m が整数の場合, narray
+と同じ大きさの 1 次元整数配列を返す.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000608">w_module#l_nm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000880" class="method-detail">
+        <a name="M000880"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">l_nm</span><span class="method-args">( narray, marray ) result(l_nm_array11)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>l_nm_array11(size(narray))  </tt></b>  <tt> </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ位置
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>narray(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 全波数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>marray(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 帯状波数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+全波数(n)と東西波数(m)からそのスペクトルデータの格納位置を返す.
+</p>
+<p>
+第 1,2 引数 narray, marray がともに整数 1 次元配列の場合, narray, marray
+と同じ大きさの 1 次元整数配列を返す. narray, marray
+は同じ大きさでなければならない.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000608">w_module#l_nm</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000936" class="method-detail">
+        <a name="M000936"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">n_EnergyFromStreamfunc_w</span><span class="method-args">( w_Strfunc ) result(n_EnergyFromStreamfunc_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000936">n_EnergyFromStreamfunc_w</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) エネルギースペクトル (水平全波数 n 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_Strfunc(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータから各全波数のエネルギー成分(スペクトル)を
+計算する(1 層用).
+</p>
+<pre>
+ * 全波数 n の流線関数のスペクトル成分ψ(n,m) から
+   エネルギースペクトルはΣ[m=-nm]^nm(1/2)n(n+1)ψ(n,m)^2
+   と計算される.
+
+ * 全てのエネルギースペクトル成分の和に 4πをかけたものが
+   球面上での全エネルギーに等しい.
+</pre>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000642">w_module#n_EnergyFromStreamfunc_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000938" class="method-detail">
+        <a name="M000938"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">n_EnstrophyFromStreamfunc_w</span><span class="method-args">( w_Strfunc ) result(n_EnstrophyFromStreamfunc_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000938">n_EnstrophyFromStreamfunc_w</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) エンストロフィースペクトル(水平全波数 n 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_Strfunc(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータから各全波数のエネルギー成分(スペクトル)を
+計算する(1 層用)
+</p>
+<ul>
+<li>全波数 n の流線関数のスペクトル成分ψ(n,m) からエンストロフィー
+スペクトルはΣ[m=-nm]^nm(1/2)n^2(n+1)^2ψ(n,m)^2 と計算される.
+
+</li>
+<li>全てのエネルギースペクトル成分の和に 4π/R^2 をかけたものが
+球面上での全エンストフィーに等しい.
+
+</li>
+</ul>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000644">w_module#n_EnstrophyFromStreamfunc_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000942" class="method-detail">
+        <a name="M000942"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">na_EnergyFromStreamfunc_wa</span><span class="method-args">( wa_Strfunc ) result(na_EnergyFromStreamfunc_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000942">na_EnergyFromStreamfunc_wa</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm,size(wa_Strfunc,2))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) エネルギースペクトル (水平全波数 n 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_Strfunc(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータから各全波数のエネルギー成分(スペクトル)を
+計算する(多層用).
+</p>
+<pre>
+ * 全波数 n の流線関数のスペクトル成分ψ(n,m) から
+   エネルギースペクトルはΣ[m=-nm]^nm(1/2)n(n+1)ψ(n,m)^2
+   と計算される.
+
+ * 全てのエネルギースペクトル成分の和に 4πをかけたものが
+   球面上での全エネルギーに等しい.
+</pre>
+<p>
+Original external subprogram is <a
+href="wa_spectrum_module.html#M000865">wa_spectrum_module#na_EnergyFromStreamfunc_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000944" class="method-detail">
+        <a name="M000944"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">na_EnstrophyFromStreamfunc_wa</span><span class="method-args">( wa_Strfunc ) result(na_EnstrophyFromStreamfunc_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000944">na_EnstrophyFromStreamfunc_wa</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm,size(wa_Strfunc,2))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> エンストロフィースペクトル (out) エンストロフィースペクトル(水平全波数 n
+空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_Strfunc(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータから各全波数のエネルギー成分(スペクトル)を
+計算する(多層用)
+</p>
+<ul>
+<li>全波数 n の流線関数のスペクトル成分ψ(n,m) からエンストロフィー
+スペクトルはΣ[m=-nm]^nm(1/2)n^2(n+1)^2ψ(n,m)^2 と計算される.
+
+</li>
+<li>全てのエネルギースペクトル成分の和に 4π/R^2 をかけたものが
+球面上での全エンストフィーに等しい.
+
+</li>
+</ul>
+<p>
+Original external subprogram is <a
+href="wa_spectrum_module.html#M000867">wa_spectrum_module#na_EnstrophyFromStreamfunc_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000935" class="method-detail">
+        <a name="M000935"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">nm_EnergyFromStreamfunc_w</span><span class="method-args">( w_Strfunc ) result(nm_EnergyFromStreamfunc_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000935">nm_EnergyFromStreamfunc_w</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm,-nm:nm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) エネルギースペクトル(水平全波数 n, 帯状波数 m 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_Strfunc(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータからエネルギーの球面調和函数成分
+(スペクトル)を計算する(1 層用).
+</p>
+<pre>
+ * 全波数 n, 帯状波数 m の流線関数のスペクトル成分ψ(n,m) から
+   エネルギースペクトルは (1/2)n(n+1)ψ(n,m)^2 と計算される.
+
+ * 全てのエネルギースペクトル成分の和に4πをかけたものが球面上での
+   全エネルギーに等しい.
+
+ * データの存在しない全波数 n, 帯状波数 m の配列には欠損値が格納される.
+   欠損値の値はモジュール変数 w_spectrum_VMiss によって設定できる
+   (初期値は -999.0)
+</pre>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000641">w_module#nm_EnergyFromStreamfunc_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000937" class="method-detail">
+        <a name="M000937"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">nm_EnstrophyFromStreamfunc_w</span><span class="method-args">( w_Strfunc ) result(nm_EnstrophyFromStreamfunc_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000937">nm_EnstrophyFromStreamfunc_w</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm,-nm:nm)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> エンストロフィースペクトル (水平全波数 n, 帯状波数 m 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_Strfunc(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータからエンストロフィーの球面調和函数成分
+(スペクトル)を計算する(1 層用).
+</p>
+<ul>
+<li>全波数 n, 帯状波数 m の流線関数のスペクトル成分ψ(n,m) から
+
+<pre>
+ エンストロフィースペクトルは (1/2)n^2(n+1)^2ψ(n,m)^2 と計算される.
+</pre>
+</li>
+<li>全てのエンストロフィースペクトル成分の和に4π/R^2をかけたものが
+球面上での全エンストロフィーに等しい. ここで R は球面の半径である.
+
+</li>
+<li>データの存在しない全波数 n, 帯状波数 m の配列には欠損値が格納される.
+欠損値の値はモジュール変数 <a
+href="wa_module.html#M000939">w_spectrum_VMiss</a> によって設定できる
+(初期値は -999.0)
+
+</li>
+</ul>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000643">w_module#nm_EnstrophyFromStreamfunc_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000881" class="method-detail">
+        <a name="M000881"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">nm_l</span><span class="method-args">( l ) result(nm_l_int)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>nm_l_int(2)  </tt></b>  <tt> </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 全波数, 帯状波数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>l  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータの格納位置
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータの格納位置(l)から全波数(n)と東西波数(m)を返す.
+</p>
+<p>
+引数 l が整数値の場合, 対応する全波数と帯状波数を 長さ 2 の 1
+次元整数値を返す. <a href="wa_module.html#M000881">nm_l</a>(1) が全波数, <a
+href="wa_module.html#M000881">nm_l</a>(2) が帯状波数である.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000612">w_module#nm_l</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000882" class="method-detail">
+        <a name="M000882"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">nm_l</span><span class="method-args">( larray ) result(nm_l_array)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>nm_l_array(size(larray),2)  </tt></b>  <tt> </tt> :</td><td><tt>integer</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータの格納位置
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>larray(:)  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 全波数, 帯状波数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータの格納位置(l)から全波数(n)と東西波数(m)を返す.
+</p>
+<p>
+引数 larray が整数 1 次元配列の場合, larray に対応する n, m を格納した 2
+次元整数配列を返す. nm_l_array(:,1) が全波数, nm_l_array(:,2)
+が帯状波数である.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000612">w_module#nm_l</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000941" class="method-detail">
+        <a name="M000941"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">nma_EnergyFromStreamfunc_wa</span><span class="method-args">( wa_Strfunc ) result(nma_EnergyFromStreamfunc_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000941">nma_EnergyFromStreamfunc_wa</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm,-nm:nm,size(wa_Strfunc,2))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) エネルギースペクトル(水平全波数 n, 帯状波数 m 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_Strfunc(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータからエネルギーの球面調和函数成分
+(スペクトル)を計算する(多層用).
+</p>
+<pre>
+ * 全波数 n, 帯状波数 m の流線関数のスペクトル成分ψ(n,m) から
+   エネルギースペクトルは (1/2)n(n+1)ψ(n,m)^2 と計算される.
+
+ * 全てのエネルギースペクトル成分の和に4πをかけたものが球面上での
+   全エネルギーに等しい.
+
+ * データの存在しない全波数 n, 帯状波数 m の配列には欠損値が格納される.
+   欠損値の値はモジュール変数 w_spectrum_VMiss によって設定できる
+   (初期値は -999.0)
+</pre>
+<p>
+Original external subprogram is <a
+href="wa_spectrum_module.html#M000864">wa_spectrum_module#nma_EnergyFromStreamfunc_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000943" class="method-detail">
+        <a name="M000943"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">nma_EnstrophyFromStreamfunc_wa</span><span class="method-args">( wa_Strfunc ) result(nma_EnstrophyFromStreamfunc_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000943">nma_EnstrophyFromStreamfunc_wa</a>  </tt></b>  <tt> </tt> :</td><td><tt>real(8), dimension(0:nm,-nm:nm,size(wa_Strfunc,2))</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> エンストロフィースペクトル (水平全波数 n, 帯状波数 m 空間)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_Strfunc(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 流線関数(スペクトルデータ)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+流線関数のスペクトルデータからエンストロフィーの球面調和函数成分
+(スペクトル)を計算する(多層用).
+</p>
+<ul>
+<li>全波数 n, 帯状波数 m の流線関数のスペクトル成分ψ(n,m) から
+
+<pre>
+ エンストロフィースペクトルは (1/2)n^2(n+1)^2ψ(n,m)^2 と計算される.
+</pre>
+</li>
+<li>全てのエンストロフィースペクトル成分の和に4π/R^2をかけたものが
+球面上での全エンストロフィーに等しい. ここで R は球面の半径である.
+
+</li>
+<li>データの存在しない全波数 n, 帯状波数 m の配列には欠損値が格納される.
+欠損値の値はモジュール変数 <a
+href="wa_module.html#M000939">w_spectrum_VMiss</a> によって設定できる
+(初期値は -999.0)
+
+</li>
+</ul>
+<p>
+Original external subprogram is <a
+href="wa_spectrum_module.html#M000866">wa_spectrum_module#nma_EnstrophyFromStreamfunc_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000885" class="method-detail">
+        <a name="M000885"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">rn</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000885">rn</a>(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> ラプラシアン演算用配列
+
+<p>
+スペクトルデータのラプラシアンを計算するための係数
+配列のサイズは((nm+1)*(nm+1), 2)
+</p>
+<p>
+r(L,1) には L 番目の格納位置のスペクトルに対するラプラシアン計算の 係数
+-n(n+1) の値が格納されている.
+</p>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000614">w_module#rn</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000889" class="method-detail">
+        <a name="M000889"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_DLon_w</span><span class="method-args">( w_data ) result(w_DLon_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000889">w_DLon_w</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの経度微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに経度微分 ∂/∂λ を作用させる(1 層用).
+</p>
+<p>
+スペクトルデータの経度微分とは, 対応する格子点データに
+経度微分∂/∂λを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000618">w_module#w_DLon_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000898" class="method-detail">
+        <a name="M000898"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_DivLambda_xy</span><span class="method-args">( xy_data ) result(w_DivLambda_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000898">w_DivLambda_xy</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型経度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型経度微分 1/(1-μ^2)・∂/∂λ (μ=sinφ)
+を作用させてスペクトルデータに変換して返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000627">w_module#w_DivLambda_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000893" class="method-detail">
+        <a name="M000893"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_DivLat_xy</span><span class="method-args">( xy_data ) result(w_DivLat_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000893">w_DivLat_xy</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型緯度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型緯度微分 1/cosφ・∂(f cosφ)/∂φ を作用させて
+スペクトルデータに変換して返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000622">w_module#w_DivLat_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000892" class="method-detail">
+        <a name="M000892"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_DivLon_xy</span><span class="method-args">( xy_data ) result(w_DivLon_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000892">w_DivLon_xy</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型経度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型経度微分 1/cosφ・∂/∂λ を作用させて
+スペクトルデータに変換して返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000621">w_module#w_DivLon_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000899" class="method-detail">
+        <a name="M000899"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_DivMu_xy</span><span class="method-args">( xy_data ) result(w_DivMu_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000899">w_DivMu_xy</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型緯度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型緯度微分 ∂/∂μ (μ=sinφ)を作用させて
+スペクトルデータに変換して返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000628">w_module#w_DivMu_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000894" class="method-detail">
+        <a name="M000894"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_Div_xy_xy</span><span class="method-args">( xy_u, xy_v ) result(w_Div_xy_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000894">w_Div_xy_xy</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 2 つの入力格子点データをベクトル成分とする発散のスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_u(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ベクトル経度成分の格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_v(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ベクトル緯度成分の格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 つの入力格子点データをベクトル成分とする発散を計算し,
+スペクトルデータとして返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000623">w_module#w_Div_xy_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000895" class="method-detail">
+        <a name="M000895"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_Jacobian_w_w</span><span class="method-args">( w_a, w_b ) result(w_Jacobian_w_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000895">w_Jacobian_w_w</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 2 つのスペクトルデータのヤコビアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_a((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1つ目の入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_b((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2つ目の入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 つのスペクトルデータにヤコビアン
+</p>
+<pre>
+  J(f,g) = ∂f/∂λ・∂g/∂μ - ∂g/∂λ・∂f/∂μ
+         = ∂f/∂λ・1/cosφ・∂g/∂φ
+            - ∂g/∂λ・1/cosφ・∂f/∂φ
+</pre>
+<p>
+を作用させる(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000624">w_module#w_Jacobian_w_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000888" class="method-detail">
+        <a name="M000888"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_LaplaInv_w</span><span class="method-args">( w_data ) result(w_LaplaInv_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000888">w_LaplaInv_w</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの逆ラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに逆ラプラシアン
+</p>
+<pre>
+   ▽^{-2}
+     =[1/cos^2φ・∂^2/∂λ^2 + 1/cosφ・∂/∂φ(cosφ∂/∂φ)]^{-1}
+</pre>
+<p>
+を作用する(1 層用).
+</p>
+<p>
+スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000617">w_module#w_LaplaInv_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000887" class="method-detail">
+        <a name="M000887"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_Lapla_w</span><span class="method-args">( w_data ) result(w_Lapla_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000887">w_Lapla_w</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 入力スペクトルデータのラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータにラプラシアン
+</p>
+<pre>
+   ▽^2 = 1/cos^2φ・∂^2/∂λ^2 + 1/cosφ・∂/∂φ(cosφ∂/∂φ)
+</pre>
+<p>
+を作用する(1 層用).
+</p>
+<p>
+スペクトルデータのラプラシアンとは, 対応する格子点データに
+ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000616">w_module#w_Lapla_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000939" class="method-detail">
+        <a name="M000939"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_spectrum_VMiss</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000939">w_spectrum_VMiss</a>  </tt></b>  <tt> = -999.000    </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 欠損値初期値
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000640">w_module#w_spectrum_VMiss</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000876" class="method-detail">
+        <a name="M000876"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">w_xy</span><span class="method-args">( xy_data, [ipow], [iflag] ) result(w_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000876">w_xy</a>((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ipow  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 変換時に同時に作用させる 1/cosφ の次数. 省略時は 0.
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>iflag  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 変換の種類
+
+<pre>
+   0 : 通常の正変換
+  -1 : 経度微分を作用させた正変換
+   1 : 緯度微分 1/cosφ・∂(f cos^2φ)/∂φ を作用させた正変換
+   2 : sinφを作用させた正変換
+ 省略時は 0.
+</pre>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子データからスペクトルデータへ(正)変換する(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000607">w_module#w_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000902" class="method-detail">
+        <a name="M000902"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_DLon_wa</span><span class="method-args">( wa_data ) result(wa_DLon_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000902">wa_DLon_wa</a>((nm+1)*(nm+1),size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの経度微分
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに経度微分 ∂/∂λ を作用させる(多層用).
+</p>
+<p>
+スペクトルデータの経度微分とは, 対応する格子点データに
+経度微分∂/∂λを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001261">wa_deriv_module#wa_DLon_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000911" class="method-detail">
+        <a name="M000911"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_DivLambda_xya</span><span class="method-args">( xya_data ) result(wa_DivLambda_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000911">wa_DivLambda_xya</a>((nm+1)**2,size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型経度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型経度微分 1/(1-μ^2)・∂/∂λ (μ=sinφ)
+を作用させてスペクトルデータに変換して返す(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001270">wa_deriv_module#wa_DivLambda_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000906" class="method-detail">
+        <a name="M000906"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_DivLat_xya</span><span class="method-args">( xya_data ) result(wa_DivLat_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000906">wa_DivLat_xya</a>((nm+1)**2,size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型緯度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型緯度微分 1/cosφ・∂(f cosφ)/∂φ を作用させて
+スペクトルデータに変換して返す(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001265">wa_deriv_module#wa_DivLat_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000905" class="method-detail">
+        <a name="M000905"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_DivLon_xya</span><span class="method-args">( xya_data ) result(wa_DivLon_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000905">wa_DivLon_xya</a>((nm+1)**2,size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型経度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型経度微分 1/cosφ・∂/∂λ を作用させて
+スペクトルデータに変換して返す(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001264">wa_deriv_module#wa_DivLon_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000912" class="method-detail">
+        <a name="M000912"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_DivMu_xya</span><span class="method-args">( xya_data ) result(wa_DivMu_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000912">wa_DivMu_xya</a>((nm+1)**2,size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データを発散型緯度微分したスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点データに発散型緯度微分 ∂/∂μ (μ=sinφ)を作用させて
+スペクトルデータに変換して返す(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001271">wa_deriv_module#wa_DivMu_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000907" class="method-detail">
+        <a name="M000907"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_Div_xya_xya</span><span class="method-args">( xya_u, xya_v ) result(wa_Div_xya_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000907">wa_Div_xya_xya</a>((nm+1)**2,size(xya_u,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 2 つの入力格子点データをベクトル成分とする発散のスペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_u(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ベクトル経度成分の格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_v(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) ベクトル緯度成分の格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 つの入力格子点データをベクトル成分とする発散を計算し,
+スペクトルデータとして返す(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001266">wa_deriv_module#wa_Div_xya_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000868" class="method-detail">
+        <a name="M000868"></a>
+
+        <div class="method-heading">
+
+
+          <a href="#M000868" class="method-signature">
+
+
+
+          <span class="method-name">wa_Initial</span><span class="method-args">( n_in, i_in, j_in, k_in, [np_in] ) </span>
+
+
+
+          </a>
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Subroutine </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>n_in  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 切断波数
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>i_in  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(東西)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>j_in  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 格子点数(南北)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>k_in  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 最大データ数(層数)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>np_in  </tt></b>  <tt> </tt> :</td><td><tt>integer,intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> OPENMP での最大スレッド数
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトル変換の格子点数, 波数, 最大データ数(層数)および OPENMP
+使用時の最大スレッド数を設定する.
+</p>
+<p>
+他の関数を呼ぶ前に, 最初にこのサブルーチンを呼んで初期設定を
+しなければならない.
+</p>
+<p>
+np_in に 1 より大きな値を指定すれば ISPACK の球面調和函数変換 OPENMP
+並列計算ルーチンが用いられる. 並列計算を実行するには, 実行時に環境変数
+OMP_NUM_THREADS を np_in 以下の数字に設定する等の
+システムに応じた準備が必要となる.
+</p>
+<p>
+np_in に 1 より大きな値を指定しなければ並列計算ルーチンは呼ばれない.
+</p>
+
+
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000868-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000868-source">
+<pre>
+  subroutine wa_Initial(n_in,i_in,j_in,k_in,np_in)
+    !
+    ! スペクトル変換の格子点数, 波数, 最大データ数(層数)および 
+    ! OPENMP 使用時の最大スレッド数を設定する.
+    !
+    ! 他の関数を呼ぶ前に, 最初にこのサブルーチンを呼んで初期設定を
+    ! しなければならない. 
+    !
+    ! np_in に 1 より大きな値を指定すれば ISPACK の球面調和函数変換 
+    ! OPENMP 並列計算ルーチンが用いられる. 並列計算を実行するには, 
+    ! 実行時に環境変数 OMP_NUM_THREADS を np_in 以下の数字に設定する等の
+    ! システムに応じた準備が必要となる. 
+    !
+    ! np_in に 1 より大きな値を指定しなければ並列計算ルーチンは呼ばれない.
+    !
+    integer,intent(in) :: i_in                ! 格子点数(東西)
+    integer,intent(in) :: j_in                ! 格子点数(南北)
+    integer,intent(in) :: n_in                ! 切断波数
+    integer,intent(in) :: k_in                ! 最大データ数(層数)
+    integer,intent(in), optional :: np_in     ! OPENMP での最大スレッド数
+
+    if ( present(np_in) ) then
+       call w_Initial(n_in,i_in,j_in,np_in)
+    else
+       call w_Initial(n_in,i_in,j_in)
+    endif
+    call wa_base_Initial(k_in)
+
+    call MessageNotify('M','wa_initial','wa_module is initialized')
+  end subroutine wa_Initial
+</pre>
+          </div>
+
+        </div>
+      </div>
+
+
+      <div id="method-M000908" class="method-detail">
+        <a name="M000908"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_Jacobian_wa_wa</span><span class="method-args">( wa_a, wa_b ) result(wa_Jacobian_wa_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000908">wa_Jacobian_wa_wa</a>((nm+1)**2,size(wa_a,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 2 つのスペクトルデータのヤコビアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_a(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 1つ目の入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_b(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2つ目の入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 つのスペクトルデータにヤコビアン
+</p>
+<pre>
+  J(f,g) = ∂f/∂λ・∂g/∂μ - ∂g/∂λ・∂f/∂μ
+         = ∂f/∂λ・1/cosφ・∂g/∂φ
+            - ∂g/∂λ・1/cosφ・∂f/∂φ
+</pre>
+<p>
+を作用させる(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001267">wa_deriv_module#wa_Jacobian_wa_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000901" class="method-detail">
+        <a name="M000901"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_LaplaInv_wa</span><span class="method-args">( wa_data ) result(wa_LaplaInv_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000901">wa_LaplaInv_wa</a>((nm+1)*(nm+1),size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータの逆ラプラシアン
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータに逆ラプラシアン
+</p>
+<pre>
+   ▽^{-2}
+     =[1/cos^2φ・∂^2/∂λ^2 + 1/cosφ・∂/∂φ(cosφ∂/∂φ)]^{-1}
+</pre>
+<p>
+を作用する(多層用).
+</p>
+<p>
+スペクトルデータの逆ラプラシアンとは, 対応する格子点データに
+逆ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001260">wa_deriv_module#wa_LaplaInv_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000900" class="method-detail">
+        <a name="M000900"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_Lapla_wa</span><span class="method-args">( wa_data ) result(wa_Lapla_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+入力スペクトルデータにラプラシアン
+</p>
+<pre>
+   ▽^2 = 1/cos^2φ・∂^2/∂λ^2 + 1/cosφ・∂/∂φ(cosφ∂/∂φ)
+</pre>
+<p>
+を作用する(多層用).
+</p>
+<p>
+スペクトルデータのラプラシアンとは, 対応する格子点データに
+ラプラシアンを作用させたデータのスペクトル変換のことである.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001259">wa_deriv_module#wa_Lapla_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000940" class="method-detail">
+        <a name="M000940"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_spectrum_VMiss</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000940">wa_spectrum_VMiss</a>  </tt></b>  <tt> = -999.000 </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 欠損値初期値
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="wa_spectrum_module.html#M000863">wa_spectrum_module#wa_spectrum_VMiss</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000884" class="method-detail">
+        <a name="M000884"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">wa_xya</span><span class="method-args">( xya_data, [ipow], [iflag] ) result(wa_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000884">wa_xya</a>((nm+1)*(nm+1),size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータ((nm+1)*(nm+1),:)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 格子点データ(0:im-1,1:jm,:)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ipow  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 変換時に同時に作用させる 1/cosφ の次数. 省略時は 0.
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>iflag  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 変換の種類
+
+<pre>
+   0 : 通常の正変換
+  -1 : 経度微分を作用させた正変換
+   1 : 緯度微分を作用させた正変換
+   2 : sinφを作用させた正変換
+ 省略時は 0.
+</pre>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+格子点 -&gt; 球面調和関数スペクトル
+</p>
+<p>
+格子データからスペクトルデータへ(正)変換する(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_base_module.html#M001916">wa_base_module#wa_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000923" class="method-detail">
+        <a name="M000923"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_AvrLat_xy</span><span class="method-args">( xy_data ) result(x_AvrLat_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000923">x_AvrLat_xy</a>(im)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元経度(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの緯度(Y)方向平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000638">w_module#x_AvrLat_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000918" class="method-detail">
+        <a name="M000918"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_IntLat_xy</span><span class="method-args">( xy_data ) result(x_IntLat_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000918">x_IntLat_xy</a>(0:im-1)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元経度(X)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの緯度(Y)方向積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000633">w_module#x_IntLat_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000869" class="method-detail">
+        <a name="M000869"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_Lon</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000869">x_Lon</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 緯度経度
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000600">w_module#x_Lon</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000871" class="method-detail">
+        <a name="M000871"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">x_Lon_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000871">x_Lon_Weight</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 座標重み
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000602">w_module#x_Lon_Weight</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000933" class="method-detail">
+        <a name="M000933"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xa_AvrLat_xya</span><span class="method-args">( xya_data ) result(xa_AvrLat_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000933">xa_AvrLat_xya</a>(0:im-1,size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元経度(X)格子点データの並び(im,*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データの並び(0:im-1,1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの緯度(Y)方向平均(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算し, y_Y_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002130">wa_integral_module#xa_AvrLat_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000928" class="method-detail">
+        <a name="M000928"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xa_IntLat_xya</span><span class="method-args">( xya_data ) result(xa_IntLat_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000928">xa_IntLat_xya</a>(0:im-1,size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元経度(X)格子点データの並び
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データの並び(0:im-1,1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの緯度(Y)方向積分(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に y_Y_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002125">wa_integral_module#xa_IntLat_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000896" class="method-detail">
+        <a name="M000896"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xy_GradLambda_w</span><span class="method-args">( w_data ) result(xy_GradLambda_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000896">xy_GradLambda_w</a>(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型経度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型経度微分 ∂/∂λ を作用する(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000625">w_module#xy_GradLambda_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000891" class="method-detail">
+        <a name="M000891"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xy_GradLat_w</span><span class="method-args">( w_data ) result(xy_GradLat_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000891">xy_GradLat_w</a>(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型緯度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型緯度微分 ∂/∂φ を作用させて
+格子点データに変換して返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000620">w_module#xy_GradLat_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000890" class="method-detail">
+        <a name="M000890"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xy_GradLon_w</span><span class="method-args">( w_data ) result(xy_GradLon_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000890">xy_GradLon_w</a>(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型経度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型経度微分 1/cosφ・∂/∂λ を
+作用させた格子点データを返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000619">w_module#xy_GradLon_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000897" class="method-detail">
+        <a name="M000897"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xy_GradMu_w</span><span class="method-args">( w_data ) result(xy_GradMu_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000897">xy_GradMu_w</a>(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型緯度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型緯度微分 (1-μ^2)∂/∂μ (μ=sinφ)
+を作用させて格子点データに変換して返す(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000626">w_module#xy_GradMu_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000874" class="method-detail">
+        <a name="M000874"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xy_Lat</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000874">xy_Lat</a>(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000605">w_module#xy_Lat</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000873" class="method-detail">
+        <a name="M000873"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xy_Lon</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000873">xy_Lon</a>(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000604">w_module#xy_Lon</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000875" class="method-detail">
+        <a name="M000875"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xy_w</span><span class="method-args">( w_data, [ipow], [iflag] ) result(xy_w)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000875">xy_w</a>(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>w_data((nm+1)*(nm+1))  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ipow  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 作用させる 1/cosφ の次数. 省略時は 0.
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>iflag  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 変換の種類
+
+<pre>
+   0 : 通常の正変換
+  -1 : 経度微分を作用させた逆変換
+   1 : 緯度微分 cosφ・∂/∂φ を作用させた逆変換
+   2 : sinφを作用させた逆変換
+   省略時は 0.
+</pre>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータから格子データへ変換する(1 層用).
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000606">w_module#xy_w</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000909" class="method-detail">
+        <a name="M000909"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xya_GradLambda_wa</span><span class="method-args">( wa_data ) result(xya_GradLambda_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000909">xya_GradLambda_wa</a>(0:im-1,1:jm,size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型経度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型経度微分 ∂/∂λ を作用する(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001268">wa_deriv_module#xya_GradLambda_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000904" class="method-detail">
+        <a name="M000904"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xya_GradLat_wa</span><span class="method-args">( wa_data ) result(xya_GradLat_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000904">xya_GradLat_wa</a>(0:im-1,1:jm,size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型緯度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型緯度微分 ∂/∂φ を作用させて
+格子点データに変換して返す(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001263">wa_deriv_module#xya_GradLat_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000903" class="method-detail">
+        <a name="M000903"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xya_GradLon_wa</span><span class="method-args">( wa_data ) result(xya_GradLon_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000903">xya_GradLon_wa</a>(0:im-1,1:jm,size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型経度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型経度微分 1/cosφ・∂/∂λ を
+作用させた格子点データを返す(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001262">wa_deriv_module#xya_GradLon_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000910" class="method-detail">
+        <a name="M000910"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xya_GradMu_wa</span><span class="method-args">( wa_data ) result(xya_GradMu_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000910">xya_GradMu_wa</a>(0:im-1,1:jm,size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) スペクトルデータを勾配型緯度微分した格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 入力スペクトルデータ
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+スペクトルデータに勾配型緯度微分 (1-μ^2)∂/∂μ (μ=sinφ)
+を作用させて格子点データに変換して返す(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_deriv_module.html#M001269">wa_deriv_module#xya_GradMu_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000883" class="method-detail">
+        <a name="M000883"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">xya_wa</span><span class="method-args">( wa_data, [ipow], [iflag] ) result(xya_wa)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000883">xya_wa</a>(0:im-1,1:jm,size(wa_data,2))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 格子点データ(0:im-1,1:jm,:)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>wa_data(:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) スペクトルデータ((nm+1)*(nm+1),:)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>ipow  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 作用させる 1/cosφ の次数. 省略時は 0.
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>iflag  </tt></b>  <tt> </tt> :</td><td><tt>integer, intent(in), optional</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 変換の種類
+
+<pre>
+   0 : 通常の正変換
+  -1 : 経度微分を作用させた正変換
+   1 : 緯度微分を作用させた正変換
+   2 : sinφを作用させた正変換
+   省略時は 0.
+</pre>
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+球面調和関数スペクトル -&gt; 格子点
+</p>
+<p>
+スペクトルデータから格子データへ変換する(多層用).
+</p>
+<p>
+Original external subprogram is <a
+href="wa_base_module.html#M001915">wa_base_module#xya_wa</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000921" class="method-detail">
+        <a name="M000921"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_AvrLon_xy</span><span class="method-args">( xy_data ) result(y_AvrLon_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000921">y_AvrLon_xy</a>(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元緯度(Y)格子点
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの経度(X)方向平均(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, x_X_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000636">w_module#y_AvrLon_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000916" class="method-detail">
+        <a name="M000916"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_IntLon_xy</span><span class="method-args">( xy_data ) result(y_IntLon_xy)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000916">y_IntLon_xy</a>(1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元緯度(Y)格子点データ
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xy_data(0:im-1,1:jm)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データ(0:im-1,1:jm)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの経度(X)方向積分(1 層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000631">w_module#y_IntLon_xy</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000870" class="method-detail">
+        <a name="M000870"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Lat</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000870">y_Lat</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 緯度経度
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000601">w_module#y_Lat</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000872" class="method-detail">
+        <a name="M000872"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">y_Lat_Weight</span><span class="method-args"></span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em>Variable</em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000872">y_Lat_Weight</a>(:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), allocatable</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> 座標重み
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+Original external subprogram is <a
+href="w_module.html#M000603">w_module#y_Lat_Weight</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000931" class="method-detail">
+        <a name="M000931"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ya_AvrLon_xya</span><span class="method-args">( xya_data ) result(ya_AvrLon_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000931">ya_AvrLon_xya</a>(1:jm,size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 平均された 1 次元緯度(Y)格子点の並び(1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データの並び(0:im-1,1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの経度(X)方向平均(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算し, x_X_Weight
+の総和で割ることで平均している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002131">wa_integral_module#ya_AvrLon_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+      <div id="method-M000926" class="method-detail">
+        <a name="M000926"></a>
+
+        <div class="method-heading">
+
+
+
+
+          <span class="method-name">ya_IntLon_xya</span><span class="method-args">( xya_data ) result(ya_IntLon_xya)</span>
+
+
+
+        </div>
+
+        <div class="method-description">
+
+          <table>
+<tr><td valign="top"><b><em> Function </em></b> :</td><td>
+</td></tr>
+<tr><td valign="top"><b><tt><a href="wa_module.html#M000926">ya_IntLon_xya</a>(1:jm,size(xya_data,3))  </tt></b>  <tt> </tt> :</td><td><tt>real(8)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (out) 積分された 1 次元緯度(Y)格子点データの並び
+
+</td></tr>
+</table>
+</td></tr>
+<tr><td valign="top"><b><tt>xya_data(0:,:,:)  </tt></b>  <tt> </tt> :</td><td><tt>real(8), intent(in)</tt>
+
+<table>
+<tr><td valign="top"> :</td><td> (in) 2 次元経度緯度格子点データの並び(0:im-1,1:jm,*)
+
+</td></tr>
+</table>
+</td></tr>
+</table>
+<p>
+2 次元緯度経度格子点データの経度(X)方向積分(多層用).
+</p>
+<p>
+実際には格子点データ各点毎に x_X_Weight をかけた総和を計算している.
+</p>
+<p>
+Original external subprogram is <a
+href="wa_integral_module.html#M002126">wa_integral_module#ya_IntLon_xya</a>
+</p>
+
+
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+
+  </div>
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

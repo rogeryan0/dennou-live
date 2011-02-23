@@ -1,0 +1,265 @@
+% 表題  内外境界球面の回転により引き起こされる球殻内の粘性流体の流れ
+%
+% 履歴  2005/03/01 竹広真一 
+%
+\documentclass[12pt,a4j,notitlepage]{jarticle}
+\usepackage{Dennou6}
+\usepackage{ascmac}
+\usepackage{times}
+\Dtitle[内外境界球面の回転による球殻内の粘性流体]
+       {内外境界球面の回転により引き起こされる球殻内の粘性流体の流れ}
+\Dauthor{竹広 真一}
+\Ddate{平成 17 年 3 月 1 日} 
+\Dparskip
+
+\pagestyle{Dheadings}
+
+\begin{document}
+
+\maketitle
+
+\section{はじめに}
+
+  ここでは中心を共有するが異なる回転角速度で回転する 2 つの球面(球殻)に
+  挟まれた領域内の非圧縮粘性流体の運動を考える. 
+
+\section{支配方程式}
+
+
+\section{解析解}
+
+  \subsection{慣性項が無視できる場合(ストークス近似)の解}
+  
+    内外球殻の回転により引き起こされる球殻中の流れについて, 
+    回転角速度が十分に小さく粘性項に比べて慣性項が無視できる
+    状況での解を見出す\footnotemark[6]
+    ($Re=\Omega_i D^2/\nu, \Omega_o D^2/\nu \ll 1)$. 
+    
+    \footnotetext[6]
+       {Landau and Lifshitz, Vol.6, Fluid Mechanics (1987), Section 20, 
+        Problem 1. を参照のこと. }
+    
+    内外球殻がそれぞれ一定の角速度 $\Dvect{\Omega_i},\Dvect{\Omega_o}$
+    で回転しているとする. 
+    満たすべき方程式は, 外力がなく慣性項を無視した式, 
+    %
+    \begin{displaymath}
+       L_2\Dlapla \psi = 0,   L_2\Dlapla\Dlapla \phi =0, 
+    \end{displaymath}
+    %
+    境界での条件は粘着条件である. 
+    %
+    \begin{eqnarray*}
+      & & \phi = \DP{\phi}{r} = 0, \quad
+          \psi = (\Dvect{r}\cdot\Dvect{\Omega_i})
+          \quad \mbox{at} \quad r=r_i=\frac{\zeta}{1-\zeta}, \\
+      & & \phi = \DP{\phi}{r} = 0, \quad
+          \psi = (\Dvect{r}\cdot\Dvect{\Omega_o})
+          \quad \mbox{at} \quad r=r_o=\frac{1}{1-\zeta}. 
+    \end{eqnarray*}
+    %
+    そこで
+    \begin{displaymath}
+      \phi=0, \quad
+      \psi= A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})
+            +B(r)(\Dvect{r}\cdot\Dvect{\Omega_o})
+    \end{displaymath}
+    %
+    の形で解を求める. ここで $A(r),B(r)$ は境界条件
+    %
+    \begin{displaymath}
+       A(r=r_i) = 1, \quad  A(r=r_o) = 0, \quad
+      B(r=r_i) = 0, \quad   B(r=r_o) = 1,
+    \end{displaymath}
+    %
+    を満たす関数である. 
+    %
+    仮定した解の形を支配方程式に代入すると, $A(r), B(r)$ の
+    満たすべき方程式が\footnotemark[9]
+    \footnotetext[9]{
+      第 1 項目だけ代入すると
+      \begin{eqnarray*}
+        & & L_2\Dlapla A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})
+          = L_2\left(\frac{1}{r^2}\DP{}{r}r^2\DP{}{r}- \frac{L_2}{r^2}\right)
+              A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})\\
+        &=& L_2\frac{1}{r^2}\DP{}{r}
+              \left(r^2\DP{}{r}[A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})]\right)
+           - \frac{L_2 L_2 A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+        &=& \frac{1}{r^2}\DP{}{r}
+            \left(r^2\DP{}{r}[A(r)L_2(\Dvect{r}\cdot\Dvect{\Omega_i})]\right)
+           - \frac{A(r)}{r^2}L_2 L_2(\Dvect{r}\cdot\Dvect{\Omega_i})\\
+        &=& \frac{1}{r^2}\DP{}{r}
+            \left(r^2\DP{}{r}[A(r)2(\Dvect{r}\cdot\Dvect{\Omega_i})]\right)
+           - \frac{A(r)}{r^2}4(\Dvect{r}\cdot\Dvect{\Omega_i})\\
+        &=& \frac{2}{r^2}\DP{}{r}
+            \left(r^2\DP{}{r}[A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})]\right)
+           - \frac{4A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+        &=& \frac{2}{r^2}\DP{}{r}
+            \left(r^2(\Dvect{r}\cdot\Dvect{\Omega_i})\DP{A(r)}{r}
+            + r^2A(r)\frac{(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}\right)
+           - \frac{4A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+        &=& \frac{2}{r^2}\DP{}{r}
+              \left(r^2(\Dvect{r}\cdot\Dvect{\Omega_i})\DP{A(r)}{r}\right)
+           +\frac{2}{r^2}\DP{}{r}
+              [rA(r)(\Dvect{r}\cdot\Dvect{\Omega_i})]
+           - \frac{4A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+        &=& \frac{2(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\DP{}{r}
+              \left(r^2\DP{A(r)}{r}\right)
+            +2\DP{A(r)}{r}
+               \frac{(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}
+            +\frac{2(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}
+              \DP{}{r}[rA(r)]
+            +2\frac{A(r)}{r}\frac{(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}\\
+          &&- \frac{4A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+        &=& 2(\Dvect{r}\cdot\Dvect{\Omega_i})\DP[2]{A(r)}{r}
+           + \frac{4(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}\DP{A(r)}{r}
+           +2\DP{A(r)}{r}\frac{(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}
+           +\frac{2(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}
+              \DP{A(r)}{r}
+           +\frac{2(\Dvect{r}\cdot\Dvect{\Omega_i})A(r)}{r^2}\\
+          &&- \frac{2A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})}{r^2}\\
+        &=& 2(\Dvect{r}\cdot\Dvect{\Omega_i})\DP[2]{A(r)}{r}
+           + \frac{8(\Dvect{r}\cdot\Dvect{\Omega_i})}{r}\DP{A(r)}{r}\\
+        &=& 2(\Dvect{r}\cdot\Dvect{\Omega_i})
+              \left(\DP[2]{A(r)}{r}+\frac{4}{r}\DP{A(r)}{r}\right)
+      \end{eqnarray*}
+      第 2 項目についても同様に計算できる. 
+      $\Dvect{\Omega_i}$ と $\Dvect{\Omega_o}$ が異なる場合に限り
+      $(\Dvect{r}\cdot\Dvect{\Omega_i})$ と
+      $(\Dvect{r}\cdot\Dvect{\Omega_o})$ が恒等的に 0 とならないので
+      それらの係数から $A, B$ の微分方程式が求められる. 
+    }
+    
+    \begin{displaymath}
+       \DD[2]{A(r)}{r}+\frac{4}{r}\DD{A(r)}{r}=0, \quad
+       \DD[2]{B(r)}{r}+\frac{4}{r}\DD{B(r)}{r}=0. 
+    \end{displaymath}
+    %
+    $A(r),B(r)=r^n$ の形を仮定すると, 
+    \begin{displaymath}
+      n(n-1)r^{n-2} + 4n r^{n-2} =0, \quad n(n+3)=0, 
+      \quad \mbox{i.e.} \quad n=0,-3
+    \end{displaymath}
+    %
+    したがって, 
+    \begin{displaymath}
+      A(r) = C_1 + \frac{C_2}{r^3}, \quad
+      B(r) = C_3 + \frac{C_4}{r^3}
+    \end{displaymath}
+    となる. ここで $C_1,C_2,C_3,C_4$ は定数である. 
+    %
+    境界条件より
+    \begin{displaymath}
+        C_1 + \frac{C_2}{r_i^3}=1, \quad
+        C_1 + \frac{C_2}{r_o^3}=0, \quad
+        C_3 + \frac{C_4}{r_i^3}=0, \quad
+        C_3 + \frac{C_4}{r_o^3}=1,
+    \end{displaymath}
+    %
+    \begin{eqnarray*}
+      & & C_1 = \frac{1}{1-r_o^3/r_i^3}= -\frac{r_i^3}{r_o^3-r_i^3}, \quad
+          C_2 = \frac{r_i^3r_o^3}{r_o^3-r_i^3}, \\
+      & & C_3 = \frac{1}{(1-r_i^3/r_o^3)}= \frac{r_o^3}{r_o^3-r_i^3}, \quad
+          C_4 = -\frac{r_i^3r_o^3}{r_o^3-r_i^3}.
+    \end{eqnarray*}
+    %
+    よって
+    \begin{eqnarray*}
+      \phi&=&0, \\
+      \psi&=& \left( -\frac{r_i^3}{r_o^3-r_i^3}
+                     +\frac{r_i^3r_o^3}{r_o^3-r_i^3}\frac{1}{r^3}\right)
+                 (\Dvect{r}\cdot\Dvect{\Omega_i})
+            +\left( \frac{r_o^3}{r_o^3-r_i^3}
+                   -\frac{r_i^3r_o^3}{r_o^3-r_i^3}\frac{1}{r^3}\right)
+                 (\Dvect{r}\cdot\Dvect{\Omega_o})\\
+         &=& -\frac{r_i^3}{r_o^3-r_i^3}\left(1-\frac{r_o^3}{r^3}\right)
+                (\Dvect{r}\cdot\Dvect{\Omega_i})
+            +\frac{r_o^3}{r_o^3-r_i^3}\left(1-\frac{r_i^3}{r^3}\right)
+                 (\Dvect{r}\cdot\Dvect{\Omega_o}).
+    \end{eqnarray*}
+    %
+    無次元量で $r_i,r_o$ を書けば
+    \begin{eqnarray*}
+      \phi&=&0, \\
+      \psi&=& -\frac{\zeta^3}{1-\zeta^3}
+             \left(1-\frac{1}{(1-\zeta)^3 r^3}\right)
+                 (\Dvect{r}\cdot\Dvect{\Omega_i})
+            +\frac{1}{1-\zeta^3}
+               \left(1-\frac{\zeta^3}{(1-\zeta)^3 r^3}\right)
+                 (\Dvect{r}\cdot\Dvect{\Omega_o})
+    \end{eqnarray*}
+    %
+    特に内球が存在しない場合には $r_i\longrightarrow 0$ として, 
+    %
+    \begin{displaymath}
+      \phi=0, \quad  \psi=(\Dvect{r}\cdot\Dvect{\Omega_o}).
+    \end{displaymath}
+    %
+    球内全体が剛体回転の解となる. 
+    %
+    逆に外側の球が存在しない極限では 
+    $\Dvect{\Omega_o}=0, r_o\longrightarrow\infty$ として
+    %
+    \begin{displaymath}
+      \phi = 0, \quad
+      \psi = \frac{1}{r^3}(\Dvect{r}\cdot\Dvect{\Omega_i}).
+    \end{displaymath}
+    
+    速度場はトロイダルポテンシャルの定義\Deqref{速度分解}より
+    %
+    \begin{displaymath}
+      \Dvect{u}=\Drot(\psi\Dvect{r})
+               =\Dgrad\psi\times\Dvect{r} +\psi\Drot\Dvect{r}
+               =\Dgrad\psi\times\Dvect{r}.
+    \end{displaymath}
+    %
+    ここで 
+    \begin{eqnarray*}
+      \Dgrad [A(r)(\Dvect{r}\cdot\Dvect{\Omega_i})]\times\Dvect{r}
+      &=& (\Dvect{r}\cdot\Dvect{\Omega_i})[\Dgrad A(r)] \times\Dvect{r}
+           A(r)[\Dgrad (\Dvect{r}\cdot\Dvect{\Omega_i})]\times\Dvect{r}\\
+      &=& A(r)\Dvect{\Omega_i}\times\Dvect{r}
+    \end{eqnarray*}
+    %
+    $A(r)$ は $r$ だけの関数なので $\Dgrad A(r)$ は $\Dvect{r}$ と
+    並行であり, $[\Dgrad A(r)] \times\Dvect{r}=0 $ であることに
+    注意されたい. 
+    したがって, 
+    \begin{displaymath}
+      \Dvect{u}
+          = -\frac{r_i^3}{r_o^3-r_i^3}\left(1-\frac{r_o^3}{r^3}\right)
+                (\Dvect{\Omega_i}\times\Dvect{r})
+            +\frac{r_o^3}{r_o^3-r_i^3}\left(1-\frac{r_i^3}{r^3}\right)
+                 (\Dvect{\Omega_o}\times\Dvect{r}).
+    \end{displaymath}
+
+
+  \subsection{ほぼ剛体回転に近い場合の流れ}
+
+    Dormy {\it et al.} (1998), Proudman (1956), Stewartson (1966) を
+    参照のこと. 
+
+
+\begin{Dreference}
+  \item Landau, L. D., Lifshitz, E. M., 1987 : 
+         Fluid Mechanics (Volume 6 of Course of theoretical physics), 
+         2nd edition. Pergamon press, 539pp.
+
+  \item Dormy, E., Cardin, P., Jault, D., 1998 : 
+    MHD flow in a slightly differntially rotating spherical shell, 
+    with conducting inner core, in a dipolar magnetic field. 
+    {\it Earth Planet. Sci. Lett.}, {\bf 160}, 15--30. 
+
+  \item Proudman, I., 1956 : 
+    The almost-rigid rotation of viscous fluid between concentric spheres. 
+    {\it J. Fluid Mech.}, {\bf 1}, 505--516. 
+
+  \item Stewartson, K., 1966 : On almost rigid rotations. Part 2.
+    {\it J. Fluid Mech.}, {\bf 26}, 131--144. 
+\end{Dreference}
+
+\end{document}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

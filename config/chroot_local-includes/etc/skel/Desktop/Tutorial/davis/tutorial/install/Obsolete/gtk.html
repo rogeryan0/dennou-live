@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>GTK情報</title>
+</head>
+<body>
+<h1>GTKに関する情報</h1>
+
+<h3>GTKについて</h3>
+<p>
+現在、GTKには 1系(1.*.*)と2系(2.*.*)の大きく分て二つのバージョンの系統があり、
+これらは互換性がありません。
+インストールする際には注意が必要です。
+</p>
+
+<h3>DCL with GTK</h3>
+<p>
+dcl で GTK を利用するためには
+DCL(C) と ruby-dcl にパッチをあててコンパイルする必要があります。
+<a href="http://www-mete.kugi.kyoto-u.ac.jp/seiya/dcl/install.html">
+ここ</a>を参考にインストールしてください。<br>
+
+上記のパッチは GTK1、GTK2両方に対応しています。<br><br>
+
+DCL(C)のコンパイル時に configure スクリプトがあなたの環境をチェックし、
+GTK2が見つかればGTK2を、
+GTK2が見つからずにGTK1がみつかればGTK1を、
+GTK1も見つからなければGTKなしでコンパイルします。<br>
+インストール後<br>
+%cdclconfig --gtkversion<br>
+とすれば使用されたGTKのバージョンが分かります
+(2->GTK2, 1->GKT1, no->GTKなし)。<br><br>
+
+ruby-dclのコンパイル時は自動的に DCL(C) と同じバージョンの GTKを使います。
+インストール後<br>
+%ruby -r numru/dcl -e "p NumRu::DCL.gtk_version"<br>
+とすれば使用されたGTKのバージョンが分かります
+([2, 2, 4] -> gtk-2.2.4 )。<br>
+また ruby-dcl はおなじGTKバージョンの
+<a href="http://ruby-gnome.sourceforge.net/ja/index.html">
+ruby-gtk(ruby-gnome)</a> or
+<a href="http://ruby-gnome2.sourceforge.jp/ja/index.html">
+ruby-gtk2(ruby-gnome2)
+</a>
+を必要とします。<br>
+GTK2がインストールされている環境では ruby-gtk2を、
+GTK1なら ruby-gtk をインストールするようにしましょう
+</p>
+
+<hr>
+Seiya Nishizawa
+<a href="mailto:seiya@kugi.kyoto-u.ac.jp">seiya@kugi.kyoto-u.ac.jp</a>
+</body>
+</html>
