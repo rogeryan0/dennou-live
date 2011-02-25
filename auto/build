@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BUILDDATE=`date +%Y%m%d-%H%M%S`
+BUILDDATE=`date +%Y-%m-%d-%H%M`
 # sudo MKSQUASHFS_OPTIONS="-b 1024k" lb build 2>&1 | tee debian_live-binary-${BUILDDATE}.buildlog
 lb build noauto 2>&1 | tee dennou_live-binary-${BUILDDATE}.buildlog
 # rename files

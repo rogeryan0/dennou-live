@@ -22,7 +22,8 @@ apt-get -y install ${PACKAGES}
 
 apt-get -y install librd-html-ext-ruby1.8
 
-gem install rails --version 2.3.5
+gem install rails -v=2.3.5
+#apt-get -y install rails
 gem install rdoc-f95
 
 
