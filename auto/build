@@ -10,7 +10,7 @@ if [ -f binary.iso ]; then
     ln -s dennou_live-binary-${BUILDDATE}.iso current.iso
 elif [ -f binary-hybrid.iso ]; then
     mv binary-hybrid.iso dennou_live-binary-${BUILDDATE}-hybrid.iso
-    ln -s dennou_live-binary-${BUILDDATE}-hybrid.iso denno_live-current-hybrid.iso
+    ln -s dennou_live-binary-${BUILDDATE}-hybrid.iso dennou_live-current-hybrid.iso
 elif [ -f binary-net.tar.gz ]; then
     mv binary-net.tar.gz dennou_live-binary-${BUILDDATE}-net.tar.gz
     ln -s dennou_live-binary-${BUILDDATE}-net.tar.gz current.tar.gz
