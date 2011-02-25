@@ -13,6 +13,9 @@ set -e
 PACKAGES="wicd acpid rubygems rubygems1.8 ruby1.8 ruby rdoc1.8 rdoc ruby1.8-dev libopenssl-ruby1.8 xfonts-efont-unicode xfonts-efont-unicode-ib openssh-client openssh-blacklist openssh-blacklist-extra xdg-user-dirs-gtk"
 apt-get -y install ${PACKAGES}
 
+PACKAGES="less"
+apt-get -y install ${PACKAGES}
+
 
 debconf-set-selections <<EOF
 firmware-ipw2x00	firmware-ipw2x00/license/accepted	boolean	true
