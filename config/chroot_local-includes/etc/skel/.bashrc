@@ -98,5 +98,5 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-PATH=/var/lib/gems/1.8/bin:${PATH}
-export PATH
+PATH=/var/lib/gems/1.8/bin:${PATH}; export PATH
+G95_MEM_SEGMENTS=0; export G95_MEM_SEGMENTS
