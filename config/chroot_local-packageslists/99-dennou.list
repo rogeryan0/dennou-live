@@ -8,3 +8,5 @@ libnusdas-ruby
 libfftw3-ruby
 libgpv-ruby
 libhdfeos5-ruby
+# gfdnavi
+gfdnavi-utils
