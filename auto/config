@@ -14,6 +14,7 @@ lb config noauto \
 	--archive-areas "main contrib non-free" \
 	--backports false \
 	--binary-images iso-hybrid \
+  --bootappend-live 'persistent' \
 	--bootloader syslinux \
 	--iso-publisher "GFD Dennou Club; http://www.gfd-dennou.org/;" \
 	--linux-flavours 686 \
@@ -28,7 +29,7 @@ lb config noauto \
 	--syslinux-timeout 30 \
 	--tasks "japanese japanese-desktop laptop desktop xfce-desktop" \
 	--tasksel aptitude \
-	--volatile false \
+	--volatile true \
 	--win32-loader true \
 	-d ${DISTRIBUTION} \
 	-l ja \
