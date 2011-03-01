@@ -10,6 +10,7 @@ dennou*.list
 .*~
 .directory
 .stage/
+.lock
 binary/
 cache/
 chroot/

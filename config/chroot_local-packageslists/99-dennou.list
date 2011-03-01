@@ -4,7 +4,7 @@ build-essential
 spml-g95
 # Dennou Ruby
 gphys
-libnusdas-ruby
+#libnusdas-ruby
 libfftw3-ruby
 libgpv-ruby
 libhdfeos5-ruby

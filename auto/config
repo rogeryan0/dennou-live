@@ -7,14 +7,11 @@ MIRROR_VOLATILE=${MIRROR_DEBIAN}
 
 DISTRIBUTION="squeeze"
 
-#	--debian-installer live \
-#	--debian-installer-distribution ${DISTRIBUTION} \
 lb config noauto \
 	--apt-recommends true \
 	--archive-areas "main contrib non-free" \
 	--backports false \
-	--binary-images iso-hybrid \
-  --bootappend-live 'persistent' \
+	--bootappend-live 'persistent' \
 	--bootloader syslinux \
 	--iso-publisher "GFD Dennou Club; http://www.gfd-dennou.org/;" \
 	--linux-flavours 686 \
