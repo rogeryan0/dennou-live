@@ -4,15 +4,11 @@ set -e
 # disable console tty2,tty3,tty4,tty5,tty6
 sed -i 's/^[23456]/#\ &/' /etc/inittab
 
-# set usplash
-#update-alternatives --set usplash-artwork.so /usr/lib/usplash/CrunchyBranch.so
-
 # update command-not-found
 [ -f "/usr/sbin/update-command-not-found" ] && /usr/sbin/update-command-not-found
 
 # remove packages
 apt-get -y clean 
-#apt-get -y autoremove 
 
 # purge package
 PURGEPKG=$(dpkg -l | grep ^rc | cut -d' ' -f3)
