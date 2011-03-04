@@ -1,5 +1,10 @@
-git-all
+git
+git-svn
+git-cvs
 subversion
+subversion-tools
 cvs
+tmux
 screen
 corkscrew
+imagemagick

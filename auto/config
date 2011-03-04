@@ -11,7 +11,8 @@ lb config noauto \
 	--apt-recommends true \
 	--archive-areas "main contrib non-free" \
 	--backports false \
-	--bootappend-live 'persistent' \
+	--bootappend-live 'persistent noautologin' \
+  --debian-installer live \
 	--bootloader syslinux \
 	--iso-publisher "GFD Dennou Club; http://www.gfd-dennou.org/;" \
 	--linux-flavours 686 \
