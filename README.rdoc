@@ -12,7 +12,7 @@ using Debian live-helper, see {SPMODEL Live CD}[http://www.gfd-dennou.org/arch/s
 
 * install git, clone live-helper recive
 
-      $ sudo apt-get install git
+      $ sudo apt-get install git-core
       $ git clone git://github.com/uwabami/dennou-live.git
 
 * build iso/usb-img
