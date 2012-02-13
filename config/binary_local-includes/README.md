@@ -1,7 +1,7 @@
 Debian Live DVD/USB (Squeeze) with GFD-Dennou Club dcmodel/davis product
 ========================================================================
 
-Copyright(c) 2011: Youhei SASAKI <uwabami@gfd-dennou.org>
+Copyright(c) 2012: Youhei SASAKI <uwabami@gfd-dennou.org>
 
 
 はじめに/ 追加情報など
@@ -63,7 +63,8 @@ Debian Live は, 起動時に「 live-rw 」もしくは「 home-rw 」という
 -------------
 
 Q. ネットワークに接続するには?
-A. wicd を使用します. 右上のネットワークのアイコンをクリックするか, terminal 上で
+A. wicd を使用します. 右上のネットワークのアイコンをクリックするか, 
+   terminal 上で
 
   > wicd-gtk -n
 
@@ -81,7 +82,6 @@ A. sudo を使って下さい.
 
 Q. キーボードが英語(日本語)キーボード配列になっている
 A. GDM のログイン画面で日本語(英語)キーボードを選択してください.
-
 
 Debian Live のカスタマイズについて
 -----------------------------------

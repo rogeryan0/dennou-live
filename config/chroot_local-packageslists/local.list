@@ -1,0 +1,26 @@
+# editor
+emacs23 emacs23-bin-common emacs23-common emacs23-common-non-dfsg emacsen-common emacs23-el anthy-el ttf-inconsolata gedit vim-gtk less lv
+
+# ruby
+ruby-full ruby-elisp rubygems rubygems1.8 ruby1.8 rdoc1.8 ruby rdoc ruby1.8-dev libopenssl-ruby1.8 librd-html-ext-ruby1.8 libsqlite3-ruby libsqlite3-ruby1.8
+
+# shell
+tcsh zsh
+
+# ssh client
+openssh-client openssh-blacklist openssh-blacklist-extra
+
+# X 
+xfonts-efont-unicode xfonts-efont-unicode-ib xdg-user-dirs-gtk xbacklight debian-installer-launcher xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-input-vmmouse xserver-xorg-video-nouveau xserver-xorg-video-radeonhd xserver-xfbdev plymouth plymouth-x11 plymouth-themes-all syslinux-themes-debian
+
+# development
+git git-svn git-cvs subversion subversion-tools cvs tmux screen corkscrew imagemagick
+
+# spml
+netcdf-bin build-essential spml-g95
+# Dennou Ruby
+gphys libfftw3-ruby libgpv-ruby libhdfeos5-ruby
+# libnusdas-ruby
+# gfdnavi
+# gfdnavi-utils
+

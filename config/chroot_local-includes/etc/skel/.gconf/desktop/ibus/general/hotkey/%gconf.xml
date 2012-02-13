@@ -12,8 +12,5 @@
 		<li type="string">
 			<stringvalue>Release+Henkan_Mode</stringvalue>
 		</li>
-		<li type="string">
-			<stringvalue>Shift+space</stringvalue>
-		</li>
 	</entry>
 </gconf>
