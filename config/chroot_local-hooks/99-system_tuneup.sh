@@ -8,7 +8,10 @@ sed -i 's/^[23456]/#\ &/' /etc/inittab
 [ -f "/usr/sbin/update-command-not-found" ] && /usr/sbin/update-command-not-found
 
 # remove packages
-apt-get -y clean 
+aptitude -y purge ttf-sazanami-mincho ttf-sazanami-gothic
+aptitude -y install otf-ipaexfont-mincho otf-ipaexfont-gothic
+apt-get -y clean
+
 
 # purge package
 PURGEPKG=$(dpkg -l | grep ^rc | cut -d' ' -f3)
