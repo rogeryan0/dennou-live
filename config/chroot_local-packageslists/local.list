@@ -17,9 +17,9 @@ xfonts-efont-unicode xfonts-efont-unicode-ib xdg-user-dirs-gtk xbacklight debian
 git git-svn git-cvs subversion subversion-tools cvs tmux screen corkscrew imagemagick
 
 # spml
-netcdf-bin build-essential spml-g95
+# netcdf-bin build-essential spml-g95
 # Dennou Ruby
-gphys libfftw3-ruby libgpv-ruby libhdfeos5-ruby
+# gphys libfftw3-ruby libgpv-ruby libhdfeos5-ruby
 # libnusdas-ruby
 # gfdnavi
 # gfdnavi-utils

@@ -22,7 +22,7 @@ lb config noauto \
 	--iso-publisher "GFD Dennou Club; http://www.gfd-dennou.org/;" \
 	--linux-packages "none" \
 	--linux-packages "linux-image-3.2.0-0.bpo.1" \
-	--linux-flavours "686-pae" \
+	--linux-flavours "686-pae 486" \
 	--mirror-binary "${MIRROR_DEBIAN}" \
 	--mirror-binary-security "${MIRROR_SECURITY}" \
 	--mirror-binary-volatile "${MIRROR_VOLATILE}" \

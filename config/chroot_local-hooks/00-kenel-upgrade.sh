@@ -9,3 +9,5 @@ apt-get -y install ${firmware_PACKAGES}
 
 aptitude -y install console-tools
 aptitude -y remove kbd
+aptitude -y remove wicd
+aptitude -y install -R 
