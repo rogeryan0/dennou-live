@@ -1,0 +1,96 @@
+<h2>Function: <%= h(@func.name) %></h2>
+
+<table border=2>
+  <tr>
+    <th colspan=2>name</th>
+    <td><%= h(@func.name) %></td>
+  </tr>
+  <tr>
+    <th colspan=2>description</th>
+    <td><%= h(@func.description) %></td>
+  </tr>
+<% if @func.owner == @user %>
+  <tr>
+    <th colspan=2>usable to</th>
+    <td><%= if @func.other_readable
+              rgs = Group.find_by_bit_flag(@func.rgroups) 
+              srgs = rgs.length>0 ? '  ('+rgs.collect{|g| g.name}.join(' ')+')' : ''
+              "everyone"+srgs
+	    else
+              ags = Group.find_by_bit_flag(@func.groups_readable)
+              ags.length>0 ? ags.collect{|g| g.name}.join(' ') :  'nobody'
+	    end
+      %></td>
+  </tr>
+<% end %>
+  <tr>
+    <th colspan=2>number of input variables</label></th>
+    <td><%= @func.nvars %></td>
+  </tr>
+  <tr>
+    <th colspan=2>script</th>
+    <td>
+     {|<%= ary0=Array.new;ary1=Array.new;@func.function_arguments.length.times{|i|ary0[i]="arg#{i}"};@func.nvars.times{|i|ary1[i]="gphys#{i}"}; (ary0+ary1).join(", ") %>|
+      <br/>
+      <div style="padding-left:1em">
+        <pre><%= h(@func.script) %></pre>
+      </div>
+      }
+    </td>
+  </tr>
+
+<%
+args = @func.function_arguments
+narg = args.length
+narg.times do |j|
+  arg = args[j]
+%>
+  <tr>
+    <th rowspan=3>argument<%= j %></th>
+    <th>description</th>
+    <td><%= h(arg.description) %></td>
+  </tr>
+  <tr>
+    <th>value type</th>
+    <td><%= h(arg.value_type.name) %></td>
+  </tr>
+  <tr>
+    <th>default</th>
+    <td><%= h(arg.default) %></td>
+  </tr>
+<% end %>
+
+
+<%
+outputs = @func.function_outputs
+nout = outputs.length
+nout.times do |j|
+  output = outputs[j]
+%>
+  <tr>
+    <th rowspan=3>output<%= j %></th>
+    <th>name</th>
+    <td><%= h(output.name) %></td>
+  </tr>
+  <tr>
+    <th>description</th>
+    <td><%= h(output.description) %></td>
+  </tr>
+  <tr>
+    <th>subscript</th>
+    <td><%= h(output.subscript) %></td>
+  </tr>
+<% end %>
+
+
+
+</table>
+
+<br/>
+<br/>
+
+<% if @func.owner == @user %>
+<%= link_to("edit function", :action => "edit", :id => h(@func.name)) %>
+<br/>
+<% end %>
+<%= link_to("back to list", :action => "list") %>

@@ -1,0 +1,188 @@
+<%
+anc = @ancestors
+path = @path
+if @node.class.respond_to?(:site)
+   @site = @node.class.site.to_s
+   path = @site + "@" + @path
+else
+   @site = nil
+end
+%>
+<p class="description">
+  <div class="link_descriotion">
+<% if @mode %>
+  <a href="<%=relative_url_root%>/data<%=path%>/edit" class="description">edit</a>
+<% end %>
+<%
+case @type
+when "directory"
+%>
+    <a id="openTreeLink" class="description" href="<%=relative_url_root%>/finder/index?path=<%=path%>">open node tree</a>
+
+<%
+  if @dl_url
+%>
+    <a href="<%=@dl_url%>" class="description">Download this file</a>
+<%
+  end
+when "variable"
+%>
+    <%= link_to("Add this variable for analysis/visualization",
+	       {:controller => "finder", :action => "add_to_list", :path => path, :type => "var"}, :class => "description") %>
+<%
+when "image"
+  url = @dl_url
+%>
+    <a href="<%= url %>" class="description">Download this image</a>
+    <br />
+    <img src="<%= url %>"/>
+<%
+when "function"
+%>
+    <%= render :partial => "function" %>
+<%
+when "draw_method"
+%>
+    <%= render :partial => "draw_method" %>
+<%
+end
+%>
+  <div>
+</p>
+
+<div class="title_description">
+  <h1 class="description">
+    <%=h anc[-1][:name] %>
+    <font size=3>
+<%
+if @type == "directory"
+  if @plain_file
+%>
+       [plain file]
+  <% else %>
+       [directory]
+  <% end %>
+       &nbsp;&nbsp;&nbsp;&nbsp;<%= path %>
+<% end %>
+    </font>
+  </h1>
+  <h2 class="description">
+    <%=h anc[-1][:title] %>
+  </h2>
+<% if @mode %>
+  <h2>
+    <%= render :partial => "mode" %>
+  </h2>
+<% end %>
+</div>
+
+<hr/>
+
+<% if @type == "directory" %>
+<div style="padding-bottom:1em">
+  <h3>Children</h3>
+<% [["Directories",@directories],["Variables",@variables],["Images",@images]].each{|ntitle,nodes| %>
+  <div style="padding-left:1em">
+    <%= ntitle %>
+    <div style="padding-left:2em">
+      <%= nodes.collect{|dir|
+        link_to(dir.name, data_url(:path => dir.path.sub(/^\//,""),:format=>"html")) }.join(", ") %>
+    </div>
+  </div>
+<% } %>
+</div>
+
+<hr/>
+<% end %>
+
+<div>
+  <h3>Ancestors</h3>
+<%= render :partial => "ancestors" %>
+</div>
+
+<% if %w(variable image knowledge).include?(@type) %>
+<p>
+ <!-- ‚±‚±‚É <hr/> ‚ð“ü‚ê‚é‚Æ‚È‚º‚© IE ‚Å‚ÍŽš‚ªÁ‚¦‚é‚Ì‚Å“ü‚ê‚Ê‚±‚Æ -->
+  <div class="references">
+    <h4>Link:</h4>
+    <%
+      refs = @references
+      l_imgs = @link_images
+      l_vars = @link_variables
+
+      if (refs | l_imgs | l_vars).length == 0
+      %>
+    no link<br>
+    <% else %>
+    <%    if refs.length > 0 %>
+	      <ul>
+    <%        refs.each{|ref|
+                rpath = ref["path"]
+    %>
+                <li>
+		  <a href="<%= data_url(:path => rpath.sub(/^\//,""), :format => "html") %>"><%= h(File.basename(rpath)) %></a>
+		</li>
+    <%        } %>
+	      </ul>
+    <%    end %>
+    <%    if l_imgs.length > 0 %>
+            Images:
+    	      <ul>
+    <%
+              l_imgs.each{|img|
+                rpath = img["path"]
+    %>
+  	        <li>
+                  <a href="<%= data_url(:path => rpath.sub(/^\//,""), :format => "html") %>"><%= h(File.basename(rpath)) %></a>
+	        </li>
+    <%        } %>
+	      </ul>
+    <%    end %>
+    <%    if l_vars.length > 0 %>
+	    Variables:
+	      <ul>
+    <%
+                l_vars.each{|var|
+                  rpath = var["path"]
+    %>
+	        <li>
+                  <a href="<%= data_url(:path => rpath.sub(/^\//,""), :format => "html") %>"><%= h(File.basename(rpath)) %></a><br>
+	        </li>
+    <%          } %>
+              </ul>
+    <%    end %>
+    <% end %>
+  </p>
+  <p>
+    <h4>Linked From:</h4>
+    <%
+      refs = @referenced_by
+      l_klgs = @linked_knowledges
+      if (refs | l_klgs).length == 0
+      %>
+    no link<br>
+    <% else %>
+    <%    if refs.length > 0 %>
+	      <ul>
+    <%        refs.each{|ref|
+                rpath = ref["path"]
+    %>
+                <li>
+		  <a href="<%= data_url(:path => rpath.sub(/^\//,""), :format => "html") %>"><%= h(File.basename(rpath)) %></a>
+		</li>
+    <%        } %>
+	      </ul>
+    <%    end %>
+    <%    if l_klgs.length > 0 %>
+            Knowledges:
+    	      <ul>
+    <%          l_klgs.each{|klg| %>
+  	        <li>
+		  <%= link_to h(klg["title"]), :controller => 'knowledge', :action => 'show', :path => klg["path"] %>
+	        </li>
+    <%        } %>
+	      </ul>
+    <%    end %>
+    <% end %>
+  </p>
+<% end %>

@@ -1,0 +1,64 @@
+:name: min
+:description: minimum on the specific dimensions
+:nvars: 1
+:script: |
+  arg0 = [0] if arg0.empty?
+  if(((limit1=NumRu::GPhys::read_size_limit_1)&&(gphys0.length > limit1))|| 
+     ((limit2=NumRu::GPhys::read_size_limit_2)&&(gphys0.length > limit2)))
+    limit = limit1
+    if(limit.nil? ||
+       (limit2 && limit < limit2))
+      limit = limit2
+    end
+    ldim = 0
+    shape = gphys0.shape.dup
+    idx = NArray.int(shape.length).indgen!.to_a
+    arg0.each{|a|
+      if a.is_a?(String)
+        idx_min = gphys0.coordnames.index(a)
+      elsif a.is_a?(Numeric)
+        idx_min = 0
+      else
+        raise ArgumentError, "Arg to function min must be names of axes or numbers."
+      end
+      shape[idx_min] = nil
+      idx[idx_min] = nil
+    }
+    shape.compact!
+    idx.compact!
+    length = gphys0.length
+    for i in 1..(shape.length)
+      length /= shape[-i]
+      ldim = i
+      break if length < limit
+    end
+    loopdims = (NArray.to_na(idx)[NArray.int(ldim).indgen!(-1,-1).to_a.sort!]).to_a
+    NumRu::GPhys::each_along_dims(gphys0,loopdims){|g|
+      if (!g.val.respond_to?(:count_valid)) || g.val.count_valid > 0 || !(g.val.nil?)
+        [g.min(*arg0)]
+      else
+        newidx = [true]*(gphys0.rank)
+        loopdims.each{|lp| newidx[lp] = 0..0}
+        arg0.each{|a|
+          idx_min = gphys0.coordnames.index(a)
+          newidx[idx_min] = 0
+        }
+        [g[*newidx]]
+      end
+    }
+  else
+    [gphys0.min(*arg0)]
+  end
+
+:setting_html: |
+  <%= analysis_dimension_selector(0,"min") %>
+
+:arguments:
+- :description: the dimension for min
+  :value_type: array_string
+  :default: []
+  :position: 0
+:outputs:
+- :name: min
+  :subscript: min
+  :description: min

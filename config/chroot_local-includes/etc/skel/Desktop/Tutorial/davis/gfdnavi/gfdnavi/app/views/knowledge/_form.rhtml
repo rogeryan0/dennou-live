@@ -1,0 +1,133 @@
+<!-- category -->
+<% if @type == "comment" %>
+  <input type="hidden" id="knowledge_category" name="knowledge[category]" value="comment">
+  Category: comment<br>
+<% else %>
+  <%= render :partial => 'category' %>
+<% end %>
+<br>
+
+<!-- title -->
+<p>
+  <label for="knowledge_title">Title:&nbsp;&nbsp;</label>
+  <%= text_field 'knowledge', 'title', 'size'=>60, 'value'=>@knowledge.title %>
+  &nbsp;&nbsp;
+  
+  <label for="knowledge_author">Author:&nbsp;&nbsp;</label>
+  <input id="knowledge_creator" name="knowledge[creator]" size="30" type="text" value="<%= @knowledge.creator || @user.full_name%>" />
+</p>
+
+<!-- textbody -->
+<p>
+  <label for="knowledge_textbody">Textbody:&nbsp;<br>
+    <%= text_area 'knowledge', 'textbody' %>
+  </label>
+</p>
+
+<!-- description -->
+<p><label for="knowledge_description">Description:&nbsp;</label><br>
+  <%= text_area 'knowledge', 'description' %>
+</p>
+
+<!-- knowledge_path -->
+<% case @type
+    when "comment" %>
+      <input type="hidden" id="new_comment_number" name="knowledge[comment_number]" value="<%= @new_comment_number %>">
+      <input type="hidden" id="node_path" name="node[path]" value="<%= @comment_path %>">
+<% when "new", "new_from_analysis" %>
+      <p><br>
+        <label for="knowledge_knowledge_path">Path:&nbsp;</label>
+        <% if @user.super_user %>
+          /<input id="node_path" name="node[path]" type="text" value="usr/<%= h Knowledge.remove_scheme(@user) %>/knowledge/" />.knlge<br>
+        <% else %>
+          /usr/<%= h Knowledge.remove_scheme(@user) %>/knowledge/<%= text_field 'node', 'path' %>.knlge<br>
+        <% end %>
+        &nbsp;&nbsp;&nbsp;ex) /usr/<%= h Knowledge.remove_scheme(@user) %>/knowledge/<U>folder1/folder2/writing</U>.knlge
+      </p>
+<% end %>
+
+<!-- default_layout -->
+<%
+        layouts = ["layout_figures_under_text","layout_one_figure_above_text","layout_figures_in_a_row_above_text"]
+        layout_messages = ["figures under text.", "one figure above text.", "figures in a row above text."]
+        
+        if params[:layout]
+          selected_layout = params[:layout]
+        elsif @knowledge.default_layout
+          selected_layout = layouts[@knowledge.default_layout]
+        else
+          selected_layout = layouts[0]
+        end
+        message = String.new
+        0.upto(2){|i| message += "<option#{i==layouts.index(selected_layout) ? " selected" : ""} value=#{i}>#{layout_messages[i]}</option>,"}
+%>
+
+<p class="form_layout">
+<table>
+  <tr><td align="right">
+    <label for="layout">Choose a default layout : </label>
+    <select id="knowledge_default_layout" name="knowledge[default_layout]" onChange="putNumSelectMenu(this.selectedIndex)">
+      <%= message[0..-2] %><!--ÅŒã‚Ì ", "‚ª—]Œv‚È‚Ì‚ÅŽæ‚èœ‚­ -->
+    </select>
+  </td>
+    <td>
+      &nbsp;size of figure:&nbsp;
+      <%
+          if (params[:knowledge] && params[:knowledge]["height_or_width"] == "width") || (@knowledge && @knowledge.figures_size_height_or_width == 1)
+            selected_side = "width"
+            other_side = "height"
+          else
+            selected_side = "height"
+            other_side = "width"
+          end
+      %>
+      <%= select_tag "knowledge[height_or_width]",  "<option>#{selected_side}</option><option>#{other_side}</option>" %>
+      
+      <%
+          if params[:knowledge] && params[:knowledge]["figures_size_number"]
+            figures_size_number = params[:knowledge]["figures_size_number"]
+          elsif @knowledge && @knowledge.figures_size_number
+            figures_size_number = @knowledge.figures_size_number
+          else
+            figures_size_number = 100
+          end
+      %>
+      <%= text_field_tag "knowledge[figures_size_number]", figures_size_number, :size => 5 %>
+      
+      <%
+          if (params[:knowledge] && params[:knowledge]["percent_or_pixel"]) == 'pixel' || (@knowledge && @knowledge.figures_size_units == 1)
+            selected_unit = "<option value='pixel'>px</option>"
+            other_unit = "<option value='percent'>%</option>"
+          else
+            selected_unit = "<option value='percent'>%</option>"
+            other_unit = "<option value='pixel'>px</option>"
+          end
+      %>
+      <%= select_tag "knowledge[percent_or_pixel]", "#{selected_unit}#{other_unit}" %>
+    </td></tr>
+  <tr><td align="right">
+    input the number of figures in a row
+      <% 
+      num_fig_message = String.new
+      1.upto(20) do |i|
+        num_fig_message << "<option #{i==@knowledge.horizontal_figures ? 'selected' : ""} value=#{i}>#{i}</option>,"
+      end
+      %>
+    <select id="knowledge_horizontal_figures" name="knowledge[horizontal_figures]" 
+      <%= h("disabled") if selected_layout != layouts[0]  %> >
+      <%= num_fig_message[0..-2] %>
+    </select>
+  </td>
+    <td align="right">
+    </td></tr>
+</table>
+</p>
+
+<!-- group and figures -->
+<div id="group_and_figure_form">
+  <%= render(:partial=>"group_form") %>
+  <%= render(:partial=>"knowledge_figure_form") %>
+</div>
+
+<a href="#" id="more_figure" onclick="moreFigure();location.href='#knowledge_figure_form'; return false;">More Figure</a><br>
+

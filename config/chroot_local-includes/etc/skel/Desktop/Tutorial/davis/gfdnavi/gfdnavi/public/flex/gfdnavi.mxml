@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:gfdnavi="*"
+	layout="absolute" initialize="initApp()">
+	
+  <mx:Script>
+    <![CDATA[
+      import mx.managers.SystemManager;
+      import mx.events.ItemClickEvent;
+
+      [Bindable]
+      private var mainURI:String;
+
+      private function initApp():void {
+        if (Application.application.parameters.uri) {
+           mainURI = Application.application.parameters.uri;
+        } else {
+//           mainURI = "localhost:3000";
+             mainURI = "davis.gfd-dennou.org/experimental/gfdnavi";
+        }
+      }
+      
+      private function addAnalysis(event:Event):void {
+      	var node:TreeNode = event.currentTarget as TreeNode;
+      	analysis.add(node);
+      	pages.selectedChild = analysis;
+      }
+
+    ]]>
+  </mx:Script>
+
+  <mx:ApplicationControlBar width="100%">
+    <mx:LinkBar dataProvider="{pages}"/>
+  </mx:ApplicationControlBar>
+
+  <mx:ViewStack id="pages" width="100%" height="90%" y="45">
+    <gfdnavi:Finder id="finder" creationComplete="finder.addSite(mainURI)"/>
+    <mx:Panel label="Exploer"
+	      width="100%" height="90%" headerHeight="10"
+	      visible="false" includeInLayout="false">
+    </mx:Panel>
+    <gfdnavi:Analysis id="analysis"/>
+    <mx:Panel label="User"
+	      width="100%" height="90%" headerHeight="10"
+	      visible="false" includeInLayout="false">
+    </mx:Panel>
+  </mx:ViewStack>
+
+</mx:Application>

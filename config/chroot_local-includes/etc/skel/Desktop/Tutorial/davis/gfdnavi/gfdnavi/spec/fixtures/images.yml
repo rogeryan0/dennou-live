@@ -1,0 +1,12 @@
+bob_image:
+  id: 1
+  node_id: 15
+
+bob_hidden_image:
+  id: 2
+  node_id: 16
+
+ncep_t_100hPa_image:
+  id: 3
+  node_id: 19
+

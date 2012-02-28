@@ -1,27 +1,29 @@
 ;; -*- mode: emacs-lisp; coding: utf-8-unix; indent-tabs-mode: nil -*-
 ;;; init.el
-
-;; Copyright(C) 2010 Youhei SASAKI All rights reserved.
-;; $Id: $
-
+;;
+;; Copyright(C) 2012 Youhei SASAKI All rights reserved.
+;;
 ;; Author: Youhei SASAKI <uwabami@gfd-dennou.org>
 ;; Keywords:
 ;;
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-;;
-;;
-;;; Commentary:
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;; 
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+;; 
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+;; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+;; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+;; NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+;; LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+;; OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+;; WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ;;
 ;;; Code:
 ;; -----------------------------------------------------------
@@ -74,7 +76,7 @@
 ;; タイトルにバッファ名を表示
 (setq frame-title-format "%b")
 ;; \C-x f で画像を表示しない(主に terminal で起動するから)
-(setq auto-image-file-mode nil)
+;; (setq auto-image-file-mode nil)
 ;; ファイル名とともにディレクトリも表示
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
@@ -91,10 +93,10 @@
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 ;; 分割ウィンドウの大きさを M + up/down で変更
-(global-set-key (kbd "M-<up>")
-                '(lambda (arg) (interactive "p")(shrink-window arg)))
-(global-set-key (kbd "M-<down>")
-                '(lambda (arg) (interactive "p")(shrink-window (- arg))))
+;; (global-set-key (kbd "M-<up>")
+;;                 '(lambda (arg) (interactive "p")(shrink-window arg)))
+;; (global-set-key (kbd "M-<down>")
+;;                 '(lambda (arg) (interactive "p")(shrink-window (- arg))))
 ;; 空になったファイルを尋ねず自動削除
 (if (not (memq 'delete-file-if-no-contents after-save-hook))
     (setq after-save-hook
@@ -105,7 +107,6 @@
          (= (point-min) (point-max)))
     (delete-file
      (buffer-file-name (current-buffer)))))
-
 ;; *scratch* を殺さない設定(再生成する)
 (defun my-make-scratch (&optional arg)
   (interactive)
@@ -141,38 +142,37 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;; 日本語入力 -> Anthy
-;;
+(eval-when-compile (require 'anthy))
 (load-library "anthy")
 (setq default-input-method "japanese-anthy")
 (setq anthy-accept-timeout 1)
 ;;; font
-;;
-(when window-system
-  (create-fontset-from-ascii-font "Inconsolata:size=12" nil "myfont")
-  (set-fontset-font "fontset-myfont"
-                    'unicode
-                    (font-spec :family "IPAGothic" :size 12)
-                    nil 'append)
-  (dolist (charset '(
-                     japanese-jisx0208
-                     japanese-jisx0208-1978
-                     japanese-jisx0212
-                     japanese-jisx0213-1
-                     japanese-jisx0213-2
-                     japanese-jisx0213-a
-                     japanese-jisx0213.2004-1
-                     katakana-jisx0201
-                     ))
-    (set-fontset-font "fontset-myfont"
-                      charset
-                      (font-spec :family "IPAGothic" :size 12)
-                      nil 'prepend))
-  (setq face-font-rescale-alist
-        '(("-cdac$" . 1.3)))
-  (custom-set-faces
-   '(variable-pitch ((t (:family "Monospace")))))
-  (add-to-list 'default-frame-alist
-               '(font . "fontset-myfont")))
+;; (when window-system
+;;   (create-fontset-from-ascii-font "Inconsolata:size=12" nil "myfont")
+;;   (set-fontset-font "fontset-myfont"
+;;                     'unicode
+;;                     (font-spec :family "IPAGothic" :size 12)
+;;                     nil 'append)
+;;   (dolist (charset '(
+;;                      japanese-jisx0208
+;;                      japanese-jisx0208-1978
+;;                      japanese-jisx0212
+;;                      japanese-jisx0213-1
+;;                      japanese-jisx0213-2
+;;                      japanese-jisx0213-a
+;;                      japanese-jisx0213.2004-1
+;;                      katakana-jisx0201
+;;                      ))
+;;     (set-fontset-font "fontset-myfont"
+;;                       charset
+;;                       (font-spec :family "IPAGothic" :size 12)
+;;                       nil 'prepend))
+;;   (setq face-font-rescale-alist
+;;         '(("-cdac$" . 1.3)))
+;;   (custom-set-faces
+;;    '(variable-pitch ((t (:family "Monospace")))))
+;;   (add-to-list 'default-frame-alist
+;;                '(font . "fontset-myfont")))
 
 
 

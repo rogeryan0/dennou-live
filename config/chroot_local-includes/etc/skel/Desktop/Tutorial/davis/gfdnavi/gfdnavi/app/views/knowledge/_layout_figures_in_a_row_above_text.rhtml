@@ -1,0 +1,42 @@
+<!-- figure -->
+<% @count = 1 %>
+<table border=1 cellspacing=0 cellpadding=8pt frame=void rules=cols class=layout2_table>
+  <tr>
+    <% @knowledge_figures.each do |@kf| %>
+      <td width=<%= @image_widths[@count-1] %>
+        <%= render(:partial => "layout_figure") %>
+      </td>
+    <% end %>
+  </tr>
+  <tr>
+    <% @knowledge_figures.each do |@kf| %>
+      <td align="center" valign="top">
+        <table><tr><td align="left" valign="top" width=<%= @caption_widths[@count-1] %> style="word-break:break-all">
+          <p>
+            <b>Fig.<%= @count %>.&nbsp;</b>
+            <% @count += 1 %>
+            <% @kf.caption.each_line {|line| %>
+              <%= h line %>
+            <% } %>
+          </p>
+        </td></tr></table>
+      </td>
+    <% end %>
+  </tr>
+</table>
+<br>
+
+<!-- textbody -->
+<%
+  # textbody‚ð“Ç‚ÝŽæ‚Á‚ÄARD•—‚Ì•¶‘‚©‚çHTML•¶‘‚Ö‚Æ•ÏŠ·‚·‚é
+  require "knowledge_parser"
+  textbody = @knowledge.textbody
+  rdparser = RDParser.new(textbody)
+  tree = rdparser.make_tree
+  element = rdparser.to_html(@knowledge_figures, relative_url_root)
+%>
+<div class=show_textbody>
+  <%= element %>
+</div>
+<br>
+  

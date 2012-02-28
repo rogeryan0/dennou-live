@@ -1,0 +1,180 @@
+# It's often a good idea to start the test with 'setup'.
+# See /selenium/setup for more info.
+
+def wait_for_image_loaded(id)
+  wait_for_eval <<"EOS", 'false'
+var win = this.page().getCurrentWindow();
+var diagrams = (win.diagrams) ? win.diagrams : win.wrappedJSObject.diagrams;
+diagrams[#{id}].imageLoading;
+EOS
+end
+
+def inputvar_id_base(*args)
+  diagram_id = args.shift
+  layer_id = args.shift
+  id = "diagram#{diagram_id}_layer#{layer_id}_win1_"
+  id << args.map{|arg| "vars#{arg}_"}.join("input_vars_")
+end
+
+def inputvar_id_select(*args)
+  id = inputvar_id_base(*args) << "input_select"
+end
+
+def inputvar_id_arg_dim(*args)
+  idim = args.pop
+  id = inputvar_id_base(*args) << "input_arg_dim_#{idim}"
+end
+
+def inputvar_id_arg(*args)
+  id = inputvar_id_base(*args) << "input_arg"
+end
+
+def inputvar_id_appfunc_button(*args)
+  id = inputvar_id_base(*args) << "appfunc_button"
+end
+
+def inputvar_id_delfunc_button(*args)
+  id = inputvar_id_base(*args) << "delfunc_button"
+end
+
+def inputvar_id_axes_table(*args)
+  id = inputvar_id_base(*args) << "axes_table"
+end
+
+def inputvar_id_axes_button(*args)
+  id = inputvar_id_base(*args) << "axes_button"
+end
+
+setup  :fixtures => :all
+
+# ADD TWO VARIABLES WITH THE SAME AXES
+open '/finder/add_to_list?path=%2Fsamples%2Freanalysis%2Fncep%2FUV.jan.nc'
+
+# ADD FUNCTION
+click "diagram0_inputs_window_button"
+click inputvar_id_appfunc_button(0, 0, 0)
+select inputvar_id_select(0, 0, 0), "label=addition" # REQUIRES TWO INPUT VARIABLES
+select inputvar_id_select(0, 0, 0, 0), "label=U"
+select inputvar_id_select(0, 0, 0, 1), "label=U"
+assert_element_not_present inputvar_id_arg_dim(0, 0, 0, 0) # NO DIMENSION SELECTOR
+assert_element_not_present inputvar_id_arg(0, 0, 0) # NO OTHER ARGUMENT
+click "diagram0_layer0_win1_var_apply_button"
+wait_for_image_loaded(0)
+
+# COPY DIAGRAM 0
+click "diagram0_menu_window_button"
+click "diagram0_clone"
+wait_for_image_loaded(1)
+assert_selected_label inputvar_id_select(1, 0, 0), "addition"
+assert_selected_label inputvar_id_select(1, 0, 0, 0), "U"
+assert_selected_label inputvar_id_select(1, 0, 0, 1), "U"
+
+# CHANGE FUNCTION
+select inputvar_id_select(1, 0, 0), "label=mean" # REQUIRES ONE INPUT VARIABLE
+assert_selected_label inputvar_id_select(1, 0, 0, 0), "U"
+assert_element_not_present inputvar_id_select(1, 0, 0, 1)
+check inputvar_id_arg_dim(1, 0, 0, 0)   # DIMENSION SELECTOR
+uncheck inputvar_id_arg_dim(1, 0, 0, 1) # DIMENSION SELECTOR
+uncheck inputvar_id_arg_dim(1, 0, 0, 2) # DIMENSION SELECTOR
+assert_element_not_present inputvar_id_arg_dim(1, 0, 0, 3) # RANK == 3
+assert_element_not_present inputvar_id_arg(1, 0, 0) # NO OTHER ARGUMENT
+click "diagram1_layer0_win1_var_apply_button"
+wait_for_image_loaded(1)
+
+# CHANGE DIMS FOR OPERATION
+uncheck inputvar_id_arg_dim(1, 0, 0, 0)
+uncheck inputvar_id_arg_dim(1, 0, 0, 1)
+check inputvar_id_arg_dim(1, 0, 0, 2)
+click "diagram1_layer0_win1_var_apply_button"
+wait_for_image_loaded(1)
+
+# TRY TO CHECK ALL
+2.times{|idim| check inputvar_id_arg_dim(1, 0, 0, idim)}
+# EMULATE ACTUAL CLICK EVENT
+uncheck inputvar_id_arg_dim(1, 0, 0, 2)
+click inputvar_id_arg_dim(1, 0, 0, 2)
+click "diagram1_layer0_win1_var_apply_button"
+wait_for_image_loaded(1)
+
+# TRY TO UNCHECK ALL
+2.times{|idim| uncheck inputvar_id_arg_dim(1, 0, 0, idim)}
+# EMULATE ACTUAL CLICK EVENT
+uncheck inputvar_id_arg_dim(1, 0, 0, 2)
+click inputvar_id_arg_dim(1, 0, 0, 2)
+click "diagram1_layer0_win1_var_apply_button"
+wait_for_image_loaded(1)
+
+# REMOVE FUNCTION OF DIAGRAM 1
+click "diagram1_inputs_window_button"
+click inputvar_id_delfunc_button(1, 0, 0)
+click "diagram1_layer0_win1_var_apply_button"
+wait_for_image_loaded(1)
+
+# OPEN AXES WINDOW FOR INPUT 1 OF THE FUNCTION IN DIAGRAM 0
+click "diagram0_inputs_window_button"
+assert_not_visible inputvar_id_axes_table(0, 0, 0, 1)
+assert_value inputvar_id_axes_button(0, 0, 0, 1), "Show axes"
+click inputvar_id_axes_button(0, 0, 0, 1)
+assert_visible inputvar_id_axes_table(0, 0, 0, 1)
+assert_value inputvar_id_axes_button(0, 0, 0, 1), "Hide axes"
+click inputvar_id_axes_button(0, 0, 0, 1)
+assert_not_visible inputvar_id_axes_table(0, 0, 0, 1)
+assert_value inputvar_id_axes_button(0, 0, 0, 1), "Show axes"
+click inputvar_id_axes_button(0, 0, 0, 1)
+
+# CHANGE INPUT 1 OF THE FUNCTION IN DIAGRAM 0
+select inputvar_id_select(0, 0, 0, 1), "label=V"
+click "diagram0_layer0_win1_var_apply_button"
+wait_for_image_loaded(0)
+
+# CHECK STATUS OF AXES WINDOW FOR INPUT 1 OF THE FUNCTION
+assert_not_visible inputvar_id_axes_table(0, 0, 0, 1)
+assert_value inputvar_id_axes_button(0, 0, 0, 1), "Show axes"
+
+# COPY DIAGRAM 0 AGAIN
+click "diagram0_menu_window_button"
+click "diagram0_clone"
+wait_for_image_loaded(2)
+
+# CHAIN OF FUNCTIONS
+click inputvar_id_appfunc_button(0, 0, 0)
+# ASSERT INPUT FUNCTIONS OF NEW FUNCTION ARE THE SAME AS THE ORIGINAL
+assert_selected_label inputvar_id_select(0, 0, 0), "addition"
+assert_selected_label inputvar_id_select(0, 0, 0, 0), "addition"
+assert_selected_label inputvar_id_select(0, 0, 0, 1), "addition"
+# ASSERT THAT VARIABLES OF INPUT 0 AND 1 OF THE FUNCTION ARE COPIED FROM ORIGINAL INPUT
+assert_selected_label inputvar_id_select(0, 0, 0, 0, 0), "U"
+assert_selected_label inputvar_id_select(0, 0, 0, 0, 1), "V"
+assert_selected_label inputvar_id_select(0, 0, 0, 1, 0), "U"
+assert_selected_label inputvar_id_select(0, 0, 0, 1, 1), "V"
+click "diagram0_layer0_win1_var_apply_button"
+wait_for_image_loaded(0)
+
+# RELOAD PAGE
+open '/analysis2'
+wait_for_page_to_load 30000
+# DIAGRAM IDS SHOULD CHANGE AS FOLLOWS:
+# BEFORE RELOAD: [diagram0, diagram2, diagram1]
+# AFTER RELOAD:  [diagram0, diagram1, diagram2]
+wait_for_image_loaded(0)
+assert_selected_label inputvar_id_select(0, 0, 0), "addition"
+assert_selected_label inputvar_id_select(0, 0, 0, 0), "addition"
+assert_selected_label inputvar_id_select(0, 0, 0, 1), "addition"
+assert_selected_label inputvar_id_select(0, 0, 0, 0, 0), "U"
+assert_selected_label inputvar_id_select(0, 0, 0, 0, 1), "V"
+assert_selected_label inputvar_id_select(0, 0, 0, 1, 0), "U"
+assert_selected_label inputvar_id_select(0, 0, 0, 1, 1), "V"
+wait_for_image_loaded(1)
+assert_selected_label inputvar_id_select(1, 0, 0), "addition"
+assert_selected_label inputvar_id_select(1, 0, 0, 0), "U"
+assert_selected_label inputvar_id_select(1, 0, 0, 1), "V"
+wait_for_image_loaded(2)
+assert_selected_label inputvar_id_select(2, 0, 0), "U"
+
+# More information about the commands is available at:
+#   http://release.openqa.org/selenium-core/nightly/reference.html
+# See also the RDoc for SeleniumOnRails::TestBuilder.
+#
+# Point the browser to http://localhost:3000/selenium/tests/analysis2_function.rsel to see
+# how this test is rendered, or to http://localhost:3000/selenium to
+# run the suite.

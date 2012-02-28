@@ -1,0 +1,72 @@
+<h2>Function: <%= h(@node.name) %></h2>
+
+<table border=2>
+  <tr>
+    <th colspan=2>name</th>
+    <td><%= h(@node.name) %></td>
+  </tr>
+  <tr>
+    <th colspan=2>description</th>
+    <td><%= h(@node.description) %></td>
+  </tr>
+  <tr>
+    <th colspan=2>number of input variables</label></th>
+    <td><%= @node.nvars %></td>
+  </tr>
+  <tr>
+    <th colspan=2>script</th>
+    <td>
+     {|<%= ary0=Array.new;ary1=Array.new;@node.function_arguments.length.times{|i|ary0[i]="arg#{i}"};@node.nvars.times{|i|ary1[i]="gphys#{i}"}; (ary0+ary1).join(", ") %>|
+      <br/>
+      <div style="padding-left:1em">
+        <pre><%= h(@node.script) %></pre>
+      </div>
+      }
+    </td>
+  </tr>
+
+<%
+args = @node.function_arguments
+narg = args.length
+narg.times do |j|
+  arg = args[j]
+%>
+  <tr>
+    <th rowspan=3>argument<%= j %></th>
+    <th>description</th>
+    <td><%= h(arg.description) %></td>
+  </tr>
+  <tr>
+    <th>value type</th>
+    <td><%= h(arg.value_type.name) %></td>
+  </tr>
+  <tr>
+    <th>default</th>
+    <td><%= h(arg.default) %></td>
+  </tr>
+<% end %>
+
+
+<%
+outputs = @node.function_outputs
+nout = outputs.length
+nout.times do |j|
+  output = outputs[j]
+%>
+  <tr>
+    <th rowspan=3>output<%= j %></th>
+    <th>name</th>
+    <td><%= h(output.name) %></td>
+  </tr>
+  <tr>
+    <th>description</th>
+    <td><%= h(output.description) %></td>
+  </tr>
+  <tr>
+    <th>subscript</th>
+    <td><%= h(output.subscript) %></td>
+  </tr>
+<% end %>
+
+</table>
+<br />

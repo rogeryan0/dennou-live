@@ -1,0 +1,113 @@
+<%
+@draw_method.nvars = 1 unless @draw_method.nvars
+@draw_method.ndims = 1 unless @draw_method.ndims
+dmas = @draw_method.draw_method_options
+%>
+
+  <%= error_messages_for 'draw_method' %><br/>
+
+  <h3>Draw Method</h3>
+  <table>
+    <tr>
+      <td><label for="draw_method_name">name</label></td>
+      <td><%= text_field("draw_method", 'name', :size => 10) %></td>
+    </tr>
+    <tr>
+      <td>save directory</td>
+      <td><%= @directory %></td>
+    </tr>
+    <tr>
+      <td><label for="draw_method_description">description</label></td>
+      <td>
+         <textarea cols="40" id="draw_method_description" name="draw_method[description]" rows="5"><%= @draw_method.description %></textarea>
+         <%# text_area("draw_method", "description", "rows" => 5)  # it did not insert current value. I don't know why%>
+      </td>
+    </tr>
+    <tr>
+      <td><label for="draw_method_group_id">group</label></td>
+      <td>
+        <%= options = ["<option selected>only me</option>"]
+            if @groups
+               options.push('<option disabled>--groups--</option>')
+               options += @groups.collect{|group| 
+                                      "<option>#{h(group.name)}</option>"}
+            end
+            select_tag("groups[]", options, {:multiple=>true} ) 
+        %>
+<% if @user.super_user %>
+        <%= link_to("create group", :controller => "group", :action => "create") %>
+<% end %>
+      </td>
+    </tr>
+    <tr>
+      <td><label for="draw_method_nvars">number of input variables</label></td>
+      <td>
+        <%= select("draw_method", "nvars", [1,2,3], {}, :onchange => "changeVars();") %>
+      </td>
+    </tr>
+    <tr>
+      <td><label for="draw_method_ndims">number of dimensions</label></td>
+      <td>
+        <%= select("draw_method", "ndims", [0,1,2], {}) %>
+      </td>
+    </tr>
+    <tr>
+      <td><label for="draw_method_vizshot_method">vizshot method</label></td>
+      <td><%= text_field("draw_method", 'vizshot_method', :size => 10) %></td>
+    </tr>
+    <tr>
+      <td><label for="draw_method_script">script for vizshot</label></td>
+      <td>
+        {|<span id="vizshot_args"></span>|<br/>
+          <%= text_area("draw_method", "script", "rows" => 10) %><br/>
+        }
+      </td>
+    </tr>
+    <tr>
+      <td><label for="draw_method_ggraph">script for ggraph</label></td>
+      <td>
+        {|<span id="ggraph_args"></span>|<br/>
+          <%= text_area("draw_method", "ggraph", "rows" => 10) %><br/>
+        }
+      </td>
+    </tr>
+    <tr>
+      <td><label for="option_num">number of options</label></td>
+      <td>
+        <%= select_tag("option_num", [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].collect{|i| "<option #{"selected='selected'" if i==dmas.length}>#{i}</option>"}, :onchange => "changeOptions();") %>
+      </td>
+    </tr>
+  </table>
+
+  <h3>Draw Method Options</h3>
+  <div id="option_table"></div>
+
+
+  <h3>Html for specific settings</h3>
+  <%= button_to_function("create default html",'new Ajax.Request(gfdnaviUrlRoot+"/draw_method/create_setting_html",{parameters: "name="+$F("draw_method_name")+"&nopts="+$F("option_num")+"&"+Form.serialize("option_table")})') %>
+  <br/>
+  <div id="setting_html_div">
+    <%= text_area("draw_method", "setting_html", "rows" => 15, "cols" => 80) %>
+  </div>
+  <%= button_to_function("preview",'new Ajax.Updater("preview",gfdnaviUrlRoot+"/analysis/preview",{parameters: Form.serialize("setting_html_div")})') %>
+  <div id="preview"></div>
+  <br/>
+
+
+  <script>
+    changeVars();
+    changeOptions();
+<%
+vtypes = %w(int float string array_int array_float boolean)
+parsers = %w(vizshot ggraph)
+%>
+<% dmas.each_with_index{|dma,i| %>
+    $('option_<%=i%>_name').value = '<%=h(dma.name)%>';
+    $('option_<%=i%>_optional').checked = <%=h(dma.optional)%>;
+    $('option_<%=i%>_default').value = '<%=h(dma.default)%>';
+    $('option_<%=i%>_value_type').selectedIndex = <%=vtypes.index(dma.value_type.name) || 0%>;
+    $('option_<%=i%>_parser').selectedIndex = <%=parsers.index(dma.parser) || 0%>;
+<% } %>
+  </script>
+
+  <br/><br/>

@@ -6,16 +6,16 @@ lb build noauto 2>&1 | tee dennou_live-binary-${BUILDDATE}.buildlog
 # rename files
 if [ -f binary.iso ]; then
     mv binary.iso dennou_live-binary-${BUILDDATE}.iso
-#    ln -s -f dennou_live-binary-${BUILDDATE}.iso dennou_live-current.iso
+    ln -s -f dennou_live-binary-${BUILDDATE}.iso dennou_live-current.iso
 elif [ -f binary-hybrid.iso ]; then
     mv binary-hybrid.iso dennou_live-binary-${BUILDDATE}-hybrid.iso
-#    ln -s -f dennou_live-binary-${BUILDDATE}-hybrid.iso dennou_live-current-hybrid.iso
+    ln -s -f dennou_live-binary-${BUILDDATE}-hybrid.iso dennou_live-current-hybrid.iso
 elif [ -f binary-net.tar.gz ]; then
     mv binary-net.tar.gz dennou_live-binary-${BUILDDATE}-net.tar.gz
-#    ln -s -f dennou_live-binary-${BUILDDATE}-net.tar.gz dennou_live-current.tar.gz
+    ln -s -f dennou_live-binary-${BUILDDATE}-net.tar.gz dennou_live-current.tar.gz
 elif [ -f binary.img ]; then
     mv binary.img dennou_live-binary-${BUILDDATE}.img
-#    ln -s -f dennou_live-binary-${BUILDDATE}.img dennou_live-current.img
+    ln -s -f dennou_live-binary-${BUILDDATE}.img dennou_live-current.img
 fi
 [ -f binary.list ] && mv binary.list dennou_live-binary-${BUILDDATE}.list
 [ -f binary.packages ] && mv binary.packages dennou_live-binary-${BUILDDATE}.packages

@@ -1,0 +1,73 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+reanalysis_description:
+  id: 1
+  node_id: 3
+  name: description
+  value: Re-analysis datasets
+  num_value: null
+  lang: null
+
+ncepncar_long_name:
+  id: 2
+  node_id: 4
+  name: long_name
+  value: NCEP/NCAR
+  num_value: null
+  lang: null
+
+ncep_jan_t_description:
+  id: 3
+  node_id: 5
+  name: description
+  value: climatorogy of in Jan
+  num_value: null
+  lang: null
+
+ncep_jan_t_long_name:
+  id: 4
+  node_id: 6
+  name: long_name
+  value: temperature
+  num_value: null
+  lang: null
+
+ncep_jan_t_description:
+  id: 5
+  node_id: 6
+  name: description
+  value: climatorogy of temperature in Jan
+  num_value: null
+  lang: null
+
+ncep_jan_u_long_name:
+  id: 6
+  node_id: 8
+  name: long_name
+  value: eastward wind
+  num_value: null
+  lang: null
+
+ncep_jan_u_units:
+  id: 7
+  node_id: 8
+  name: units
+  value: m/s
+  num_value: null
+  lang: null
+
+ncep_jan_u_units:
+  id: 8
+  node_id: 8
+  name: units
+  value: K
+  num_value: null
+  lang: null
+
+era40_long_name:
+  id: 9
+  node_id: 10
+  name: long_name
+  value: ERA40
+  num_value: null
+  lang: null
+

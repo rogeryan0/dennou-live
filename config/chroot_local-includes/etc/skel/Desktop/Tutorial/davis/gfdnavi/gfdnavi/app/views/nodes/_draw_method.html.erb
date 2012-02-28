@@ -1,0 +1,87 @@
+<%
+ary=Array.new
+@node.nvars.times{|i|
+  ary[i]= i==0 ? "gphys" : "gphys#{i}"
+}
+arg_str = ary.join(", ")
+%>
+<h2>Draw Method: <%= h(@node.name) %></h2>
+
+<table border=2>
+  <tr>
+    <th>name</th>
+    <td colspan=5><%= h(@node.name) %></td>
+  </tr>
+  <tr>
+    <th>description</th>
+    <td colspan=5><%= h(@node.description) %></td>
+  </tr>
+  <tr>
+    <th>number of variables</label></th>
+    <td colspan=5><%= @node.nvars %></td>
+  </tr>
+  <tr>
+    <th>number of dimensions</label></th>
+    <td colspan=5><%= @node.ndims %></td>
+  </tr>
+  <tr>
+    <th>vizshot method</label></th>
+    <td colspan=5><%= @node.vizshot_method %></td>
+  </tr>
+  <tr>
+    <th>script for vizshot</th>
+    <td colspan=5>
+<% if @node.script %>
+     {|<%= arg_str %>|
+      <br/>
+      <div style="padding-left:1em">
+        <pre><%= h(@node.script) %></pre>
+      </div>
+      }
+<% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>script for ggraph</th>
+    <td colspan=5>
+<% if @node.ggraph %>
+     {|<%= arg_str %>|
+      <br/>
+      <div style="padding-left:1em">
+        <pre><%= h(@node.ggraph) %></pre>
+      </div>
+      }
+<% end %>
+    </td>
+  </tr>
+
+  <tr>
+    <th colspan=6>options</th>
+  </tr>
+
+  <tr>
+    <th></th>
+    <th>name</th>
+    <th>value type</th>
+    <th>default</th>
+    <th>optional</th>
+    <th>parser</th>
+  </tr>
+<%
+opts = @node.draw_method_options
+nopts = opts.length
+nopts.times do |j|
+  opt = opts[j]
+%>
+  <tr>
+    <th>options <%= j %></th>
+    <td><%= h(opt.name) %></td>
+    <td><%= h(opt.value_type.name) %></td>
+    <td><%= h(opt.default) %></td>
+    <td><%= opt.optional ? "true" : "false" %></td>
+    <td><%= h(opt.parser) %></td>
+  </tr>
+<% end %>
+
+</table>
+<br/>

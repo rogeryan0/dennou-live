@@ -1,0 +1,205 @@
+<%
+require "multibytes"
+
+child = children_details_tr
+path = child.path
+title = child.keyword_attributes.find_by_stdname("title")
+desc = child.keyword_attributes.find_by_stdname("description")
+
+link = false
+dl = false
+
+if child.directory?
+  image = @image_folder
+  if child.count_variable_nodes(:user=>@user) > 0
+    link = image_tag('tree/anal_viz.png', :alt=>'Anal/Vis',
+		     :title=>'Analyze/visualize variables in this folder',
+		     :border=>0,:align=>'absmiddle')
+  end
+  if child.entity.downloadable?
+    if child.opendap?
+      dl = path + '.html'  # ad hoc solution : applicable only to opendap
+    elsif @url_prefix
+      dl = url_for(:controller=>"node", :action=>"download", :path => path)
+    end
+  end
+elsif child.knowledge?
+# [show] knowledge
+  show_knowledge = image_tag('tree/show.png', :alt=>'Show', 
+		        :title=>'Show knowledges',
+                        :border=>0,:align=>'absmiddle')
+elsif child.variable?
+  image = @image_data
+  link = image_tag('tree/anal_viz.png', :alt=>'Anal/Vis',
+                   :title=>'Analyze/visualize this variable', 
+                   :border=>0, :align=>'absmiddle')
+elsif child.image?
+  image = @image_image
+  show_image = image_tag('tree/show.png', :alt=>'Show',
+		        :title=>'Show images',
+                        :border=>0,:align=>'absmiddle')
+else
+  raise "bug"
+end
+
+if @mapsearch
+  details = link_to("Details", :controller => "description", :action => "node", :path => path)
+else
+  details = link_to_remote( 
+    image_tag('tree/details.png',:alt=>'details', 
+              :title=>'Show details',:border=>0,:align=>'absmiddle'),
+    :update => :details,
+    :url => {:controller => "description", :action => "node", :path => path})
+end
+%>
+
+<tr>
+  <td>
+<% if link || show_image %>
+    <%= check_box_tag("list[#{path}]") %>
+<% end %>
+  </td>
+  
+  
+  <td nowrap>
+<% if link %>
+    <%= link_to(link, :action => "add_to_list", :path => path, :type => @type) %>
+<% elsif show_knowledge %>
+    <%= link_to_remote(show_knowledge, :update => :details, :url => {:controller => "knowledge", :action => "show_without_layout", :path => path}) %>
+<% elsif show_image %>
+    <%= link_to_remote(show_image, :update=> :details, :url=>{:controller=>"description", :action=>"images", :images => path}) %>
+<% end %>
+  </td>
+
+<% unless @mapsearch %>
+  <td nowrap>
+<% if dl %>
+    <a href="<%= dl %>">
+    <!-- DL -->
+    <%= image_tag('tree/DL.png', :alt=>'DL', :title=>'Download', 
+                  :border=>0, :align=>'absmiddle')
+    %>
+    </a>
+<% end %>
+  </td>
+<% end %>
+        
+<% if @mapsearch %>
+  <td nowrap>
+    <%= @no %><%= child.id %>
+  </td>
+<% end %>
+
+    
+  <td nowrap>
+    <%= details %>
+  </td>
+
+<!-- [knowledge] button - search from Variable to Image and Knowledge-->
+  <td nowrap>
+  <%  if (child.node_type == 1 && @user)
+        # image -> knowledge_ids
+        if path[-4 .. -1] == ".png"
+	  knowledge_ids = Variable.knowledges(session[:user], path)
+        # variable(numerical data) -> knowledge_ids
+        else
+          node = Node.find(:first, :conditions => ["path=?", path], :user => session[:user])
+          if node.referenced_by.length > 0
+	    knowledge_ids = Array.new
+            node.referenced_by.each{|nd|
+	      if nd.node_type == 2 # referenced by Image
+                knowledge_ids.concat(Variable.knowledges(session[:user], nd.path))
+                if knowledge_ids.length > 0
+                  for kid in knowledge_ids
+                    knowledge = Knowledge.find_by_sql("SELECT * FROM knowledges WHERE id=#{kid}")[0]
+                  end
+                end
+              end
+            }
+          end
+        end
+        if (knowledge_ids && knowledge_ids.length > 0)
+          knowledge_ids.uniq!
+   %>
+  <%=  
+          link_to_remote(
+          image_tag(
+		  'tree/knowledges.png',
+	          :alt=>'knowledges',
+		  :title=>'knowledge list',
+                  :border=>0,
+                  :align=>'absmiddle'
+           ),
+          :update => :details,
+          :url => {:controller => "knowledge", :action => "list_without_layout", :knowledge_ids => knowledge_ids}
+           )
+   %>
+  <%          
+	end
+      end
+   %>
+  </td>
+
+
+<% unless @mapsearch %>
+  <td nowrap>
+    <%= image %>
+  </td>
+<% end %>
+
+  <td nowrap bgcolor="#f0f0f0">
+    <% if child.knowledge? %>
+      <%= h(child.path.split('/')[-1]) %>
+    <% else %>
+      <%= h(child.name) %>
+    <% end %>
+  </td>
+  
+  <td nowrap>
+    <% if child.knowledge? %>
+      <% knowledge = Knowledge.find(child, :user => session[:user]) %>
+      <%= h(knowledge.title.jleft_w_dots(28)) %>
+    <% else %>
+      <% if title %>
+        <%= h( title.value.jleft_w_dots(28) ) %>
+      <% end %>
+    <% end %>
+  </td>
+  
+  <td nowrap bgcolor="#f0f0f0" align=right>
+    <%= h(Node.size2str(child.size)) %>
+  </td>
+
+  <td nowrap>
+    <%= h(child.mtime.strftime('%Y-%m-%d %H:%M')) %>
+  </td>
+
+  <td nowrap bgcolor="#f0f0f0">
+<% if desc %>
+    <%= h( desc.value.jleft_w_dots(80) ) %>
+<% end %>
+  </td>
+
+   
+<%
+if @mapsearch
+  if @mode == "points" || @mode == "partial"
+%>
+  <td nowrap> 
+<%
+    SpatialAttribute.find(:all, :conditions=>"variable_id=#{child.id}").each do |s|
+      case @mode
+      when "points"
+%>
+    (<%= h( s.longitude_lb ) %>,<%= h( s.latitude_lb ) %>)
+<%    when "partial" %>
+    (<%= h( s.longitude_lb ) %>,<%= h( s.latitude_lb ) %>)-(<%= h( s.longitude_rt ) %>,<%= h( s.latitude_rt ) %>)
+<%
+      end
+    end
+  end
+%>
+  </td>
+<% end %>
+
+</tr>

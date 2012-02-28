@@ -1,0 +1,21 @@
+<!-- 文書を作るためのスクリプトを表示する -->
+<pre>
+#! ruby -Ks
+require "numru/gfdnavi_data"
+include NumRu
+
+def display(plot)
+  IO.popen("display","w"){|io| io.print(plot.to_png)}
+end
+
+url_prefix = ARGV.shift || "http://0.0.0.0:3000/data"
+url_prefix = url_prefix.sub(/\/\z/, "")
+
+knowledge = GfdnaviData::KnowledgeRemote.new
+<% script = @knowledge_script.gsub(/&/, "&amp;").gsub(/</, "&lt;").gsub(/>/, "&gt;").gsub(/\n/, "<br>") %>
+<%= script %>
+knowledge.save
+exit
+
+
+</pre>

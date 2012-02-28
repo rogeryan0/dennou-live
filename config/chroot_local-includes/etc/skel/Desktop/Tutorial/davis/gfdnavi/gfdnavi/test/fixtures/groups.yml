@@ -1,0 +1,25 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+root:
+  id: 1
+  name: root
+  owner_id: 1
+all:
+  id: 2
+  name: all
+  owner_id: 1
+bob:
+  id: 3
+  name: bob
+  owner_id: 2
+longbob:
+  id: 4
+  name: longbob
+  owner_id: 3
+bobs:
+  id: 5
+  name: bobs
+  owner_id: 2
+era:
+  id: 6
+  name: era
+  owner_id: 1

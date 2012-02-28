@@ -1,0 +1,50 @@
+<% form_for :user, @user, :url => {:action => "edit" } do |f| %>
+
+  <table>
+  <% unless @super %>
+    <tr>
+      <th>
+        <label for="password">Password (to confirm)</label>
+      </th>
+      <td>
+        <input id="password" name="password" type="password" />
+      </td>
+    </tr>
+  <% end %>
+
+    <tr>
+      <th>
+        <%= f.label :full_name, "Full name" %>:
+      </th>
+      <td>
+         <%= f.text_field :full_name %><br/>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <%= f.label :email_address, "Email address" %>:
+      </th>
+      <td>
+        <%= f.text_field :email_address %><br/>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <%= f.label :affiliation, "Affiliation" %>:
+      </th>
+      <td>
+        <%= f.text_field :affiliation %><br/>
+      </td>
+    </tr>
+
+  </table>
+
+  <input type="hidden" name="name" value="<%= @user.login %>" />
+
+
+  <%= submit_tag 'Update' %>
+
+
+<% end %>

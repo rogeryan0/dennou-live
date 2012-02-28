@@ -1,0 +1,18 @@
+:name: multiplication
+:description: multiplication of two data
+:nvars: 2
+:script: |
+  dat = gphys0 * gphys1
+
+  # NAME CHANGE MUST BE IMPLEMENTED IN GPhys
+  dat.name = gphys0.name + "_times_" + gphys1.name
+  if gphys0.long_name && gphys1.long_name
+    dat.long_name = gphys0.long_name + " * " + gphys1.long_name
+  end
+
+  [dat]
+
+:outputs:
+- :name: product
+  :subscript: prod
+  :description: product of two data

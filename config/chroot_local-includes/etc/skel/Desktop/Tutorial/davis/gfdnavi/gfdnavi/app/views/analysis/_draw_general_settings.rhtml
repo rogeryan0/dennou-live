@@ -1,0 +1,317 @@
+<%
+nvar = @analysis.variables.length
+dims = @analysis.common_dimensions
+ndim = dims.length
+x_axis = @analysis.draw_x_axis
+y_axis = @analysis.draw_y_axis
+z_axis = @analysis.draw_z_axis
+anim_dim = @analysis.draw_anim_dim
+unless x_axis && y_axis && z_axis && anim_dim
+  hash = Hash.new
+  dims.each_with_index{|dim,i|
+    hash[dim[:name]] = i
+  }
+  if ndim>0 && !x_axis
+    ary = []
+    ndim.times{|i| ary.push i }
+    ary.delete(hash[y_axis])
+    ary.delete(hash[z_axis])
+    ary.delete(hash[anim_dim])
+    x_axis = dims[ary.empty? ? -1 : ary.min][:name]
+  end
+  if ndim>1 && !y_axis
+    ary = []
+    ndim.times{|i| ary.push i }
+    ary.delete(hash[x_axis])
+    ary.delete(hash[z_axis])
+    ary.delete(hash[anim_dim])
+    y_axis = dims[ary.empty? ? -1 : ary.min][:name]
+  end
+  if ndim>2 && !z_axis
+    ary = []
+    ndim.times{|i| ary.push i }
+    ary.delete(hash[x_axis])
+    ary.delete(hash[y_axis])
+    ary.delete(hash[anim_dim])
+    z_axis = dims[ary.empty? ? -1 : ary.min][:name]
+  end
+  unless ndim<2 || anim_dim
+    if ndim==2
+      anim_dim = dims[-1][:name]
+    else
+      ary = []
+      ndim.times{|i| ary.push i }
+      ary.delete(hash[x_axis])
+      ary.delete(hash[y_axis])
+      ary.delete(hash[z_axis])
+      anim_dim = dims[ary.empty? ? -1 : ary.min][:name]
+    end
+  end
+end
+%>
+
+<div style="display:none">
+  <%= check_box("analysis", "draw_share") %>
+  <label for="draw_share">
+     <%= help_popup( 'draw_share') %>
+     Record visualization for statistics
+  </label>
+  <hr/>
+</div>
+
+<div>
+<% if nvar > 0 %>
+  <span style="font-weight: bold">Figure type:</span>
+  <select name="analysis[draw_method]" id="draw_method" onChange="selectDrawMethod();">
+  </select>
+  <script>
+    var drawMethodSelect = $('draw_method');
+    var option;
+  <% @draw_methods.each_with_index{|dm,i| %>
+    option = new Option("<%=dm.name%>","<%=dm.name%>");
+    option.ndims = <%=dm.ndims%>;
+    option.nvars = <%=dm.nvars%>;
+    <% if @analysis.draw_method == dm %>
+    option.selected = true;
+    <% end %>
+    drawMethodSelect.options[<%=i%>] = option;
+  <% } %>
+  </script>
+<%
+end
+%>
+</div>
+
+
+<div>
+  <% if ndim >= 1 %>
+    <div id="draw_x_axis_row" style="margin-left: 10%">
+      <label for="x_axis">the 1st Dim:</label>
+      <select name="analysis[draw_x_axis]" id="draw_x_axis" onChange="selectXAxis(this)">
+        <%
+        ndim.times do |i|
+          dim = dims[i]
+          name = dim[:name]
+          units = dim[:units].to_s
+          selected = (name == x_axis) ? "selected" : ""
+        %>
+          <option value="<%= name %>" title="<%= units %>" id="x_axis_<%= i %>" <%= selected %>>
+            <%= h(name) %>
+          </option>
+        <% end %>
+      </select>
+    </div>
+  <% end %>
+  <% if ndim >= 2 %>
+    <div id="draw_y_axis_row" style="display:none; margin-left: 10%">
+      <label for="y_axis">the 2nd Dim:</label>
+      <select name="analysis[draw_y_axis]" id="draw_y_axis" onchange="selectYAxis(this)">
+        <%
+        ndim.times do |i|
+          dim = dims[i]
+          name = dim[:name]
+          units = dim[:units].to_s
+          selected = (name == y_axis) ? "selected" : ""
+        %>
+          <option value="<%= name %>" title="<%= units %>" id="y_axis_<%= i %>" <%= selected %>>
+            <%= h(name) %>
+          </option>
+        <% end %>
+      </select>
+    </div>
+  <% end %>
+  <% if ndim >= 3 %>
+    <div id="draw_z_axis_row" style="display:none; margin-left: 10%">
+      <label for="z_axis">the 3rd Dim:</label>
+      <select name="analysis[draw_z_axis]" id="draw_z_axis" onchange="selectZAxis(this)">
+        <%
+        ndim.times do |i|
+          dim = dims[i]
+          name = dim[:name]
+          units = dim[:units].to_s
+          selected = (name == z_axis) ? "selected" : ""
+        %>
+          <option value="<%= name %>" title="<%= units %>" id="z_axis_<%= i %>" <%= selected %>>
+            <%= h(name) %>
+          </option>
+        <% end %>
+      </select>
+    </div>
+  <% end %>
+</div>
+
+<div>
+  <% if ndim >= 2 %>
+    <span title="Check to animate">
+      <%= check_box("analysis", "draw_anim", :onclick => "setAnim();") %>
+      <label for="analysis_draw_anim">Animation</label><br/>
+    </span>
+    <span title="You can further specify the range in the Axes window above">
+      <label for="anim_dim" style="margin-left: 10%">dimension to animate:</label>
+      <select name="analysis[draw_anim_dim]" id="draw_anim_dim" onchange="selectAnimDim(this);">
+        <%
+        ndim.times do |i|
+          dim = dims[i]
+          name = dim[:name]
+          selected = (name == anim_dim) ? "selected" : ""
+        %>
+          <option value="<%= name %>" id="anim_dim_<%= i %>" <%= selected %>>
+            <%= h(name) %>
+          </option>
+        <% end %>
+      </select>
+    </span>
+  <% end %>
+</div>
+
+<div>
+  <span title="Check to pile up graphs to the one diagram">
+    <%= check_box("analysis", "draw_pileup") %>
+    <label for="analysis_draw_pileup">Pile up</label>
+  </span>
+</div>
+
+<div>
+  <span title="Check to lay out images without replacing">
+    <%= check_box("analysis", "draw_keep") %>
+    <label for="analysis_draw_keep">Keep diagrams</label>
+  </span>
+</div>
+
+<hr/>
+
+<div>
+  <span style="font-weight: bold">Projection Type:</span><br/>
+  <!-- Projection Types for 1D -->
+  <!-- Disable Map Projections -->
+  <select id="draw_projection_1d" onChange="setMapProjOption();">
+<%
+VirtualData::DRAW_PROJECTION.sort_by{|proj| proj[:itr]}.each{|proj|
+  break if proj[:itr] > 9
+  selected = (proj[:itr] == @analysis.draw_projection) ? "selected" : ""
+%>
+    <option value="<%= proj[:itr] %>" id="draw_projection_<%= proj[:itr] %>" <%= selected %>>
+      <%= h(proj[:description]) %>
+    </option>
+<% } %>
+  </select>
+  <!-- Projection Types for 2D -->
+  <!-- Enable Map Projections -->
+  <select id="draw_projection_2d" onChange="setMapProjOption();">
+<%
+VirtualData::DRAW_PROJECTION.sort_by{|proj| proj[:itr]}.each{|proj|
+  selected = (proj[:itr] == @analysis.draw_projection) ? "selected" : ""
+%>
+    <option value="<%= proj[:itr] %>" id="draw_projection_<%= proj[:itr] %>" <%= selected %>>
+      <%= h(proj[:description]) %>
+    </option>
+<% } %>
+  </select>
+  <!-- Hidden Object -->
+  <input type="hidden" name="analysis[draw_projection]" id="draw_projection" value="1">
+</div>
+<div>
+  <span id="map_fit" title="Check this if you want to fit the window to the data window">
+   <%= check_box("analysis", "draw_map_fit", :onclick => "setMapProjOption();") %>
+    Map fit
+  </span>
+</div>
+<div>
+  <span id="map_axis" title="Central or Tangential point of the projection / rotation angle of the diagram">
+    Map axis (deg):<br/>
+    Lon:
+    <input type="text" id="map_axis_lon" size="3" maxlength="6" onchange="updateMapAxis();"
+     value="<%= @analysis.draw_map_axis ? @analysis.draw_map_axis[0] : '' %>">
+    Lat:
+    <input type="text" id="map_axis_lat" size="2" maxlength="6" onchange="updateMapAxis();"
+     value="<%= @analysis.draw_map_axis ? @analysis.draw_map_axis[1] : '' %>">
+    Rot:
+    <input type="text" id="map_axis_rot" size="3" maxlength="6" onchange="updateMapAxis();"
+     value="<%= @analysis.draw_map_axis ? @analysis.draw_map_axis[2] : '' %>">
+    <%= hidden_field("analysis", "draw_map_axis") %>
+    <script>updateMapAxis();</script>
+  </span>
+</div>
+<div>
+  <span id="map_radius" title="Radial extent around the tangential point">
+    Map radius (deg):
+    <%= text_field("analysis", "draw_map_radius", :size => 5, :maxlength => 10) %>
+  </span>
+</div>
+<div>
+  <span id="map_window" title="lon-lat window">
+    Map window (deg):<br/>
+    Lon min:
+    <input type="text" id="map_win_xmin" size="3" maxlength="6" onchange="updateMapWindow();"
+     value="<%= @analysis.draw_map_window ? @analysis.draw_map_window[0] : '' %>">
+    max:
+    <input type="text" id="map_win_xmax" size="3" maxlength="6" onchange="updateMapWindow();"
+     value="<%= @analysis.draw_map_window ? @analysis.draw_map_window[1] : '' %>">
+    <br/>
+    Lat min:
+    <input type="text" id="map_win_ymin" size="3" maxlength="6" onchange="updateMapWindow();"
+     value="<%= @analysis.draw_map_window ? @analysis.draw_map_window[2] : '' %>">
+    max:
+    <input type="text" id="map_win_ymax" size="3" maxlength="6" onchange="updateMapWindow();"
+     value="<%= @analysis.draw_map_window ? @analysis.draw_map_window[3] : '' %>">
+    <%= hidden_field("analysis", "draw_map_window") %>
+    <script>updateMapWindow();</script>
+  </span>
+</div>
+<script>
+  setMapProjOption();
+</script>
+
+<hr/>
+
+<div>
+  Diagram size:
+<div style="margin-left: 10%">
+<%
+VirtualData::DRAW_SIZE.each_with_index do |hash, i|
+%>
+  <%= radio_button :analysis, :draw_size, hash[:size].join(","), :checked => (@analysis.draw_size == hash[:size] ? "checked" : "") %>
+  <span title="Size: <%= hash[:size].join(' x ') %>">
+   <label for="analysis_draw_size_<%= i %>"><%= hash[:name] %></label>
+  </span>
+<% end %>
+</div>
+</div>
+
+<div>
+  <label for="analysis_draw_viewport">Viewport (0 to 1):</label>
+  <div style="margin-left: 5%">
+  <% tmp_vpt = @analysis['draw_viewport'] %>
+  <% tmp_vpt = tmp_vpt.split(",") if String === tmp_vpt %>
+  X min:
+  <input id="draw_viewport_x0" value="<%= tmp_vpt[0] %>" size="5" maxlength="5"
+   onchange="updateViewport();">
+  X max:
+  <input id="draw_viewport_x1" value="<%= tmp_vpt[1] %>" size="5" maxlength="5"
+   onchange="updateViewport();">
+  <br/>
+  Y min:
+  <input id="draw_viewport_y0" value="<%= tmp_vpt[2] %>" size="5" maxlength="5"
+   onchange="updateViewport();">
+  Y max:
+  <input id="draw_viewport_y1" value="<%= tmp_vpt[3] %>" size="5" maxlength="5"
+   onchange="updateViewport();">
+  <%= hidden_field("analysis", "draw_viewport", :size => 30, :maxlength => 60) %>
+  <script>updateViewport();</script>
+  </div>
+</div>
+
+<div>
+  <label for="analysis_draw_colormap">Color map number:</label>
+  <div style="margin-left: 10%">
+  <select id="draw_colormap_select" onChange="
+    $('analysis_draw_colormap').value = this.selectedIndex + 1;
+  ">
+    <% for i in 1..(VirtualData::COLOR_MAPS.length) %>
+      <% selected = (i == @analysis.draw_colormap) ? "selected" : "" %>
+      <option value="<%= i %>" <%= selected %>> <%= i.to_s + ": " +  VirtualData::COLOR_MAPS[i] %> </option>
+    <% end %>
+  </select>
+  <%= hidden_field("analysis", "draw_colormap", :size => 2, :maxlength => 3) %>
+  </div>
+</div>

@@ -1,0 +1,187 @@
+:name: scatter_rainbow
+:description: scatter plot with rainbow coloring
+:ndims: 0
+:nvars: 3
+:vizshot_method: scatter_rainbow
+:script: |
+  newfrm = opt.delete(:newfrm)
+  color_bar = opt.delete(:color_bar)
+  color_bar_options = opt.delete(:color_bar_options)
+  if color_bar_options && !color_bar_options.is_a?(Hash)
+    raise ":color_bar_options must be a Hash"
+  end
+  eofanalysis = opt.delete(:eofanalysis)
+  opt_eof = Hash.new
+  opt_eof['lineindex'] = opt.delete(:eof_lineindex)
+  opt_eof['linetype'] = opt.delete(:eof_linetype)
+  opt_eof['style'] = opt.delete(:eof_style)
+  opt_eof['fact'] = opt.delete(:eof_fact)
+
+  # CONVERT markersize -> size
+  opt["size"] = opt.delete(:markersize)
+  GGraph::color_scatter(gphys, gphys1, gphys2, newfrm, opt)
+
+  if color_bar
+    cbopt = color_bar_options || Hash.new
+    cbopt['log'] = true if opt['log']
+    GGraph::color_bar(cbopt)
+  end
+
+  if eofanalysis
+    require "numru/ganalysis"
+    # interpret cut, slice, etc
+    gpx, closerx = GGraph::data_prep_multidim(gphys, opt)
+    gpy, closery = GGraph::data_prep_multidim(gphys1, opt)
+    # flatten gphys data -----
+    fakeaxis = Axis.new.set_pos(VArray.new(NArray.int(gpx.length).indgen!,
+                                           {"long_name"=>"fake",
+                                             "units"=>""},
+                                           "fake"))
+    fakegrid = Grid.new(fakeaxis)
+    gpx, gpy = [gpx, gpy].collect{|gp|
+      na = gp.val.reshape!(gp.length)
+      attr = gp.data.attr_copy
+      GPhys.new(fakegrid,VArray.new(na,attr,gp.name))
+    }
+    # ------------------------
+    evec,rate = GAnalysis.eof2(gpx,gpy)
+    GGraph::add_mode_vectors([gpx.mean.val,gpy.mean.val],evec,opt_eof)
+  end
+
+:setting_html: |
+  <%
+  @order_type = "scatter_rainbow"
+  @order_names = %w(X Y Color)
+  @num_for_each = 3
+  @group_name = "diagram"
+  @order = @analysis.draw_variables_order
+  %>
+  <div>
+    X-Y component and color
+    <%= render(:partial => "variables_order") %>
+    <br/>
+    <label for="analysis_scatter_rainbow_type">marker type (1--17, 33--219, or 224--230)</label>
+    <%= text_field("analysis", "scatter_rainbow_type", :size => 3, :maxlength => 3) %>
+    <br/>
+    <a href="http://www.gfd-dennou.org/library/dcl/dcl-f77doc/rc1/grph1/img89.gif" target="dclfont">
+    Sample image of markers</a>
+    <br/>
+    <label for="analysis_scatter_rainbow_index">marker line width (1--9))</label>
+    <%= text_field("analysis", "scatter_rainbow_index", :size => 1, :maxlength => 1) %>
+    <br/>
+    <label for="analysis_scatter_rainbow_markersize">marker size (default: 0.01)</label>
+    <%= text_field("analysis", "scatter_rainbow_markersize", :size => 4, :maxlength => 5) %>
+    <br/>
+    <%= check_box("analysis", "scatter_rainbow_log") %>
+    <label for="analysis_scatter_rainbow_log">Logarithmic levels</label>
+    <br/>
+    <%= check_box("analysis", "scatter_rainbow_color_bar") %>
+    <label for="analysis_scatter_rainbow_color_bar">Color bar</label>
+    <hr/>
+    <%= check_box("analysis", "scatter_rainbow_eofanalysis", :onclick => "
+                  if($('analysis_scatter_rainbow_eofanalysis').checked)
+                    Element.show('span_scatter_rainbow_eof_params');
+                  else
+                    Element.hide('span_scatter_rainbow_eof_params');
+                  ") %>
+    <label for="analysis_scatter_rainbow_eofanalysis">Display EOF modes</label>    
+    <span id="span_scatter_rainbow_eof_params">
+      <br/>
+      <%= line_index_generator("scatter_rainbow","eof_lineindex","Line") %>
+      <label for="analysis_scatter_rainbow_index">Line type</label>
+      <%= text_field("analysis", "scatter_rainbow_eof_linetype", :size => 3, :maxlength => 20) %>
+      <br/>
+      <label for="analysis_scatter_rainbow_eof_fact">scaling factor (line length = stddev times the scaling factor for each side)</label>
+      <%= text_field("analysis", "scatter_rainbow_eof_fact", :size => 3, :maxlength => 3) %>
+      <br/>
+      Style:
+      <select name="analysis[scatter_rainbow_eof_style]" id="analysis_scatter_rainbow_eof_style">
+        <% eof_style = %w(line arrow ellipse) %>
+        <% eof_style.each{|style| %>
+          <option <%= (@analysis["scatter_rainbow_eof_style"]==style ? "selected" : "") %>><%= style %></option>
+        <% } %>
+      </select>
+    </span>
+    <hr/>
+    <%= check_box("analysis", "scatter_rainbow_correlation") %>
+    <label for="analysis_scatter_rainbow_correlation">Display correlation coefficient</label>
+  </div>
+  <!-- INITIALIZATION -->
+  <script>
+    if($('analysis_scatter_rainbow_eofanalysis').checked)
+      Element.show('span_scatter_rainbow_eof_params');
+    else
+      Element.hide('span_scatter_rainbow_eof_params');
+  </script>
+
+:options:
+- :name: type
+  :type: int
+  :optional: true
+  :default: 10
+  :min: 1
+  :max: 255
+  :parser: ggraph
+  :description: "marker type"
+- :name: index
+  :type: int
+  :optional: true
+  :default: 1
+  :min: 1
+  :max: 999
+  :parser: ggraph
+  :description: "marker width (lower 1 digit) and color (upper 2 digits)"
+- :name: markersize
+  :type: float
+  :optional: true
+  :default: 0.01
+  :min: 0.0
+  :max: 0.1
+  :parser: vizshot
+  :description: "marker size"
+- :name: color_bar
+  :default: true
+  :type: boolean
+  :parser: vizshot
+  :description: "display color bar"
+- :name: log
+  :type: boolean
+  :optional: true
+  :parser: ggraph
+  :description: "use logarithmic color levels"
+- :name: eofanalysis
+  :type: boolean
+  :optional: true
+  :parser: vizshot
+  :description: "display EOF eigenmodes"
+- :name: eof_lineindex
+  :type: int
+  :optional: true
+  :default: 1
+  :parser: vizshot
+  :description: "line width (lower 1 digit) and color (upper 2 digits) for EOF"
+- :name: eof_linetype
+  :type: int
+  :optional: true
+  :default: 1
+  :parser: vizshot
+  :description: "line type for EOF"
+- :name: eof_fact
+  :type: float
+  :optional: true
+  :default: 2
+  :parser: vizshot
+  :description: "size of eigenmodes becomes 1 standard deviation times this factor" 
+- :name: eof_style
+  :type: string
+  :optional: true
+  :default: line
+  :parser: vizshot
+  :description: "style for displaying eigenmodes (line, arrow, ellipse)"
+- :name: correlation
+  :type: boolean
+  :optional: true
+  :parser: ggraph
+  :description: "display Pearson (ordinary) correlation"
+
+

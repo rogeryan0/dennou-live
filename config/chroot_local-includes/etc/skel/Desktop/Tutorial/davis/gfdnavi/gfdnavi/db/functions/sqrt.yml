@@ -1,0 +1,18 @@
+:name: sqrt
+:description: square root
+:nvars: 1
+:script: |
+  dat = gphys0.sqrt
+
+  # NAME CHANGE MUST BE IMPLEMENTED IN GPhys
+  dat.name = gphys0.name + "_sqrt"
+  if gphys0.long_name
+    dat.long_name = "sqrt(" + gphys0.long_name + ")"
+  end
+
+  [dat]
+
+:outputs:
+- :name: sqrt
+  :subscript: sqrt
+  :description: sqrt of data

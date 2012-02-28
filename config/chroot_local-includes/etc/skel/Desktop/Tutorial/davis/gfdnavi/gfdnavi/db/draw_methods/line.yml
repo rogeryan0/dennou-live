@@ -1,0 +1,146 @@
+:name: line
+:description: line plot
+:ndims: 1
+:nvars: 1
+:vizshot_method: plot_1d
+:setting_html: |
+  <div>
+    <%= check_box("analysis", "line_line", :onclick => "
+                  if($('analysis_line_line').checked)
+                    Element.show('span_analysis_line_lineconfig');
+                  else{
+                    Element.hide('span_analysis_line_lineconfig');
+                    if(!$('analysis_line_mark').checked){
+                      $('analysis_line_mark').checked = true;
+                      Element.show('span_analysis_line_markerconfig');
+                    }
+                  }
+                  ") %>
+    <label for="analysis_line_line">Draw line</label>
+    <%= check_box("analysis", "line_mark", :onclick => "
+                  if($('analysis_line_mark').checked)
+                    Element.show('span_analysis_line_markerconfig');
+                  else{
+                    Element.hide('span_analysis_line_markerconfig');
+                    if(!$('analysis_line_line').checked){
+                      $('analysis_line_line').checked = true;
+                      Element.show('span_analysis_line_lineconfig');
+                    }
+                  }
+                  ") %>
+    <label for="analysis_line_mark">Draw marker</label>
+    <br/>
+    <label for="analysis_line_min">Min</label>
+    <%= text_field("analysis", "line_min", :size => 5, :maxlength => 10) %>
+    <br/>
+    <label for="analysis_line_max">Max</label>
+    <%= text_field("analysis", "line_max", :size => 5, :maxlength => 10) %>
+    <br/>
+    <%= check_box("analysis", "line_exchange") %>
+    <label for="analysis_line_exchange">Exchange x and y</label>
+
+    <!-- LINE -->
+    <span id="span_analysis_line_lineconfig">
+      <hr/>
+      <%= line_index_generator("line", "lineindex", "Line") %>
+      <label for="analysis_line_linetype">Line type (integer):</label>
+      <%= text_field("analysis", "line_linetype", :size => 2, :maxlength => 2) %>
+      <br/>
+      <a href="http://www.gfd-dennou.org/library/dcl/dcl-f77doc/rc1/grph1/sgltyp.gif" target="linetype">
+      Sample image of lines</a>
+      <br/>
+      <a href="http://www.gfd-dennou.org/library/dcl/dcl-f77doc/rc1/grph1/node20.html" target="_blank">
+      Document (in Japanese)</a>
+    </span>
+    <!-- END OF LINE -->
+
+    <!-- MARKER -->
+    <span id="span_analysis_line_markerconfig">
+      <hr/>
+      <%= line_index_generator("line", "markerindex", "Marker") %>
+      <label for="analysis_line_markertype">Marker type (1--230):</label>
+      <%= text_field("analysis", "line_markertype", :size => 3, :maxlength => 3) %>
+      <br/>
+      <a href="http://www.gfd-dennou.org/library/dcl/dcl-f77doc/rc1/grph1/img89.gif" target="dclfont">
+      Sample image of markers</a>
+      <br/>
+      <label for="analysis_line_markersize">Marker size (default: 0.01):</label>
+      <%= text_field("analysis", "line_markersize", :size => 5, :maxlength => 5) %>
+    </span>
+    <!-- END OF MARKER -->
+  </div>
+  <!-- INITIALIZATION -->
+  <script>
+    if($('analysis_line_line').checked)
+      Element.show('span_analysis_line_lineconfig');
+    else
+      Element.hide('span_analysis_line_lineconfig');
+    if($('analysis_line_mark').checked)
+      Element.show('span_analysis_line_markerconfig');
+    else
+      Element.hide('span_analysis_line_markerconfig');
+  </script>
+
+:options:
+- :name: line
+  :default: true
+  :type: boolean
+  :parser: vizshot
+  :description: "display line"
+- :name: mark
+  :default: true
+  :type: boolean
+  :parser: vizshot
+  :description: "display markers"
+- :name: exchange
+  :default: false
+  :type: boolean
+  :parser: ggraph
+  :description: "exchange abscissa and ordinate"
+- :name: lineindex
+  :default: 1
+  :min: 1
+  :max: 999
+  :type: int
+  :parser: vizshot
+  :description: "line width (lower 1 digit) and color (upper 2 digits)"
+- :name: linetype
+  :default: 1
+  :min: 1
+  :type: int
+  :parser: vizshot
+  :description: "line type"
+- :name: markerindex
+  :default: 1
+  :min: 1
+  :max: 999
+  :type: int
+  :parser: vizshot
+  :description: "marker width (lower 1 digit) and color (upper 2 digits)"
+- :name: markertype
+  :default: 1
+  :min: 1
+  :max: 255
+  :type: int
+  :parser: vizshot
+  :description: "marker type"
+- :name: markersize
+  :default: 0.01
+  :min: 0.0
+  :max: 0.1
+  :type: float
+  :parser: vizshot
+  :description: "marker size"
+- :name: min
+  :optional: true
+  :type: float
+  :default: null
+  :parser: ggraph
+  :description: "minimum of display range"
+- :name: max
+  :optional: true
+  :type: float
+  :default: null
+  :parser: ggraph
+  :description: "maximum of display range"
+

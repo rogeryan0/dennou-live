@@ -1,0 +1,234 @@
+line_bob_option_line:
+  id: 1
+  draw_method_id: 1
+  name: line
+  default: true
+  value_type_id: 7
+  parser: vizshot
+  description: display line
+
+line_bob_option_mark:
+  id: 2
+  draw_method_id: 1
+  name: mark
+  default: true
+  value_type_id: 7
+  parser: vizshot
+  description: display markers
+
+line_bob_option_exchange:
+  id: 3
+  draw_method_id: 1
+  name: exchange
+  default: false
+  value_type_id: 7
+  parser: ggraph
+  description: exchange abscissa and ordinate
+
+line_bob_option_lineindex:
+  id: 4
+  draw_method_id: 1
+  name: lineindex
+  default: 1
+  min: 1
+  max: 999
+  value_type_id: 1
+  parser: vizshot
+  description: line width (lower 1 digit) and color (upper 2 digits)
+
+line_bob_option_linetype:
+  id: 5
+  draw_method_id: 1
+  name: linetype
+  default: 1
+  min: 1
+  value_type_id: 1
+  parser: vizshot
+  description: line type
+
+line_bob_option_markerindex:
+  id: 6
+  draw_method_id: 1
+  name: markerindex
+  default: 1
+  min: 1
+  max: 999
+  value_type_id: 1
+  parser: vizshot
+  description: marker width (lower 1 digit) and color (upper 2 digits)
+
+line_bob_option_markertype:
+  id: 7
+  draw_method_id: 1
+  name: markertype
+  default: 1
+  min: 1
+  max: 255
+  value_type_id: 1
+  parser: vizshot
+  description: marker type
+line_bob_option_markersize:
+  id: 8
+  draw_method_id: 1
+  name: markersize
+  default: 0.01
+  min: 0.0
+  max: 0.1
+  value_type_id: 2
+  parser: vizshot
+  description: marker size
+
+line_bob_option_min:
+  id: 9
+  draw_method_id: 1
+  name: min
+  optional: true
+  value_type_id: 2
+  default: null
+  parser: ggraph
+  description: minimum of display range
+
+line_bob_option_max:
+  id: 10
+  draw_method_id: 1
+  name: max
+  optional: true
+  value_type_id: 2
+  default: null
+  parser: ggraph
+  description: maximum of display range
+
+tone_root_option_tone:
+  id: 11
+  draw_method_id: 2
+  name: tone
+  default: true
+  value_type_id: 7
+  parser: vizshot
+  description: display tone
+
+tone_root_option_contour:
+  id: 12
+  draw_method_id: 2
+  name: contour
+  default: true
+  value_type_id: 7
+  parser: vizshot
+  description: display contour
+
+tone_root_option_min:
+  id: 13
+  draw_method_id: 2
+  name: min
+  value_type_id: 2
+  default: null
+  optional: true
+  parser: ggraph
+  description: minimum of tone/contour range
+
+tone_root_option_max:
+  id: 14
+  draw_method_id: 2
+  name: max
+  value_type_id: 2
+  default: null
+  optional: true
+  parser: ggraph
+  description: maximum of tone/contour range
+
+tone_root_option_nlev:
+  id: 15
+  draw_method_id: 2
+  name: nlev
+  value_type_id: 1
+  default: null
+  min: 2
+  max: 99
+  optional: true
+  parser: ggraph
+  description: number of tone/contour levels
+
+tone_root_option_levels:
+  id: 16
+  draw_method_id: 2
+  name: levels
+  value_type_id: 5
+  default: null
+  optional: true
+  parser: ggraph
+  description: comma-separated tone/contour levels
+
+tone_root_option_interval:
+  id: 17
+  draw_method_id: 2
+  name: interval
+  value_type_id: 2
+  default: null
+  optional: true
+  parser: ggraph
+  description: tone/contour interval
+
+tone_root_option_color_bar:
+  id: 18
+  draw_method_id: 2
+  name: color_bar
+  default: true
+  value_type_id: 7
+  parser: vizshot
+  description: display color bar
+
+tone_root_option_log:
+  id: 19
+  draw_method_id: 2
+  name: log
+  default: false
+  value_type_id: 7
+  parser: ggraph
+  description: use logarithmic tone/contour levels
+
+tone_root_option_coloring:
+  id: 20
+  draw_method_id: 2
+  name: coloring
+  default: false
+  value_type_id: 7
+  parser: ggraph
+  description: display rainbow contours
+
+tone_root_option_tonc:
+  id: 21
+  draw_method_id: 2
+  name: tonc
+  default: false
+  value_type_id: 7
+  parser: ggraph
+  description: use tiling algorithm for tone
+
+vector_root_option_xintv:
+  id: 22
+  draw_method_id: 3
+  name: xintv
+  default: 1
+  min: 1
+  value_type_id: 1
+  optional: true
+  parser: ggraph
+
+vector_root_option_yintv:
+  id: 23
+  draw_method_id: 3
+  name: yintv
+  default: 1
+  min: 1
+  value_type_id: 1
+  optional: true
+  parser: ggraph
+
+vector_root_option_unit_vect:
+  id: 24
+  draw_method_id: 3
+  name: unit_vect
+  default: false
+  value_type_id: 7
+  optional: true
+  parser: ggraph

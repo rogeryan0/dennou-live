@@ -1,0 +1,32 @@
+* GfdnaviData の継承関係
+
+GfdnaviData(モジュール)
+└Base(クラス)─┬─Directory─┬─DirectoryLocal
+              │　　　　　　　 └─DirectoryRemote
+              ├─Variable ─┬─VariableLocal
+              │　　　　　　　 └─VariableRemote
+              ├─Image   ──┬─ImageLocal
+              │　　　　　　　　└─ImageRemote
+              ├─Array   ──┬─ArrayLocal
+              │　　　　　　　　└─ArrayRemote
+              └─Knowledge ─┬─KnowledgeLocal
+　　　　　　　　　　　　　　　　　　└─KnowledgeRemote
+
+GfdnaviData-----──┬──Local  <- DirectoryLocalなどがincludeする
+　　　　　　　　　　　　│
+                　　└──Remote <- DirectoryRemoteなどがincludeする
+
+
+全てに適用したいこと(共通項)はbase.rbに書く。
+全てのローカルに適用したいことはlocal.rbに書く。
+全てのKnowledgeに適用したいことはknowledge.rbに書く。
+KnowledgeのLocalだけならknowledge_local.rbに書く。
+などなど。
+
+注意点：
+このディレクトリのソースの中では
+単に"Knowledge"と書くとGfdnaviData::Knowledgeを指す。
+ローカルの中で、ARのKnowledgeを指したいときは ::Knowledge と書かないといけない。
+特に注意するのは Array。Array.new とするときとか。
+Direcoty, Variable, Image, Array, Knowledge についてはこれに気をつけること。
+

@@ -1,0 +1,24 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+mean_1:
+  id: 1
+  function_id: 1
+  description: dimensions for mean
+  value_type_id: 1
+  default: "0"
+  position: 1
+
+stddev_1:
+  id: 2
+  function_id: 2
+  description: dimensions for stddev
+  value_type_id: 1
+  default: "0"
+  position: 1
+
+mean_root_1:
+  id: 3
+  function_id: 4
+  description: dimensions for mean
+  value_type_id: 1
+  default: "0"
+  position: 1

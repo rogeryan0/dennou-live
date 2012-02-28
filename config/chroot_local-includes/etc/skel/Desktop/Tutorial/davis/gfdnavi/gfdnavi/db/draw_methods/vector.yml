@@ -1,0 +1,71 @@
+:name: vector
+:description: vector plot
+:ndims: 2
+:nvars: 2
+:vizshot_method: vector
+:setting_html: |
+  <%
+  @order_type = "vector"
+  @order_names = %w(X Y)
+  @num_for_each = 2
+  @group_name = "diagram"
+  @order = @analysis.draw_variables_order
+  %>
+  <div>
+    X-Y component
+    <%= render(:partial => "variables_order") %>
+    <br/>
+    <label for="analysis_vector_xintv">interval of grids in x</label>
+    <%= text_field("analysis", "vector_xintv", :size => 2, :maxlength => 2) %>
+    <br />
+    <label for="analysis_vector_yintv">interval of grids in y</label>
+    <%= text_field("analysis", "vector_yintv", :size => 2, :maxlength => 2) %>
+    <br />
+    Unit Vector:<br />
+    &nbsp;&nbsp;
+    <%= check_box("analysis", "vector_unit_vect") %>
+    <label for="analysis_vector_unit_vect">Draw unit vector</label>
+    <br />&nbsp;&nbsp;
+    <%=check_box("analysis", "vector_max_unit_vect") %>
+    <label for="analysis_vector_max_unit_vect">The maximum arrows to scale</label>
+    <br />&nbsp;&nbsp;
+    <label for="analysis_vector_ux_unit">Length (x direction)</label>
+    <%= text_field("analysis", "vector_ux_unit", :size => 10, :maxlength => 60) %>
+    <br />&nbsp;&nbsp;
+    <label for="analysis_vector_uy_unit">Length (y direction)</label>
+    <%= text_field("analysis", "vector_uy_unit", :size => 10, :maxlength => 60) %>
+  </div>
+:options:
+- :name: xintv
+  :default: 1
+  :min: 1
+  :type: int
+  :optional: true
+  :parser: ggraph
+- :name: yintv
+  :default: 1
+  :min: 1
+  :type: int
+  :optional: true
+  :parser: ggraph
+- :name: unit_vect
+  :default: false
+  :type: boolean
+  :optional: true
+  :parser: ggraph
+- :name: max_unit_vect
+  :default: false
+  :type: boolean
+  :optional: true
+  :parser: ggraph
+- :name: ux_unit
+  :default: null
+  :type: float
+  :optional: true
+  :parser: ggraph
+- :name: uy_unit
+  :default: null
+  :type: float
+  :optional: true
+  :parser: ggraph
+

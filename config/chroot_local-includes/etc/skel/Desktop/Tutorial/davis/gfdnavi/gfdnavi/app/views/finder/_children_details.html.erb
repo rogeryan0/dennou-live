@@ -1,0 +1,76 @@
+<%
+@image_folder = image_tag('tree/folder.png', :style => "border:0")
+@image_data = image_tag('tree/binary.png', :style => "border:0")
+@image_image = image_tag('tree/image2.png', :style => "border:0")
+@image_knowledge = image_tag('tree/knowledge.png', :style => "border:0")
+%>
+<div class="path" id="current_directory">
+  <%= link_to(@path, data_url(:path => @path,:format=>"html"), :class => "path_text") %>
+</div>
+<% form_tag({:action => "items_selected"}, :id => "childrenForm") do %>
+  <table cellpadding="3" cellspacing="0">
+    <thead>
+      <tr>
+        <th></th>
+        <th align='left'><%= help_popup('dir_details') %></th>
+        <th nowrap></th>
+        <th nowrap></th>
+        <th nowrap></th>
+        <th nowrap></th>
+        <th nowrap bgcolor="#f0f0f0">
+	  <div id="dir_details_name_column">
+            <%= link_to_function("name", "new Ajax.Updater(dirDetailsDivId, '#{url_for(:action=>"show_details")}', {method:'get',parameters:'order=name'});") %>
+          </div>
+        </th>
+        <th nowrap>
+          title
+        </th>
+        <th nowrap bgcolor="#f0f0f0">
+            <%= link_to_function("size", "new Ajax.Updater(dirDetailsDivId, '#{url_for(:action=>"show_details")}', {method:'get',parameters:'order=size'});") %>
+        </th>
+        <th nowrap>
+            <%= link_to_function("last modified", "new Ajax.Updater(dirDetailsDivId, '#{url_for(:action=>"show_details")}', {method:'get',parameters:'order=mtime'});") %>
+        </th>
+        <th nowrap bgcolor="#f0f0f0">
+          description
+        </th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <td colspan="11">
+  	  <%
+	     flag = @vars.length > 0
+	     unless flag
+                @dirs.each{|dir|
+                  if dir.has_variable_nodes?
+                     flag = true
+                     break
+                  end
+                }
+             end
+	     if flag
+	  %>
+	    <%= image_submit_tag("tree/analyze_visualize_checked_items.png", :style=>"cursor: pointer;", :alt=>"Analyze/Vizualize checked items", :title=>"Analyze/Vizualize checked items", :border=>0, :align=>"absmiddle", :name => "anal_viz") %>
+          <%
+            end
+            if @imgs.length > 0
+          %>
+            <%= image_tag('tree/show_checked_items.png', :style=>"cursor: pointer;", :alt=>"Show checked items", :onclick=>"new Ajax.Updater('details', '#{url_for(:action=>'show_images')}', {asynchronous:true, evalScripts:true, parameters:Form.serialize('childrenForm')}); return false;", :align=>"absmiddle", :name=>"show_checked_items_button") %>
+          <% end %>
+	  <% if @vars.length > 0 %>
+	    <%#= image_submit_tag("tree/download_checked_items.png", :style=>"cursor: pointer;", :alt=>"Download checked items", :title=>"Download checked items", :border=>0, :align=>"absmiddle", :name => "dl") %>
+          <% end %>
+        </td>
+      </tr>
+    </tfoot>
+    <tbody>
+      <%= render(:partial => "children_details_tr", :collection => @dirs) %>
+      <%= render(:partial => "children_details_tr", :collection => @vars) %>
+      <%= render(:partial => "children_details_tr", :collection => @imgs) %>
+      <%= render(:partial => "children_details_tr", :collection => @klgs) %>
+      <%= render(:partial => "children_details_tr", :collection => @funcs) %>
+      <%= render(:partial => "children_details_tr", :collection => @dms) %>
+    </tbody>
+  </table>
+<% end %>

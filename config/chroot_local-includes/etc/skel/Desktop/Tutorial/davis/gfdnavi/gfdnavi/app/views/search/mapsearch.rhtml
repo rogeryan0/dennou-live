@@ -1,0 +1,176 @@
+<script src="http://maps.google.com/maps?file=api&v=2&key=<%= @google_map_key %>" type="text/javascript" charset="utf-8"></script>
+<%= javascript_include_tag "mapsearch" %>
+<div id="debug"></div>
+<form id="mapsearch" name="mapsearch" action="mapsearch" method="post">
+<script type="text/javascript">
+
+window.onload = function() {
+        map = new GMap($("map"));
+        map.setCenter(new GLatLng(<%= (@query.center_y).to_f %>,<%= (@query.center_x).to_f %>), <%= @query.zoomlevel %>,G_NORMAL_MAP);
+        map.addControl(new GLargeMapControl());
+        map.addControl(new GScaleControl());
+        map.addControl(new GMapTypeControl());
+        dDrag();
+<% if @query.spatial_region %>
+        var sp=new GLatLng(<%= @query.start_lat %>,<%= @query.start_lon %>);
+        var ep=new GLatLng(<%= @query.end_lat %>,<%= @query.end_lon %>);
+        var rb = new GLatLngBounds(sp,ep);
+        map.addOverlay(new Rectangle(rb));
+ <% end %>
+
+//åèêîÇGoogleMapè„Ç…ï`âÊÇ∑ÇÈ
+   
+     <%if @all_partial_group %>
+       size=<%= @all_partial_group.keys.size%>
+       <% @all_partial_group.keys.each do |key|
+          group = @all_partial_group[key]
+          size = group.length if group.length > 30
+          size = 30 if group.length <= 30 
+       %>
+         <% if (group.length!=0) %>
+           <% 
+              lng_lb=group[0].longitude_lb
+              if lng_lb<0 then
+                 lng_lb=360+lng_lb
+              end
+            %>
+           drawGroup("<%=key%>",map.getBounds().toSpan().lat()/5,new GLatLng(<%= group[0].latitude_lb%>,<%= lng_lb %>),<%= size%>,<%= group.length%>,"partial");
+         <% end %>
+       <% end %>
+       Zoom();
+     <% end %>
+       
+     <%if @all_points_group %>
+       <% @all_points_group.keys.each do |key|
+          group = @all_points_group[key]
+          size = group.length if group.length > 30
+          size = 30 if group.length <= 30 
+        %>
+         <% if (group.length!=0) %>
+           <% 
+              lng_lb=group[0].longitude_lb
+              if lng_lb<0 then
+                 lng_lb=360+lng_lb
+              end
+            %>
+           drawGroup("<%=key%>",map.getBounds().toSpan().lat()/5,new GLatLng(<%= group[0].latitude_lb%>,<%= lng_lb%>),<%= size%>,<%= group.length%>,"point");
+         <% end %>
+       <% end %>
+       <%if @all_partial_group==nil %>
+         Zoom();
+       <%end%>
+     <% end %>
+     
+}
+</script>
+  <input type="hidden" id="query_zoomlevel" name="query[zoomlevel]" value="<%= @query.zoomlevel%>" >
+  <input type="hidden" id="query_oldzoomlevel" name="query[oldzoomlevel]" value="<%= @query.oldzoomlevel%>" >
+  <input type="hidden" id="query_center_x" name="query[center_x]" value="<%= @query.center_x%>" >
+  <input type="hidden" id="query_center_y" name="query[center_y]" value="<%= @query.center_y%>" >
+  <input type="hidden" id="query_window_start_lon" name="query[window_start_lon]" value="-90" >
+  <input type="hidden" id="query_window_start_lat" name="query[window_start_lat]" value="-180" >
+  <input type="hidden" id="query_window_end_lon" name="query[window_end_lon]" value="90" >
+  <input type="hidden" id="query_window_end_lat" name="query[window_end_lat]" value="180" >
+  <input type="hidden" id="query_span" name="query[span]" value="360">
+  
+ 
+  <div align="center">
+    <table border="1">
+      <tr>
+        <td colspan="2">
+          <div class="map_keyword">
+            <label for="query_keywords">keywords</label>
+            <%= text_field :query, :keywords, :size=>100 %>
+            <%= submit_tag '      S E A R C H !    ' %>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table>
+            <tr><td>
+               <div id="map" style="width:500px; height: 300px"></div>
+            </td></tr>
+            <tr><tdalign="center">
+              <input type="button" value="drag map" onClick="eDrag()">
+              <input type="button" value="specify a region" onClick="dDrag()">
+            </td></tr>
+          </table>
+        </td>
+        <td valign="top">
+          <table>
+            <tr><td>
+              <div class="map_menu">
+              <% if @query.spatial_region==true then %>
+              <input checked="checked" id="query_spatial_region" name="query[spatial_region]" onclick="checkSpace();" type="checkbox" value="1" />
+              <% else %>
+              <input id="query_spatial_region" name="query[spatial_region]" onclick="checkSpace();" type="checkbox" value="1" />              
+              <% end %>
+              Spatial Region</div>
+            </td></tr>
+            <tr><td>
+              <div class="map_submenu">point1</div>
+            </td></tr>
+            <tr><td>
+              longitude : <%= text_field :query, :start_lon %>
+            </td></tr>
+            <tr><td>
+              latitude: <%= text_field :query, :start_lat %>
+            </td></tr>
+            <tr><td>
+              <div class="map_submenu">point2</div>
+            </td></tr>
+            <tr><td>
+              longitude: <%= text_field :query, :end_lon %>
+            </td></tr>
+            <tr><td>
+              latitude: <%= text_field :query, :end_lat %>
+            </td></tr>
+            <tr><td>
+              <div class="map_menu">
+              <% if @query.time_region==1 then %>
+              <input checked="checked" id="query_time_region" name="query[time_region]" onclick="checkTime();" type="checkbox" value="0" />
+              <% else %>
+              <input id="query_time_region" name="query[time_region]" onclick="checkTime();" type="checkbox" value="1" />              
+              <% end %>              
+              Temporal Region</div>
+            </td></tr>
+            <tr><td>
+              <div class="map_submenu">start:</div>
+            </td></tr>
+            <tr><td>
+              <div id="query_starttime"><%= datetime_select :query, :starttime, :use_month_numbers => true %></div>
+            </td></tr>
+            <tr><td>
+              <div class="map_submenu">end:</div>
+            </td></tr>
+            <tr><td>
+              <div id="query_endtime"><%= datetime_select :query, :endtime, :use_month_numbers => true %></div>
+            </td></tr>
+          </table>
+        </td>
+      </tr>
+      
+    </table>
+  </div>
+  <script>
+    checkSpace();
+    checkTime();
+  </script>
+
+</form>
+<div id="grouplist">
+  <%= render(:partial=>"show_grouplist") %>
+</div>
+
+<% form_remote_tag(:update=>"results",:url => {:action => :change_results}) do %>
+ <%= select "show","list", ["all","points","partial","global","no_region"] %>
+ <%= submit_tag "change" %>
+<% end %>
+
+
+<div id="results">
+<% if @results %>
+  <%= render(:partial =>"show_results") %>
+<% end %>
+</div>

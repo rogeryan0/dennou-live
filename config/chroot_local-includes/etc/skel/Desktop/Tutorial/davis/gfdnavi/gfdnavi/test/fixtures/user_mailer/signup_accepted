@@ -1,0 +1,10 @@
+Dear <%= @user.full_name %>
+
+Your request to sign up gfdnavi was accepted.
+Enjoy "gfdnavi"!
+
+Your account information:
+ login name: <%= @user.login %>
+ full name: <%= @user.full_name %>
+ email address: <%= @user.email_address %>
+ affiliation: <%= @user.affiliation %>

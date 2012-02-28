@@ -1,0 +1,12 @@
+title: starndard pressure level data
+
+creator: N. Hashiguchi, RISH, Kyoto Univ.
+
+description:
+    The raw data obtained from NCEP were screened
+    with an algorithm suitable for the tropical conditions.
+    The files archived here contains data only at the
+    standard pressure levels.
+
+    See http://dss.ucar.edu/datasets/ds353.4/ for more
+    info on the original data.

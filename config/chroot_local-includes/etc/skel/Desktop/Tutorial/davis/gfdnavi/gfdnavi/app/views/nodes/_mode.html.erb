@@ -1,0 +1,20 @@
+<% if @mode %>
+<table>
+  <tr>
+    <th>owner:</th>
+    <td><%= @mode[:owner] %></td>
+  <tr>
+  <tr>
+    <th>other_mode:</th>
+    <td><%= @mode[:other_mode] %></td>
+  <tr>
+  <tr>
+    <th>rgroups:</th>
+    <td><%= @mode[:rgroups] %></td>
+  <tr>
+  <tr>
+    <th>wgroups:</th>
+    <td><%= @mode[:wgroups] %></td>
+  <tr>
+</table>
+<% end %>

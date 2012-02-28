@@ -1,0 +1,54 @@
+<!-- -*- coding: sjis -*- -->
+<!-- Save Temporarily ボタンは一時的に消しておく RELEASE2.1 2011/02/25 -->
+<!-- Save Temporarily ボタン -->
+<%# if @knowledge %><!-- @type=="edit" -->
+  <%#= submit_to_remote("commit", "Save Temporarily", :update => :backup, :url => {:action => 'update', :type => "temporary_save", :document_id => @knowledge.node_id, :original_path => @knowledge.path, :commit => "Save Temporarily"}) %>
+<%# else %>
+  <%#= submit_to_remote("commit", "Save Temporarily", :update => :backup, :url => {:action => 'update', :type => "temporary_save", :commit => "Save Temporarily"}) %>
+<%# end %>
+<!-- <br><br> -->
+<!-- Save Temporarily ボタンは一時的に消しておく RELEASE2.1 2011/02/25 -->
+
+
+<!-- バックアップのリスト -->
+<!-- このドキュメントのバックアップ(バージョンつき) -->
+<div class="form_backup">
+<% unless params[:action] == "show" || params[:action] == "appear_comment_input_form" %>
+<% if (@knowledge && (backups = KnowledgeBackup.find(:all, :conditions => ["backup_on = ? AND (NOT temporary)", @knowledge.path])) && backups.length > 0) %>
+  <h2>Backup of This Document</h2>
+    <table>
+    <% backups.each do |backup| %>
+      <tr>
+        <td>
+          ver.<%= h backup.version_number %>:
+        </td>
+        <td>
+	  <%= h backup.mtime.to_s[0..-5] %>
+          &nbsp;&nbsp;
+	</td>
+        <% if @user==@knowledge.owner %>
+        <td>
+          <% if @type == "edit" %>
+            <%= link_to_remote image_tag('delete.png', :alt=>'delete', :title=>'delete this backup',:border=>0,:align=>'absmiddle'),:update => :backup, :url => {:controller => 'knowledge', :action => 'destroy_backup', :backup_id => backup.id, :type => @type, :document_id => @knowledge.node_id}, :confirm => 'Are you sure?', :method => :post %>
+          <% else %>
+            <%= link_to_remote image_tag('delete.png',:alt=>'delete', :title=>'delete this backup',:border=>0,:align=>'absmiddle'),:update => :backup, :url => {:controller => 'knowledge', :action => 'destroy_backup', :backup_id => backup.id, :type => @type}, :confirm => 'Are you sure?', :method => :post %>
+          <% end %>
+        </td>
+	<td style="cursor: pointer;" onclick='restoreDocument("<%= h backup.title %>", "<%= h backup.textbody.to_s.gsub(/\r\n|\r|\n/, '\n') %>", "<%= h backup.description.to_s.gsub(/\r\n|\r|\n/, '\n') %>", "<%= h backup.category %>", "<%= h backup.creator %>", "<%= backup.default_layout %>", "<%= backup.horizontal_figures %>", "<%= backup.figures_size_height_or_width %>", "<%= backup.figures_size_units %>", "<%= backup.figures_size_number %>")'>
+          <%= image_tag('read_in_the_form.png', :alt=>'read in the form', :title=>'read in the form',:border=>0,:align=>'absmiddle') %>
+        </td>
+        <% end %>
+      </tr>
+    <% end %>
+    </table>
+  <% end %>
+<% end %>
+
+<!-- このリストは一時的に消しておく RELEASE2.1 2011/02/25 -->
+<!-- 作成or編集中のドキュメントの一時保存リスト -->
+
+<!-- 上のリストは一時的に消しておく RELEASE2.1 2011/02/25 -->
+
+</div><!-- class="form_backup" -->
+
+

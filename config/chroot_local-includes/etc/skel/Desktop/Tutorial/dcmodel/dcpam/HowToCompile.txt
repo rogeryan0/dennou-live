@@ -1,0 +1,23 @@
+====================================================
+コンパイル手順
+====================================================
+
+1) ソースファイルを展開
+
+   $ tar xvfz dcpam5-20120226.tgz
+
+2) dcpam をコンパイル
+
+   $ cd dcpam5-20120226
+   $ ./compile_with_pkgs.sh
+
+   ***メモ***
+   compile.sh には, 今回のライブイメージの環境でのコンパイル手順をまとめてある. 内容は,
+     a) 環境設定
+     b) configure
+     c) make
+   である.
+
+3) 実験
+
+   実験の詳細は, 「ごくらく dcpam」http://www.gfd-dennou.org/library/dcpam/dcpam5/dcpam5-latest/doc/gokuraku/ を参照してください.

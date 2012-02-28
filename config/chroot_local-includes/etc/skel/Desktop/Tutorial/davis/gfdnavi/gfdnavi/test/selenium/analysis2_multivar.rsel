@@ -1,0 +1,93 @@
+# It's often a good idea to start the test with 'setup'.
+# See /selenium/setup for more info.
+
+def wait_for_image_loaded(id)
+  wait_for_eval <<"EOS", 'false'
+var win = this.page().getCurrentWindow();
+var diagrams = (win.diagrams) ? win.diagrams : win.wrappedJSObject.diagrams;
+diagrams[#{id}].imageLoading;
+EOS
+end
+
+setup  :fixtures => :all
+
+# ADD TWO VARIABLES WITH THE SAME AXES
+open '/finder/add_to_list?path=%2Fsamples%2Freanalysis%2Fncep%2FUV.jan.nc'
+
+# CHECK VARIABLES INFO ON THE LEFT PANEL
+assert_element_present 'left_variables_name_0'
+assert_text 'left_variables_name_0', 'U'
+assert_element_present 'left_variables_name_1'
+assert_text 'left_variables_name_1', 'V'
+3.times{|i| assert_element_present "left_axes_#{i}"} # RANK IS SUPPOSED TO BE 3
+
+# CHANGE VARIABLES OF THE DIAGRAM WITH DRAW METHOD OF NVAR == 1
+click "diagram0_dm_window_button"
+select "diagram0_layer0_dm", "value=tone_contour"
+click "diagram0_inputs_window_button"
+select "diagram0_layer0_win1_vars0_input_select", "U"
+click "diagram0_layer0_win1_var_apply_button"
+wait_for_image_loaded(0)
+# TRY CANCEL
+select "diagram0_layer0_win1_vars0_input_select", "V"
+click "diagram0_layer0_win1_var_cancel_button"
+assert_selected_label "diagram0_layer0_win1_vars0_input_select", "U"
+# APPLY CHANGE
+select "diagram0_layer0_win1_vars0_input_select", "V"
+click "diagram0_layer0_win1_var_apply_button"
+wait_for_image_loaded(0)
+select "diagram0_layer0_win1_vars0_input_select", "U"
+click "diagram0_layer0_win1_var_apply_button"
+wait_for_image_loaded(0)
+
+# COPY DIAGRAM 0
+click "diagram0_menu_window_button"
+click "diagram0_clone"
+wait_for_image_loaded(1)
+assert_selected_label "diagram1_layer0_win1_vars0_input_select", "U"
+# CHANGE INPUT VARIABLE
+click "diagram1_inputs_window_button"
+select "diagram1_layer0_win1_vars0_input_select", "V"
+click "diagram1_layer0_win1_var_apply_button"
+wait_for_image_loaded(1)
+click "diagram1_clone"
+wait_for_image_loaded(2)
+assert_selected_label "diagram2_layer0_win1_vars0_input_select", "V"
+
+# TRY DRAW METHOD OF NVAR == 2
+click "diagram0_dm_window_button"
+select "diagram0_layer0_dm", "value=vector"
+wait_for_image_loaded(0)
+click "diagram0_inputs_window_button"
+select "diagram0_layer0_win1_vars0_input_select", "U"
+select "diagram0_layer0_win1_vars1_input_select", "V"
+click "diagram0_layer0_win1_var_apply_button"
+wait_for_image_loaded(0)
+
+# COPY DIAGRAMS
+click "diagram0_menu_window_button"
+click "diagram0_clone"
+wait_for_image_loaded(3)
+assert_selected_value "diagram3_layer0_dm", "vector"
+assert_selected_label "diagram3_layer0_win1_vars0_input_select", "U"
+assert_selected_label "diagram3_layer0_win1_vars1_input_select", "V"
+
+# RELOAD PAGE
+open '/analysis2'
+wait_for_page_to_load 30000
+wait_for_image_loaded(0)
+# NUM OF DIAGRAMS SHOULD BE 4
+assert_element_present 'diagram3'
+assert_element_not_present 'diagram4'
+# ASSERT THAT THE DIAGRAM IS REPRODUCED WITH THE SAME COMBINATION OF VARIABLES
+assert_selected_value "diagram0_layer0_dm", "vector"
+assert_selected_label "diagram0_layer0_win1_vars0_input_select", "U"
+assert_selected_label "diagram0_layer0_win1_vars1_input_select", "V"
+
+# More information about the commands is available at:
+#   http://release.openqa.org/selenium-core/nightly/reference.html
+# See also the RDoc for SeleniumOnRails::TestBuilder.
+#
+# Point the browser to http://localhost:3000/selenium/tests/analysis2_multivar.rsel to see
+# how this test is rendered, or to http://localhost:3000/selenium to
+# run the suite.

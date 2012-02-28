@@ -1,0 +1,63 @@
+<h3>Groups you own</h3>
+<% if @own_groups.length == 0 %>
+  <p>&nbsp;&nbsp;none</p>
+<% else %>
+  <table border=1>
+    <tr>
+      <th bgcolor="#dddddd">name</th>
+      <th bgcolor="#dddddd">owner</th>
+      <th bgcolor="#dddddd">member</th>
+      <td><td>
+    </tr>
+  <% for group in @own_groups %>
+    <tr>
+      <td>
+	<%= h(group.name) %>
+      </td>
+      <td>
+	<%= h(group.owner.login) %>
+      </td>
+      <td>
+	<%= group.members.collect{|user| h(user.login)}.join(", ") %>
+      </td>
+      <td>
+	<%= link_to("add member", :action => "add_member", :id => group.name) %><br>
+	<%= link_to("change owner", :action => "change_owner", :id => group.name) %><br>
+	<%= link_to("delete member", :action => "delete_member", :id => group.name) %><br>
+	<%= link_to("delete group", {:action => "delete", :id => group.name}, :confirm => "Are you sure?") %>
+      </td>
+    </tr>
+  <% end %>
+  </table>
+<% end %>
+
+<h3>Groups you belong to</h3>
+<% if @belonging_groups.length == 0 %>
+  <p>&nbsp;&nbsp;none</p>
+<% else %>
+  <table border=1>
+    <tr>
+      <th bgcolor="#dddddd">name</th>
+      <th bgcolor="#dddddd">owner</th>
+    </tr>
+  <% if @belonging_groups
+       for group in @belonging_groups %>
+	<tr>
+	  <td>
+	    <%= h(group.name) %>
+	  </td>
+	  <td>
+	    <%= h(group.owner.login) %>
+	  </td>
+	</tr>
+  <%   end
+     end %>
+  </table>
+<% end %>
+
+<% if @super_user %>
+  <br>
+  <h3><%= link_to('Create group', :action => 'create') %></h3>
+<% else %>
+  <p>Ask the super user for groups.</p>
+<% end %>

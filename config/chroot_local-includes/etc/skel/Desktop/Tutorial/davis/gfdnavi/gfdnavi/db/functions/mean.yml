@@ -1,0 +1,19 @@
+:name: mean
+:description: averaging on the specific dimensions
+:nvars: 1
+:script: |
+  arg0 = [0] if arg0.empty?
+  [gphys0.mean(*arg0)]
+
+:setting_html: |
+  <%= analysis_dimension_selector(0,"mean") %>
+
+:arguments:
+- :description: the dimension for mean
+  :value_type: array_string
+  :default: []
+  :position: 0
+:outputs:
+- :name: mean
+  :subscript: mean
+  :description: mean

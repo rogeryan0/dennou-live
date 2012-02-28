@@ -1,0 +1,30 @@
+<% form_tag do %>
+
+  <h3>Add user</h3>
+  <%= error_messages_for 'user' %><br/>
+
+  <label for="user_login">Login name:</label><br/>
+  <%= text_field "user", "login", :size => 10 %><br/>
+
+  <label for="user_full_name">Full name:</label><br/>
+  <%= text_field "user", "full_name", :size => 30 %><br/>
+
+  <label for="user_email_address">Email address:</label><br/>
+  <%= text_field "user", "email_address", :size => 30 %><br/>
+
+  <label for="user_affiliation">Affiliation:</label><br/>
+  <%= text_field "user", "affiliation", :size => 50 %><br/>
+
+  <label for="user_password">Password:</label><br/>
+  <%= password_field "user", "password", :size => 30 %><br/>
+
+  <label for="user_password_confirmation">Confirm password:</label><br/>
+  <%= password_field "user", "password_confirmation", :size => 30 %><br/>
+
+  <%= submit_tag "Add user" %>
+
+<% end %>
+
+<script>
+  $('user_login').focus();
+</script>

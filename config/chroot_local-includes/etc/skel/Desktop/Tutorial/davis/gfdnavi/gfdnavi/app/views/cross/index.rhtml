@@ -1,0 +1,301 @@
+<% @qtypecolors={"keyword"=>"#6666ff","space"=>"#66ff66","time"=>"#66ffff"}%>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<!-- Javascript tags are moved to gfdnavi.rhtml -->
+
+
+<table width="500" height="10" cellspacing="0" cellpadding="0" border="0">
+  <tr>
+  <td rowspan="1">
+
+  <table>
+  <tr><td>
+    <%= image_tag(relative_url_root + "/images/server.png", {:width => 30, :style => 'border="0"', :onClick => "pdMenu('serverlist')"}) %>
+  </td>
+<td>
+  <font color="dimgray" size=2>Please click this icon<br>
+           when you want to search the data on other public servers.</font>
+  </td>
+</tr></table>
+
+<div id="serverlist" style="visibility: hidden">
+          <div class="tit">Server List</div>   
+          <i><font color="dimgray">Please click the button below<br/>when you want to get  public servers list.</font></i>
+          <hr color="aquamarine" size="2"/>
+          <% form_remote_tag({:url=>{:action=>'get_servers'}})  do %>
+            <center> <%= submit_tag("Get public gfdnavi server list") %> </center> 
+	    <% end %>
+	    <% form_remote_tag({:url=>{:action=>'check_box'},:id=>$svid, :before=>'showLoadingIconAll()', :complete=>'hideLoadingIconAll()'}) do %>
+          <div id=servers style="font-size:18px;">
+	       <% if @serverlist.size==0  then %>
+             localhost
+	       <% else %>
+	       <% i=0
+	           @serverlist.each_key{ |key|
+		        url=@serverlist[key].url
+			  if key=="localhost" then
+			     checked=""
+			  else
+			     checked="checked"
+			  end
+			  %>
+			<div id= servers_<%=i%> style="font-size:18px;">
+			  <input type="checkbox" name="server_selection_<%=i%>" value="1" <%=checked%>><%=key%> 
+			  <nobr>
+                            <a href="http://<%=url %>/" TARGET="_blank">
+                              "http://<%=url %>"
+                            </a>
+                          </nobr>
+                        </div>
+		 <%    i=i+1
+		      } %>
+		 <% end %>
+          </div><br/>
+          <%= submit_tag("[CLOSE]", {:onClick => "Hidden('serverlist')"}) %>
+	    <% end %> 
+     </div>
+
+   </td>
+   </tr>
+ </table>
+
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tr><td class="facet">
+
+     <table cellspacing="1" cellpadding="1" border="1" width="100%">
+       <tr>
+       <td rowspan="2" width="100%">
+       <div class="tit">Free Text Search</div>
+       <center>
+       <% form_remote_tag({:url=>{:action=>'cross_freeword'},:loading=>"showLoadingIconAll()", :complete=>"hideLoadingIconAll()"}) do %>
+         <%= text_field_tag("freeword",@freeword, :size=>"34") %>
+         <%= submit_tag("search") %>
+       <% end %>
+       </center>
+       </div>
+       </td>
+       </tr>
+     </table>
+     
+    <table border="1" cellspacing="1" cellpadding="1" width="100%">
+      <tr><td rowspan="1" width="100%">
+        <div style="width:100%;overflow:auto;">
+        <div class="tit">Map</div>
+        <div id="map" style="width:100%;height:250px" align="center"></div>
+	  <% if @start_lat!=nil then
+      	   area=[-70,30,70,330]
+            else
+		   area=[@start_lat,@start_lon,@end_lat,@end_lon]
+	      end 
+	   %>
+
+       
+        <div class="tit">Time Attributes</div>  
+        <% form_remote_tag({:url=>{:action=>'cross_time'}}) do %>
+           starttime:<%= text_field_tag("starttime","YYYY-MM-DD HH:MM:SS", :size=>20) %> - endtime:<%= text_field_tag("endtime","YYYY-MM-DD HH:MM:SS",:size=>20)%> 
+           <center><%= submit_tag("temporal search") %> </center>
+	  <% end %>
+
+        <div class="tit">Keyword</div>
+        <div align="center" name="loading" id="keywords_loading" style="display:none"><br><br><img src="<%= relative_url_root%>/images/loading.gif"></div>
+   	  <div id="keyword">
+	    <ul id='keyword_list'>	    
+	      <% @resultInfoList[:all_servers].get_keynames_sorted.each{ |kname| %>
+	         <li><%= link_to_remote(kname,{:url=>{:action=>'show_keyvalues',:keyname=>kname},:before=>'showLoadingIconAll()', :complete=>'hideLoadingIconAll()'})%>
+		   (<%= @resultInfoList[:all_servers].get_keyvalue_count(kname,:all_values) %>)
+		   </li>
+		   <div id="kw_<%= kname%>" style="display:none;">
+		   <ul>
+             <% @resultInfoList[:all_servers].get_keyvalues_sorted(kname).each{ |kvalue,count|
+                if kvalue!=:all_values then %>
+		  <li>
+ 	         <%= link_to_remote(kvalue,{:url=>{:action=>'cross_kw',:keyname=>kname, :keyvalue=>kvalue},:before=>'showLoadingIconAll()', :complete=>'hideLoadingIconAll()'})%>
+		 (<%= count %>)</li>
+                  <% end
+		  } %>
+                  </ul></div>
+                  <div id="kw_<%= kname%>_close" style="display:none;">
+		  <%= link_to_remote("[CLOSE]",{:url=>{:action=>'hide_keyvalues',:keyname=>kname}}) %>
+		</div>
+	     <%}%>
+            </ul>
+	  </div> <!-- id="keyword" -->
+
+        <div class="tit">Data Type</div>  
+	  <% form_remote_tag({:url=>{:action=>'nodetype_selection'}}) do %>
+  	  <ul>
+            <% ["data", "knowledge", "function", "draw_method"].each_with_index{|nodetype, i| %>
+               <li style="font-size:13px;">
+                 <% checked = !(@nodetypes && (@nodetypes[nodetype] == 1)) %>
+                 <%= check_box_tag("nodetype_" + nodetype, "1", checked, {:name => "nodetype_" + nodetype}) %>
+                 <%= observe_field('nodetype_' + nodetype,
+                                   :url => {:action => 'nodetype_selection', :id => i + 1},
+                                   :with => "nodetype_" + nodetype,
+                                   :before => 'showLoadingIconAll()',
+                                   :complete => 'hideLoadingIconAll()') %>
+                 <%= nodetype.camelize %>
+               </li>
+            <% } %>
+     	  </ul>
+	  <% end -%>
+        </div> <!-- <div style="width:100%;height:690px;overflow:auto;">-->
+      </td>  <!--  <td rowspan="1" width="100"> -->
+      </tr>
+    </table> <!-- <table border="1" cellspacing="1" cellpadding="1"> -->
+  </td> <!-- <td class="facet" > -->
+
+  <td class="result" valign="top" width="100%">
+    <div align="left">
+       <div id="reset"><%= link_to("[RESET ALL]", :action => "reset") %></div>
+    </div>
+      <table border="1" cellspacing="1" cellpadding="1" width="100%">
+        <tr>
+        <td rowspan="1">
+          <div style="width:100%;height:100;overflow:auto;">
+            <div class="tit2" align="center">Search Conditions</div>
+	      <% form_remote_tag({:url => {:action => 'queryconditions_selection'}}) do %>
+               <div id="qcond">
+                 <% @spconditions = Array.new %>
+                 <% if @queryconditions.size > 0 %> 
+	           <font>These terms define your current search.Please remove the check to remove a term. </font><br>  
+      	   
+      	           <% @queryconditions.each_with_index{|qc, qcid| %>
+		     <span id="qcond_<%= qcid %>" class="query_conditions">
+                       <% selected = (session[:qcond_selection][qcid] == 1) %>
+                       <%= check_box_tag("qconds_#{qcid}", selected ? 1 : 0, selected, {:name => "qcond_selection_#{qcid}"}) %>
+                       <%= observe_field("qconds_#{qcid}", {:url => {:action => 'queryconditions_selection',:id => qcid},
+                                                            :before => 'showLoadingIconAll()',
+                                                            :complete => 'hideLoadingIconAll()'}) %>
+                       <%= qc %>
+                       <% if @queryconditions.size != (qcid + 1) %>
+                         &
+                       <% end %>      
+                     </span>
+                     <% if qc =~ /sp.overlap\[(.*)\]/
+                       @spconditions.push($1)
+                     end
+      	           } %>
+                <% end %>
+	        <input type="hidden" name="queryset_id" id="queryset_id" value="<%= @results.qsetid %>">   
+              </div> <!-- id="qcond" -->
+              <% end %>
+
+              <div id="spconditions" style="visibility:hidden">
+	      <% if @spconditions.size > 0 then
+                 @spconditions.each_with_index{|sp, spid| 
+                   s = sp.split(/,/) %>
+                 <span id="spconditions_<%= spid %>">
+                 (<span id="start_lon"><%= s[0] %></span>,<span id="start_lat"><%= s[1] %></span>)-
+                 (<span id="end_lon"><%= s[2] %></span>,<span id="end_lat"><%= s[3] %></span>)
+                 </span>
+                <%
+                 }
+               end %>
+               </div> <!-- id="spconditions" -->
+
+	    </div>
+	  </td>
+	  </tr>
+	  <tr>
+         <td rowspan="1" width="100%">
+           <div style="width:100%;height:680;overflow:auto;">
+             <div class="tit2">** Results **</div>
+             <div align="center" name="loading" id="results_loading" style="display:none"><br><br><img src="<%= relative_url_root%>/images/loading.gif"></div>
+             <div id="results">
+               <%
+               if @pathtree_html
+               @pathtree_html.each_key{|servername| %>
+               <h2>********** <%=servername%> **********</h2>
+               <% viewInfoList = @pathtree_html[servername]
+               if viewInfoList %>
+               <%= render_view_info_list(viewInfoList).join("") %>
+               <%
+               end
+               }
+               end
+               %>
+             </div>
+           </div>
+         </td>
+         </tr>
+     </table> <!-- <table border="1" cellspacing="1" cellpadding="1">-->
+   </td><!-- <td class="result" > -->
+  </tr>
+</table>
+
+	  <table width="250" height="30" cellspacing="0" cellpadding="0" border="0">
+	    <tr>
+	    <td rowspan="2" width="100">
+	       <a href="javaScript:pdMenu2('MapDetail')"></a>
+	       <div id="MapDetail" style="position:absolute; z-index:1; left:150px; top:260px; background-color:azure; visibility: hidden">
+                <table width="500"  cellspacing="0" cellpadding="0" border="1">
+		     <tr>
+                  <td rowspan="2" width="500">
+                    <div class="tit">Map</div>
+                    <% if @start_lat==nil then
+      	             area=[-70,30,70,330]
+      	           else
+	                    area=[@start_lat,@start_lon,@end_lat,@end_lon]
+     	                 end
+   	               %>
+	             <% form_remote_tag({:url=>{:action=>'cross_space'}}) do %>
+		          SW:(<%=text_field_tag("start_lon",@start_lon,:size=>12) %>,<%= text_field_tag("start_lat",@start_lat,:size=>12) %>)<br/>
+		       - NE:(<%= text_field_tag("end_lon",@end_lon,:size=>12) %>, <%= text_field_tag("end_lat",@end_lat,:size=>12) %>)  
+                    <% end %>
+	              <div class="tit2">all covered</div>
+	              <div id="all_covered" style="font-size:13px;height:50px;overflow:auto;" >
+	              <% i=0
+			@resultInfoList[:all_servers].all_covered.each_key{ |reg|
+			        cnt=@resultInfoList[:all_servers].get_count_all_covered(reg)
+				region=reg.split(/_/)
+			 %>
+  	                     <div id="group_<%=i%>">
+    	                       (<span id="lontitude_lb"><%=region[0]%></span>,<span id="latitude_lb"><%=region[1]%></span>)-
+    	                       (<span id="lontitude_rt"><%=region[2]%></span>,<span id="latitude_rt"><%=region[3]%></span>) 
+    	                       [<span id="count"><%=cnt%></span>]
+  	                   </div>			     
+			<%  
+			    i=i+1
+                          }%>
+	              </div> 
+    	              <div class="tit2"><input type="checkbox" name="partialcovered" onclick="show_regions(this);" checked>partial covered</div>
+	              <div id="partial_covered" style="font-size:13px;height:80px;overflow:auto;">
+	              <% i=0
+			@resultInfoList[:all_servers].partial.each_key{ |reg|
+			        cnt=@resultInfoList[:all_servers].get_count_partial(reg)
+				region=reg.split(/_/)
+			 %>
+  	                     <div id="partial_group_<%=i%>">
+    	                       (<span id="lontitude_lb"><%=region[0]%></span>,<span id="latitude_lb"><%=region[1]%></span>)-
+    	                       (<span id="lontitude_rt"><%=region[2]%></span>,<span id="latitude_rt"><%=region[3]%></span>) 
+    	                       [<span id="count"><%=cnt%></span>]
+  	                   </div>			     
+			<%  
+			    i=i+1
+                          }%>
+	              </div>   
+   	              <div class="tit2"><div id="box"><input type="checkbox" name="points" onclick="show_points(this);" checked>point</div></div>
+	              <div id="points" style="font-size:13px;height:80px;overflow:auto;">
+	              <% i=0
+			@resultInfoList[:all_servers].point.each_key{ |pos| 
+			        cnt=@resultInfoList[:all_servers].get_count_point(pos)
+				point=pos.split(/_/)
+			-%>
+  	                   <div id="point_group_<%=i%>">
+  	                     (<span id="lontitude"><%=point[0]%></span>,<span id="latitude"><%=point[1]%></span>) 
+    	                     [<span id="count"><%=cnt%></span>]
+  	                   </div>
+  	                   <%   
+			    i=i+1
+			    }
+			 -%>
+	             </div>
+		       <br/>
+                   <hr color="aquamarine" size="2"/> <br/>
+                   <a class="menu" href="javascript:Hidden2()">[CLOSE]</a>
+                 </td></tr>
+	         </table>
+	       </div> <% # id=MapDetail %>
+	    </td>
+	    </tr>
+	  </table>
+

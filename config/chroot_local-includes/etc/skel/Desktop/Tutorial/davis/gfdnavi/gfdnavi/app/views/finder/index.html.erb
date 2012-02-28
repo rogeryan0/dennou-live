@@ -1,0 +1,45 @@
+
+<p>
+  <%= link_to("Faceted Navigation Search", :controller => "cross") %> 
+</p>
+<br>
+
+<p>
+  <h4>
+    Select from directory tree:
+  </h4>
+</p>
+
+
+<div id="dir">
+  <div id="dir_tree" style="float:left">
+  </div>
+  <div id="dir_details">
+  </div>
+</div>
+
+<script>
+  var hrb = new ResizableBox($('dir_tree'), 300, 200, true);
+  var vrb = new ResizableBox($('dir'), null, 200, false, true, [$('dir_tree'),$('dir_details'),hrb.hbar.element]);
+
+  progressText = new ProgressText();
+
+  tree = new Tree('dir_tree');
+  tree.dirDetailsDivId = 'dir_details';
+  tree.selectedFunction = tree.showDirDetails;
+<% if @path %>
+  tree.create('<%=@path%>');
+<% else %>
+  tree.create();
+<% end %>
+
+</script>
+
+<br/>
+<hr/>
+<br/>
+
+<!-- <h4>Details</h4> -->
+<div id="details_window">
+  <div id="details"></div>
+</div>

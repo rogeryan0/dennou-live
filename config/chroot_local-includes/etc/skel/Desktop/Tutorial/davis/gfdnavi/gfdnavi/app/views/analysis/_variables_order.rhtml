@@ -1,0 +1,58 @@
+<%
+vars = @analysis.variables
+nvars = vars.length
+@num_for_each ||= nvars
+@group_name ||= "group"
+if @order.nil? || @order.empty?
+  @order = Hash.new
+  (nvars/@num_for_each).times{|n|
+    @order[n] = Array.new
+    @num_for_each.times{|i| @order[n][i] = n*@num_for_each+i}
+  }
+end
+unless @order_names
+  @order_names = Array.new
+  nvars.times{|i| @order_names[i] = i.to_s}
+end
+%>
+<table>
+<% (nvars/@num_for_each).times{|n| %>
+  <tr>
+  <% unless nvars == @num_for_each %>
+    <td><%=@group_name%><%=n%><td>
+  <% end %>
+    <td nowrap>
+  <%
+  @num_for_each.times{|i|
+    ni = @num_for_each*n+i
+    d_f = @order_type == "function" ? "function" : "draw"
+  %>
+      <label for="variables_order_<%=ni%>"><%=@order_names[i]%>:</label>
+      <select id="<%=@order_type%>_variables_order_<%=ni%>" name="analysis[function_variables_order][<%=n%>[<%=i%>]" onChange="selectVarOrder(this,'<%=@order_type%>',<%=ni%>)">
+    <%
+    nvars.times{|j|
+      selected = j==@order[n][i] ? "selected" : ""
+    %>
+        <option value="<%=j%>" <%=selected%>><%=h(vars[j].name)%></option>
+    <% } %>
+      </select>
+  <% } %>
+    </td>
+  </tr>
+<% } %>
+</table>
+<script>
+  variablesOrder["<%=@order_type%>"] = new Array(<%=nvars%>);
+<%
+(nvars/@num_for_each).times{|n|
+  @num_for_each.times{|i|
+    ni = @num_for_each*n+i
+%>
+    variablesOrder["<%=@order_type%>"][<%=ni%>] = <%=@order[n][i]%>;
+<%
+  }
+}
+%>
+  setVarOrder($('<%=@order_type%>_variables_order_0'),
+              "<%=@order_type%>",variablesOrder["<%=@order_type%>"][0]);
+</script>

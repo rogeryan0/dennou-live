@@ -1,0 +1,10 @@
+:name: cut
+:description: cut out a subset of data
+:nvars: 1
+:script: |
+  [gphys0.copy]
+
+:outputs:
+- :name: subset
+  :subscript: sub
+  :description: a subset 

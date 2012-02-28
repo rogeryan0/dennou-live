@@ -1,0 +1,20 @@
+<%
+cols = %w(name path size node_type size mtime owner other_mode rgroups wgroups created_at updated_at)
+%>
+<table border=1>
+<% cols.each{|col|
+     case col
+     when "node_type"
+       val = Node::NODE_TYPES[@node[col]]
+     when "rgroups", "wgroups"
+       val = Group.find_by_bit_flag(@node[col])
+     else
+       val = @node[col]
+     end
+   %>
+  <tr>
+    <th><%= col %></th>
+    <td><%= val %></td>
+  </tr>
+<% } %>
+</table>

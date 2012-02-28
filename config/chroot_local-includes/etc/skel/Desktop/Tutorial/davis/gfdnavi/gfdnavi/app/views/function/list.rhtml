@@ -1,0 +1,80 @@
+<h2>Own functions</h2>
+<%
+nfunc = @own_funcs.length
+if nfunc == 0
+%>
+None
+<% else %>
+<table border=1>
+  <tr>
+    <th>name</th>
+    <th>description</th>
+    <th></th>
+    <th></th>
+  </tr>
+<%
+  nfunc.times{|n|
+    func = @own_funcs[n]
+    name = h(func.name)
+%>
+  <tr>
+    <td><%= name %></td>
+    <td><%= h(func.description) %></td>
+    <td><%= link_to("details", :action=>"details", :id=>name) %></td>
+<% unless func.default %>
+    <td><%= link_to("edit", :action=>"edit", :id=>name) %></td>
+<% else %>
+    <td></td>
+<% end %>
+  </tr>
+<% } %>
+</table>
+<%  end %>
+
+<br/>
+<br/>
+
+<h2>Othere functions</h2>
+<%
+nfunc = @other_funcs.length
+if nfunc == 0
+%>
+None
+<% else %>
+<table border=1>
+  <tr>
+    <th>name</th>
+    <th>description</th>
+    <th></th>
+<% if @super_user %>
+    <th></th>
+    <th></th>
+<% end %>
+  </tr>
+<%
+  nfunc.times{|n|
+    func = @other_funcs[n]
+    name = h(func.name)
+%>
+  <tr>
+    <td><%= name %></td>
+    <td><%= h(func.description) %></td>
+    <td><%= link_to("details", :action=>"details", :id=>name) %></td>
+<% if @super_user %>
+    <td><%= h(func.owner.login) %></td>
+  <% unless func.default %>
+    <td><%= link_to("edit", :action=>"edit", :id=>name) %></td>
+  <% else %>
+    <td></td>
+  <% end %>
+<% end %>
+  </tr>
+<% } %>
+</table>
+<%  end %>
+
+<br/>
+<br/>
+
+
+<%= link_to("create function", :action => "create") %>

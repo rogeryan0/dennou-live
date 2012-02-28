@@ -1,0 +1,5 @@
+--- 
+gfdnavi: 
+  org_path: !str 
+    str: /samples/reanalysis/era40/t.jan.nc/t/cut(levelist=>1000.0)/plot(tone_contour;anim=0,color_bar=1,coloring=0,colormap=1,contour=1,log=0,map=0,map_axis=0.0,0.0,0.0,map_fit=1,map_window=-180.0,180.0,-75.0,75.0,pileup=0,projection=1,size=550,550,tone=1,viewport=0.2,0.8,0.2,0.8,x_axis=longitude,y_axis=latitude,z_axis=levelist)[0]
+    "@_rails_html_safe": false

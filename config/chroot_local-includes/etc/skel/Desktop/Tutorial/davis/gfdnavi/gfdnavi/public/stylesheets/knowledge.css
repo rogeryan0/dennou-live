@@ -1,0 +1,238 @@
+.pagination {
+    padding: 3px;
+    margin: 3px;
+}
+.pagination a {
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    border: 1px solid #aaaadd;
+    text-decoration: none;
+    color: #000099;
+}
+.pagination a:hover, .pagination a:active {
+    border: 1px solid #000099;
+    color: #000;
+}
+.pagination span.current {
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    border: 1px solid #000099;
+    font-weight: bold;
+    background-color: #000099;
+    color: #FFF;
+}
+.pagination span.disabled {
+    padding: 2px 5px 2px 5px;
+    margin: 2px;
+    border: 1px solid #eee;
+    color: #ddd;
+}
+
+.form_of_creating_knowledge_document {
+  border: double 6px #FFFFFF;
+  background-color: #F5F5F5;
+  padding: 6px;
+}
+
+.form_group {
+  border: solid 4px #FFFFFF;
+  padding: 10px;
+}
+
+.form_layout {
+/*  border: solid 4px #FFFFFF;
+  padding: 4px; */
+}
+
+#knowledge_textbody {
+  width: 95%;
+  height: 12em;
+}
+
+#knowledge_description {
+  width: 95%;
+  height: 4em;
+}
+
+#node_path {
+  width: 80%;
+}
+
+.form_fieldset {
+  border: 4px solid gray;
+  background-color: #FFFFFF;
+  width: 90%;
+}
+
+.caption_text {
+  width: 100%;
+}
+
+
+.form_backup {
+  border: solid 4px #FFFFFF;
+  background-color: #FFFFFF;
+  padding: 10px;
+}
+
+.show_textbody {
+}
+
+.category {
+  font-size: 120%;
+  font-weight: bold;
+  text-align: left;
+  float: left;
+}
+
+.author {
+  font-size: 120%;
+  font-weight: bold;
+  text-align: right;
+}
+
+.layout2_table {
+  table-layout: fixed; 
+}
+
+.list_title {
+  font-size: 140%;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.comment_list_table {
+  /* width: 80%; */
+  border: solid 1pt orange;
+  background-color: #F5F5F5;
+}
+
+.comment_list_td {
+  border: solid 1pt orange;
+  background-color: #F5F5F5;
+}
+
+.comment_list_title {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.list_knowledge_path {
+  color: green;
+  font-size: 80%;
+}
+
+.list_knowledge_property {
+  color: darkblue;
+  font-size: 80%;
+}
+
+.list_knowledge_figures_number {
+  color: black;
+  font-size: 80%;
+}
+
+.textarea_size60 {
+  width: 300pt;
+}
+
+.image_background {
+ background-color: white;
+}
+
+.show_comment_buttons {
+  cursor: pointer;
+  border-color: black;
+  border-width: 3px;
+  background-color: #CCCCCC;
+}
+
+.on_buttons_in_list {
+  cursor: pointer;
+  border: solid 1px black;
+  color: black;
+}
+
+.off_buttons_in_list {
+  cursor: pointer;
+  border: solid 1px #CCCCCC;
+  color: gray;
+}
+
+.space_td {
+  width: 10px;
+}
+
+h1.davis {
+  background-color: #9999FF;
+  color: #FFFFFF;
+  font-family: "times roman", verdana, sans-serif; 
+  text-align: center;
+  border-top: 4px solid;
+  border-bottom: 4px solid;
+  border-color: #0099ff;
+  line-height: 100%;
+}
+
+h2.davis, h3.davis, h4.davis, h5.davis, h6.davis {
+  font-family: verdana, arial, helvetica, Sans-Serif;
+}
+
+h2.davis {
+  border-left: #9999ff 0.6em solid;
+  border-bottom: #0099ff 5px solid;
+  margin-right: 30%;
+}
+
+h3.davis {
+  color: #003366;
+  border-bottom: #000066 1px solid;
+  margin-right: 35%;
+  margin-top:2ex;
+  margin-bottom:0ex;
+  margin-left: 0.5em;
+}
+
+h4.davis {
+  margin-left: 1.0em;
+  text-decoration: underline;
+}
+
+ul.davis {
+  margin-left: 3em;
+  padding: 0;
+}
+
+li.davis {
+  line-height: 150%;
+}
+
+p.davis {
+  margin-left: 2em;
+}
+
+em.davis {
+  color: #004080;
+  font-family: arial, helvetica, Sans-Serif, gothic;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: bold;
+}
+
+pre.davis {
+  line-height: 100%;
+  border-right: #646464 1px solid;
+  padding-right: 0.5em;
+  border-top: #646464 1px solid;
+  padding-top: 0.5em;
+  border-left: #646464 1px solid;
+  padding-left: 0.5em;
+  border-bottom: #646464 1px solid;
+  padding-bottom: 0.5em;
+  margin-left: 2em;
+  margin-right: 2em;
+  white-space: pre;
+  background-color: #e6e6e6;
+  color: black;
+}
+

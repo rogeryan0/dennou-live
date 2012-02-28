@@ -1,0 +1,8 @@
+--- 
+contains: 
+  T_mean: 
+    gfdnavi: 
+      references: 
+      - name: analyze
+        path: /samples/reanalysis/ncep/T.jan.nc/T
+    analysis: mean calculated from T

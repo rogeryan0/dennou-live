@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:gfdnavi="*"
+		initialize="init()">
+  <mx:Script>
+    <![CDATA[
+                import mx.controls.Image;
+	  	import mx.utils.StringUtil;
+	  	import mx.utils.Base64Decoder;
+	  	import mx.rpc.AsyncResponder;
+	  	import mx.rpc.AsyncToken;
+	  	import mx.collections.ArrayCollection;
+	  	import mx.controls.Alert;
+	  	
+		[Bindable]
+		private var variables:ArrayCollection;
+		[Bindable]
+		private var dimensions:ArrayCollection;
+		
+		[Bindable]
+		private var drawMethodsHost:ArrayCollection;
+		private var drawMethods:Array = new Array();
+
+		[Bindable]
+		private var functionsHost:ArrayCollection;
+		private var functions:Array = new Array();
+
+		[Bindable]
+		private var diagramAry:ArrayCollection = new ArrayCollection;
+
+		private function init():void {
+                  TreeNode.hs = analysisHS;
+                  var path:String;
+
+                  /* GET PATH TO THE DATA */
+                  if (Application.application.parameters.path) {
+                    path = Application.application.parameters.path;
+                  } else {
+                    path = "http://localhost:3000/data//samples/reanalysis/ncep/T.jan.nc/T";
+                  }
+                  add(path);
+		}
+		
+		public function add(path:String):void {
+		  if (!variables) variables = new ArrayCollection();
+                    TreeNode.getNode(path,
+                                     function(node:TreeNode):void{variables.addItem(node);},
+                                     "dimensions=true");
+		}
+		
+		private function changeVariable(event:Event):void {
+                  var nodes:Array = variablesList.selectedItems;
+		  var node:TreeNode = nodes[0] as TreeNode;
+                  var ary:ArrayCollection = getDrawMethods(node.host);
+                  ary.addEventListener("collectionChange",
+                                       function(event:Event):void {
+                                         var ary:ArrayCollection = event.currentTarget as ArrayCollection;
+                                         var ary2:Array = new Array();
+                                         var nvars:Number = nodes.length;
+                                         var ndims:Number = node.dimensions.length;
+                                         for each (var dm:Object in ary) {
+                                           if ( ((nvars % dm.nvars)==0) && (dm.ndims<=ndims) )
+                                             ary2.push(dm);
+                                         }
+                                         drawMethodsHost = new ArrayCollection(ary2);
+                                         setDrawMethod();
+                                         //Alert.show("addEventListener(collectionChange) called","info");
+                                       });
+		  dimensions = node.dimensions;
+                  //drawMethodsHost.addEventListener("collectionChange",setDrawMethod);
+
+                  var ary3:ArrayCollection = getFunctions(node.host);
+                  ary3.addEventListener("collectionChange",
+                                        function(event:Event):void {
+                                          var ary4:ArrayCollection = event.currentTarget as ArrayCollection;
+                                          var ary5:Array = new Array();
+                                          var nvars:Number = nodes.length;
+                                          //var ndims:Number = node.dimensions.length;
+                                          for each (var dm:Object in ary4) {
+                                            //if ( ((nvars % dm.nvars)==0) && (dm.ndims<=ndims) )
+                                            if ( (nvars % dm.nvars)==0 )
+                                              ary5.push(dm);
+                                          }
+                                          functionsHost = new ArrayCollection(ary5);
+                                          setFunction();
+                                        });
+	        }
+		
+		private function getDrawMethods(host:String):ArrayCollection {
+		  var ary:ArrayCollection;
+		  if (drawMethods[host]) {
+                    /* WHEN DRAW METHODS ARE ALREADY OBTAINED FROM THE HOST "host" */
+                    /* NO CONSIDERATION MADE FOR UPDATE ON THE SERVER? */
+		    ary = drawMethods[host];
+		  } else {
+		    ary = new ArrayCollection();
+		    drawMethods[host] = ary;
+                    /* SET REQUEST URL */
+		    analysisHS.url = host+"/draw_methods.xml";
+                    /* SEND REQUEST */
+		    var call:AsyncToken = analysisHS.send();
+                    /* GET RESULT */
+		    call.addResponder(new AsyncResponder(
+				  function(result:Object, token:Object = null):void {
+		      	            var dms:Object = result.result["draw-methods"]["draw-method"];
+				    if (!dms.length) dms = new Array(dms);
+				    var obj:Object;
+				    for each (var dm:Object in dms) {
+				      obj = new Object;
+				      obj.name = dm.name;
+				      obj.path = dm.path;
+				      obj.ndims = dm.ndims;
+				      obj.nvars = dm.nvars;
+				      ary.addItem(obj);
+				    }
+				  },
+				  function(error:Object, token:Object = null):void {
+				    Alert.show("failed to get draw method from "+host,"error");
+				    ary = null;
+				  },
+				  call
+				));
+		  }
+		  return ary;
+		}
+		
+                private function setDrawMethod(event:Event=null):void {
+                  /* THIS FUNCTION IS ASSIGNED TO drawMethodsCombo.valueCommit */
+                  /* DO NOT CHANGE STATUS OF drawMethodsComo IN THIS FUNCTION */
+                  /* AND IN OTHER FUNCTIONS CALLED FROM THIS FUNCTION */
+                  /* TO AVOID ENDLESS LOOP */
+                  var dm:Object = drawMethodsCombo.selectedItem;
+                  if (dm) {
+                    if (dm.ndims > 1) {
+                      axisYCombo.enabled = true;
+                      axisXCombo.selectedIndex = 0;
+                      axisYCombo.selectedIndex = 1;
+                      resetAxes();
+                      setAxisX();
+                      setAxisY();
+                    } else {
+                      axisYCombo.enabled = false;
+                      axisXCombo.selectedIndex = 0;
+                      resetAxes();
+                      setAxisX();
+                    }
+                  }
+                }
+
+                private var ix:Number;
+                private function setAxisX(event:Event=null):void {
+                  var ds:DimensionSlider;
+                  if (ix && axisYCombo.enabled && ix!=iy) {
+                    ds = dimensionsList.indexToItemRenderer(ix) as DimensionSlider;
+                    ds.toPoint();
+                  }
+                  ix = axisXCombo.selectedIndex;
+                  ds = dimensionsList.indexToItemRenderer(ix) as DimensionSlider;
+                  ds.toRange()
+                  if (axisYCombo.enabled && (axisYCombo.selectedIndex==ix)) {
+                    axisYCombo.selectedIndex = (ix==0 ? 1 : 0);
+                    setAxisY();
+                  }
+                }
+                private var iy:Number;
+                private function setAxisY(event:Event=null):void {
+                  var ds:DimensionSlider;
+                  if (iy && iy!=ix) {
+                    ds = dimensionsList.indexToItemRenderer(iy) as DimensionSlider;
+                    ds.toPoint();
+                  }
+                  iy = axisYCombo.selectedIndex;
+                  ds = dimensionsList.indexToItemRenderer(iy) as DimensionSlider;
+                  ds.toRange();
+                  if (axisXCombo.selectedIndex==iy) {
+                    axisXCombo.selectedIndex = (iy==0 ? 1 : 0);
+                    setAxisX();
+                  }
+                }
+		
+                private function resetAxes(event:Event=null):void {
+                  var ds:DimensionSlider;
+                  for(var dim:Number = 0; dim < dimensions.length; dim++){
+                    ds = dimensionsList.indexToItemRenderer(dim) as DimensionSlider;
+                    if (ds)
+                      ds.toPoint();
+                  }
+                }
+
+		private function draw(event:Event):void {
+			var node:TreeNode = variablesList.selectedItem as TreeNode;
+			var dm:Object = drawMethodsCombo.selectedItem;
+			var uri:String;
+                        var options:Array = new Array();
+
+                        /* BASE URL */
+                        uri = node.host + "/data" + node.path + "/draw" + dm.path +".xml";
+
+                        /* SET OPTIONS */
+                        var imageWidth:String = imgX.toString()
+                        var imageHeight:String = imgY.toString()
+                        options.push( "size=" + imageWidth + "," + imageHeight );
+
+                        var viewportx0:String = vptX[0].toString()
+                        var viewportx1:String = vptX[1].toString()
+                        var viewporty0:String = vptY[0].toString()
+                        var viewporty1:String = vptY[1].toString()
+                        options.push( "viewport=" + viewportx0 + "," + viewportx1 + "," + viewporty0 + "," + viewporty1);
+
+			options.push("projection=" + mapProj.toString());
+
+                        if(Number(mapProj) > 9){
+                          var mapProjOpts:String = mapLon.value.toString();
+                          mapProjOpts = mapProjOpts + "," + mapLat.value.toString();
+                          mapProjOpts = mapProjOpts + "," + mapRot.value.toString();
+                          mapProjOpts = mapProjOpts + "," + mapRad.value.toString();
+                          options.push("map_opts=" + mapProjOpts);
+                        }
+
+                        /* DIMENSION */
+                        var ds:DimensionSlider;
+			var x0:Number;
+			var x1:Number;
+			var y0:Number;
+			var y1:Number;
+                        /* SET RANGE OF X */
+			ds = dimensionsList.indexToItemRenderer(ix) as DimensionSlider;
+                        if(!ds.values()[1])
+                          Alert.show("no axis is selected as x","error");
+			x0 = ds.values()[0];
+			x1 = ds.values()[1];
+			var axes:String = dimensions[ix].name + "," + x0 + "," + x1;
+			if(dm.ndims > 1){
+                          /* SET RANGE OF Y */
+			  ds = dimensionsList.indexToItemRenderer(iy) as DimensionSlider;
+			  x0 = ds.values()[0];
+			  x1 = ds.values()[1];
+			  axes = axes + "," + dimensions[iy].name + "," + x0 + "," + x1;
+                        }
+                        for(var dim:Number = 0; dim < dimensions.length; dim++){
+                          if(!((dim==ix) || ((dm.ndims>1) && (dim==iy)))){
+                            /* CUT DATA */
+			    ds = dimensionsList.indexToItemRenderer(dim) as DimensionSlider;
+			    x0 = ds.values()[0];
+			    axes = axes + "," + dimensions[dim].name + "," + x0 + "," + x0;
+                          }
+                        }
+			options.push("axes=" + axes);
+
+                        /* SET REQUEST URL */
+			analysisHS.url = uri + "?" + options.join("&");
+                        /* SEND REQUEST */
+			var call:AsyncToken = analysisHS.send();
+                        /* GET RESULT */
+			call.addResponder(new AsyncResponder(
+			  function(result:Object, token:Object = null):void {
+			  	if (! result.result.images ){
+			          /* SHOW ERROR MESSAGE IN XML */
+			          Alert.show(result.result.hash.messages + "\n requested URL: " + analysisHS.url, 
+				             result.result.hash.status);
+			        }
+                                /* EXTRACT IMAGES FROM XML */
+			  	var images:Object = result.result.images.image;
+			  	if (! images.length ) images = new Array(images);
+			  	var b64dec:Base64Decoder = new Base64Decoder();
+                                var img:Image;
+			  	for each (var image:String in images) {
+                                    b64dec.decode(image.content);
+                                    img = new Image();
+                                    img.source = b64dec.toByteArray();
+                                    //diagramTile.addChild(img);
+                                    diagramAry.addItemAt(img,0);
+                                    diagramMain.source = img.source;
+                                    b64dec.reset();
+			  	}
+			  },
+			  function(error:Object, token:Object = null):void {
+                            /* SHOW ERROR MESSAGE WHEN HTTP FAILURE */
+       	                    Alert.show("faild to draw: "+uri, "error");
+			  },
+			  call
+			));
+		}
+    /////////////////////////////////////////////////////////////////////////////
+		private function getFunctions(host:String):ArrayCollection {
+			var ary:ArrayCollection;
+			if (functions[host]) {
+			   ary = functions[host];
+			} else {
+			   ary = new ArrayCollection();
+			   functions[host] = ary;
+			   analysisHS.url = host+"/functions.xml";
+			   var call:AsyncToken = analysisHS.send();
+			   call.addResponder(new AsyncResponder(
+				  function(result:Object, token:Object = null):void {
+				  	var dms:Object = result.result["functions"]["function"];
+				  	if (!dms.length) dms = new Array(dms);
+				  	var obj:Object;
+				  	for each (var dm:Object in dms) {
+				  		obj = new Object;
+				  		obj.name = dm.name;
+				  		obj.path = dm.path;
+				  		//obj.ndims = dm.ndims;
+				  		obj.nvars = dm.nvars;
+				  		ary.addItem(obj);
+				  	}
+				  },
+				  function(error:Object, token:Object = null):void {
+				  	Alert.show("failed to get function from "+host,"error");
+				  	ary = null;
+				  },
+				  call
+				));
+			}
+			return ary;
+		}
+		
+                private function setFunction(event:Event=null):void {
+                  if (functionsCombo) {
+                    var dm:Object = functionsCombo.selectedItem;
+                    if (dm) {
+                      if (dm.ndims > 1) {
+                        //axisYCombo.enabled = true;
+                        //axisXCombo.selectedIndex = 0;
+                        //axisYCombo.selectedIndex = 1;
+                        //setAxisX();
+                        //setAxisY();
+                      } else {
+                        //axisYCombo.enabled = false;
+                        //axisXCombo.selectedIndex = 0;
+                        //setAxisX();
+                      }
+                    }
+                  }
+                }
+
+                private function thumbnailClick(event:Event):void {
+                  diagramMain.source = diagramTile.selectedItem.source;
+                  diagramTab.selectedIndex = 0;
+                }
+
+                /* CONTEXT MENU ON DIAGRAM */
+                private var imageMenuData:ArrayCollection = new ArrayCollection(['save to disk','save to database','save as a script']);
+                private var imageMenu:mx.controls.Menu;
+                private var imagePoint:Point = new Point();
+                private function showMenu():void{
+                  imageMenu= mx.controls.Menu.createMenu(diagramMain, imageMenuData, false);
+                  imageMenu.labelField="@label"
+                  imageMenu.addEventListener("itemClick", menuHandler);
+
+                  imagePoint.x = diagramMain.mouseX;
+                  imagePoint.y = diagramMain.mouseY;
+                  imagePoint = diagramMain.localToGlobal(imagePoint);
+                  imageMenu.show(imagePoint.x,imagePoint.y);        
+                }
+
+                private function menuHandler():void  {
+                  //
+                }    
+
+                private var imgX:Number = 400;
+                private var imgY:Number = 400;
+                private var vptRangeX:Array = ['0','1'];
+                private var vptRangeY:Array = ['0','1'];
+                private var vptDefaultX:Array = ['0.2','0.8'];
+                private var vptDefaultY:Array = ['0.2','0.8'];
+                [Bindable]
+                private var vptX:Array = ['0.2','0.8'];/* ASSIGNED TO viewportX */
+                [Bindable]
+                private var vptY:Array = ['0.2','0.8'];/* ASSIGNED TO viewportY */
+                /* CHECK CONSISTENCY OF VIEWPORT AND IMAGE SIZE */
+                private function layoutCheck():void {
+                  imgX = imageWidthSlider.value;
+                  imgY = imageHeightSlider.value;
+                  imageWidthValue.text=imgX.toString();
+                  imageHeightValue.text=imgY.toString();
+                  if(imgX < imgY){
+                    vptRangeY = ['0','1'];
+                    vptDefaultY = ['0.2','0.8'];
+                    vptRangeX[0] = 0;
+                    vptRangeX[1] = imgX / imgY;
+                    vptDefaultX[0] = 0.2 * imgX / imgY;
+                    vptDefaultX[1] = 0.8 * imgX / imgY;
+                  }else{
+                    vptRangeX = ['0','1'];
+                    vptDefaultX = ['0.2','0.8'];
+                    vptRangeY[0] = 0;
+                    vptRangeY[1] = imgY / imgX;
+                    vptDefaultY[0] = 0.2 * imgY / imgX;
+                    vptDefaultY[1] = 0.8 * imgY / imgX;
+                  }
+                  viewportX.minimum = vptRangeX[0];
+                  viewportX.maximum = vptRangeX[1];
+                  viewportY.minimum = vptRangeY[0];
+                  viewportY.maximum = vptRangeY[1];
+                  resetViewportX();
+                  resetViewportY();
+                }
+
+                private function resetViewportX():void{
+                  viewportX.setThumbValueAt(0,vptDefaultX[0]);
+                  viewportX.setThumbValueAt(1,vptDefaultX[1]);
+                }
+
+                private function resetViewportY():void{
+                  viewportY.setThumbValueAt(0,vptDefaultY[0]);
+                  viewportY.setThumbValueAt(1,vptDefaultY[1]);
+                }
+
+                private var mapProj:Number = 1;
+                /* NAMES OF PROJECTION */
+                [Bindable]
+                private var mapProjName:Array = ["rectangular uniform coordinate",/* 1 */
+                                                 "semi-logarithmic coordinate (y axis)",/* 2 */
+                                                 "semi-logarithmic coordinate (x axis)",/* 3 */
+                                                 "logarithmic coordinate",/* 4 */
+                                                 "polar coordinate",/* 5 */
+                                                 "bipolar coordinate",/* 6 */
+                                                 "equidistant cylindrical projection",/* 10 */
+                                                 "Mercator's projection",/* 11 */
+                                                 "Mollweide's projection",/* 12 */
+                                                 "Hammer's projection",/* 13 */
+                                                 "Eckert VI projection",/* 14 */
+                                                 "Kitada's elliptic projection",/* 15 */
+                                                 "equidistant conical projection",/* 20 */
+                                                 "Lambert's equal-area conical projection",/* 21 */
+                                                 "Lambert's conformal conical projection",/* 22 */
+                                                 "Bonne's projection",/* 23 */
+                                                 "orthographic projection",/* 30 */
+                                                 "polar stereo projection",/* 31 */
+                                                 "azimuthal equidistant projection",/* 32 */
+                                                 "Lambert's azimuthal equal-area projection"/* 33 */]
+
+                /* ITR NUMBERS FOR PROJECTION */
+                private var mapProjItr:ArrayCollection = new ArrayCollection(['1','2','3','4','5','6',
+					                                      '10','11','12','13','14','15',
+						                              '20','21','22','23',
+						                              '30','31','32','33'])
+                /* PARAMETERS FOR MAP PROJECTION */
+                private var mapProjLon:Array = ['0','0','0','0','0','0',
+					        '180','180','180','180','180','180',
+					        '180','180','180','180',
+					        '140','140','140','140']
+                private var mapProjLat:Array = ['0','0','0','0','0','0',
+					        '0','0','0','0','0','0',
+					        '90','90','90','90',
+					        '0','90','0','0']
+                private var mapProjRot:Array = ['0','0','0','0','0','0',
+					        '0','0','0','0','0','0',
+					        '0','0','0','0',
+					        '0','0','0','0']
+                private var mapProjRad:Array = ['0','0','0','0','0','0',
+					        '0','0','0','0','0','0',
+					        '90','90','90','90',
+					        '90','90','90','90']
+                /* UPDATE PARAMETERS FOR MAP PROJECTION */
+                private function checkMapProj():void{
+                  mapProj = mapProjItr[mapProjection.selectedIndex];
+                  mapLon.value = mapProjLon[mapProjection.selectedIndex];
+                  mapLat.value = mapProjLat[mapProjection.selectedIndex];
+                  mapRot.value = mapProjRot[mapProjection.selectedIndex];
+                  mapRad.value = mapProjRad[mapProjection.selectedIndex];
+                  if(mapProj < 10){
+                    mapLon.enabled = false;
+                    mapLat.enabled = false;
+                    mapRot.enabled = false;
+                    mapRad.enabled = false;
+                  }else if(mapProj < 20){
+                    mapLon.enabled = true;
+                    mapLat.enabled = true;
+                    mapRot.enabled = true;
+                    mapRad.enabled = false;
+                  }else if(mapProj < 30){
+                    mapLon.enabled = true;
+                    mapLat.enabled = true;
+                    mapRot.enabled = true;
+                    mapRad.enabled = true;
+                  }else{
+                    mapLon.enabled = true;
+                    mapLat.enabled = true;
+                    mapRot.enabled = true;
+                    mapRad.enabled = true;
+                  }
+                }
+
+	  ]]>
+  </mx:Script>
+  
+  <mx:HTTPService id="analysisHS" 
+		  useProxy="false" 
+		  showBusyCursor="true" 
+		  requestTimeout="120"/>
+  
+  <!-- MAIN PANEL -->
+  <mx:Panel width="100%" height="100%" label="Analsys2" headerHeight="10">
+    <mx:HDividedBox width="100%" 
+		    horizontalScrollPolicy="off" >
+      
+      <!-- LEFT PANELS -->
+      <mx:VDividedBox height="100%" resizeToContent="true">
+
+	<!-- LIST OF VARIABLES -->
+	<mx:Panel width="100%" height="100%" title="Variables">
+	  <mx:List width="100%" 
+		   height="100%"
+		   fontSize="14"
+		   horizontalScrollPolicy="auto"
+		   id="variablesList"
+		   dataProvider="{variables}" 
+		   labelField="name" 
+		   change="changeVariable(event)"/>
+	</mx:Panel>
+
+	<!-- DIMENSIONS -->
+	<mx:Panel width="100%" height="100%" title="Dimensions">
+	  <mx:List id="dimensionsList" 
+		   fontSize="14"
+		   selectable="false"
+		   dataProvider="{dimensions}">
+	    <mx:itemRenderer>
+	      <mx:Component>
+		<gfdnavi:DimensionSlider axis="{data}"/>
+	      </mx:Component>
+	    </mx:itemRenderer>
+	  </mx:List>
+	</mx:Panel>
+
+	<!-- PARAMETERS -->
+	<mx:Panel width="100%" title="Parameters">
+	  <mx:TabNavigator width="100%" height="100%">
+	    
+	    <!-- DRAW TAB -->
+	    <mx:HBox label="Draw" width="100%" height="100%">
+	      <mx:TabNavigator width="100%" height="100%">
+
+		<!-- MAIN TAB -->
+		<mx:HBox label="Main" width="100%" height="100%">
+		  <mx:VBox>
+		    <mx:Button label="Draw" 
+			       fontSize="16"
+			       click="draw(event)"/>
+		    <mx:ComboBox id="drawMethodsCombo" 
+				 dataProvider="{drawMethodsHost}" 
+				 labelField="name" 
+				 fontSize="14"
+				 valueCommit="setDrawMethod(event)"/>
+		    <mx:HBox>
+                      <mx:Label text="X Axis" fontSize="14"/>
+		      <mx:ComboBox id="axisXCombo" 
+				   dataProvider="{dimensions}" 
+				   labelField="name" 
+				   fontSize="14"
+				   change="setAxisX(event)"/>
+		    </mx:HBox>
+		    <mx:HBox>
+                      <mx:Label text="Y Axis" fontSize="14"/>
+		      <mx:ComboBox id="axisYCombo" 
+				   dataProvider="{dimensions}" 
+				   labelField="name" 
+				   fontSize="14"
+				   change="setAxisY(event)"/>
+		    </mx:HBox>
+		  </mx:VBox>
+		</mx:HBox>
+
+
+		<!-- MAP TAB -->
+		<mx:HBox label="Map projection" width="100%" height="100%">
+		  <mx:VBox>
+		    <mx:HBox>
+		      <mx:Label text="Map projection" fontSize="14"/>
+		      <mx:ComboBox id="mapProjection" 
+				   dataProvider="{mapProjName}" 
+				   labelField="num" 
+				   fontSize="14"
+				   change="checkMapProj()"/>
+		    </mx:HBox>
+		    <mx:HBox>
+		      <mx:Label text="Central longitude" fontSize="14"/>
+		      <mx:NumericStepper id="mapLon" 
+					 minimum="0"
+					 maximum="360"
+					 stepSize="0.1"/>
+		    </mx:HBox>
+		    <mx:HBox>
+		      <mx:Label text="Central latitude" fontSize="14"/>
+		      <mx:NumericStepper id="mapLat" 
+					 minimum="-90"
+					 maximum="90"
+					 stepSize="0.1"/>
+		    </mx:HBox>
+		    <mx:HBox>
+		      <mx:Label text="Rotation" fontSize="14"/>
+		      <mx:NumericStepper id="mapRot" 
+					 minimum="0"
+					 maximum="360"
+					 stepSize="0.1"/>
+		    </mx:HBox>
+		    <mx:HBox>
+		      <mx:Label text="Radius" fontSize="14"/>
+		      <mx:NumericStepper id="mapRad" 
+					 minimum="0"
+					 maximum="180"
+					 stepSize="0.1"/>
+		    </mx:HBox>
+		  </mx:VBox>
+		</mx:HBox>
+
+
+		<!-- LAYOUT TAB -->
+		<mx:HBox label="Layout" width="100%" height="100%">
+		  <mx:VBox>
+		    <mx:HBox>
+		      <mx:Label text="Image width" fontSize="14"/>
+		      <mx:Label id="imageWidthValue" text="400" fontSize="14"/>
+		      <mx:HSlider id="imageWidthSlider" 
+				  minimum="200" 
+				  maximum="800" 
+				  snapInterval="200" 
+				  value="400" 
+				  change="layoutCheck()"/>
+		    </mx:HBox>
+		    <mx:HBox>
+		      <mx:Label text="Image height" fontSize="14"/>
+		      <mx:Label id="imageHeightValue" text="400" fontSize="14"/>
+		      <mx:HSlider id="imageHeightSlider" 
+				  minimum="200" 
+				  maximum="800" 
+				  snapInterval="200" 
+				  value="400" 
+				  change="layoutCheck()"/>
+		    </mx:HBox>
+		    <mx:HBox>
+		      <mx:Label text="Viewport(x)" fontSize="14"/>
+		      <mx:HSlider id="viewportX"
+				  thumbCount="2" 
+				  values="{vptX}"
+				  minimum="0"
+				  maximum="1"/>
+		      <mx:Button label="reset"
+				 fontSize="14"
+				 click="resetViewportX()"/>
+		    </mx:HBox>
+		    <mx:HBox>
+		      <mx:Label text="Viewport(y)" fontSize="14"/>
+		      <mx:HSlider id="viewportY"
+				  thumbCount="2"
+				  values="{vptY}"
+				  minimum="0"
+				  maximum="1"/>
+		      <mx:Button label="reset"
+				 fontSize="14"
+				 click="resetViewportY()"/>
+		    </mx:HBox>
+		  </mx:VBox>
+		</mx:HBox>
+	      </mx:TabNavigator>
+	    </mx:HBox>
+	    
+	    <!-- ANALYSIS TAB -->
+	    <mx:HBox label="Analysis" width="100%" height="100%">
+	      <mx:ComboBox id="functionsCombo" 
+			   dataProvider="{functionsHost}" 
+			   labelField="name" 
+			   change="setFunction(event)"/>
+	    </mx:HBox>
+	  </mx:TabNavigator>
+	  
+	</mx:Panel>
+      </mx:VDividedBox>
+      
+      <!-- DIAGRAMS -->
+      <mx:Panel width="70%" height="100%" title="Diagrams">
+	<!--<mx:Tile id="diagramTile" width="100%" height="100%"/>-->
+
+	<mx:TabNavigator width="100%" height="100%" id="diagramTab">
+
+	  <!-- FULL IMAGE -->
+	  <mx:HBox width="100%" height="100%" label="Full size">
+	    <mx:Image id="diagramMain" 
+		      scaleContent="false"
+		      click="{showMenu()}"/>
+	  </mx:HBox>
+
+	  <!-- THUMBNAILS -->
+	  <mx:VBox width="100%" height="100%" label="Thumbnails">
+	    <mx:TileList id="diagramTile" 
+			 width="100%" 
+			 height="100%" 
+			 dataProvider="{diagramAry}"
+			 rowCount="1"
+			 columnCount="1"
+			 rowHeight="200"
+			 columnWidth="200"
+			 variableRowHeight="true"
+			 dragEnabled="true" 
+			 dropEnabled="true" 
+			 dragMoveEnabled="true"
+			 doubleClickEnabled="true"
+			 doubleClick="thumbnailClick(event)">
+              <mx:itemRenderer>
+		<mx:Component>
+		  <mx:Image source="{data.source}"
+			    height="{data.height}"
+			    width="{data.width}"
+			    toolTip="Doubleclick image to see the full image"
+			    scaleContent="true"/> 
+		</mx:Component>
+              </mx:itemRenderer>
+	    </mx:TileList>
+	    <mx:HBox>
+	      <mx:Label text="Size of thumbnails" fontSize="14"/>
+	      <mx:NumericStepper maximum="400" 
+				 minimum="50" 
+				 stepSize="50"
+				 value="200"
+				 id="diagramSize"
+				 change="diagramTile.columnWidth=diagramSize.value;
+					 diagramTile.rowHeight=diagramSize.value"/>
+	      <mx:Button label="remove selected item"
+			 fontSize="14"
+			 click="diagramAry.removeItemAt(diagramTile.selectedIndex);
+				diagramMain.source=null"/>
+	      <mx:Button label="clear all"
+			 fontSize="14"
+			 click="diagramAry.removeAll();
+				diagramMain.source=null"/>
+	    </mx:HBox>
+	    
+	  </mx:VBox>
+	</mx:TabNavigator>
+	
+      </mx:Panel>
+    </mx:HDividedBox>
+  </mx:Panel>
+</mx:Application>

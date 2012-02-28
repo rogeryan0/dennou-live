@@ -1,0 +1,233 @@
+.main_buttons{
+    background-color:#CCFFCC;
+}
+
+.diagram_div {
+    float:left; 
+    margin:3px; 
+    padding:3px;
+}
+.diagram_div:hover {
+    -moz-box-shadow: 0px 0px 3px 1px #000000;
+    -webkit-box-shadow: 0px 0px 3px 1px #000000;
+    -o-box-shadow: 0px 0px 3px 1px #000000;
+    box-shadow: 0px 0px 3px 1px #000000;
+}
+.diagram_div:hover .opts_window { 
+    opacity:0.95; /* standard  browsers */
+    filter: alpha(opacity=95); /* IE */
+}
+
+.diagram_div_nonactive { 
+    background-color:#DDDDFF; 
+}
+
+.diagram_div_active {
+    background-color:#9999FF; 
+}
+
+.diagram_top_buttons {
+    margin: 2px;
+}
+
+.diagram_and_optwins {
+    position:relative;
+    margin: 2px;
+    clear: both;
+}
+
+.opts_window_buttons {
+    float: left;
+}
+
+.opts_window {
+    background-color:#DDDDFF; 
+    margin:3px; 
+    padding:3px; 
+    opacity:0.3; /* standard  browsers */
+    filter: alpha(opacity=30); /* IE */
+    position:absolute;
+    left: 0;
+    top: 0;
+    overflow:auto;
+    z-index:1;
+    -moz-box-shadow: 1px 1px 3px 0px #000000;
+    -webkit-box-shadow: 1px 1px 3px 0px #000000;
+    -o-box-shadow: 1px 1px 3px 0px #000000;
+    box-shadow: 1px 1px 3px 0px #000000;
+}
+
+.opts_window_title {
+    font-weight: bold;
+    float: left;
+}
+
+.opts_window_body {
+    clear: both;
+}
+
+.layer_tabtops{ 
+    padding: 2px;
+    white-space: nowrap;
+}
+
+.layer_tabtop{ 
+    margin-right: 4px;
+    padding-left: 3px;
+    padding-right: 3px;
+    -moz-box-shadow: 0px -1px 3px 1px #000000;
+    -webkit-box-shadow: 0px -1px 3px 1px #000000;
+    -o-box-shadow: 0px -1px 3px 1px #000000;
+    box-shadow: 0px -1px 3px 1px #000000;
+    font-family: sans-serif;
+}
+.layer_tabtop:hover{ 
+    background-color:#BBBBFF; 
+}
+
+.layer_tabtop_active{ 
+    background-color:#BBBBFF; 
+}
+
+.layer_remove_button {
+    padding: 0;
+    margin-left: 10px;
+    font-family: sans-serif;
+    cursor: pointer;
+}
+.layer_remove_button:hover {
+    color: red;
+    font-weight: bold;
+}
+
+.layer_tabbodies{ 
+    clear: both;
+    padding: 3px;
+    background-color:#BBBBFF; 
+    -moz-box-shadow: 1px 1px 3px 1px #000000;
+    -webkit-box-shadow: 1px 1px 3px 1px #000000;
+    -o-box-shadow: 1px 1px 3px 1px #000000;
+    box-shadow: 1px 1px 3px 1px #000000;
+}
+
+.div_indent {
+    margin-left:20px
+}
+
+.table_input {
+    //width:100%;
+}
+
+.td_input {
+    border:2px solid #5555AA;
+    vertical-align:top;
+}
+
+.draw_method {
+    font-size: large;
+}
+
+.select_input {
+    font-size: large;
+}
+
+.corner_button {
+    padding: 0;
+    float: right;
+    cursor: pointer;
+}
+
+.corner_button_close:hover {
+    color: red;
+    font-weight: bold;
+}
+
+.diagram_fullimage { 
+    width: "";
+}
+
+.diagram_thumbnail { 
+    width: 100px;
+}
+
+.diagram_droppable { 
+    -moz-box-shadow: 0px 0px 3px 2px #0000FF;
+    -webkit-box-shadow: 0px 0px 3px 2px #0000FF;
+    -o-box-shadow: 0px 0px 3px 2px #0000FF;
+    box-shadow: 0px 0px 3px 2px #0000FF;
+}
+
+.leftpanels {
+    float: left;
+    background-color: #CCFFCC;
+}
+
+.left_eachpanel {
+    float: left;
+    background-color: #99CC99;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 200px;
+}
+
+.showhidebutton { 
+    float: right;
+}
+
+.leftpanel_contents {
+    background-color: #CCFFCC;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
+    clear: both;
+}
+
+.left_variables_name {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    margin-right: 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
+    font-weight: bold;
+}
+.left_variables_name:hover {
+    background-color: #EEFFEE;
+    -moz-box-shadow: 0px 0px 3px 1px #000000;
+    -webkit-box-shadow: 0px 0px 3px 1px #000000;
+    -o-box-shadow: 0px 0px 3px 1px #000000;
+    box-shadow: 0px 0px 3px 1px #000000;
+}
+
+.left_axes_name { 
+    color: black;
+    font-weight: bold;
+}
+
+.left_axes_name_highlight { 
+    color: blue;
+    font-weight: bold;
+}
+
+.left_axes_units { 
+    font-weight: normal;
+}
+
+.add_button { 
+    cursor: pointer;
+    font-family: sans-serif;
+}
+.add_button:hover { 
+    color: blue;
+    font-weight: bold;
+}
+

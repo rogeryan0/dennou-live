@@ -1,0 +1,58 @@
+<%
+# === category の集合の初期値を取得する
+# 以後は controller で、0.3s ごとに取得。
+# (取得するメソッドを呼び出しているのは、_form.rhtml)
+
+category = ""
+@categories = Array.new
+
+if @knowledge && @knowledge.category
+  Knowledge.find(:all, :group => "category", :conditions => ['category LIKE ?', @knowledge.category + '%'], :order => "category").each do |knowledge|
+    @categories << knowledge.category
+  end
+  category = @knowledge.category
+else
+  Knowledge.find(:all, :group => "category", :order => "category", :user => :all).each do |knowledge|
+    @categories << knowledge.category
+  end
+end
+%>
+  <table border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+    <tr>
+      <td align="right">Category:</td>
+      <td>
+        <input id="knowledge_category" name="knowledge[category]" size="30" type="text" value="<%= category %>" autocomplete="off" style="border-bottom: 1px solid white;" >
+        <%= observe_field 'knowledge_category',
+  	  :frequency => 0.2,
+          :url => { :action => 'category_search' },
+          :with => "'keyword=' + encodeURIComponent(value)",
+          :update => 'hits' %>
+      </td>
+    </tr>
+  
+    <tr>
+      <td valign="top">
+        <div id="close_button">
+  	  <a href="javascript:;" onclick="document.getElementById('open_button').style.display='block';
+             document.getElementById('outline_of_category_table').style.display='none';
+             document.getElementById('close_button').style.display='none';">hide list</a>
+        </div>
+      </td>
+      <td padding="0">
+        <div id="open_button" style="display: none;">
+          <a href="javascript:;" onclick="document.getElementById('close_button').style.display='block';
+             document.getElementById('outline_of_category_table').style.display='block';
+             document.getElementById('open_button').style.display='none';">select from candidates</a>
+        </div>
+        <div id="outline_of_category_table">
+	  <div>
+	    <div id="hits">
+	      <%= render :partial => 'category_table' %>
+	    </div>
+	  </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  

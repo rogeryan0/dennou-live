@@ -1,0 +1,73 @@
+:name: histogram1D
+:description: 1D histogram
+:ndims: 0
+:nvars: 1
+:vizshot_method: histogram1D
+:options:
+- :name: nbins
+  :optional: true
+  :type: int
+  :parser: ggraph
+  :default: null
+  :min: 1
+  :description: "number of bins"
+- :name: min
+  :optional: true
+  :type: float
+  :default: null
+  :parser: ggraph
+  :description: "minimum of bins"
+- :name: max
+  :optional: true
+  :type: float
+  :default: null
+  :parser: ggraph
+  :description: "maximum of bins"
+- :name: fill
+  :optional: true
+  :type: boolean
+  :default: true
+  :parser: ggraph
+  :description: "fill bars"
+- :name: exchange
+  :optional: true
+  :type: boolean
+  :default: false
+  :parser: ggraph
+  :description: "exchange abscissa and ordinate"
+
+:script: |
+  require "numru/ganalysis"
+  newfrm = opt.delete(:newfrm)
+  opt_gphys = opt.dup
+  opt_ggraph = opt.dup
+  opt_ggraph.delete("nbins")
+  opt_ggraph.delete("min")
+  opt_ggraph.delete("max")
+  GGraph::histogram(gphys.histogram(opt_gphys), newfrm, opt_ggraph)
+
+:setting_html: |
+  <div>
+    <label for="analysis_histogram1D_nbins">Num of bins:</label>
+    <%= text_field("analysis", "histogram1D_nbins", :size => 5, :maxlength => 10) %>
+    <br/>
+    <label for="analysis_histogram1D_min">min:</label>
+    <%= text_field("analysis", "histogram1D_min", :size => 5, :maxlength => 10, :onchange => "
+                   var tmp;
+                   if(parseFloat($('analysis_histogram1D_min').value) > parseFloat($('analysis_histogram1D_max').value)){
+                     tmp = $('analysis_histogram1D_min').value;
+                     $('analysis_histogram1D_min').value = $('analysis_histogram1D_max').value;
+                     $('analysis_histogram1D_max').value = tmp;
+                   }
+                   ") %>
+    <br/>
+    <label for="analysis_histogram1D_max">max:</label>
+    <%= text_field("analysis", "histogram1D_max", :size => 5, :maxlength => 10, :onchange => "
+                   var tmp;
+                   if(parseFloat($('analysis_histogram1D_min').value) > parseFloat($('analysis_histogram1D_max').value)){
+                     tmp = $('analysis_histogram1D_min').value;
+                     $('analysis_histogram1D_min').value = $('analysis_histogram1D_max').value;
+                     $('analysis_histogram1D_max').value = tmp;
+                   }
+                   ") %>
+  </div>

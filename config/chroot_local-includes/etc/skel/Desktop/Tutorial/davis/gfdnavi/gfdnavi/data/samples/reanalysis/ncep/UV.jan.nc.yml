@@ -1,0 +1,10 @@
+title: ncep climatology
+description: 
+    Derived from the ncep reanalysis climatology data.
+contains:
+  U:
+    long_name: Zonal Wind
+  V:
+    long_name: Merional Wind
+  %:
+    remark: number of grid points are significantly reduced by thinning.

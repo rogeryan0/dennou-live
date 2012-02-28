@@ -1,0 +1,24 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+line:
+  id: 1
+  node_id: 61
+  description: line plot
+  ndims: 1
+  nvars: 1
+  vizshot_method: line
+
+tone_root:
+  id: 2
+  node_id: 66
+  description: tone and contour plot
+  ndims: 2
+  nvars: 1
+  vizshot_method: tone_cont
+
+vector_root:
+  id: 3
+  node_id: 67
+  description: vector plot
+  ndims: 2
+  nvars: 2
+  vizshot_method: vector

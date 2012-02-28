@@ -1,0 +1,61 @@
+<div>
+  <label for="function">Function</label>
+  <select name="analysis[function]" id="function" onChange="selectFunction(this);">
+<%
+for func in @functions
+  name = h(func.name)
+  selected = (@analysis.function == func) ? "selected" : ""
+%>
+    <option value="<%= name %>" id="function_<%= name %>" <%= selected %>><%= name %></option>
+<% end %>
+  </select>
+
+  <%= link_to("add function", :controller => "function", :action => "create") %>
+</div>
+
+<div id="function_arguments">
+<% @functions.each{|func| %>
+  <div id="function_arguments_<%=h(func.name)%>">
+    <%= (src=func.setting_html) ? render_erb(src) : "" %>
+  </div>
+<% } %>
+</div>
+
+<div id="function_variables_order">
+  <%
+  if @functions.length > 0
+    vnums = @functions.collect{|f| f.nvars}.uniq!.sort!
+    vnums.each{|i|
+      @order_type = "function"
+      @num_for_each = i
+      @order = @analysis.function_variables_order
+    %>
+    <div id="function_variables_order_div_<%=i%>" style="display:none">
+    <% unless i==1 %>
+      Order of input variables
+      <%= render(:partial => "variables_order") %>
+    <% end %>
+    </div>
+    <% }
+  end %>
+</div>
+
+
+<%
+  nfunc = @functions.length
+%>
+<script>
+  funcs = new Array(<%=nfunc%>);
+  var obj;
+<% nfunc.times{|i| %>
+  obj = new Object();
+  obj.name = '<%=h(@functions[i].name)%>';
+  obj.order = $('function_variables_order_div_<%=@functions[i].nvars%>');
+  funcs[<%=i%>] = obj;
+<% } %>
+  funcVNums = new Array();
+  <% vnums && vnums.each_with_index{|vn,i| %>
+  funcVNums[<%=i%>] = <%=vn%>;
+  <% } %>
+  selectFunction($('function'));
+</script>

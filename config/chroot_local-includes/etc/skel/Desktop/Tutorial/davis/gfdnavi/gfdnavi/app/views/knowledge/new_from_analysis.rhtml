@@ -1,0 +1,21 @@
+<body onload="setNumOfFigure(<%= @num_of_figure %>)">
+<div class="form_of_creating_knowledge_document">
+  <u>
+    <h1>Save Images and Create a New Knowledge</h1>
+  </u>
+  
+  <% form_tag({:action => "update", :type => "new_from_analysis"}, {"name"=>"form"}) do %>
+    <%= error_messages_for 'knowledge' %>
+    <%= render :partial => 'form' %>
+    <%= submit_tag "Create" %>
+    <br>
+    <br>
+    <div id="backup">
+      <%#= render :partial => "backup" %>
+    </div>
+  <% end %>
+</div>
+
+<%= link_to 'Go to Knowledge List', :action => 'list' %>
+</body>
+

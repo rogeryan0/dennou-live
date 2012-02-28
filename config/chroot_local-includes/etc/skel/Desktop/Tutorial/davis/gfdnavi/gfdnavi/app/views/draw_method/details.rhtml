@@ -1,0 +1,125 @@
+<%
+ary=Array.new
+@draw_method.nvars.times{|i|
+  ary[i]= i==0 ? "gphys" : "gphys#{i}"
+}
+arg_str = ary.join(", ")
+%>
+<h2>Draw Method: <%= h(@draw_method.name) %></h2>
+
+<table border=2>
+  <tr>
+    <th colspan=2>name</th>
+    <td><%= h(@draw_method.name) %></td>
+  </tr>
+  <tr>
+    <th colspan=2>description</th>
+    <td><%= h(@draw_method.description) %></td>
+  </tr>
+<% if @draw_method.owner == @user %>
+  <tr>
+    <th colspan=2>usable to</th>
+    <td><%= if @draw_method.other_readable
+              rgs = Group.find_by_bit_flag(@draw_method.rgroups) 
+              srgs = rgs.length>0 ? '  ('+rgs.collect{|g| g.name}.join(' ')+')' : ''
+              "everyone"+srgs
+	    else
+              ags = Group.find_by_bit_flag(@draw_method.groups_readable)
+              ags.length>0 ? ags.collect{|g| g.name}.join(' ') :  'nobody'
+	    end
+      %></td>
+  </tr>
+<% end %>
+  <tr>
+    <th colspan=2>number of variables</label></th>
+    <td><%= @draw_method.nvars %></td>
+  </tr>
+  <tr>
+    <th colspan=2>number of dimensions</label></th>
+    <td><%= @draw_method.ndims %></td>
+  </tr>
+  <tr>
+    <th colspan=2>vizshot method</label></th>
+    <td><%= @draw_method.vizshot_method %></td>
+  </tr>
+  <tr>
+    <th colspan=2>script for vizshot</th>
+    <td>
+<% if @draw_method.script %>
+     {|<%= arg_str %>|
+      <br/>
+      <div style="padding-left:1em">
+        <pre><%= h(@draw_method.script) %></pre>
+      </div>
+      }
+<% end %>
+    </td>
+  </tr>
+  <tr>
+    <th colspan=2>script for ggraph</th>
+    <td>
+<% if @draw_method.ggraph %>
+     {|<%= arg_str %>|
+      <br/>
+      <div style="padding-left:1em">
+        <pre><%= h(@draw_method.ggraph) %></pre>
+      </div>
+      }
+<% end %>
+    </td>
+  </tr>
+
+
+<%
+opts = @draw_method.draw_method_options
+nopts = opts.length
+nopts.times do |j|
+  opt = opts[j]
+%>
+  <tr>
+    <th rowspan=8>options<%= j %></th>
+    <th>name</th>
+    <td><%= h(opt.name) %></td>
+  </tr>
+  <tr>
+    <th>value type</th>
+    <td><%= h(opt.value_type.name) %></td>
+  </tr>
+  <tr>
+    <th>default</th>
+    <td><%= h(opt.default) %></td>
+  </tr>
+  <tr>
+    <th>min</th>
+    <td><%= h(opt.min) %></td>
+  </tr>
+  <tr>
+    <th>max</th>
+    <td><%= h(opt.max) %></td>
+  </tr>
+  <tr>
+    <th>optional</th>
+    <td><%= opt.optional ? "true" : "false" %></td>
+  </tr>
+  <tr>
+    <th>parser</th>
+    <td><%= h(opt.parser) %></td>
+  </tr>
+  <tr>
+    <th>description</th>
+    <td><%= h(opt.description) %></td>
+  </tr>
+<% end %>
+
+
+
+</table>
+
+<br/>
+<br/>
+
+<% if (@user.super_user || @draw_method.owner==@user) && !@draw_method.default %>
+<%= link_to("edit draw_method", :action => "edit", :id => h(@draw_method.name)) %>
+<br/>
+<% end %>
+<%= link_to("back to list", :action => "list") %>

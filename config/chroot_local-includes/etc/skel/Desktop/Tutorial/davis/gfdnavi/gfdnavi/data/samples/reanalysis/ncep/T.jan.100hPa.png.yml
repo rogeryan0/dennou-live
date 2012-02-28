@@ -1,0 +1,8 @@
+--- 
+gfdnavi: 
+  org_path: /samples/reanalysis/ncep/T.jan.nc/T/draw:/usr/root/draw_methods/tone(lev=100).png
+  user: root
+  references: 
+  - name: draw
+    path: /samples/reanalysis/ncep/T.jan.nc/T
+description: Longitude-latitude cross section of climatorogy temperature in January

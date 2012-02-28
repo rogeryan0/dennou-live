@@ -1,0 +1,56 @@
+<%
+if (params[:knowledge] && params[:knowledge]["height_or_width"] == "width") || (@knowledge && @knowledge.figures_size_height_or_width  == 1)
+  height_or_width = "width"
+else
+  height_or_width = "height"
+end
+
+if params[:knowledge] && params[:knowledge]["figures_size_number"]
+  image_width = params[:knowledge]["figures_size_number"]
+  image_height = params[:knowledge]["figures_size_number"]
+elsif @knowledge && @knowledge.figures_size_number
+  image_width = @knowledge.figures_size_number
+  image_height = @knowledge.figures_size_number
+else
+  image_width = 100
+  image_height = 100
+end
+
+if params[:knowledge]
+  if params[:knowledge]["percent_or_pixel"] == 'pixel'
+    percent_or_pixel = ""
+  else
+    percent_or_pixel = "%"
+    image_width = image_width.to_i * @image_widths[@count-1] / 100
+    image_height = image_height.to_i * @image_heights[@count-1] / 100
+  end
+elsif (@knowledge && @knowledge.figures_size_units == 1)
+  percent_or_pixel = ""
+else
+  percent_or_pixel = "%"
+  image_width = image_width.to_i * @image_widths[@count-1] / 100
+  image_height = image_height.to_i * @image_heights[@count-1] / 100
+end
+%>
+
+<% unless (image = Image.find(:first, :conditions => ["path=?", @kf.image_path], :user => @user)) %>
+  <!-- 画像がDBに存在しない場合 -->
+  <img src="x.gif">
+  <%= "(Image not found.)" %>
+<% else%>
+  <!-- まず画像を置く -->
+  <%= link_to image_tag(image_path(image), :id=>"figure_#{@count}", :"#{height_or_width}"=>"#{image_height.to_i}", :alt=>image_path(image), :title=>'image', :align=>'absmiddle', :border=>0), image_path(image) %><br>
+  <br>
+
+  <% if image.org_path %>
+  <!-- 画像の元となるデータがある(Gfdnavi中で作られた画像の)場合 -->
+    <span title="then you can further explore the data.">
+      <%= link_to "&lt;Redraw this image&gt;", :action => 'fig2analysis2', :org_path => image.org_path %>
+    </span>
+    <% if (image_height.to_i <= 200) %>
+       <br>
+    <% end %>
+  <% end %>
+<% end %>
+
+

@@ -1,0 +1,17 @@
+gfdnavi:
+  aggregate:
+    *.nc/temp:
+      alias: ../2006.nc
+    010[1-3].nc/temp:
+
+contains:
+  010[1-3].nc/temp:
+     note: united data sample
+  2006.nc/temp:
+     gfdnavi:
+       draw_parameters:
+         tone_nlev: 30
+       references:
+         - path: /samples/jmadata/MSM-P/2006/0101.nc/temp
+         - path: /samples/jmadata/MSM-P/2006/0102.nc/temp
+         - path: /samples/jmadata/MSM-P/2006/0103.nc/temp

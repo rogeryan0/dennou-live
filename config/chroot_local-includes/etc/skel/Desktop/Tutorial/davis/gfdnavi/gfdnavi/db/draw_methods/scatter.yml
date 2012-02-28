@@ -1,0 +1,161 @@
+:name: scatter
+:description: scatter plot
+:ndims: 0
+:nvars: 2
+:vizshot_method: scatter
+:script: |
+  newfrm = opt.delete(:newfrm)
+  eofanalysis = opt.delete(:eofanalysis)
+  opt_eof = Hash.new
+  opt_eof['lineindex'] = opt.delete(:eof_lineindex)
+  opt_eof['linetype'] = opt.delete(:eof_linetype)
+  opt_eof['style'] = opt.delete(:eof_style)
+  opt_eof['fact'] = opt.delete(:eof_fact)
+
+  # CONVERT markersize -> size
+  opt["size"] = opt.delete(:markersize)
+  GGraph::scatter(gphys, gphys1, newfrm, opt)
+
+  if eofanalysis
+    require "numru/ganalysis"
+    # interpret cut, slice, etc
+    gpx, closerx = GGraph::data_prep_multidim(gphys, opt)
+    gpy, closery = GGraph::data_prep_multidim(gphys1, opt)
+    # flatten gphys data -----
+    fakeaxis = Axis.new.set_pos(VArray.new(NArray.int(gpx.length).indgen!,
+                                           {"long_name"=>"fake",
+                                             "units"=>""},
+                                           "fake"))
+    fakegrid = Grid.new(fakeaxis)
+    gpx, gpy = [gpx, gpy].collect{|gp|
+      na = gp.val.reshape!(gp.length)
+      attr = gp.data.attr_copy
+      GPhys.new(fakegrid,VArray.new(na,attr,gp.name))
+    }
+    # ------------------------
+    evec,rate = GAnalysis.eof2(gpx,gpy)
+    GGraph::add_mode_vectors([gpx.mean.val,gpy.mean.val],evec,opt_eof)
+  end
+
+
+:setting_html: |
+  <%
+  @order_type = "scatter"
+  @order_names = %w(X Y)
+  @num_for_each = 2
+  @group_name = "diagram"
+  @order = @analysis.draw_variables_order
+  %>
+  <div>
+    X-Y component
+    <%= render(:partial => "variables_order") %>
+    <br/>
+    <label for="analysis_scatter_type">Marker type (1--17, 33--219, or 224--230)</label>
+    <%= text_field("analysis", "scatter_type", :size => 3, :maxlength => 3) %>
+    <br/>
+    <a href="http://www.gfd-dennou.org/library/dcl/dcl-f77doc/rc1/grph1/img89.gif" target="dclfont">
+    Sample image of markers</a>
+    <br/>
+    <%= line_index_generator("scatter", "index", "Marker") %>
+    <label for="analysis_scatter_markersize">Marker size (default: 0.01)</label>
+    <%= text_field("analysis", "scatter_markersize", :size => 4, :maxlength => 5) %>
+    <hr/>
+    <%= check_box("analysis", "scatter_eofanalysis", :onclick => "
+                  if($('analysis_scatter_eofanalysis').checked)
+                    Element.show('span_scatter_eof_params');
+                  else
+                    Element.hide('span_scatter_eof_params');
+                  ") %>
+    <label for="analysis_scatter_eofanalysis">Display EOF modes</label>    
+    <span id="span_scatter_eof_params">
+      <br/>
+      <%= line_index_generator("scatter","eof_lineindex","Line") %>
+      <label for="analysis_scatter_index">Line type</label>
+      <%= text_field("analysis", "scatter_eof_linetype", :size => 3, :maxlength => 20) %>
+      <br/>
+      <label for="analysis_scatter_eof_fact">scaling factor (line length = stddev times the scaling factor for each side)</label>
+      <%= text_field("analysis", "scatter_eof_fact", :size => 3, :maxlength => 3) %>
+      <br/>
+      Style:
+      <select name="analysis[scatter_eof_style]" id="analysis_scatter_eof_style">
+        <% eof_style = %w(line arrow ellipse) %>
+        <% eof_style.each{|style| %>
+          <option <%= (@analysis["scatter_eof_style"]==style ? "selected" : "") %>><%= style %></option>
+        <% } %>
+      </select>
+    </span>
+    <hr/>
+    <%= check_box("analysis", "scatter_correlation") %>
+    <label for="analysis_scatter_correlation">Display correlation coefficient</label>
+  </div>
+  <!-- INITIALIZATION -->
+  <script>
+    if($('analysis_scatter_eofanalysis').checked)
+      Element.show('span_scatter_eof_params');
+    else
+      Element.hide('span_scatter_eof_params');
+  </script>
+
+:options:
+- :name: type
+  :type: int
+  :optional: true
+  :default: 2
+  :min: 1
+  :max: 255
+  :parser: ggraph
+  :description: "marker type"
+- :name: index
+  :type: int
+  :optional: true
+  :default: 1
+  :min: 1
+  :max: 999
+  :parser: ggraph
+  :description: "marker width (lower 1 digit) and color (upper 2 digits)"
+- :name: markersize
+  :type: float
+  :optional: true
+  :default: 0.01
+  :min: 0.0
+  :max: 0.1
+  :parser: vizshot
+  :description: "marker size"
+- :name: eofanalysis
+  :type: boolean
+  :optional: true
+  :parser: vizshot
+  :description: "display EOF eigenmodes"
+- :name: eof_lineindex
+  :type: int
+  :optional: true
+  :default: 21
+  :min: 1
+  :max: 999
+  :parser: vizshot
+  :description: "line width (lower 1 digit) and color (upper 2 digits) for EOF"
+- :name: eof_linetype
+  :type: int
+  :optional: true
+  :default: 1
+  :parser: vizshot
+  :description: "line type for EOF"
+- :name: eof_fact
+  :type: float
+  :optional: true
+  :default: 2
+  :parser: vizshot
+  :description: "size of eigenmodes becomes 1 standard deviation times this factor" 
+- :name: eof_style
+  :type: string
+  :optional: true
+  :default: line
+  :parser: vizshot
+  :description: "style for displaying eigenmodes (line, arrow, ellipse)"
+- :name: correlation
+  :type: boolean
+  :optional: true
+  :default: true
+  :parser: ggraph
+  :description: "display Pearson (ordinary) correlation"
+

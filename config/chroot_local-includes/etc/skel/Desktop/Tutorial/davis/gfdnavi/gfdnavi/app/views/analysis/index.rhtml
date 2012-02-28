@@ -1,0 +1,205 @@
+<div id="messages" class="notice">
+<% if flash[:messages] %>
+  <%= flash[:messages] %>
+<% end %>
+</div>
+
+<div id="gmap" style="left:320px;top:150px;position:absolute;z-index:999;display:none;border:solid;border-width:3px;background:#ffffff">
+  <div class="menu_header">
+    <div style="float:right">
+      <%= link_to_function(image_tag("x.gif", :class => "delete"), "Element.hide('gmap')") %>
+    </div>
+  </div>
+  <div style="clear:right">
+    <div id="map" class="menu_body" style="width:500px;height:300px"></div>
+  </div>
+</div>
+
+
+<div id="analysis_menu">
+
+  <div id="variables" class="analysis_menu">
+    <div id="variables_header" class="menu_header">
+      <%= link_to_function(image_tag("minimize.gif", :class => "minmax"), "variablesBox.setHeight(0);") %>
+      <%= link_to_function(image_tag("maximize.gif", :class => "minmax"), "variablesBox.resetHeight();") %>
+      <span class="tab_font">Variables</span>
+    </div>
+    <div id="variables_body" class="menu_body">
+      <%= render(:partial => "variables") %>
+    </div>
+  </div>
+
+  <div id="action_form">
+
+    <div id="axes" class="analysis_menu">
+      <div id="axes_header" class="menu_header">
+        <%= link_to_function(image_tag("minimize.gif", :class => "minmax"), "axesBox.setHeight(0);") %>
+        <%= link_to_function(image_tag("maximize.gif", :class => "minmax"), "axesBox.resetHeight();") %>
+        <span class="tab_font">Axes</span>
+      </div>
+      <div id="dimensions_body" class="menu_body">
+<!--
+        <script>
+          var tab_axes = new Tab();
+        </script>
+        <table cellpadding="0" cellspacing="0">
+          <tr>
+            <td class="tab_td"><div class="tab_sep">&nbsp;</div></td>
+            <td class="tab_td"><div id="dimensions_tab" class="tab_open" onclick="tab_axes.select(0);">
+              <span class="tab_font">Dimensions</span>
+            </div></td>
+            <td class="tab_td" width="100%"><div class="tab_sep"><span class="tab_font">&nbsp;</span></div></td>
+          </tr>
+          <tr>
+            <td colspan="3"><div class="tab_body">
+-->
+              <div id="dimensions_setting">
+<% if @analysis.dimensions.length > 0 %>
+                <%= render(:partial => "dimension_option") %>
+<% end %>
+              </div>
+<!--
+            </div></td>
+          </tr>
+        </table>
+        <script>
+          tab_axes.tab_list[0] = $('dimensions_tab');
+          tab_axes.body_list[0] = $('dimensions_setting');
+        </script>
+-->
+      </div>
+    </div>
+
+    <div id="options" class="analysis_menu">
+      <div id="options_header" class="menu_header">
+        <%= link_to_function(image_tag("minimize.gif", :class => "minmax"), "optionsBox.setHeight(0);") %>
+        <%= link_to_function(image_tag("maximize.gif", :class => "minmax"), "optionsBox.resetHeight();") %>
+        <span class="tab_font">Options</span>
+      </div>
+      <div id="options_body" class="menu_body">
+        <!-- THIS FORM IS USED TO COPY THE ORDER OF THE VARIABLES 
+             FROM EACH DRAW/ANALYSIS SETTING WINDOW -->
+        <form id="variables_order_hidden" style="display:none"></form>
+
+        <script>
+          var tab_actions = new Tab();
+        </script>
+<!--[if IE]>
+        <table cellpadding="0" cellspacing="0" width="96%">
+<![endif]-->
+<![if !IE]>
+        <table cellpadding="0" cellspacing="0" width="100%">
+<![endif]>
+          <tr>
+<%
+nactions = Analysis::ACTION_TYPE.length
+nactions.times do |i|
+  action_name = Analysis::ACTION_TYPE[i]
+  class_name = i==@analysis.action_type ? "tab_open" : "tab_close"
+%>
+            <td class="tab_td"><div class="tab_sep">&nbsp;</div></td>
+            <td class="tab_td"><div id="action_<%= action_name %>_tab" class="<%= class_name %>" onclick="tab_actions.select(<%= i %>);">
+              <span class="tab_font"><%= h(action_name.capitalize) %>
+                <%= help_popup( action_name+'_tab' ) %>
+              </span>
+              <script>
+                tab_actions.tab_list[<%= i %>] = $('action_<%= action_name %>_tab');
+              </script>
+            </div></td>
+<% end %>
+            <td class="tab_td"><div class="tab_sep"><span class="tab_font">&nbsp;</span></div></td>
+          </tr>
+
+          <tr>
+            <td colspan="<%= nactions*2+1 %>"><div class="tab_body">
+              <div id="draw_settings" style="display:none">
+<% if @analysis.action_type == 0 %>
+                <%= render(:partial => "draw_settings") %>
+                <script>
+                  Element.show('draw_settings');
+                </script>
+<% end %>
+              </div>
+              <div id="analysis_settings" style="display:none">
+<% if @analysis.action_type == 1 %>
+                <%= render(:partial => "analysis_settings") %>
+                <script>
+                  Element.show('analysis_settings');
+                </script>
+<% end %>
+              </div>
+            </div></td>
+          </tr>
+        </table>
+        <script>
+          tab_actions.body_list[0] = $('draw_settings');
+          tab_actions.body_list[1] = $('analysis_settings');
+          tab_actions.action_list[0] = "changeActionType(0);";
+          tab_actions.action_list[1] = "changeActionType(1);";
+        </script>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    variablesBox = new ResizableBox($('variables'), 300, null, false, true);
+    axesBox = new ResizableBox($('axes'), 300, null, false, true);
+    optionsBox = new ResizableBox($('options'), 300, null, false, true);
+  </script>
+
+</div>
+
+
+<div id="analysis_main">
+
+  <div id="progress"></div>
+  <div id="diagram_control">
+    <%= link_to_function("Thumbnails","operationForAllDiagrams(minimizeDiagram);") %> /
+    <%= link_to_function("Full images","operationForAllDiagrams(maximizeDiagram);") %> /
+    <%= link_to_function("Destroy all","operationForAllDiagrams(destroyDiagram);" + remote_function(:url => {:action => "clear_diagrams"})) %>
+    (<%= link_to("new version", :controller => "analysis2") %>)
+  </div>
+  <div id="diagrams">
+<%
+if @diagrams
+  @diagrams.compact!
+  @diagrams.reverse.each_with_index{|dia,i|
+    @diagram = [@diagrams.length - i - 1, dia]
+%>
+    <%= render :partial => "diagram" %>
+<%
+  }
+end
+%>
+  </div>
+</div>
+
+<div id="create_knowledge_from_analysis"></div>
+<% if @diagrams && (@diagrams.compact.length > 0) && !GFDNAVI_DISABLE_USER %>
+  <script>
+    drawKnowledgeFromAnalysisButton();
+  </script>
+<% end %>
+
+
+
+<div style="clear:left">
+  <div id="history">
+    <%= render :partial => "history" %>
+  </div>
+  <hr/>
+</div>
+
+
+<div id="script">
+  <script>
+    progressText = new ProgressText();
+    executable = <%= @analysis.dimensions.length > 0 %>;
+    action_type = <%= @analysis.action_type %>;
+    afterCallBack();
+  </script>
+</div>
+
+<!-- defer loading of google map ("defer" attribute has a problem on IEs) -->
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>

@@ -1,0 +1,11 @@
+title: 米国環境予測センター (NCEP) / 米国国立大気研究センター (NCAR)
+       再解析データからの気候値
+comments: このデータは, オリジナルデータを間引きしたものです.
+#contains:
+#  U:
+#    物理量: 東西風
+#    欠損値: -9.96921e+36f
+#  V:
+#    物理量: 子午面風
+#  *:
+#    remark: number of grid points are significantly reduced by thinning.

@@ -1,0 +1,33 @@
+<% form_tag do %>
+
+  <h3>Signup</h3>
+  <%= error_messages_for 'sign_up_user' %><br/>
+
+  <label for="sign_up_user_login">Desired login name:</label><br/>
+  <%= text_field "sign_up_user", "login", :size => 10 %><br/>
+
+  <label for="sign_up_user_full_name">Full name:</label><br/>
+  <%= text_field "sign_up_user", "full_name", :size => 30 %><br/>
+
+  <label for="sign_up_user_email_address">Email address:</label><br/>
+  <%= text_field "sign_up_user", "email_address", :size => 30 %><br/>
+
+  <label for="sign_up_user_affiliation">Affiliation:</label><br/>
+  <%= text_field "sign_up_user", "affiliation", :size => 50 %><br/>
+
+  <label for="sign_up_user_password">Password (more than 5 characters):</label><br/>
+  <%= password_field "sign_up_user", "password", :size => 30 %><br/>
+
+  <label for="sign_up_user_password_confirmation">Confirm password:</label><br/>
+  <%= password_field "sign_up_user", "password_confirmation", :size => 30 %><br/>
+
+  <label for="sign_up_user_openid">OpenID URL:</label><br/>
+  <%= text_field "sign_up_user", "openid", :size => 50 %><br/>
+
+  <%= submit_tag "Signup" %>
+
+<% end %>
+
+<script>
+  $('sign_up_user_login').focus();
+</script>

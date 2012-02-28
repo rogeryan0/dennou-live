@@ -1,0 +1,32 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+mean:
+  id: 1
+  node_id: 41
+  description: the first dimensional mean
+  nvars: 1
+  script: |
+    [gphys0.mean(*arg0)]
+
+stddev:
+  id: 2
+  node_id: 42
+  description: the first dimensional standard deviation
+  nvars: 1
+  script: |
+    [gphys0.stddev(*arg0)]
+
+addition:
+  id: 3
+  node_id: 43
+  description: add two data
+  nvars: 2
+  script: |
+    [gphys0 + gphys1]
+
+mean_root:
+  id: 4
+  node_id: 64
+  description: the first dimensional mean
+  nvars: 1
+  script: |
+    [gphys0.mean(*arg0)]

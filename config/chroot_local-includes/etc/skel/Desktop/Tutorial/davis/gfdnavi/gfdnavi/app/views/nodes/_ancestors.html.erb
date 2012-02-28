@@ -1,0 +1,89 @@
+<%
+anc = @ancestors
+anc.each_with_index do |dsc,idx|
+%>
+<div class="dir_description">
+  <p class="description">
+    <%= "#{idx+1}." %>
+  <%
+   case dsc[:type]
+   when "directory"
+  %>
+    <%= image_tag('tree/folder.png', :size=>'17x19', :border => 0) %>
+  <% when "variable" %>
+    <%= image_tag('tree/binary.png', :size=>'17x19', :border => 0) %>
+  <% when "image" %>
+    <%= image_tag('tree/image2.png', :size=>'17x19', :border => 0) %>
+  <% end %>
+    <b>
+  <% if dsc[:path]
+       if @site
+  %>
+        <a href="<%= data_url(:path => dsc[:path].sub(/^\//,""), :format=>"html", :site=>"#{@site}") %>"><%= h(dsc[:name]) %></a>
+    <% else %>
+        <a href="<%= data_url(:path => dsc[:path].sub(/^\//,""), :format=>"html") %>"><%= h(dsc[:name]) %></a>
+    <% end %>
+  <% else %>
+      <%= h(dsc[:name]) %>
+  <% end %>
+    </b>
+  <% if dsc[:infomation_url] %>
+    &nbsp;<a href="<%= h(dsc[:infomation_url]) %>" class="description">info</a>
+  <% end %>
+    <i>
+  <% if (dsc[:title] != dsc[:name]) %>
+      &nbsp;&nbsp; : &nbsp;&nbsp; <%= h(dsc[:title]) %>
+  <% end %>
+    </i>
+  </p>
+<% end %>
+<% anc.length.times do %>
+  </div>
+<% end %>
+
+<hr/>
+
+<%
+count=0
+anc.each_with_index do |dsc,idx| 
+  count += 1 
+%>
+<div class="title_description">
+  <p class="description"><b>
+    <%= "#{idx+1}." %>
+    <%= h(dsc[:title]) %>
+  </b></p>
+</div>
+<div class="description_description">
+  <p>
+    <b>Description:</b>
+    <%=h(dsc[:description]) %>
+  </p>
+  <p>
+  <%
+  if dsc[:keyword_attributes].length > 0 
+    alid = "att_label"+count.to_s 
+    acid = "att_contents"+count.to_s 
+  %>
+    <div class="att_label" id='<%=alid%>'
+         onclick="Element.show('<%=acid%>'); Element.hide('<%=alid%>');">
+      other attributes
+    </div>
+    <div class="att_contents" id='<%=acid%>' style="display:none"
+	 onclick="Element.hide('<%=acid%>'); Element.show('<%=alid%>');">
+      <div class="att_label">
+	hide
+      </div>
+      <table>
+    <% dsc[:keyword_attributes].each{|kwa| %>
+        <tr>
+          <td><%= h(kwa[:name]) %></td>
+          <td><%= h(kwa[:value]) %></td>
+        </tr>
+    <% } %>
+      </table>
+    </div>
+  <% end %>
+  </p>
+</div>
+<% end %>

@@ -1,0 +1,13 @@
+Dear gfdnavi administrators
+
+Following user signed up for gfdnavi.
+Please click the following link or visited to gfdnavi(<%= @url %>) and deside to accept or reject the request.
+accept: <%= @url %>user/accept_signup/<%= @user.id %>
+reject: <%= @url %>user/reject_signup/<%= @user.id %>
+
+
+User's information:
+ login name: <%= @user.login %>
+ full name: <%= @user.full_name %>
+ email address: <%= @user.email_address %>
+ affiliation: <%= @user.affiliation %>

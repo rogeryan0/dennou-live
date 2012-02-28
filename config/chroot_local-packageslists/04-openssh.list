@@ -1,0 +1,2 @@
+# ssh client
+openssh-client openssh-blacklist openssh-blacklist-extra

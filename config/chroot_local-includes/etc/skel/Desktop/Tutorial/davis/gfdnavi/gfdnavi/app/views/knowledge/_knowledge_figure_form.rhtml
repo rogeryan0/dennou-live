@@ -1,0 +1,187 @@
+<!-- knowledge figures -->
+<%
+if @type == "new_from_analysis"
+   image_paths = session[:knowledge_figure]["image_paths"]
+end
+%>
+
+<table id="knowledge_figure_table">
+  <tbody id="knowledge_figure_tbody">
+    <% for i in 1 .. @num_of_figure %><!-- 図の枚数だけループさせる -->
+    <tr>
+      <td>
+	<!-- 図の番号を記憶しておく(0からはじまる) -->
+	<fieldset id="figure_field_<%= i %>" class="form_fieldset">
+	  <input type="hidden" id="knowledge_figure_<%= i %>_figure_number" name="knowledge_figure[<%= i %>][figure_number]" value="<%= i-1 %>">
+	  <legend>
+	    <!-- GUIで現れる図の番号(1からはじまる) -->
+	    <span id="figure_<%= i %>">Figure <%= i %></span>
+	  </legend>
+	  <table>
+	    <tr valign="top">
+	      <td><!-- 図の入れ替えボタン(ボタンのないところには代わりに空白の四角を入れる) -->
+		<br>
+		<!-- up button -->
+		<% if (i==1) %>
+		  <img src = "<%= relative_url_root %>/images/white.bmp" id="up_alternative_<%= i %>" width="50" height="50">
+		<% else %>
+		  <a href="#" id="up_<%= i %>" onclick="swapFigure(<%= i-1 %>);location.href='#knowledge_figure_form';return false;"><img id="up_img_<%= i %>" alt="Up" border="0" src="<%= relative_url_root %>/images/up.png" height="50" width="50" /></a>
+		<% end %>
+		<br>
+		<!-- down button -->
+                <% if (i == @num_of_figure) %>
+		  <img src = "<%= relative_url_root %>/images/white.bmp" id="down_alternative_<%= i %>" width="50" height="50">
+                <% else %>
+		  <a href="#" id="down_<%= i %>" onclick="swapFigure(<%= i %>);location.href='#knowledge_figure_form';return false;"><img id="down_img_<%= i %>" alt="Down" border="0" src="<%= relative_url_root %>/images/down.png" height="50" width="50" /></a>
+                <% end %>
+		<br>
+	      </td>
+	      
+	      <!-- キャプションとパスの入力フォームの表示 (new, edit, new_from_analysis 毎に場合分け) -->
+	      <!-- new_from_analysis なら、パスはデフォルトを表示 -->
+	      <%   # File Name
+		   case i
+		   when  0..9  then default_file_name = "image00" + i.to_s
+		   when 10..99 then default_file_name = "image0"  + i.to_s
+		   else             default_file_name = "image" + i.to_s
+		   end
+              %>
+		<%
+		   case @type
+		   when "new_from_analysis"
+		   %>
+	      <td>
+		<!-- 見えているもの: figure_caption, name 隠れているもの: figure_path -->
+		Caption:<br>
+		<textarea id="knowledge_figure_<%= i %>_figure_caption" name="knowledge_figure[<%= i %>][figure_caption]" class="caption_text"></textarea>
+		<br><br>
+		<div id="label_<%= i %>">File Name:</div>
+		<!-- filename (default value or user input) -->
+		<input type="text" class="textarea_size60" id="knowledge_figure_<%= i %>_displayed_textbox" name="knowledge_figure[<%= i %>][name]" value="<%= default_file_name %>">
+		<span id="png_<%= i %>"> </span>
+		<!-- figure path (automatically determined) -->
+                <input type="hidden" id="knowledge_figure_<%= i %>_diagram_id" name="knowledge_figure[<%= i %>][diagram_id]" value="<%= session[:knowledge_figure][i-1] %>">
+		<input type="hidden" id="knowledge_figure_<%= i %>_hidden_textbox" name="knowledge_figure[<%= i %>][figure_path]" value="<%= image_paths[i-1] %>">
+	      </td>
+	      <!-- edit なら、パスとキャプションは編集対象のものを表示 -->
+	      <% when "edit" %>
+              <!-- 見えているもの: figure_caption, figure_path 隠れているもの: name -->
+	      <td>
+		Caption:<br>
+		<textarea id="knowledge_figure_<%= i %>_figure_caption" name="knowledge_figure[<%= i %>][figure_caption]" class="caption_text"><%= @figure_captions[i-1] %></textarea>
+		<br><br>
+		<div id="label_<%= i %>">Figure Path:</div>
+		<!-- figure path (user input) -->
+		<input type="text" class="textarea_size60" id="knowledge_figure_<%= i %>_displayed_textbox" name="knowledge_figure[<%= i %>][figure_path]" value="<%= @figure_paths[i-1][0 .. -5] %>">
+		<span id="png_<%= i %>">.png</span>
+		<!-- dummy (for javascript)-->
+		<input type="hidden" id="knowledge_figure_<%= i %>_hidden_textbox" name="knowledge_figure[<%= i %>][name]" value="<%= default_file_name %>">
+		<input type="hidden" id="knowledge_figure_<%= i %>_diagram_id" name="dummy_knowledge_figure[<%= i %>][diagram_id]" value="">
+		<input type="hidden" id="knowledge_figure_<%= i %>_figure_path" name="dummy_knowledge_figure[<%= i %>][figure_path]" value="">
+	      </td>
+	      <!-- new なら、パスとキャプションは空 -->
+              <!-- 見えているもの: figure_caption, figure_path 隠れているもの: name -->
+	      <% when "new", "comment" %>
+	      <td>
+		Caption:<br>
+		<textarea id="knowledge_figure_<%= i %>_figure_caption" name = "knowledge_figure[<%= i %>][figure_caption]" class="caption_text"></textarea><br>
+                <div id="label_<%= i %>">Figure Path:</div>
+		<!-- figure path (user input) -->
+		<input type="text" class="textarea_size60" id="knowledge_figure_<%= i %>_displayed_textbox" name="knowledge_figure[<%= i %>][figure_path]" value="">
+		<span id="png_<%= i %>">.png</span>
+		<!-- dummy (for javascript)-->
+		<input type="hidden" id="knowledge_figure_<%= i %>_hidden_textbox" name="knowledge_figure[<%= i %>][name]" value="<%= default_file_name %>">
+		<input type="hidden" id="knowledge_figure_<%= i %>_diagram_id" name="dummy_knowledge_figure[<%= i %>][diagram_id]" value="">
+		<input type="hidden" id="knowledge_figure_<%= i %>_figure_path" name="dummy_knowledge_figure[<%= i %>][figure_path]" value="">
+<% end %>
+	      </td>
+	      <td>
+		<table>
+		  <!-- 図の入力フォームを消すボタン -->
+		  <tr>
+		    <td align="right">
+		      <a href="#" id="delete_figure_<%= i %>" onclick="deleteFigure(<%= i %>);location.href='#knowledge_figure_form'; return false;"><%=image_tag('delete.png', :alt=>"X", :border=>0)%></a>
+		    </td>
+		  </tr>
+
+		  <!-- 「図」と「図へのリンク」の表示 -->
+            <% case @type
+               when "new_from_analysis"
+             %>   <!-- new_from_analysisのときは解析画面の情報を元にする -->
+            <% if image_paths[i-1] %><!-- nil になることがあるようなので -->
+		  <!-- 図 -->
+		  <tr>
+		    <td>
+                      <!-- link_to_img (dummy) -->
+                      <a href = "#" id="link_to_img_<%= i %>" name="link_to_img_<%= i %>"> </a>
+                      <!-- img                 -->
+		      <img src = "<%= relative_url_root + '/data' + image_paths[i-1] + '.png' %>" id="img_<%= i %>" name="img_<%= i %>" width=150 height=150 >
+		    </td>
+		  </tr>
+		  <!-- 図へのリンク -->
+		  <tr>
+		    <td>
+                      <!-- view_image, link_to_view_img -->
+		      <span id="view_image_<%= i %>">
+			<a href = "<%= relative_url_root + '/data' + image_paths[i-1] + '.png' %>" id="link_to_view_img_<%= i %>" name="link_to_view_img_<%= i %>">
+			  view this image in the original size
+			</a>
+		      </span>
+		    </td>
+		  </tr>
+            <% end %>
+
+            <% when "edit" %>
+                  <!-- edit のときは編集対象の文書の中身を元にする -->
+		  <!-- 図 -->
+		  <tr>
+		    <td>
+                      <!-- link_to_img, img -->
+		      <a href = "<%= data_dl_url :path => @figure_paths[i-1] %>" id="link_to_img_<%= i %>" name="link_to_img_<%= i %>">
+			<img src = "<%= data_dl_url :path => @figure_paths[i-1] %>" id="img_<%= i %>" name="img_<%= i %>" width=150 height=150 >
+		      </a>
+		    </td>
+		  </tr>
+		  <!-- 図へのリンク -->
+		  <tr>
+		    <td>
+                      <!-- view_image, link_to_view_img -->
+		      <span id="view_image_<%= i %>">
+			<a href = "<%= data_dl_url :path => @figure_paths[i-1] %>" id="link_to_view_img_<%= i %>" name="link_to_view_img_<%= i %>">
+			  view this image in the original size
+			</span>
+		      </a>
+		    </td>
+		  </tr>
+            <% when "new", "comment" %>
+                  <!-- new のときは編集対象の文書の中身を元にする -->
+		  <!-- 図 -->
+		  <tr>
+		    <td>
+                      <!-- link_to_img (dummy) -->
+                      <a href = "#" id="link_to_img_<%= i %>" name="link_to_img_<%= i %>"> </a>
+                      <!-- img                 -->
+		      <img src = "<%= relative_url_root %>/images/white.bmp" id="img_<%= i %>" name="img_<%= i %>" width=150 height=150 >
+		    </td>
+		  </tr>
+		  <!-- 図へのリンク -->
+		  <tr>
+		    <td>
+                      <!-- view_image, link_to_view_img --><!-- dummy (for javascript) -->
+			<span id="view_image_<%= i %>">
+			  <a href = "#" id="link_to_view_img_<%= i %>" name="link_to_view_img_<%= i %>"> </a>
+			</span>
+		    </td>
+		  </tr>
+              <% end %>
+	      </table>
+	    </td>
+	  </tr>
+	  </table>
+	</fieldset>
+      </td>
+    </tr>
+    <% end %><!-- 図の枚数分の for ループの終了 -->
+  </tbody>
+</table>
+

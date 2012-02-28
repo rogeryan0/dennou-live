@@ -1,0 +1,15 @@
+<div id="dir_help">
+  <div style="float:right">
+    <%= link_to("clear tree", :action => :clear_tree) %>
+  </div>
+  <%= help_popup( 'dir_tree' ) %>
+</div>
+<div id="dir_tree_float">
+  <%= render :partial => "children" %>
+</div>
+
+<% if @selected_dir %>
+<script>
+  tree.dirSelected('<%=@selected_dir.path%>',true);
+</script>
+<% end %>

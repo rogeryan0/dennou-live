@@ -1,0 +1,36 @@
+<p>
+Your signup request was successfully received.
+<br/>
+After authorization by the administrator, you will be able to login.
+<br/>
+The authorization may take some days.
+If you do not have received a email informing that you are authorized or not by the admin in some weeks,
+you request might be lost.
+Then please send email to <%= GFDNAVI_ADMIN_EMAIL %>.
+<br/>
+Thank you for your signup for "gfdnavi".
+</p>
+
+<br/>
+
+<p>
+Your information:
+<br/>
+<table>
+  <tr>
+    <td>login name</td>
+    <td><%= h(@sign_up_user.login) %></td>
+  </tr>
+  <tr>
+    <td>full name</td>
+    <td><%= h(@sign_up_user.full_name) %></td>
+  </tr>
+  <tr>
+    <td>email address</td>
+    <td><%= h(@sign_up_user.email_address) %></td>
+  </tr>
+  <tr>
+    <td>affiliation</td>
+    <td><%= h(@sign_up_user.affiliation) %></td>
+  </tr>
+</table>

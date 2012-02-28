@@ -1,0 +1,12 @@
+--- 
+root: 
+  groups: 0
+  internal_user: true
+  id: 1
+  super_user: true
+  full_name: default super user
+  email_address: gfdnavi@localhost.localdomain
+  openid: 
+  affiliation: GFDNAVI
+  password: cdbe0f5b9656e3ad7462801f83bc17b546bfd915
+  login: root

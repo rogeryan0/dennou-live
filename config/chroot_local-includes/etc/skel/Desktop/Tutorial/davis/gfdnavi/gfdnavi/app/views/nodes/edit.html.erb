@@ -1,0 +1,71 @@
+<%
+if (@node.draw_method? || @node.function?) && @node.entity.default
+%>
+This is default method, so cannot be changed.
+<%
+else
+  rgroups = Group.find_by_bit_flag(@node.rgroups).collect{|g| g.name}
+  wgroups = Group.find_by_bit_flag(@node.wgroups).collect{|g| g.name}
+%>
+
+<h3>Change groups for read</h3>
+
+
+
+<% form_tag(:controller => "data", :action => @node.path) do %>
+
+  <p>
+  path:
+  <%= @node.path %>
+  <%= hidden_field_tag("path", @node.path) %>
+  </p>
+
+<%
+if @users
+  options = Array.new
+  @users.each{|user|
+    options.push "<option#{user==@node.owner ? " selected" : ""}>#{user.login}</options>"
+  }
+%>
+  <p>
+    owner:
+    <%= select_tag("owner", options) %>
+  </p>
+<% end %>
+
+  <p>
+    readable to:
+<%
+options = ["<option#{@node.other_mode==4 ? " selected" : ""}>everyone</option>"]
+if @groups
+  options.push('<option disabled>--groups--</option>')
+  options += @groups.collect{|g|
+    gname = g.name
+    "<option#{rgroups.include?(gname) ? " selected" : ""}>#{h(gname)}</option>"
+  }
+end
+%>
+    <%= select_tag("rgroups[]", options, {:multiple=>true} ) %>
+  </p>
+  <p>
+    writable to:
+<%
+options = Array.new
+if @groups
+  options.push('<option disabled>--groups--</option>')
+  options += @groups.collect{|g|
+    gname = g.name
+    "<option#{wgroups.include?(gname) ? " selected" : ""}>#{h(gname)}</option>"
+  }
+end
+%>
+    <%= select_tag("wgroups[]", options, {:multiple=>true} )  %>
+  </p>
+
+  <br/>
+  <input name="_method" type="hidden" value="put" />
+  <%= submit_tag("update") %>
+
+<% end %>
+
+<% end %>

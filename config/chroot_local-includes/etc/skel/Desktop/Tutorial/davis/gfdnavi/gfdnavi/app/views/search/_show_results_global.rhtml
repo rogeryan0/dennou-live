@@ -1,0 +1,36 @@
+<%
+@image_folder = image_tag('tree/folder.png', :style => "border:0")
+@image_data = image_tag('tree/binary.png', :style => "border:0")
+@image_image = image_tag('tree/image2.png', :style => "border:0")
+%>
+<% form_tag(:action => "add_items_to_list") do %>
+  <table cellspacing="10">
+    <thead>
+    <h2>global data </h2>
+      <tr>
+        <th></th>
+        <th></th>
+        <th nowrap>No</th>
+        <th nowrap>Name</th>
+        <th nowrap>Title</th>
+        <th nowrap>Description</th>
+        <th nowrap>(lon_lb,lat_lb)-(lon_rt,lat_rt)</th>
+        <th nowrap>Path</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <td colspan="5">
+          <%= submit_tag("Add selected items") %>
+        </td>
+      </tr>
+    </tfoot>
+    <tbody>
+<%
+@type = "var"
+@no="g"
+%>
+      <%= render(:partial => "children_details_mapsearch", :collection => @varglobal) %>
+    </tbody>
+  </table>
+<% end %>

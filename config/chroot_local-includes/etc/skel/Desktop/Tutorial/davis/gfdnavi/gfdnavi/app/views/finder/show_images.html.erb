@@ -1,0 +1,3 @@
+<% @images.each{|path| %>
+  <%= image_tag(data_dl_url(:path => path.sub(/^\//,""))) %>
+<% } %>

@@ -1,0 +1,64 @@
+<%
+# 本文の全文表示を出すために必要なパラメータを読み込む
+node = Node.find(comment.node_id, :user => @user)
+user = User.find(:first, :conditions => ["id=?", node.owner_id])
+@knowledge, @knowledge_figures, @comments, @image_paths, @image_widths, @image_heights, @caption_widths, @caption_heights = Knowledge.read_parameters_of_knowledge_document(comment.node.path, user)
+
+# リストに並ぶコメントの本文に割り当てるDOMのidを決める
+@summary = "textbody_of_#{comment.comment_on}_#{comment.comment_number}"
+%>
+
+<li>
+  <table class="comment_list_table">
+    <tr>
+      <td>
+	<span class="comment_list_title" title="click to show this document.">
+	  <%= link_to h(comment.title), :controller => 'knowledge', :action => 'show', :path => comment.path %>
+	</span>
+      </td>
+      <td class="space_td"></td>
+      <td>owner:</td>
+      <td>
+	<b><%= h comment.owner.login %></b>
+      </td>
+      <td class="space_td"></td>
+      <td>last update:</td>
+      <td>
+	<b><%= h comment.mtime.to_s[0..-5] %></b>
+      </td>
+      <td class="space_td"></td>
+      <td class="space_td"></td>
+      <td>
+        <% if @knowledge_figures.length > 0 %>
+	  (<%= @knowledge_figures.length %> figure<%= @knowledge_figures.length > 1 ? "s" : "" %>)
+	<% end %>
+      </td>
+      <td>
+        <% form_remote_tag(:update => "comments", :url => {:action => "destroy_document", :path => comment.path, :parent_path => @displayed_knowledge.path}, :html => {:style => "margin: 0px;"}) do %>
+          <% if @user && (@user == comment.owner || @user.super_user == true || (@displayed_knowledge && @user == @displayed_knowledge.owner)) %>    
+            <%= image_submit_tag("delete.png", :alt=>'delete', :title=>'delete this comment', :border=>0, :align=>'absmiddle', :onclick => "return #{confirm_javascript_function('Are you sure?')}")%>
+          <% end %>
+        <% end %>
+      </td>
+    </tr>
+    <tr class='list_each_comment_tr'>
+      <td colspan=13>
+	<span id=<%= @summary %>>
+          <% if display_type=="full_display" %>
+            <%= render :partial => "layout_figures_under_text" %>
+          <% else %>
+	    <%= render :partial => "summary" %>
+	  <% end %>
+	</span>
+      </td>
+    </tr>
+  </table>
+</li>
+<!-- 文書本体の下に、コメント表示部 -->
+<% comments = Knowledge.find(:all, :conditions => ["comment_on = ?" ,comment.node_id]) %>
+<% if comments.length > 0 %>
+  <ul style="list-style-type: none;">
+    <%= render(:partial => "comment", :collection => comments, :locals => {:type => type, :display_type => ""}) %>
+  </ul>
+<% end %>
+

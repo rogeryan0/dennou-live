@@ -1,0 +1,73 @@
+<%
+id, dg = @diagram
+dg = File.join(relative_url_root, "data", dg)
+id_html = "diagram_#{id}"
+display = @anim ? 'style="display:none;"' : ""
+%>
+<table id="<%= id_html %>_table" class="diagram" cellspacing="0" cellpadding="0" <%= display %>>
+  <tr id="<%= id_html %>_header" class="diagram_header">
+    <td align="right">
+      <!-- DO NOT INSERT SPACE OR CR BETWEEN ICONS
+           DUE TO COMPATIBILITY WITH IE -->
+      <!-- naturalWidth IS ADDED DUE TO COMPATIBILITY WITH IE -->
+      <%= link_to_function(image_tag("minimize.gif", :class => "delete", :title => "Minimize"), "minimizeDiagram('#{id_html}');") %><%= link_to_function(image_tag("maximize.gif", :class => "delete", :title => "Maximize"), "maximizeDiagram('#{id_html}');") %><%= link_to_function(image_tag("x.gif", :class => "delete", :title => "Destroy"), "if ($('popup_menu_diagram_menu_#{id}') != null) Element.remove($('popup_menu_diagram_menu_#{id}')); #{(@diagrams && @diagrams.compact.length == 1)? 'deleteKnowledgeFromAnalysisButton();' : ''} new Effect.Fade('#{id_html}_table',{afterFinishInternal: function(effect){Element.remove(effect.element)}});" + remote_function(:url => {:action => "delete_diagram", :id => id})) %>
+    </td>
+  </tr>
+  <tr>
+    <td style="cursor:pointer" id="<%= id_html %>">
+<%
+options =  {:id=> "#{id_html}_image", :style => "border:0", :title => "Click to show menu"}
+if GFDNAVI_BENCHMARK && @benchmark
+  options.update( {:onload => "onDraw=false;benchMark.load('#{id}');"} )
+else
+  options.update( {:onload => "onDraw=false;"} )
+end
+%>
+      <%= image_tag(dg+".png", options) %>
+    </td>
+  </tr>
+</table>
+<%
+menu = Array.new
+
+=begin
+if flag
+  menu.push link_to('download script and data', {:action => "download_diagram_script_and_data", :id => id})
+end
+unless GFDNAVI_DISABLE_USER && session[:user].nil?
+  menu.push link_to('save diagram', :action => "save", :id => id, :type => "diagram")
+end
+
+=end
+menu.push "<a href=\"#{dg+'.rb'}\">Download script</a>"
+unless @pile
+  menu.push "<a href=\"#{dg+'.html'}\">Link to this diagram</a>"
+end
+menu.push "--"
+menu.push link_to_function("Minimize", "minimizeDiagram('#{id_html}');")
+menu.push link_to_function("Maximize", "maximizeDiagram('#{id_html}');")
+menu.push link_to_function("Destroy", "Element.remove($('popup_menu_diagram_menu_#{id}')); #{(@diagrams && @diagrams.length == 1)? 'deleteKnowledgeFromAnalysisButton();' : ''} new Effect.Fade('#{id_html}_table',{afterFinishInternal: function(effect){Element.remove(effect.element)}});" + remote_function(:url => {:action => "delete_diagram", :id => id}))
+
+%>
+<script>
+<% if menu.length > 0 %>
+  new PopupMenu($('<%= id_html %>'),'diagram_menu_<%= id%>','<%= escape_javascript(menu.join('<br/>')) %>');
+<% end %>
+  var table = $("<%= id_html %>_table");
+  table.diagram_id = <%= id %>;
+  new Draggable(table,
+                {revert: true,
+                 ghosting: false,
+                 handle: '<%= id_html %>_header'
+                 }
+                );
+  Droppables.add(table,
+                 {accept: "diagram",
+                  hoverclass: "drop_diagram",
+                  onDrop: function(drag,drop){
+                            benchMark.start();
+                            actionDropDiagram(drag.diagram_id, drop.diagram_id);
+                          }
+                 }
+                );
+</script>

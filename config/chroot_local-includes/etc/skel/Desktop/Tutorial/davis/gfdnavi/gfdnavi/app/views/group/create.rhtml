@@ -1,0 +1,11 @@
+<% form_tag do %>
+
+<h3>New group</h3>
+
+<label for="group_name">name:</label><br/>
+<%= text_field "group", "name", :size => 30 %><br/>
+
+<%= submit_tag "Create" %>
+
+<% end %>
+

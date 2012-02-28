@@ -1,0 +1,19 @@
+<div class="form_of_creating_knowledge_document">
+<% if @comments.length == 0 %>
+  <h3 class="davis">Write a Comment on this document.</h3>
+<% else %>
+  <h3 class="davis">Add a Comment on this document.</h3>
+<% end %>
+
+<% form_remote_tag(:update => "comments", :url => {:action => "update", :path => @knowledge.path, :type => "comment", :commit => "Add a Comment on this document."}) do %>
+  <%= render :partial=>"form" %>
+  <%= submit_tag "Add a Comment on this document." %>
+  <br><br>
+  <div id="backup">
+    <%= render :partial=>"backup" %>
+  </div>
+<% end %>
+</div>
+
+<hr size="10px" noshade>
+

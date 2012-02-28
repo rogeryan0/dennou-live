@@ -1,0 +1,166 @@
+<h2>User Information</h2>
+<div class="user_info">
+  <table>
+    <tr>
+      <th>Item</th>
+      <th>Data</th>
+    </tr>
+    <tr>
+      <td class="user_info_field">Login Name</td>
+      <td><%= @user.login %></td><br>
+    </tr>
+    <tr>
+      <td class="user_info_field">Full Name</td>
+      <td><%= @user.full_name %></td><br>
+    </tr>
+    <tr>
+      <td class="user_info_field">E-mail Address</td>
+      <td><%= @user.email_address %></td>
+    </tr>
+    <tr>
+      <td class="user_info_field">Affiliation</td>
+      <td><%= @user.affiliation %></td>
+    </tr>
+    <tr>
+      <td class="user_info_field">Belonging Groups</td>
+      <td>
+        <%  @user.belonging_groups.each do |group| %>
+        <%=   h group.name %>
+        <%  end %>
+      </td>
+    </tr>
+    <tr>
+      <td class="user_info_field">User Type</td>
+      <td>
+	<% if @user.super_user %>
+             Super User
+	<% elsif @user.internal_user %>
+	     Internal User
+	<% else %>
+	     External User
+	<% end %>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<% if @user.internal_user? %>
+<h2>Menu</h2>
+<div class="user_info">
+  <table>
+    <tr><td><%= link_to("change password", :action => "change_password") %></td></tr>
+    <tr><td><%= link_to("edit user information", :action => "edit") %></td><br></tr>
+    <tr><td><%= link_to("manage groups", :controller => "group", :action => "list") %></td></tr>
+    <tr><td><%= link_to("manage functions", :controller => "function", :action => "list") %></td></tr>
+    <tr><td><%= link_to("manage draw methods", :controller => "draw_method", :action => "list") %></td></tr>
+    <% if @user.super_user? %>
+    <tr><td><%= link_to("add user", :controller => "user", :action => "add_user") %></td></tr>
+    <% end %>
+  </table>
+</div>
+<% end %>
+
+<% if @user.super_user? %>
+<br>
+<hr>
+<h2>Super user list</h2>
+<div class="user_info">
+<table>
+  <thead>
+    <tr>
+      <th>login name</th>
+      <th>full name</th>
+      <th>email address</th>
+      <th>affiliation</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%
+  for user in User.find(:all, :conditions => ["super_user = ?", true])
+    name = h(user.login)
+%>
+    <tr>
+      <td><%= name %></td>
+      <td><%= h(user.full_name) %></td>
+      <td><%= h(user.email_address) %></td>
+      <td><%= h(user.affiliation) %></td>
+      <td>
+        <%= link_to("edit", :action=>"edit", :name => name) %>
+        <%= link_to("change_password", :action=>"change_password", :name => name) %>
+    <% unless name == "root" %>
+        <%= link_to("downgrade to non-super user", {:action => "unset_super_user", :name => name}, :confirm => "Are you sure to set #{name} non-super user?") %>
+    <% end %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+</div>
+
+<h2>Non-super user list</h2>
+<div class="user_info">
+<table>
+  <thead>
+    <tr>
+      <th>login name</th>
+      <th>full name</th>
+      <th>email address</th>
+      <th>affiliation</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%
+  for user in User.find(:all, :conditions => ["super_user = ?", false])
+    name = h(user.login)
+%>
+    <tr>
+      <td><%= name %></td>
+      <td><%= h(user.full_name) %></td>
+      <td><%= h(user.email_address) %></td>
+      <td><%= h(user.affiliation) %></td>
+      <td>
+        <%= link_to("edit", :action=>"edit", :name => name) %>
+        <%= link_to("change password", :action => "change_password", :name => name) %>
+        <%= link_to("delete", {:action => "delete", :name => name}, :confirm => "Are you sure to delete #{name}?") %>
+	<%= link_to("upgrade to super user", {:action => "set_super_user", :name => name}, :confirm => "Are you sure that #{name} is really trusted as super user?") %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+</div>
+
+<div class="user_info">
+<h2>Unauthorized user list</h2>
+<table style="border-spacing:20px 0px">
+  <thead>
+    <tr>
+      <th>login name</th>
+      <th>full name</th>
+      <th>email address</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%
+  for user in SignUpUser.find(:all)
+    id = user.id
+%>
+    <tr>
+      <td><%= h(user.login) %></td>
+      <td><%= h(user.full_name) %></td>
+      <td><%= h(user.email_address) %></td>
+      <td>
+        <%= link_to("accept", {:action => "accept_signup", :id => id}, :confirm => "Are you sure to accept signup of #{h(user.login)}?") %>
+        <%= link_to("reject", {:action => "reject_signup", :id => id}, :confirm => "Are you sure to reject signup of #{h(user.login)}?") %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+</div>
+
+
+<% end %>

@@ -1,0 +1,7 @@
+= What's gfdnavi_utils
+* gfdnavi_utils contains libraries required by Gfdnavi, which can be used alone.
+  * vizshot: a wrapper library of GGraph
+  * gfdnavi_datals: a client library for Gfdnavi web services
+
+= How to install
+ % sudo ruby install.rb

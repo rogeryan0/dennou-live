@@ -1,0 +1,28 @@
+<% if @analysis.dimensions.length > 0 %>
+
+
+<div>
+  <script>
+<% if GFDNAVI_BENCHMARK %>
+    benchmark = true;
+<% else %>
+    benchmark = false;
+<% end %>
+  </script>
+  <%= link_to_function image_tag("analyze.gif", :border => 0), "analysisExecute();", :id => "analysis_button", :style=>"margin:5;margin-left:1em" %>
+</div>
+
+<hr style="margin-bottom:5"/>
+
+<div id="analysis_function_settings">
+  <%= render(:partial => "analysis_function_settings") %>
+</div>
+
+<% end %>
+
+
+<script>
+  if( $("draw_settings") )
+    Element.hide("draw_settings");
+  Element.show("analysis_settings");
+</script>
