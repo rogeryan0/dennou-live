@@ -1,8 +1,0 @@
-Subject: 回転球殻ブシネスク対流モデル
-Maintainer: 竹広真一
-Update: 2002/09/04
-Description: 時間積分は Adams-Bashforth + Crank Nicholson 法. 
-
-履歴
-	2002/09/04 竹広真一
-

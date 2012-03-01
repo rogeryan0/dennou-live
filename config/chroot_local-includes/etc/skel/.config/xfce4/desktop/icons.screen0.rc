@@ -1,17 +1,21 @@
-[Tutorial]
-row=4
+[README]
+row=2
 col=0
 
-[README]
+[Tutorial]
 row=3
 col=0
 
+[Debian Installer]
+row=0
+col=0
+
 [misc]
-row=5
+row=4
 col=0
 
 [ゴミ箱]
-row=2
+row=5
 col=0
 
 [ホーム]

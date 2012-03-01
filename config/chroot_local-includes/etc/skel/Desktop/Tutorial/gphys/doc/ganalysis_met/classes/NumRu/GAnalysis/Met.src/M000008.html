@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>frontogenesis_func (NumRu::GAnalysis::Met)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File met.rb, line 224</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">frontogenesis_func</span>(<span class="ruby-identifier">theta</span>, <span class="ruby-identifier">u</span>, <span class="ruby-identifier">v</span>, <span class="ruby-identifier">w</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">fstodr</span>=<span class="ruby-keyword kw">true</span>, <span class="ruby-identifier">full_adv</span> = <span class="ruby-keyword kw">true</span>)
+        <span class="ruby-identifier">thx</span>, <span class="ruby-identifier">thy</span> = <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">grad_s</span>( <span class="ruby-identifier">theta</span> )
+        <span class="ruby-identifier">ux</span> = <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">grad_sx</span>( <span class="ruby-identifier">u</span> )
+        <span class="ruby-identifier">uy</span> = <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">grad_sy_cosphifact</span>( <span class="ruby-identifier">u</span>, <span class="ruby-value">-1</span> )
+        <span class="ruby-identifier">vx</span>, <span class="ruby-identifier">vy</span> =  <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">grad_s</span>( <span class="ruby-identifier">v</span> )
+        <span class="ruby-identifier">va</span> = <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">weight_tanphi</span>( <span class="ruby-identifier">v</span>, <span class="ruby-value">1</span>, <span class="ruby-value">-1</span> )
+        <span class="ruby-identifier">frgf</span> = <span class="ruby-operator">-</span> (<span class="ruby-identifier">ux</span><span class="ruby-operator">-</span><span class="ruby-identifier">va</span>)<span class="ruby-operator">*</span><span class="ruby-identifier">thx</span><span class="ruby-operator">*</span><span class="ruby-identifier">thx</span> <span class="ruby-operator">-</span> (<span class="ruby-identifier">vx</span><span class="ruby-operator">+</span><span class="ruby-identifier">uy</span>)<span class="ruby-operator">*</span><span class="ruby-identifier">thx</span><span class="ruby-operator">*</span><span class="ruby-identifier">thy</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">vy</span><span class="ruby-operator">*</span><span class="ruby-identifier">thy</span><span class="ruby-operator">*</span><span class="ruby-identifier">thy</span>
+        <span class="ruby-identifier">frgf</span>.<span class="ruby-identifier">name</span> = <span class="ruby-value str">&quot;frgen&quot;</span>
+        <span class="ruby-identifier">frgf</span>.<span class="ruby-identifier">long_name</span> = <span class="ruby-value str">&quot;frontogenesis function&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">w</span> 
+          <span class="ruby-identifier">zdim</span> = <span class="ruby-value">2</span>
+          <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">wun</span>=<span class="ruby-identifier">w</span>.<span class="ruby-identifier">units</span>) <span class="ruby-operator">!~</span> (<span class="ruby-identifier">ztun</span> = <span class="ruby-identifier">theta</span>.<span class="ruby-identifier">coord</span>(<span class="ruby-identifier">zdim</span>).<span class="ruby-identifier">units</span> <span class="ruby-operator">*</span> <span class="ruby-constant">Units</span>[<span class="ruby-value str">&quot;s-1&quot;</span>])
+            <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;w in #{wun} is inconsistent with the vertical coordinate of theta in #{ztun}&quot;</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">w</span> = <span class="ruby-identifier">w</span>.<span class="ruby-identifier">convert_units</span>(<span class="ruby-identifier">ztun</span>)    <span class="ruby-comment cmt"># For example, Pa/s -&gt; hPa/s</span>
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-identifier">z</span> = <span class="ruby-identifier">theta</span>.<span class="ruby-identifier">axis</span>(<span class="ruby-identifier">zdim</span>).<span class="ruby-identifier">to_gphys</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">z</span>.<span class="ruby-identifier">units</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">Units</span>[<span class="ruby-value str">&quot;Pa&quot;</span>]
+            <span class="ruby-identifier">thz</span> = <span class="ruby-identifier">df_dx_vialogscale</span>(<span class="ruby-identifier">theta</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">zdim</span>)
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">thz</span> = <span class="ruby-identifier">df_dx</span>(<span class="ruby-identifier">theta</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">zdim</span>)
+          <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">full_adv</span>
+            <span class="ruby-comment cmt"># full lagragian tendency of theta-gradient strength</span>
+            <span class="ruby-identifier">wx</span>,  <span class="ruby-identifier">wy</span> =  <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">grad_s</span>( <span class="ruby-identifier">w</span> ) 
+            <span class="ruby-identifier">frgf</span> <span class="ruby-operator">-=</span> (<span class="ruby-identifier">wx</span><span class="ruby-operator">*</span><span class="ruby-identifier">thx</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">wy</span><span class="ruby-operator">*</span><span class="ruby-identifier">thy</span>)<span class="ruby-operator">*</span><span class="ruby-identifier">thz</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-comment cmt"># lagragian tendency only in horizontal direction</span>
+            <span class="ruby-identifier">wthzx</span>,  <span class="ruby-identifier">wthzy</span> =  <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">grad_s</span>( <span class="ruby-identifier">w</span><span class="ruby-operator">*</span><span class="ruby-identifier">thz</span> ) 
+            <span class="ruby-identifier">frgf</span> <span class="ruby-operator">-=</span> <span class="ruby-identifier">wthzx</span><span class="ruby-operator">*</span><span class="ruby-identifier">thx</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">wthzy</span><span class="ruby-operator">*</span><span class="ruby-identifier">thy</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">fstodr</span>
+          <span class="ruby-identifier">frgf</span> <span class="ruby-operator">/=</span> (<span class="ruby-identifier">thx</span><span class="ruby-operator">**</span><span class="ruby-value">2</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">thy</span><span class="ruby-operator">**</span><span class="ruby-value">2</span>).<span class="ruby-identifier">sqrt</span> 
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">frgf</span> <span class="ruby-operator">*=</span> <span class="ruby-value">2</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">frgf</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

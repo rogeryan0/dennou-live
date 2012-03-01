@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>License</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="licence.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> ] </small>
+<h1><a name="label-0" id="label-0">License</a></h1><!-- RDLabel: "License" -->
+<h2><a name="label-1" id="label-1">Copyright and License</a></h2><!-- RDLabel: "Copyright and License" -->
+<p>All the resources of SPMODEL are released as Free Software, copyrighted by SPMODEL Development Group.
+Please read <a href="../spml/COPYRIGHT">COPYRIGHT</a> in detail.</p>
+<p>Use of SPMODEL is permitted under the principle of "NO WARRANTY" and "NO RESPONSIBILITY".
+SPMODEL Development Group shall not be liable for any event arising in any way out of the use of these resources.
+Redistribution in source and binary forms, with or without modification,
+is also permitted provided that the above copyright notice,
+disclaimer and this condition are retained.</p>
+<h3><a name="label-2" id="label-2"><a href="#label-2">Citation</a></a></h3><!-- RDLabel: "Citation" -->
+<p>Please be aware that the fact that these programs are released as Free
+Software does not excuse you from scientific propriety, which obligates
+you to give appropriate credit.</p>
+<p>If you write a scientific paper describing research that made
+substantive use of these programs, it is your obligation as a scientist
+to (a) mention the fashion in which this software was used with a
+citation to the literature or (b) mention this software in the Acknowledgements section.</p>
+<dl>
+<dt><a name="label-3" id="label-3">Example</a></dt><!-- RDLabel: "Example" -->
+<dd>
+Takehiro, S., SASAKI, Y., Morikawa, Y., Ishioka, K., Odaka, M., Takahashi, Y.O., Nishizawa, S.,
+Nakajima, K., Ishiwatari, M., Hayashi, Y.-Y.,
+SPMODEL Development Group, 2011:
+Hierarchical Spectral Models for GFD (SPMODEL),
+http://www.gfd-dennou.org/library/spmodel/, GFD Dennou Club.
+</dd>
+</dl>
+<p>When you have to refer only an article of a refereed journal, please
+cite our ariticle of online journal of Japan Society of Fluid Mechanics
+as follows:</p>
+<dl>
+<dt><a name="label-4" id="label-4">Example</a></dt><!-- RDLabel: "Example" -->
+<dd>
+Takehiro, S., Odaka, M., Ishioka, K., Ishiwatari, M., Hayashi, Y.-Y., 2006:
+SPMODEL: A Series of Hierarchical Spectral Models for Geophyiscal Fluid Dynamics,
+Nagare Multimedia 2006,
+<a href="http://www.nagare.or.jp/mm/2006/spmodel/">http://www.nagare.or.jp/mm/2006/spmodel/</a>
+</dd>
+</dl>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2012/02/29, Since: 2002/02/15 </small>
+
+</body>
+</html>

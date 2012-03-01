@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>GPhys</title>
+</head>
+
+<body BACKGROUND="../../htmltool/wall_d.gif"
+      TEXT = "003333" LINK="007777" VLINK="aa6666" ALINK="FF0000">
+
+<center>
+<p><h1>GPhys -- a multi-purpose class to handle Gridded Physical quantities</h1>
+<p><h4><i>by T Horinouchi, S Nishizawa, S Takehiro, S Otsuka, R Mizuta, D Tsukahara, M Horikawa, T Koshiro</i></h4>
+</center>
+
+<p><hr>
+<p><h3><a name="whatsnew">What's new!</a></h3>
+
+<ul>
+  <p><li> Feb 27 2012 gphys-1.2.2 released. Bug fixes and minor improvement.
+  <p><li> Feb 23 2012 gphys-1.2.1 released. -- The only difference
+    from gphys-1.2.0 is that the file install.rb (installer of gp-commands) 
+    was re-introduced in the package. No difference in the source codes.
+    (1.2.0 had a problem that install.rb has been eliminated mistakenly.)
+  <p><li> Feb 20 2012 gphys-1.2.0 released.
+      <ul>
+        <li> GGraph / DCLExt (Graphics): 
+          <ul>
+            <li> Supported vector drawing over map projections
+            <li> Separated DCLExt from ggraph.rb into dclext.rb
+            <li> Many minor improvement and bugfixes
+          </ul>
+        <li> GAnalysis (Application for data analysis):
+          <ul>
+            <li> enhnanced histogram (lib/numru/ganalysis/histogram.rb)
+                 (NOTE: histogram will be moved into ggraph in future)
+            <li> Planet: added some methods regarding diferentiation on the sphere.
+            <li> Met: added new methods such as z2geostrophic_wind, frontogenesis_func
+          </ul>
+        <li> File IO:
+          <ul>
+            <li> Supported GRIB2 (available if rb-GRIB is installed)
+                 -- But the current version (0.2.0) of rb-GRIB
+                 is <b>not recommended</b>. Please wait for a
+                 future revision.
+            <li> Improvement in GrADS data handling
+          </ul>
+        <li> gp cpmmands:
+          <ul>
+            <li> added options (--eddy, --tonf) to gpview, gpvect
+          </ul>
+        <li> Interpolation: Supported a behavior
+	  not to make extrapolation outside the original grid.
+	  Changed the default behavior to this one.
+        <li> Bug fixes, minor improvement & updates.
+      </ul>
+  <p><li> Aug 15 2011 gphys-1.1.1 released.
+      <ul>
+        <li> Added the LICENCE file (BSD 2-cluase).
+        <li> GGraph: added regression line drawing (method regression_line).
+             Added new options to the method vector.
+        <li> Bug fixes / enhancement for NuSDaS IO, NetCDF, and GRIB IO.
+        <li> Other minor updates, improvement, and bug fixes.         
+      </ul>
+  <p><li> Feb 19 2010 gphys-1.1.0 released.
+      <ul>
+        <li> Added/enhanced analyses library: ganalysis/eof.rb,
+             ganalysis/met.rb, ganalysis/covariance.rb, ganalysis/planet.rb
+        <li> Enhanced the graphic library ggraph.rb: scatter diagrams
+        <li> GRIB IO was speeded up by using extension library etc
+        <li> Support calendars
+        <li> enhanced gpview and gpvect commands 
+        <li> Extension for DCL 5.3.4
+        <li> Support Ruby 1.9.2
+        <li> Bugfixes
+      </ul>
+  <p><li> Mar 7 2010 uploaded a new document: <a href="Recipes/recipes_j/" target=_top>GPhys Recipes</a> (in Japanese)
+  <p><li> Feb 19 2010 (gphys-1.0.0)
+      <ul>
+        <li> Supported interpolation, coordinate transformation, and
+             regriding. You can also "cut" a GPhys by mouse using DCL.
+             --- a highly frexible interpolation was implemented
+             in C as an extension library, so you need to use
+             extconf.rb to install.
+        <li> and many other improvements including enhancement of 
+             GGraph graphics
+      </ul>
+  <p><li> <b><a href="old_whatsnew.html">Click here for older "What's new"s</a></b>
+</ul>
+
+<p><hr>
+<p><h3><a name="download">Download</a></h3>
+
+<ul>
+  <p><li> latest version:  <a href="release/gphys-1.2.2.tar.gz">
+	                       gphys-1.2.2</a><br>
+  <p><li> <a href="http://www.gfd-dennou.org/arch/ruby/products/gphys/release/">archive</a>
+  <p><li> <a
+      href="http://www.gfd-dennou.org/arch/ruby/products/gphys/gphys-cvs_snapshot.tar.gz">CVS snapshot</a>
+      This is the very latest one, which is under development.
+</ul>
+
+<p><hr>
+<p><h3><a name="documents">Documents</a></h3>
+
+<ul>
+  <p><li> Tutorials
+      <ul>
+	<p><li><a href="tutorial/" target=_top>GPhys Tutorial</a> (in Japanese)
+	<p><li><a href="tutorial/index-e.htm" target=_top>GPhys Tutorial</a> (in pseudo-English (by automatic translation))
+	<p><li><a href="Recipes/recipes_j/" target=_top>GPhys Recipes</a> (in Japanese)
+        <p><li><a href="http://davis.gfd-dennou.org/rubygadgets/ja/?%28Others%29+GPhys%2FGGraph+%A5%C1%A1%BC%A5%C8%A5%B7%A1%BC%A5%C8" target=_top>GPhys Cheat Sheet</a> (in Japanese)
+        <p><li><a href="tutorial/ep_flux/" target=_top>GPhys::EP_Flux Tutorial</a> (in Japanese)
+      </ul>
+  <p><li> <a href="doc/" target=_top>Reference manuals (in English)</a> / 
+          <a href="http://w.livedoor.jp/gphys/" target=_top>(Japanese translation)</a>
+  <p><li> <a href="gphys-intro-E" target=_top>
+          Introduction of GPhys (in English)</a>
+  <p><li> <a href="gphys-intro-J" target=_top>
+          Introduction of GPhys (in Japanese)</a>
+  <p><li> <a href="nc-conventions_gphys.xls">
+          Work sheet on NetCDF conventions</a> (Excel file; in Japanese)
+
+</ul>
+
+<p><hr>
+<p><h3><a name="documents">Browse</a></h3>
+
+<ul>
+  <p><li> 
+     <a href="gphys/" target=_top> Latest CVS snapshot </a> 
+  <p><li><a href="ChangeLog">ChangeLog</a>
+</ul>
+
+<p><hr>
+<p><h3><a name="download">Installation</a></h3>
+
+The following libraries are required to use GPhys:
+<ul>
+ <p><li> Ruby 1.8 or 1.9 (Ruby 1.6 support was given up to use DateTime)
+ <p><li> <a href="http://narray.rubyforge.org/">
+      NArray</a>: (0.5.7 or later required)
+      a multi-dimensional numeric array class for ruby.
+ <p><li> <a href="../numru-misc">Misc</a> (ver.0.1.0 or later required) Collection of miscellaneous common 
+     basic libraries for Ruby programming.
+ <p><li> <a href="../numru-units">Units</a> (ver.1.7 or later required)
+    Class of units of physical quantities.
+ <p><li> <a href="http://ruby.gfd-dennou.org/products/narray_miss/">
+    NArrayMiss</a> (ver.1.2.4 or later required) a multi-dimensional numeric array that handles data missing.
+    <br>
+     (at this moment, not used heavily, and GPhys is not tested well
+     for the use with NArrayMiss)
+ <p><li> <a href="../ruby-netcdf">RubyNetCDF</a>
+     (ver 0.6.6 or later)<br>
+     The Ruby interface of the NetCDF library.
+ <p><li>  <a href="../ruby-dcl">RubyDCL</a> (ver 1.6.1 or later)
+     The Ruby interface of
+     the DCL graphic library
+ <p><li> <a href="../ruby-fftw3">Ruby-FFTW3</a> (ver 0.3 or later)
+     The Ruby interface of the FFTW (ver 3) library
+ <p><li> <a href="http://rb-gsl.rubyforge.org/">Ruby-GSL</a> (ver 1.14 or later)
+     The Ruby interface of the GNU Scientific Library
+</ul>
+
+The following libraries are recommended to use GPhys:
+<ul>
+ <p><li> <a href="../ruby-lapack">Ruby-LAPACK</a> (ver 1.5 or later)
+     A Ruby interface of LAPACK - Linear Algebra PACKage
+</ul>
+
+The following is used if installed and explicitly specified on runtime,
+but the present version (0.2.0) is not recommended unless NEEDED
+(i.e., to read GRIB2 files). Otherwise, please wait a new version.
+<ul>
+ <p><li> <a href="../rb-grib">rb-GRIB</a> (ver 0.2.0 -- unstable!)
+     A Ruby interface of ECMWF's GRIB API (support GRIB1 and GRIB2 data).
+</ul>
+
+
+If you have installed these libraries, to install GPhys is quite
+easy:
+<pre>
+% tar xvzf gphys-<I>version</I>.tar.gz
+% cd gphys-<I>version</I>
+% ruby extconf.rb
+% make
+% sudo make install
+% sudo ruby install.rb
+</pre>
+
+
+<hr>
+<address></address>
+<!-- hhmts start -->Last modified: Mon Mar 15 16:09:08 JST 2010 <!-- hhmts end -->
+</body> </html>

@@ -1,0 +1,176 @@
+# = irbrc_ggraph.rb
+# irb で GPhys を使いやすくするスタートアップファイル.
+# ホームディレクトリ直下において使うとよい．
+# 
+# == 使用法
+#   $ irb -r ~/irbrc_ggraph.rb
+#
+# .bashrc 等で，次のように alias しておくと，irb_ggraph というコマンド名で
+# 呼べるようになる
+#   alias irb_ggraph="irb -r ~/irbrc_ggraph.rb"
+#
+# あるいは，ホームディレクトリの .irbrc に
+#      require "~/irbrc_ggraph.rb"
+# と書くと，irb コマンド起動時に常に読み込まれるようになる．
+#
+# == 機能
+# これを使うと ls や dir といったメソッドでディレクトリやデータファイルを
+# 見ることができるようになる．また，ディレクトリやデータファイルに cd できる
+# ようになる (GPhys化可能なデータを含むファイルはディレクトリと同様に扱われる).
+#
+# 例 (irb への入力):
+#  dir
+#  dir "air.mon.ltm.nc"
+#
+# GPhys オブジェクトはグローバルメソッド gpopen で開く．
+#
+# 例:
+#  temp = gpopen("air.mon.ltm.nc/air")
+# 
+# irb のヒストリーを一覧したり (グローバルメソッド history),
+# ファイルに保存したりできるようになる (グローバルメソッド history_save).
+# デフォルトの保存場所は ~/irb_ggraph_history.rb というファイル．
+# (デフォルトは追記)
+
+
+print "Start interactive GGraph session\n"
+
+require "numru/ggraph"
+include NumRu
+include GGraph
+
+<<<<<<< .mine
+### GPhysの設定．特にディレクトリ関連の便利なメソッド定義 ###
+
+GDir.top='/'
+GDir.cd(Dir.pwd)
+def pwd; GDir.pwd; end                       # pwd で現在のディレクトリ表示
+def cwd; GDir.cwd; end                       # (あまり使わない)
+def ls(path=nil); GDir.cwd.ls(path); end     # ls でディレクトリ内容表示(短)
+def ls_l(path=nil); GDir.cwd.ls_l(path); end # ls_l でディレクトリ内容表示(長)
+alias dir ls_l                               # dir は ls_l の別名
+def cd(path); GDir.cd(path); end             # cd でディレクトリ変更. 引数は文字列
+                                             # なので cd "T.jan.nc" などとする
+def gpopen(path); GDir.cwd.data(path); end   # ファイル中のデータより GPhys オープン.
+                                             # 例: gp = gpopen "T.jan.nc/T"
+def gpopen_all; GDir.cwd.open_all_data; end  # ファイルにcdしてから呼ぶとGPhys化可能
+                                             # な全データをハッシュに読み込む．
+                                             # (変数名のシンボルがキー)
+### 描画 (GGraph, DCL) の設定 ###
+
+DCL.swpset('iwidth',700)    # デフォルトの画像サイズ横幅（好みで編集するとよい）
+DCL.swpset('iheight',700)   # デフォルトの画像サイズ高さ（好みで編集するとよい）
+DCL.swpset('lwait',false) if /^irb/ =~ $0   # 改ページ時にマウスクリックを待たない
+##DCL.swpset('ldump',true)  # 画像ダンプ．装置番号4のときは PNG で．
+##DCL.swpset('lalt',true)   # 裏書描画．パラパラアニメ用．通常対話処理には向かない．
+DCL.sgscmn(10)              # カラーマップ番号を10番に．gropn前なら再取替可
+
+##DCL.gropn(1)         # 通常は最初の描画時に自動的に呼ばれる．
+                       # 装置番号1番以外を使う場合やページ分割する際は陽に呼ぶ
+##DCL.sldiv('y',2,2)   # ページ分割の例．ページ分割する場合，先に DCL.gropn(1) を陽に呼ぶ
+
+DCL.sgpset('isub', 96)      # control character of subscription: '_' --> '`'
+DCL.glpset('lmiss',true)
+
+#DCL.sgscmn で設定するカラーマップ番号のメモ
+# 
+# 1:  dcl_original
+# 2:  black-orange-yellow-white
+# 3:  black-blue-cyan-white
+# 4:  blue-cyan-white-yellow-red
+# 5:  gray_scale
+# 6:  pastel_rainbow
+# 7:  black-rainbow-black
+# 8:  white_yellow_red
+# 9:  white_blue_black
+# 10: short_green_original
+# 11: black-rainbow-white
+# 12: pink-rainbow-pink
+
+### History 機能 ###
+
+=======
+### GPhysの設定．特にディレクトリ関連の便利なメソッド定義 ###
+
+GDir.top='/'
+GDir.cd(Dir.pwd)
+def pwd; GDir.pwd; end                       # pwd で現在のディレクトリ表示
+def cwd; GDir.cwd; end                       # (あまり使わない)
+def ls(path=nil); GDir.cwd.ls(path); end     # ls でディレクトリ内容表示(短)
+def ls_l(path=nil); GDir.cwd.ls_l(path); end # ls_l でディレクトリ内容表示(長)
+alias dir ls_l                               # dir は ls_l の別名
+def cd(path); GDir.cd(path); end             # cd でディレクトリ変更. 引数は文字列
+                                             # なので cd "T.jan.nc" などとする
+def gpopen(path); GDir.cwd.data(path); end   # ファイル中のデータより GPhys オープン.
+                                             # 例: gp = gpopen "T.jan.nc/T"
+def gpopen_all; GDir.cwd.open_all_data; end  # ファイルにcdしてから呼ぶとGPhys化可能
+                                             # な全データをハッシュに読み込む．
+                                             # (変数名のシンボルがキー)
+### 描画 (GGraph, DCL) の設定 ###
+
+DCL.swpset('iwidth',700)    # デフォルトの画像サイズ横幅（好みで編集するとよい）
+DCL.swpset('iheight',700)   # デフォルトの画像サイズ高さ（好みで編集するとよい）
+DCL.swpset('lwait',false) if $0 == "irb"  # don't wait mouse click to renew page
+##DCL.swpset('ldump',true)  # 画像ダンプ．装置番号4のときは PNG で．
+##DCL.swpset('lalt',true)   # 裏書描画．パラパラアニメ用．通常対話処理には向かない．
+DCL.sgscmn(10)              # カラーマップ番号を10番に．gropn前なら再取替可
+
+##DCL.gropn(1)         # 通常は最初の描画時に自動的に呼ばれる．
+                       # 装置番号1番以外を使う場合やページ分割する際は陽に呼ぶ
+##DCL.sldiv('y',2,2)   # ページ分割の例．ページ分割する場合，先に DCL.gropn(1) を陽に呼ぶ
+
+DCL.sgpset('isub', 96)      # control character of subscription: '_' --> '`'
+DCL.glpset('lmiss',true)
+
+#DCL.sgscmn で設定するカラーマップ番号のメモ
+# 
+# 1:  dcl_original
+# 2:  black-orange-yellow-white
+# 3:  black-blue-cyan-white
+# 4:  blue-cyan-white-yellow-red
+# 5:  gray_scale
+# 6:  pastel_rainbow
+# 7:  black-rainbow-black
+# 8:  white_yellow_red
+# 9:  white_blue_black
+# 10: short_green_original
+# 11: black-rainbow-white
+# 12: pink-rainbow-pink
+
+### History 機能 ###
+
+>>>>>>> .r31
+def history(latest_n=nil)     # block accpeted
+  if latest_n
+    if !block_given?
+      (-latest_n..-1).each{|i| puts Readline::HISTORY[i]}
+    else
+      (-latest_n..-1).each{|i| yield(Readline::HISTORY[i])}
+    end
+  else
+    if !block_given?
+      Readline::HISTORY.each{|s| puts s}
+    else
+      Readline::HISTORY.each{|s| yield(s)}
+    end
+  end
+  Readline::HISTORY.length
+end
+
+def history_grep(regexp)
+  history{|h| puts h if regexp =~ h}
+end
+
+def history_save(path=File.expand_path("~/irb_ggraph_history.rb"),renew=false)
+  if renew
+    mode = "w"
+  else
+    mode = "a"
+  end
+  file = File.open(path,mode)
+  file.print("###########################\n## #{Time.now.to_s}\n")
+  history{|s| file.puts(s)}
+  file.close
+  print "irb history saved in ",path,"\n"
+  nil
+end

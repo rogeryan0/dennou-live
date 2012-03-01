@@ -1,7 +1,7 @@
 #!/bin/bash -x
 set -e
 
-apt-get install -t squeeze-backuports iceweasel
+# apt-get install -t squeeze-backuports iceweasel --no-install-recommends
 
 [ -f "/usr/bin/iceweasel" ] || exit 0
 

@@ -1,0 +1,235 @@
+This is pTeXk, Version 3.141592-p3.1.11 (euc) (Web2C 7.5.4) (format=platex 2011.5.26)  29 FEB 2012 18:31
+ %&-line parsing enabled.
+**main.tex
+(./main.tex
+pLaTeX2e <2006/11/10>+0 (based on LaTeX2e <2009/09/24> patch level 0)
+(/usr/share/texmf/ptex/platex/base/jarticle.cls
+Document Class: jarticle 2006/06/27 v1.6 Standard pLaTeX class
+\c@@paper=\count81
+(/usr/share/texmf/ptex/platex/base/jsize12.clo
+File: jsize12.clo 2006/06/27 v1.6 Standard pLaTeX file (size option)
+)
+\c@part=\count82
+\c@section=\count83
+\c@subsection=\count84
+\c@subsubsection=\count85
+\c@paragraph=\count86
+\c@subparagraph=\count87
+\c@figure=\count88
+\c@table=\count89
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\symmincho=\mathgroup4
+LaTeX Font Info:    Overwriting symbol font `mincho' in version `bold'
+(Font)                  JY1/mc/m/n --> JY1/gt/m/n on input line 601.
+\toclineskip=\dimen118
+\@lnumwidth=\dimen119
+\bibindent=\dimen120
+\heisei=\count90
+)
+(/usr/share/texmf/tex/generic/dennou-sty-6/Dennou6.sty
+Package: Dennou6 2001/04/03 地球流体電脳倶楽部 LaTeX2e 用マクロ集 var.6
+
+(/usr/share/texmf/tex/generic/dennou-sty-6/D6style.sty
+\Dheadrulewidth=\dimen121
+\Dfootrulewidth=\dimen122
+\Dheadwidth=\dimen123
+)
+(/usr/share/texmf/tex/generic/dennou-sty-6/D6misc.sty
+\D@parindent=\skip43
+\D@year=\count91
+)
+(/usr/share/texmf/tex/generic/dennou-sty-6/D6version.sty)
+(/usr/share/texmf/tex/generic/dennou-sty-6/D6math.sty)
+(/usr/share/texmf/tex/generic/dennou-sty-6/D6float.sty)
+(/usr/share/texmf/tex/generic/dennou-sty-6/D6prog.sty
+\c@D@proglineno=\count92
+)
+(/usr/share/texmf/tex/generic/dennou-sty-6/D6select.sty)
+(/usr/share/texmf/tex/generic/dennou-sty-6/D6graphicx.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks15
+)
+(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/etc/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: dvips.def on input line 91.
+
+(/usr/share/texmf-texlive/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+))
+\Gin@req@height=\dimen124
+\Gin@req@width=\dimen125
+)))
+(/usr/share/texmf-texlive/tex/latex/psfrag/psfrag.sty
+Package: psfrag 1998/04/11 v3.04 PSfrag (MCG)
+\pfg@pcount=\count93
+\pfg@scount=\count94
+\pfg@temp=\write3
+)
+(/usr/share/texmf/ptex/platex/base/ascmac.sty
+(/usr/share/texmf/ptex/platex/base/tascmac.sty
+\@savetbaselineshift=\dimen126
+\@saveybaselineshift=\dimen127
+\scb@x=\box41
+\scscb@x=\box42
+\@bw=\dimen128
+\@nbox=\box43
+\@nbody=\box44
+\@scw=\dimen129
+\@itemh=\dimen130
+\@iboxpos=\toks16
+\@iboxstr=\box45
+\@bwsp=\box46
+\@@bwsp=\box47
+\@bcal=\count95
+\shaderule=\dimen131
+))
+(/usr/share/texmf-texlive/tex/latex/psnfss/times.sty
+Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
+) (./main.aux
+(./equation.aux) (./horizon.aux) (./vertical.aux))
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+
+(I search kanjifont definition file: . . ) (I search font definition file: . .
+. . . . . )
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 21.
+ (/usr/share/texmf-texlive/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <24.88> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 33.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <24.88> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 33.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24.88> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 33.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <14.4> on input line 33.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 33.
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <17.28> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 33.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <17.28> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 33.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17.28> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 33.
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <20.74> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 33.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <20.74> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 33.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20.74> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 33.
+ (./main.toc
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <12> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 1.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 1.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 2.
+)
+\tf@toc=\write4
+\openout4 = `main.toc'.
+
+
+[1
+
+] [2]
+\openout2 = `equation.aux'.
+
+ (./equation.tex
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <14.4> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 15.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <14.4> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 15.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 15.
+File: ./img/cordinate.eps Graphic file (type eps)
+ <./img/cordinate.eps> [3
+
+] [4]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 111.
+ [5] [6] [7] [8] [9]
+[10]) [11]
+\openout2 = `horizon.aux'.
+
+ (./horizon.tex [12
+
+
+] [13] [14]) [15]
+\openout2 = `vertical.aux'.
+
+ (./vertical.tex [16
+
+
+] [17]
+[18] [19]
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 240.
+
+ (/usr/share/texmf-texlive/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 240.
+) [20]
+
+LaTeX Font Warning: Font shape `JT1/gt/m/it' undefined
+(Font)              using `JT1/gt/m/n' instead on input line 58.
+
+
+LaTeX Font Warning: Font shape `JY1/gt/m/it' undefined
+(Font)              using `JY1/gt/m/n' instead on input line 58.
+
+[21
+
+] (./main.aux (./equation.aux) (./horizon.aux) (./vertical.aux))
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 1203 strings out of 257674
+ 14473 string characters out of 1191153
+ 76916 words of memory out of 3000000
+ 4315 multiletter control sequences out of 10000+50000
+ 28970 words of font info for 97 fonts, out of 2000000 for 2000
+ 14 hyphenation exceptions out of 8191
+ 39i,11n,28p,224b,393s stack positions out of 5000i,500n,6000p,200000b,40000s
+
+Output written on main.dvi (21 pages, 72060 bytes).

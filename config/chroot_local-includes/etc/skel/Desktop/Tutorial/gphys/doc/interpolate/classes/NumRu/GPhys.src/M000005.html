@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>interpolate (NumRu::GPhys)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File interpolate.rb, line 313</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">interpolate</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">coords</span>)
+      <span class="ruby-identifier">coords</span>, <span class="ruby-identifier">org_coords</span>, <span class="ruby-identifier">org_dims</span>, <span class="ruby-identifier">newgrid</span> = <span class="ruby-identifier">_interpo_match_coords</span>(<span class="ruby-identifier">coords</span>)
+      <span class="ruby-identifier">crdmap</span> = <span class="ruby-identifier">_interpo_reorder_2crdmap</span>(<span class="ruby-identifier">coords</span>, <span class="ruby-identifier">org_coords</span>, <span class="ruby-identifier">org_dims</span>)
+      <span class="ruby-identifier">idxmap</span> = <span class="ruby-identifier">_interpo_find_position</span>(<span class="ruby-identifier">crdmap</span>)
+
+      <span class="ruby-identifier">z</span> = <span class="ruby-identifier">val</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">z</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">NArrayMiss</span>)
+        <span class="ruby-identifier">missval</span> = ( (<span class="ruby-identifier">a</span>=<span class="ruby-identifier">get_att</span>(<span class="ruby-value str">'_FillValue'</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">a</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span> ) <span class="ruby-operator">||</span> 
+                  ( (<span class="ruby-identifier">a</span>=<span class="ruby-identifier">get_att</span>(<span class="ruby-value str">'missing_value'</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">a</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span> ) <span class="ruby-operator">||</span> 
+                  <span class="ruby-ivar">@@interpo_missval</span>
+        <span class="ruby-identifier">z</span> = <span class="ruby-identifier">z</span>.<span class="ruby-identifier">to_na</span>(<span class="ruby-identifier">missval</span>) 
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">missval</span> = <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">na</span> = <span class="ruby-identifier">c_interpo_do</span>(<span class="ruby-identifier">newgrid</span>.<span class="ruby-identifier">shape</span>, <span class="ruby-identifier">idxmap</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">missval</span>)   <span class="ruby-comment cmt"># [C-extension]</span>
+
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">missval</span>
+        <span class="ruby-identifier">mask</span> = <span class="ruby-identifier">na</span>.<span class="ruby-identifier">ne</span>(<span class="ruby-identifier">missval</span>)
+        <span class="ruby-identifier">na</span> = <span class="ruby-constant">NArrayMiss</span>.<span class="ruby-identifier">to_nam_no_dup</span>(<span class="ruby-identifier">na</span>,<span class="ruby-identifier">mask</span>)
+      <span class="ruby-keyword kw">end</span>
+
+      <span class="ruby-identifier">va</span> = <span class="ruby-constant">VArray</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">na</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">name</span>)
+
+      <span class="ruby-identifier">ret</span> = <span class="ruby-constant">GPhys</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">newgrid</span>, <span class="ruby-identifier">va</span>)
+      <span class="ruby-identifier">ret</span>.<span class="ruby-identifier">grid</span>.<span class="ruby-identifier">set_lost_axes</span>(<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">lost_axes</span>)
+      <span class="ruby-identifier">ret</span>
+    <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,14 @@
+\contentsline {section}{\numberline {1}概要}{2}
+\contentsline {section}{\numberline {2}支配方程式系}{3}
+\contentsline {subsection}{\numberline {2.1}支配方程式系}{3}
+\contentsline {subsection}{\numberline {2.2}境界条件}{3}
+\contentsline {section}{\numberline {3}離散化}{4}
+\contentsline {subsection}{\numberline {3.1}空間離散化}{4}
+\contentsline {subsection}{\numberline {3.2}水平方向のスペクトル表現}{4}
+\contentsline {subsection}{\numberline {3.3}時間積分}{5}
+\contentsline {subsubsection}{\numberline {3.3.1}leapfrog スキーム}{5}
+\contentsline {subsubsection}{\numberline {3.3.2}Adams-Bashforth スキーム}{5}
+\contentsline {section}{\numberline {4}使用モジュールとその他の設定}{6}
+\contentsline {section}{\numberline {5}数値実験}{7}
+\contentsline {section}{\numberline {6}参考文献}{9}
+\contentsline {section}{謝辞}{10}

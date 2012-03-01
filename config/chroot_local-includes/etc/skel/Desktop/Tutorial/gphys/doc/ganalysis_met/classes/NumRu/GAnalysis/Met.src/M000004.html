@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>sigma_inv (NumRu::GAnalysis::Met)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File met.rb, line 94</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sigma_inv</span>(<span class="ruby-identifier">theta</span>, <span class="ruby-identifier">dim</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">prs</span>=<span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-identifier">dim</span> = <span class="ruby-identifier">find_prs_d</span>(<span class="ruby-identifier">theta</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">dim</span>
+        <span class="ruby-identifier">prs</span> = <span class="ruby-identifier">get_prs</span>(<span class="ruby-identifier">theta</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">prs</span>
+        <span class="ruby-identifier">prs</span> = <span class="ruby-identifier">convert_units2Pa</span>(<span class="ruby-identifier">prs</span>)
+        <span class="ruby-comment cmt">#dtheta_dp = df_dx(theta, prs, dim)</span>
+        <span class="ruby-identifier">dtheta_dp</span> = <span class="ruby-identifier">df_dx_vialogscale</span>(<span class="ruby-identifier">theta</span>, <span class="ruby-identifier">prs</span>, <span class="ruby-identifier">dim</span>)
+        <span class="ruby-identifier">sig_inv</span> = <span class="ruby-identifier">dtheta_dp</span> <span class="ruby-operator">*</span> (<span class="ruby-operator">-</span><span class="ruby-ivar">@@g</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sig_inv</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:long_name</span>)  <span class="ruby-comment cmt"># VArray or GPhys</span>
+          <span class="ruby-identifier">sig_inv</span>.<span class="ruby-identifier">name</span> = <span class="ruby-value str">&quot;sig_inv&quot;</span>
+          <span class="ruby-identifier">sig_inv</span>.<span class="ruby-identifier">long_name</span> = <span class="ruby-value str">&quot;1/sigma&quot;</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">sig_inv</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

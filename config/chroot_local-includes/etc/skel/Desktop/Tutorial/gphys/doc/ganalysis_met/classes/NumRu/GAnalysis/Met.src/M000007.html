@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>z2geostrophic_wind (NumRu::GAnalysis::Met)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File met.rb, line 160</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">z2geostrophic_wind</span>(<span class="ruby-identifier">z</span>, <span class="ruby-identifier">f</span>=<span class="ruby-keyword kw">nil</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">nil?</span>
+          <span class="ruby-identifier">f</span> = <span class="ruby-value">2</span> <span class="ruby-operator">*</span> <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">omega</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Numeric</span>)
+          <span class="ruby-identifier">f</span> = <span class="ruby-constant">UNumeric</span>[<span class="ruby-identifier">f</span>,<span class="ruby-value str">&quot;s-1&quot;</span>]
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">z</span> = <span class="ruby-identifier">z</span>.<span class="ruby-identifier">convert_units</span>(<span class="ruby-value str">&quot;m&quot;</span>)
+        <span class="ruby-identifier">gx</span>, <span class="ruby-identifier">gy</span> = <span class="ruby-constant">GAnalysis</span><span class="ruby-operator">::</span><span class="ruby-constant">Planet</span>.<span class="ruby-identifier">grad_s</span>( <span class="ruby-identifier">z</span> <span class="ruby-operator">*</span> (<span class="ruby-identifier">g</span><span class="ruby-operator">/</span><span class="ruby-identifier">f</span>) )
+        <span class="ruby-identifier">u</span> = <span class="ruby-operator">-</span><span class="ruby-identifier">gy</span>
+        <span class="ruby-identifier">v</span> = <span class="ruby-identifier">gx</span>
+        <span class="ruby-identifier">u</span>.<span class="ruby-identifier">name</span> = <span class="ruby-value str">&quot;u&quot;</span>
+        <span class="ruby-identifier">u</span>.<span class="ruby-identifier">long_name</span> = <span class="ruby-value str">&quot;geostrophic U&quot;</span>
+        <span class="ruby-identifier">u</span>.<span class="ruby-identifier">put_att</span>(<span class="ruby-value str">&quot;assumed_f&quot;</span>,<span class="ruby-identifier">f</span>.<span class="ruby-identifier">to_s</span>)
+        <span class="ruby-identifier">v</span>.<span class="ruby-identifier">name</span> = <span class="ruby-value str">&quot;v&quot;</span>
+        <span class="ruby-identifier">v</span>.<span class="ruby-identifier">long_name</span> = <span class="ruby-value str">&quot;geostrophic V&quot;</span>
+        <span class="ruby-identifier">v</span>.<span class="ruby-identifier">put_att</span>(<span class="ruby-value str">&quot;assumed_f&quot;</span>,<span class="ruby-identifier">f</span>.<span class="ruby-identifier">to_s</span>)
+        [<span class="ruby-identifier">u</span>, <span class="ruby-identifier">v</span>]
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

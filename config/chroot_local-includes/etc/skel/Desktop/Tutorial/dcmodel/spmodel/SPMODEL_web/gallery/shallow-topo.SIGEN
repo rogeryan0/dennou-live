@@ -1,9 +1,0 @@
-Subject: 球面上の流れ
-Maintainer: 竹広真一
-Update: 2002/10/07
-Description: 線形の球面浅水方程式の計算結果. 
-Note:	サンプルプログラムは relative:../2d-sphere-w/shallow/sample1/SIGEN.htm 以下を参照.
-
-履歴
-	2002/10/07 竹広真一
-	2004/06/03 小高正嗣

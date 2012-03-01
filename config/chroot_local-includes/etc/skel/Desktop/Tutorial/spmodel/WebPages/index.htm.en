@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="euc-jp" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=euc-jp" />
+<title>SPMODEL: Hierarchical Spectral Models for Geophysical Fluid Dynamics</title>
+<link href="/library/dcmodel/htmltools/dcmodel.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+<small> [ English | <a href="index.htm">Japanese</a> ] [ <a href="/index.html.en">GFD Dennou Club</a> / <a href="/library/spmodel/index.htm.en">spmodel project</a> ] </small>
+<h1><a name="label-0" id="label-0">SPMODEL: Hierarchical Spectral Models for Geophysical Fluid Dynamics</a></h1><!-- RDLabel: "SPMODEL: Hierarchical Spectral Models for Geophysical Fluid Dynamics" -->
+<p>SPMODEL project is now developing various hierarchical spectral models
+for geophysical fluid dynamics which can be easily used for research
+and education.</p>
+<table align="right">
+<tr><td>
+<A href="gallery/shallow-topo/">
+<IMG ALT="shallow_topo_linear_small.jpg" SRC="./gallery/shallow_topo_linear_small.jpg" width=240, BORDER=1></a>
+</td>
+<td>
+<A href="gallery/kh-instability/">
+<IMG ALT="kh1.gif" SRC="./gallery/kh-instability/kh1.gif" align="center" BORDER=1 width=240></a>
+</td>
+</tr>
+</table>
+
+
+<ul>
+<li><a href="#label-2">The goal of SPMODEL</a></li>
+<li><a href="./gallery/index.htm.en">Gallery</a></li>
+<li><a href="./html/usage.htm.en">How to use SPMODEL ?</a>
+<ul>
+<li><a href="./html/needed.htm.en">Required softwares</a></li>
+<li><a href="./html/spml.htm.en">SPMODEL library (spml)</a></li>
+</ul></li>
+<li><a href="./html/sample.htm.en">SPMODEL programs</a></li>
+<li><a href="./tutorial/index.htm.en">Tutorial</a></li>
+<li><a href="./html/licence.htm.en">Licence</a></li>
+<li><a href="./html/paper.htm.en">Publication</a></li>
+<li><a href="./html/member.htm.en">Development group</a></li>
+<li><a href="./html/acknowledge.htm.en">Acknowledgement</a></li>
+<li><a href="./html/link.htm.en">Link &amp; Developer's archive</a></li>
+</ul>
+<h2><a name="label-1" id="label-1">News(2012.02.29)</a></h2><!-- RDLabel: "News(2012.02.29)" -->
+<p>New version (0.7.1) of SPMODEL library (spml) was released.
+Modified points and newly implemented functions are as follows:</p>
+<ul>
+<li>License changed
+<ul>
+<li>original license → MIT License.
+    Please see <a href="./html/licence.htm.en">License</a> in detail.</li>
+</ul></li>
+<li>Newly implemented functions
+<ul>
+<li>Modules of sphere and spherical shell geometry using SJPACK_CUDA
+<ul>
+<li>w_module_sjpack_cuda, wa_module_sjpack_cuda, wt_module_sjpack_cuda</li>
+</ul></li>
+<li>Modules of sphere and spherical shell geometry, MPI parallelization
+<ul>
+<li>wq_mpi_module, wtq_mpi_module</li>
+</ul></li>
+<li>A module for solving systems of linear equations by use of CUDA: lumatrix_cuda
+<ul>
+<li>Depends: PGI Compiler + Accelerator (&gt;= 2010)</li>
+</ul></li>
+</ul></li>
+<li>Bug fixed/misc. update
+<ul>
+<li>Modules of axial symmetry: fix working space size</li>
+<li>Remove FORTRAN77 files: rewrite in fortran 90</li>
+</ul></li>
+</ul>
+<h2><a name="label-2" id="label-2">The goal of SPMODEL</a></h2><!-- RDLabel: "The goal of SPMODEL" -->
+<p>SPMODEL project is developing a series of numerical models based on various systems of approximate equations, that appear in the geophysical fluid dynamics.
+The model series is arranged hierarchically from simple spartial one-dimensinal models to complex two or three dimensional models.</p>
+<p>The aims of the series of numerical models are as follows:</p>
+<ul>
+<li>Easy reproduction of illustrations of standard or important GFD problems
+  in order to make use of understandings and teaching
+  of geophysical fluid dynamics.</li>
+<li>Sharing knowledge obtained by numerical experiments with ease:
+  from the era of unserstanding with conventional mathematical equations
+  to the era of understanding through the results of numerical calculations.</li>
+<li>Smooth comparison bwtween the numerical results of the series of the models:
+  it is helpful in understanding of the results of more complex models.</li>
+</ul>
+<p>For such purposes, readability and understandability of the source codes to permit easy re-building and/or modification are given priority in designing the program source codes. This policy might sacrifice calculation speed of the programs, however, we anticipate that on the basis of this model series,
+advanced models, which can perform leading-edge massive calculations for exapmle, could be developed easily.</p>
+<p>The programs of the series of the models use "SPMODEL library (spml)", which provides basic functions for numerical fluid dynamics calculations with the spectral methods, such as conversion between grid and spectral data and spartial derivatives. By using the array-valued functions of SPMODEL library under favor of
+the array operation features of Fortran90, the main part of each program source code is written in a similar form to the original mathematical expressions,
+which contributes to readability and understandability of the program source codes. Moreover, with the help of the introduction of systematic function naming rules of the array-valued functions of SPMODEL library, we can use these functions routinely, and the program source codes can be modified easyly and safely.</p>
+<p>The SPMODEL library and the sample programs serve as one of the experiments for Fortran90 programing style. We are pleased if we colud offer them as references for programing style of several numerical calculations not only in geophysical fluid dynamics but also in other several fields of phisics.</p>
+
+<hr /> <small> SPMODEL Development Group / GFD Dennou Staff <img src="/library/dcmodel/htmltools/dcstaff_email.png" alt="dcstaff&#64;&#103;&#102;&#100;-dennou.org" align="middle" /> <br /> Last Updated: 2012/02/29, Since: 2002/02/15 </small>
+
+</body>
+</html>

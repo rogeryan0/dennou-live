@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>df_dx_vialogscale (NumRu::GAnalysis::Met)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File met.rb, line 396</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">df_dx_vialogscale</span>(<span class="ruby-identifier">f</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">dim</span>)
+        <span class="ruby-identifier">z</span> = <span class="ruby-constant">Misc</span><span class="ruby-operator">::</span><span class="ruby-constant">EMath</span>.<span class="ruby-identifier">log</span>(<span class="ruby-identifier">x</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-constant">GPhys</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">f</span>
+          <span class="ruby-identifier">mdl</span> = <span class="ruby-constant">NumRu</span><span class="ruby-operator">::</span><span class="ruby-constant">GPhys</span><span class="ruby-operator">::</span><span class="ruby-constant">Derivative</span>
+          <span class="ruby-identifier">dfdz</span> = <span class="ruby-identifier">mdl</span>.<span class="ruby-identifier">threepoint_O2nd_deriv</span>(<span class="ruby-identifier">f</span>, <span class="ruby-identifier">dim</span>, <span class="ruby-identifier">mdl</span><span class="ruby-operator">::</span><span class="ruby-constant">LINEAR_EXT</span>, <span class="ruby-identifier">z</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">mdl</span> = <span class="ruby-constant">NumRu</span><span class="ruby-operator">::</span><span class="ruby-constant">Derivative</span>
+          <span class="ruby-identifier">dfdz</span> = <span class="ruby-identifier">mdl</span>.<span class="ruby-identifier">threepoint_O2nd_deriv</span>(<span class="ruby-identifier">f</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">dim</span>, <span class="ruby-identifier">mdl</span><span class="ruby-operator">::</span><span class="ruby-constant">LINEAR_EXT</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">dfdz</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">x</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
