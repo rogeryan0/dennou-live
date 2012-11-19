@@ -3,46 +3,31 @@
 MIRROR_DEBIAN="http://ftp.jp.debian.org/debian/"
 MIRROR_SECURITY="http://security.debian.org/"
 MIRROR_BOOTSTRAP=${MIRROR_DEBIAN}
-MIRROR_VOLATILE=${MIRROR_DEBIAN}
-MIRROR_BACKPORTS="http://backports.debian.org/debian-backports/"
 
-DISTRIBUTION="squeeze"
+DISTRIBUTION="wheezy"
 ARCH="i386"
 MODE="debian"
-BOOTAPPEND_LIVE="persistent splash noautologin"
+BOOTAPPEND_LIVE="boot=live config persistent splash noautologin locales=ja_JP.UTF-8 keyboard-layouts=jp"
 
 lb config noauto \
+	--apt-ftp-proxy http://localhost:3142/ \
+	--apt-http-proxy http://localhost:3142/ \
 	--apt-recommends true \
-	--archive-areas "main contrib non-free" \
 	--architecture "${ARCH}" \
-	--backports true \
+	--archive-areas "main contrib non-free" \
 	--bootappend-live "${BOOTAPPEND_LIVE}" \
-	--bootloader syslinux \
+	--debian-installer live \
+	--debian-installer-distribution wheezy \
+	--debug true \
+	--distribution "${DISTRIBUTION}" \
+	--firmware-binary true \
+	--firmware-chroot true \
 	--iso-publisher "GFD Dennou Club; http://www.gfd-dennou.org/;" \
-	--linux-packages "none" \
-	--linux-packages "linux-image-3.2.0-0.bpo.1" \
-	--linux-flavours "686-pae 486" \
 	--mirror-binary "${MIRROR_DEBIAN}" \
 	--mirror-binary-security "${MIRROR_SECURITY}" \
-	--mirror-binary-volatile "${MIRROR_VOLATILE}" \
-	--mirror-binary-backports "${MIRROR_BACKPORTS}" \
 	--mirror-bootstrap "${MIRROR_BOOTSTRAP}" \
 	--mirror-chroot "${MIRROR_DEBIAN}" \
 	--mirror-chroot-security "${MIRROR_SECURITY}" \
-	--mirror-chroot-volatile "${MIRROR_VOLATILE}" \
-	--mirror-chroot-backports "${MIRROR_BACKPORTS}" \
 	--mode "${MODE}" \
-	--tasks "japanese japanese-desktop laptop desktop xfce xfce-desktop" \
-	--security true \
-	--tasksel aptitude \
-	--volatile true \
 	--win32-loader true \
-	-d "${DISTRIBUTION}" \
-	-l ja \
 	${@}
-
-#	--tasks "japanese japanese-desktop laptop desktop gnome-desktop" \
-#	--tasks "japanese japanese-desktop laptop desktop gnome-full" \
-#	--debian-installer live \
-#	--debian-installer-distribution "${DISTRIBUTION}" \
-#	--tasks "japanese japanese-desktop laptop desktop lxde lxde-desktop" \

@@ -4,10 +4,6 @@
 dennou*.list
 *.md5sum
 *.packages
-*~
-.*.swp
-*.swp
-.*~
 .directory
 .stage/
 .lock
@@ -20,3 +16,4 @@ config/chroot
 config/common
 config/source
 results
+old

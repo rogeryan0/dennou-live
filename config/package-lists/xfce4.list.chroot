@@ -1,0 +1,14 @@
+task-xfce-desktop
+task-laptop
+plymouth plymouth-drm
+xfonts-efont-unicode
+xfonts-efont-unicode-ib
+xdg-user-dirs-gtk
+xbacklight
+debian-installer-launcher
+network-manager-gnome
+network-manager-pptp-gnome
+network-manager-openvpn-gnome
+network-manager-vpnc-gnome
+browser-plugin-gnash
+lxde-icon-theme

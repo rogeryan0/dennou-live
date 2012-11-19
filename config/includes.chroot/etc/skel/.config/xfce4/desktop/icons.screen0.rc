@@ -1,0 +1,28 @@
+[Install Debian sid]
+row=1
+col=0
+
+[Tutorial]
+row=5
+col=0
+
+[README]
+row=0
+col=0
+
+[misc]
+row=6
+col=0
+
+[Trash]
+row=4
+col=0
+
+[Home]
+row=2
+col=0
+
+[File System]
+row=3
+col=0
+
