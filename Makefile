@@ -55,6 +55,7 @@ sync_spmodel:
 	--exclude "*_20*.odp" \
 	--exclude "*_20*.pdf" \
 	--exclude "Makefile.rd2html" \
+	--exclude "MEMO" \
 	dennou-k.gfd-dennou.org:/GFD_Dennou_Club/ftp/arch/spmodel/tutorial/ \
 	config/includes.chroot/etc/skel/Desktop/Tutorial/spmodel/
 
