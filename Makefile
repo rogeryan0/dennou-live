@@ -45,9 +45,9 @@ sync_spmodel:
 	--exclude "svnroot" \
 	--exclude "tutorial" \
 	dennou-k.gfd-dennou.org:/GFD_Dennou_Club/ftp/arch/spmodel/ \
-	config/chroot_local-includes/etc/skel/Desktop/Tutorial/spmodel/WebPages/
-	rm -f config/chroot_local-includes/etc/skel/Desktop/Tutorial/spmodel/WebPages/Makefile
-	rm -f config/chroot_local-includes/etc/skel/Desktop/Tutorial/spmodel/WebPages/html/Makefile
+	config/includes.chroot/etc/skel/Desktop/Tutorial/spmodel/WebPages/
+	rm -f config/includes.chroot/etc/skel/Desktop/Tutorial/spmodel/WebPages/Makefile
+	rm -f config/includes.chroot/etc/skel/Desktop/Tutorial/spmodel/WebPages/html/Makefile
 	rsync -Cauvz -L \
 	--exclude "*.SIGEN" \
 	--exclude "SIGEN.htm" \
@@ -56,7 +56,7 @@ sync_spmodel:
 	--exclude "*_20*.pdf" \
 	--exclude "Makefile.rd2html" \
 	dennou-k.gfd-dennou.org:/GFD_Dennou_Club/ftp/arch/spmodel/tutorial/ \
-	config/chroot_local-includes/etc/skel/Desktop/Tutorial/spmodel/
+	config/includes.chroot/etc/skel/Desktop/Tutorial/spmodel/
 
 sync_gphys:
 	rsync -Cauvz --delete \
@@ -69,10 +69,10 @@ sync_gphys:
 		--exclude "nc-conventions_gphys.xls" \
 		--exclude "*.SIGEN" \
 		dennou-k.gfd-dennou.org:/GFD_Dennou_Club/ftp/arch/ruby/products/gphys/ \
-		config/chroot_local-includes/etc/skel/Desktop/Tutorial/gphys/
+		config/includes.chroot/etc/skel/Desktop/Tutorial/gphys/
 
 sync_desktop: sync_spmodel sync_gphys
 	rsync -Cauvlz --delete \
-		config/chroot_local-includes/etc/skel/Desktop \
+		config/includes.chroot/etc/skel/Desktop \
 		dennou-k.gfd-dennou.org:Public/tmp/
 

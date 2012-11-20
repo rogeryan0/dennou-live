@@ -1,4 +1,4 @@
-Debian Live DVD/USB (Squeeze) with GFD-Dennou Club dcmodel/davis product
+Debian Live DVD/USB (Wheezy) with GFD-Dennou Club dcmodel/davis product
 ========================================================================
 
 Copyright(c) 2012: Youhei SASAKI <uwabami@gfd-dennou.org>
@@ -27,7 +27,7 @@ Debian Live について
 --------------------
 
 この DVD/USB は, Debian Live Project の live-build を用いて制作されました.
-Debian GNU/Linux 6.0 (Squeeze) ベースで作られており, 地球流体電脳倶楽部の
+Debian GNU/Linux 7.0 (Wheezy) ベースで作られており, 地球流体電脳倶楽部の
 ソフトウェアを気軽に試せるようになっています.
 
 収録パッケージの詳細については DVD 内の live/packages.txt をご覧ください.
@@ -112,4 +112,4 @@ DebianLive - Debian Wiki (英語)
 http://wiki.debian.org/DebianLive
 
 Debian Live Manual (英語)
-http://alioth.debian.org/~lamby-guest/live-manual/html/
+http://live.debian.org/live-manual/html/

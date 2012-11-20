@@ -1,0 +1,42 @@
+#!/bin/bash -x
+set -e
+
+# disable console tty2,tty3,tty4,tty5,tty6
+sed -i 's/^[23456]/#\ &/' /etc/inittab
+
+# update command-not-found
+[ -f "/usr/sbin/update-command-not-found" ] && /usr/sbin/update-command-not-found
+
+# remove packages
+aptitude -y install otf-ipaexfont-mincho otf-ipaexfont-gothic
+
+# purge package
+PURGEPKG=$(dpkg -l | grep ^rc | cut -d' ' -f3)
+[ -z "${PURGEPKG}" ] || dpkg -P ${PURGEPKG}
+
+# Removing unused files
+find . -name *~ | xargs rm -f
+
+# Truncating logs
+for FILE in $(find /var/log/ -type f)
+do
+        : > ${FILE}
+done
+
+DEFAULT_DIR=/etc/default
+
+[ -f ${DEFAULT_DIR}/bluetooth ] && sed -i 's/BLUETOOTH_ENABLED=1/BLUETOOTH_ENABLED=0/' ${DEFAULT_DIR}/bluetooth
+[ -f ${DEFAULT_DIR}/gpsd ] && sed -i 's/START_DAEMON="true"/START_DAEMON="false"/' ${DEFAULT_DIR}/gpsd
+
+if [ -f "${DEFAULT_DIR}/pulseaudio" ]; then
+	sed -i 's/PULSEAUDIO_SYSTEM_START=0/PULSEAUDIO_SYSTEM_START=1/' ${DEFAULT_DIR}/pulseaudio
+fi
+
+if [ -f "${DEFAULT_DIR}/libvirt-bin" ]; then
+	sed -i 's/start_libvirtd="yes"/start_libvirtd="no"/' ${DEFAULT_DIR}/libvirt-bin
+fi
+
+if [ -f "${DEFAULT_DIR}/smartmontools" ]; then
+	echo "start_smartd=no" >> ${DEFAULT_DIR}/smartmontools
+fi
+

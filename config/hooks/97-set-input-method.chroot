@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+# use ibus, see /etc/skel/.gconf/ibus
+aptitude purge --asume-yes uim-anthy uim-gtk3 uim-gtk2.0 uim-qt4 uim uim-common uim-fep uim-gtk2.0 uim-gtk3 uim-qt uim-utils uim-xim mozc-data mozc-server uim-mozc
+apt-get -y install ibus-anthy ibus-gtk ibus-gtk3 ibus-qt4
+# /usr/sbin/update-alternatives --set xinput-ja_JP /etc/X11/xinit/xinput.d/ibus
+im-config -n ibus
