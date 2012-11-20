@@ -1,9 +1,0 @@
---- narray-0.5.7/narray.def~	2002-05-18 01:23:59.000000000 +0900
-+++ narray-0.5.7/narray.def	2003-03-20 15:08:04.000000000 +0900
-@@ -1,5 +1,6 @@
- EXPORTS
- Init_narray
-+cNArray
- na_sizeof
- na_make_object
- na_make_scalar

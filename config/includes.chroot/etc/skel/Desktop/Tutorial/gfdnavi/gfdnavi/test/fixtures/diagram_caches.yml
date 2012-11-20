@@ -1,7 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-first:
-  id: 1
-  #uri_params: analysis[path]=/samapes/reanalysis/ncep/T.jan.nc/T
-  path: /hogehoge/fuga.png
-  label: contour
-  files_yaml: hoge

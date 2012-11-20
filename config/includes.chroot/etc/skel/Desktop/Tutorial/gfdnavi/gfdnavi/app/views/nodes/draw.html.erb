@@ -1,9 +1,0 @@
-<% @imgs.each do |img| %>
-<div>
-  <img src="<%=relative_url_root%>/data<%=img%>.png" />
-  <br />
-  <a href="<%=relative_url_root%>/analysis?path=<%=CGI.escape(img)%>">Re-draw this diagram</a>
-  <br />
-  <a href="<%=relative_url_root%>/analysis2?path=<%=CGI.escape(img)%>">(New version)</a>
-</div>
-<% end %>

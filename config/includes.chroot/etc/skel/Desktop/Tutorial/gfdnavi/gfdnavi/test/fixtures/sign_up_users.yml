@@ -1,8 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-dave:
-  id: 1
-  login: dave
-  full_name: Dave
-  email_address: dave@example.com
-  affiliation: Ruby
-  password: <%= User.sha1("dave") %>

@@ -15,5 +15,6 @@ config/bootstrap
 config/chroot
 config/common
 config/source
+config/includes.chroot/etc/skel/Desktop/Tutorial
 results
 old
