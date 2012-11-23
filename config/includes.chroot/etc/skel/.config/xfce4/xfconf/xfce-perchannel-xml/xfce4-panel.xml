@@ -26,6 +26,7 @@
       <property name="position" type="string" value="p=9;x=0;y=0"/>
       <property name="leave-opacity" type="uint" value="80"/>
       <property name="enter-opacity" type="uint" value="100"/>
+      <property name="position-locked" type="bool" value="true"/>
     </property>
   </property>
   <property name="plugins" type="empty">
@@ -82,6 +83,9 @@
       <property name="names-visible" type="array">
         <value type="string" value="orage"/>
         <value type="string" value="networkmanager applet"/>
+        <value type="string" value="main.py"/>
+        <value type="string" value="ibus パネル"/>
+        <value type="string" value="networkmanager アプレット"/>
         <value type="string" value="uim"/>
       </property>
     </property>

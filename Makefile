@@ -3,15 +3,17 @@ all: usage
 usage:
 	@echo "make config-iso|config-usb|build|build-iso|build-usb|clean|distclean"
 
-config-iso: distclean
+config: clean
+	sudo lb config --binary-images iso-hybrid
+build: config
+	sudo lb build
+
+config-iso: clean
 	lb config --binary-images iso
-
-config-usb: distclean
-	lb config --binary-images usb-hdd
-
-build: build-iso build-usb
 build-iso: config-iso
 	sudo lb build
+config-usb: clean
+	lb config --binary-images hdd
 build-usb: config-usb
 	sudo lb build
 

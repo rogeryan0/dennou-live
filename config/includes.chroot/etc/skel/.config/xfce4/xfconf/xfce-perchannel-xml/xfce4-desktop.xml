@@ -12,6 +12,7 @@
         <property name="image-show" type="empty"/>
         <property name="last-image" type="empty"/>
         <property name="last-single-image" type="empty"/>
+        <property name="image-style" type="int" value="0"/>
       </property>
     </property>
   </property>
