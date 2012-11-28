@@ -1,13 +1,14 @@
 #!/bin/bash -x
 set -e
 
-gem1.8 install rails -v=2.3.14 --no-ri --no-rdoc
+http_proxy="http://proxy.kuins.net:8080/"; export http_proxy
+#gem1.8 install rails -v=2.3.14 --no-ri --no-rdoc
+gem1.8 install rack -v=1.1 --no-ri --no-rdoc
 gem1.8 install mongrel --no-ri --no-rdoc 
-gem1.8 install rdoc-f95 --no-ri --no-rdoc 
 gem1.8 install json --no-ri --no-rdoc 
-
 /usr/sbin/update-alternatives --set ruby /usr/bin/ruby1.8
 
 # apt-get install -y spml-g95 netcdf-bin
 # aptitude install -y gphys=1.2.0-1~bpo60+1 
 # apt-get install -y pry
+# gem1.8 install rdoc-f95 --no-ri --no-rdoc 

@@ -7,9 +7,6 @@ sed -i 's/^[23456]/#\ &/' /etc/inittab
 # update command-not-found
 [ -f "/usr/sbin/update-command-not-found" ] && /usr/sbin/update-command-not-found
 
-# remove packages
-aptitude -y install otf-ipaexfont-mincho otf-ipaexfont-gothic
-
 # purge package
 PURGEPKG=$(dpkg -l | grep ^rc | cut -d' ' -f3)
 [ -z "${PURGEPKG}" ] || dpkg -P ${PURGEPKG}
@@ -40,3 +37,5 @@ if [ -f "${DEFAULT_DIR}/smartmontools" ]; then
 	echo "start_smartd=no" >> ${DEFAULT_DIR}/smartmontools
 fi
 
+apt-get autoremove
+aptitude clean
