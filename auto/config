@@ -7,7 +7,7 @@ MIRROR_BOOTSTRAP=${MIRROR_DEBIAN}
 DISTRIBUTION="wheezy"
 ARCH="i386"
 MODE="debian"
-BOOTAPPEND_LIVE="boot=live config persistent splash noautologin locales=ja_JP.UTF-8 keyboard-layouts=jp"
+BOOTAPPEND_LIVE="boot=live config persistence splash noautologin locales=ja_JP.UTF-8 keyboard-layouts=jp"
 
 lb config noauto \
 	--apt-ftp-proxy http://localhost:3142/ \
